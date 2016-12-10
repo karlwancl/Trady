@@ -31,32 +31,34 @@ There is no nuget package available yet. You can check out the project and use i
     var equity = await importer.ImportAsync("FB");
 
 #### Compute indicators
-    // Currently available indicators: SMA, EMA, RSI, MACD, BB, Stochastics, OBV, AccumDist
-    var result = new SimpleMovingAverage(cs, 30).Compute();
-    var result = new ExponentialMovingAverage(cs, 30).Compute();
-    var result = new RelativeStrengthIndex(cs, 14).Compute();
-    var result = new MovingAverageConvergenceDivergence(cs, 12, 26, 9).Compute();
-    var result = new Stochastics.Full(cs, 14, 3, 3).Compute();
-    var result = new OnBalanceVolume(cs).Compute();
-    var result = new AccumulationDistributionLine(cs).Compute();
-    var result = new BollingerBands(cs, 20, 2).Compute();
+    // Currently available indicators: SMA, EMA, RSI, MACD, BB, Stochastics, OBV, AccumDist, ATR, ADX
+    var smaTs = equity.Sma(30);
+    var emaTs = equity.Ema(30);
+    var rsiTs = equity.Rsi(14);
+    var macdTs = equity.Macd(12, 26, 9);
+    var stoTs = equity.FullSto(14, 3, 3);
+    var obvTs = equity.Obv();
+    var accumDistTs = equity.AccumDist();
+    var bbTs = equity.Bb(20, 2);
+    var atrTs = equity.Atr(14);
+    var adxTs = equity.Adx(14);
 
 #### Strategy building & backtesting
     // Build buy rule & sell rule based on various patterns
-    var buyRule = new Rule<Equity>((e, i) => e.IsFullStoBullishCross(14, 3, 3, i))
-        .And((e, i) => e.IsMacdOscBullish(12, 26, 9, i))
-        .And((e, i) => e.IsSmaOscBullish(10, 30, i))
-        .And((e, i) => e.IsAccumDistBullish(i));
+    var buyRule = Rule.Create(c => c.IsFullStoBullishCross(14, 3, 3))
+        .And(c => c.IsMacdOscBullish(12, 26, 9))
+        .And(c => c.IsSmaOscBullish(10, 30))
+        .And(c => c.IsAccumDistBullish());
 
-    var sellRule = new Rule<Equity>((e, i) => e.IsFullStoBearishCross(14, 3, 3, i))
-        .Or((e, i) => e.IsMacdBearishCross(12, 24, 9, i))
-        .Or((e, i) => e.IsSmaBearishCross(10, 30, i));
+    var sellRule = Rule.Create(c => c.IsFullStoBearishCross(14, 3, 3))
+        .Or(c => c.IsMacdBearishCross(12, 24, 9))
+        .Or(c => c.IsSmaBearishCross(10, 30));
 
     // Create portfolio instance by using PortfolioBuilder
     var portfolio = new PortfolioBuilder()
-        .AddEquity(equity)
-        .BuyWhen(buyRule)
-        .SellWhen(sellRule)
+        .Add(equity)
+        .Buy(buyRule)
+        .Sell(sellRule)
         .Build();
     
     // Start backtesting with the portfolio

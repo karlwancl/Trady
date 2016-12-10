@@ -6,9 +6,9 @@ namespace Trady.Analysis.Pattern.Candle
     /// <summary>
     /// Reference: http://stockcharts.com/school/doku.php?id=chart_school:chart_analysis:candlestick_pattern_dictionary
     /// </summary>
-    public class ThreeWhiteSoldiers : PatternBase<DirectionalPatternResult>
+    public class ThreeWhiteSoldiers : PatternBase<IsMatchedResult>
     {
-        public ThreeWhiteSoldiers(Equity series) : base(series)
+        public ThreeWhiteSoldiers(Equity equity) : base(equity)
         {
         }
 

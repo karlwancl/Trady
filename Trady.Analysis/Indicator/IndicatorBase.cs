@@ -4,7 +4,7 @@ namespace Trady.Analysis.Indicator
 {
     public abstract class IndicatorBase : AnalyticBase<decimal>
     {
-        protected IndicatorBase(Equity series, params int[] parameters) : base(series)
+        public IndicatorBase(Equity equity, params int[] parameters) : base(equity)
         {
             Parameters = parameters;
         }

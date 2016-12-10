@@ -6,9 +6,9 @@ namespace Trady.Analysis.Pattern.Candle
     /// <summary>
     /// Reference: http://stockcharts.com/school/doku.php?id=chart_school:chart_analysis:candlestick_pattern_dictionary
     /// </summary>
-    public class AbandonedBaby : PatternBase<DirectionalPatternResult>
+    public class AbandonedBaby : PatternBase<IsMatchedResult>
     {
-        public AbandonedBaby(Equity series) : base(series)
+        public AbandonedBaby(Equity equity) : base(equity)
         {
         }
 

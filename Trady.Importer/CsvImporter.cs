@@ -1,17 +1,22 @@
 ﻿using CsvHelper;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Trady.Core;
 using Trady.Core.Period;
+using Trady.Importer.Helper;
+using Trady.Logging;
 
 namespace Trady.Importer
 {
     public class CsvImporter : IImporter
     {
         private string _path;
+        private static ILogger _logger = new LoggerFactory().CreateLogger<CsvImporter>();
 
         public CsvImporter(string path)
         {
@@ -31,30 +36,22 @@ namespace Trady.Importer
                     {
                         var record = csvReader.CurrentRecord;
 
-                        var recordSymbol = Convert.ToString(record[0]);
-                        if (!recordSymbol.Equals(symbol, StringComparison.OrdinalIgnoreCase))
-                            continue;
+                        try
+                        {
+                            var recordDatetime = Convert.ToDateTime(record[0]);
+                            if (startTime.HasValue && recordDatetime < startTime.Value || endTime.HasValue && recordDatetime >= endTime.Value)
+                                continue;
 
-                        var recordStartTime = Convert.ToDateTime(record[1]);
-                        if (recordStartTime < startTime || recordStartTime >= endTime)
-                            continue;
-
-                        candles.Add(CreateCandleFromRow(record));
+                            candles.Add(record.CreateCandleFromRow());
+                        }
+                        catch (Exception ex)
+                        {
+                            Logger.Warn($"The record {record[0]} will be skipped. ex: {ex.ToString()}");
+                        }
                     }
                     return new Equity(symbol, candles).Transform(period);
                 }
             });
-        }
-
-        private static Candle CreateCandleFromRow(object[] row)
-        {
-            return new Candle(
-                Convert.ToDateTime(row[1]),
-                Convert.ToDecimal(row[2]),
-                Convert.ToDecimal(row[3]),
-                Convert.ToDecimal(row[4]),
-                Convert.ToDecimal(row[5]),
-                Convert.ToInt64(row[6]));
         }
     }
 }

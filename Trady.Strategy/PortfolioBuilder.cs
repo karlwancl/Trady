@@ -10,29 +10,29 @@ namespace Trady.Strategy
     public class PortfolioBuilder
     {
         private IList<Equity> _equities;
-        private IList<IRule<Equity>> _buyRules;
-        private IList<IRule<Equity>> _sellRules;
+        private IList<IRule<EquityCandle>> _buyRules;
+        private IList<IRule<EquityCandle>> _sellRules;
 
         public PortfolioBuilder()
         {
             _equities = new List<Equity>();
-            _buyRules = new List<IRule<Equity>>();
-            _sellRules = new List<IRule<Equity>>();
+            _buyRules = new List<IRule<EquityCandle>>();
+            _sellRules = new List<IRule<EquityCandle>>();
         }
 
-        public PortfolioBuilder AddEquity(Equity equity)
+        public PortfolioBuilder Add(Equity equity)
         {
             _equities.Add(equity);
             return this;
         }
 
-        public PortfolioBuilder BuyWhen(IRule<Equity> rule)
+        public PortfolioBuilder Buy(IRule<EquityCandle> rule)
         {
             _buyRules.Add(rule);
             return this;
         }
 
-        public PortfolioBuilder SellWhen(IRule<Equity> rule)
+        public PortfolioBuilder Sell(IRule<EquityCandle> rule)
         {
             _sellRules.Add(rule);
             return this;

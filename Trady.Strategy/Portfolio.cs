@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Trady.Core;
 using Trady.Core.Helper;
+using Trady.Strategy.Helper;
 using Trady.Strategy.Rule;
 
 namespace Trady.Strategy
@@ -11,10 +12,10 @@ namespace Trady.Strategy
     public class Portfolio
     {
         private IList<Equity> _equities;
-        private IRule<Equity> _buyRule;
-        private IRule<Equity> _sellRule;
+        private IRule<EquityCandle> _buyRule;
+        private IRule<EquityCandle> _sellRule;
 
-        public Portfolio(IList<Equity> equities, IRule<Equity> buyRule, IRule<Equity> sellRule)
+        public Portfolio(IList<Equity> equities, IRule<EquityCandle> buyRule, IRule<EquityCandle> sellRule)
         {
             _equities = equities;
             _buyRule = buyRule;
@@ -38,12 +39,12 @@ namespace Trady.Strategy
 
                     int startIndex = startTime.HasValue ? equity.FindFirstIndexOrDefault(c => c.DateTime >= startTime).Value : 0;
                     int endIndex = endTime.HasValue ? equity.FindLastIndexOrDefault(c => c.DateTime < endTime).Value : equity.Count - 1;
-                    int prevBuyIndex = 0;
+                    int? prevBuyIndex = null;
 
                     Console.WriteLine();
                     for (int i = startIndex; i <= endIndex; i++)
                     {
-                        if (_buyRule.IsValid(equity, i) && prevBuyIndex == 0)
+                        if (_buyRule.IsValid(equity.GetCandleAt(i)) && !prevBuyIndex.HasValue)
                         {
                             transactions.Add(equity[i].DateTime, -cash);
                             asset = cash - premium;
@@ -52,15 +53,15 @@ namespace Trady.Strategy
                             prevBuyIndex = i;
                             Console.WriteLine("Buy on {0} @ {1:yyyy-MM-dd}", equity[i].Close, equity[i].DateTime);
                         }
-                        else if (_sellRule.IsValid(equity, i) && prevBuyIndex != 0)
+                        else if (_sellRule.IsValid(equity.GetCandleAt(i)) && prevBuyIndex.HasValue)
                         {
-                            decimal percent = (equity[i].Close - equity[prevBuyIndex].Close) / equity[prevBuyIndex].Close;
+                            decimal percent = (equity[i].Close - equity[prevBuyIndex.Value].Close) / equity[prevBuyIndex.Value].Close;
 
-                            cash = asset * equity[i].Close / equity[prevBuyIndex].Close - premium;
+                            cash = asset * equity[i].Close / equity[prevBuyIndex.Value].Close - premium;
                             asset = 0;
                             transactions.Add(equity[i].DateTime, cash);
 
-                            prevBuyIndex = 0;
+                            prevBuyIndex = null;
                             Console.WriteLine("Sell on {0} @ {1:yyyy-MM-dd}, P/L%: {2:0.##}%", equity[i].Close, equity[i].DateTime, percent * 100);
                             Console.WriteLine();
                         }

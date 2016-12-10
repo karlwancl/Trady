@@ -9,9 +9,9 @@ namespace Trady.Analysis.Indicator
 
         private RelativeStrength _rsIndicator;
 
-        public RelativeStrengthIndex(Equity series, int periodCount) : base(series, periodCount)
+        public RelativeStrengthIndex(Equity equity, int periodCount) : base(equity, periodCount)
         {
-            _rsIndicator = new RelativeStrength(series, periodCount);
+            _rsIndicator = new RelativeStrength(equity, periodCount);
         }
 
         public int PeriodCount => Parameters[0];
@@ -19,11 +19,11 @@ namespace Trady.Analysis.Indicator
         protected override IAnalyticResult<decimal> ComputeResultByIndex(int index)
         {
             var rsi = 100 - (100 / (1 + _rsIndicator.ComputeByIndex(index).Rs));
-            return new IndicatorResult(Series[index].DateTime, rsi);
+            return new IndicatorResult(Equity[index].DateTime, rsi);
         }
 
         public IndicatorResultTimeSeries<IndicatorResult> Compute(DateTime? startTime = null, DateTime? endTime = null)
-            => new IndicatorResultTimeSeries<IndicatorResult>(Series.Name, ComputeResults<IndicatorResult>(startTime, endTime), Series.Period, Series.MaxTickCount);
+            => new IndicatorResultTimeSeries<IndicatorResult>(Equity.Name, ComputeResults<IndicatorResult>(startTime, endTime), Equity.Period, Equity.MaxTickCount);
 
         public IndicatorResult ComputeByDateTime(DateTime dateTime)
             => ComputeResultByDateTime<IndicatorResult>(dateTime);

@@ -22,6 +22,7 @@
     <ProjectReference Include="..\Trady.Core\Trady.Core.csproj" />
     <ProjectReference Include="..\Trady.Exporter\Trady.Exporter.csproj" />
     <ProjectReference Include="..\Trady.Importer\Trady.Importer.csproj" />
+    <ProjectReference Include="..\Trady.Logging\Trady.Logging.csproj" />
     <ProjectReference Include="..\Trady.Strategy\Trady.Strategy.csproj" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

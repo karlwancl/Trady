@@ -8,10 +8,10 @@ namespace Trady.Analysis.Indicator
         {
             private Fast _fastStochasticsIndicator;
 
-            public Full(Equity series, int periodCount, int smaPeriodCountK, int smaPeriodCountD)
-                : base(series, periodCount, smaPeriodCountK, smaPeriodCountD)
+            public Full(Equity equity, int periodCount, int smaPeriodCountK, int smaPeriodCountD)
+                : base(equity, periodCount, smaPeriodCountK, smaPeriodCountD)
             {
-                _fastStochasticsIndicator = new Fast(series, periodCount, smaPeriodCountK);
+                _fastStochasticsIndicator = new Fast(equity, periodCount, smaPeriodCountK);
             }
 
             public int PeriodCount => Parameters[0];
@@ -35,7 +35,7 @@ namespace Trady.Analysis.Indicator
                     tuple = (d, sum / SmaPeriodCountD, 3 * d - 2 * sum / SmaPeriodCountD);
                 }
 
-                return new IndicatorResult(Series[index].DateTime, tuple.K, tuple.D, tuple.J);
+                return new IndicatorResult(Equity[index].DateTime, tuple.K, tuple.D, tuple.J);
             }
         }
     }

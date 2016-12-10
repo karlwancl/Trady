@@ -6,9 +6,9 @@ namespace Trady.Analysis.Pattern.Candle
     /// <summary>
     /// Reference: http://stockcharts.com/school/doku.php?id=chart_school:chart_analysis:candlestick_pattern_dictionary
     /// </summary>
-    public class SpinningTop : PatternBase<DirectionalPatternResult>
+    public class SpinningTop : PatternBase<IsMatchedResult>
     {
-        public SpinningTop(Equity series) : base(series)
+        public SpinningTop(Equity equity) : base(equity)
         {
         }
 

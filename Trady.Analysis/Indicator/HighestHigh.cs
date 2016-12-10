@@ -8,7 +8,7 @@ namespace Trady.Analysis.Indicator
     {
         private const string HighestHighTag = "HighestHigh";
 
-        public HighestHigh(Equity series, int periodCount) : base(series, periodCount)
+        public HighestHigh(Equity equity, int periodCount) : base(equity, periodCount)
         {
         }
 
@@ -16,12 +16,12 @@ namespace Trady.Analysis.Indicator
 
         protected override IAnalyticResult<decimal> ComputeResultByIndex(int index)
         {
-            var highestHigh = Series.Skip(index - PeriodCount + 1).Take(PeriodCount).Max(c => c.High);
-            return new IndicatorResult(Series[index].DateTime, highestHigh);
+            var highestHigh = Equity.Skip(index - PeriodCount + 1).Take(PeriodCount).Max(c => c.High);
+            return new IndicatorResult(Equity[index].DateTime, highestHigh);
         }
 
         public IndicatorResultTimeSeries<IndicatorResult> Compute(DateTime? startTime = null, DateTime? endTime = null)
-            => new IndicatorResultTimeSeries<IndicatorResult>(Series.Name, ComputeResults<IndicatorResult>(startTime, endTime), Series.Period, Series.MaxTickCount);
+            => new IndicatorResultTimeSeries<IndicatorResult>(Equity.Name, ComputeResults<IndicatorResult>(startTime, endTime), Equity.Period, Equity.MaxTickCount);
 
         public IndicatorResult ComputeByDateTime(DateTime dateTime)
             => ComputeResultByDateTime<IndicatorResult>(dateTime);

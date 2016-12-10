@@ -6,9 +6,9 @@ namespace Trady.Analysis.Pattern.Candle
     /// <summary>
     /// Reference: http://stockcharts.com/school/doku.php?id=chart_school:chart_analysis:candlestick_pattern_dictionary
     /// </summary>
-    public class DarkCloudCover : PatternBase<DirectionalPatternResult>
+    public class DarkCloudCover : PatternBase<IsMatchedResult>
     {
-        public DarkCloudCover(Equity series) : base(series)
+        public DarkCloudCover(Equity equity) : base(equity)
         {
         }
 

@@ -16,6 +16,6 @@ namespace Trady.Strategy.Rule
 
         protected IReadOnlyList<IRule<T>> Operands => _operands;
 
-        public abstract IRule<T> Operate(T obj, int index);
+        public abstract IRule<T> Operate(T obj);
     }
 }

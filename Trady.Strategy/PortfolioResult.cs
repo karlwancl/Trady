@@ -33,8 +33,9 @@ namespace Trady.Strategy
                 {
                     for (int i = 1; i < eq.Value.Count; i++)
                     {
-
-                        var plPercent = Convert.ToDouble((Math.Abs(eq.Value.ElementAt(i).Value) - Math.Abs(eq.Value.ElementAt(i - 1).Value)) / Math.Abs(eq.Value.ElementAt(i - 1).Value));
+                        var current = Math.Abs(eq.Value.ElementAt(i).Value);
+                        var previous = Math.Abs(eq.Value.ElementAt(i - 1).Value);
+                        var plPercent = Convert.ToDouble((current - previous) / previous);
                         if (plPercent > 0)
                             sum += Math.Abs(plPercent);
                     }
@@ -52,7 +53,9 @@ namespace Trady.Strategy
                 {
                     for (int i = 1; i < eq.Value.Count; i++)
                     {
-                        var plPercent = Convert.ToDouble((Math.Abs(eq.Value.ElementAt(i).Value) - Math.Abs(eq.Value.ElementAt(i - 1).Value)) / Math.Abs(eq.Value.ElementAt(i - 1).Value));
+                        var current = Math.Abs(eq.Value.ElementAt(i).Value);
+                        var previous = Math.Abs(eq.Value.ElementAt(i - 1).Value);
+                        var plPercent = Convert.ToDouble((current - previous) / previous);
                         if (plPercent < 0)
                             sum += Math.Abs(plPercent);
                     }

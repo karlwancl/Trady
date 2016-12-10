@@ -6,9 +6,9 @@ namespace Trady.Analysis.Pattern.Candle
     /// <summary>
     /// Reference: http://stockcharts.com/school/doku.php?id=chart_school:chart_analysis:candlestick_pattern_dictionary
     /// </summary>
-    public class PiercingLine : PatternBase<DirectionalPatternResult>
+    public class PiercingLine : PatternBase<IsMatchedResult>
     {
-        public PiercingLine(Equity series) : base(series)
+        public PiercingLine(Equity equity) : base(equity)
         {
         }
 

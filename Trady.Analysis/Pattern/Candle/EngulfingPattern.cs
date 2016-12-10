@@ -6,9 +6,9 @@ namespace Trady.Analysis.Pattern.Candle
     /// <summary>
     /// Reference: http://stockcharts.com/school/doku.php?id=chart_school:chart_analysis:candlestick_pattern_dictionary
     /// </summary>
-    public class EngulfingPattern : PatternBase<DirectionalPatternResult>
+    public class EngulfingPattern : PatternBase<IsMatchedResult>
     {
-        public EngulfingPattern(Equity series) : base(series)
+        public EngulfingPattern(Equity equity) : base(equity)
         {
         }
 

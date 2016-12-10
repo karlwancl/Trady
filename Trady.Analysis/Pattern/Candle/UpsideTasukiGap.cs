@@ -6,9 +6,9 @@ namespace Trady.Analysis.Pattern.Candle
     /// <summary>
     /// Reference: http://stockcharts.com/school/doku.php?id=chart_school:chart_analysis:candlestick_pattern_dictionary
     /// </summary>
-    public class UpsideTasukiGap : PatternBase<DirectionalPatternResult>
+    public class UpsideTasukiGap : PatternBase<IsMatchedResult>
     {
-        public UpsideTasukiGap(Equity series) : base(series)
+        public UpsideTasukiGap(Equity equity) : base(equity)
         {
         }
 

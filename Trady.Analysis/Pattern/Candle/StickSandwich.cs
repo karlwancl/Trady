@@ -6,9 +6,9 @@ namespace Trady.Analysis.Pattern.Candle
     /// <summary>
     /// Reference: http://stockcharts.com/school/doku.php?id=chart_school:chart_analysis:candlestick_pattern_dictionary
     /// </summary>
-    public class StickSandwich : PatternBase<DirectionalPatternResult>
+    public class StickSandwich : PatternBase<IsMatchedResult>
     {
-        public StickSandwich(Equity series) : base(series)
+        public StickSandwich(Equity equity) : base(equity)
         {
         }
 

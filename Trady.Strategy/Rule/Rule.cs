@@ -6,23 +6,23 @@ namespace Trady.Strategy.Rule
 {
     public class Rule<T> : IRule<T>
     {
-        private Func<T, int, bool> _predicate;
+        private Predicate<T> _predicate;
 
         public Rule(bool boolValue)
         {
-            _predicate = new Func<T, int, bool>((t, i) => boolValue);
+            _predicate = new Predicate<T>(t => boolValue);
         }
 
-        public Rule(Func<T, int, bool> predicate)
+        public Rule(Predicate<T> predicate)
         {
             _predicate = predicate;
         }
 
         public Rule(IOperation<T> @operator)
         {
-            _predicate = new Func<T, int, bool>((t, i) => @operator.Operate(t, i).IsValid(t, i));
+            _predicate = new Predicate<T>(t => @operator.Operate(t).IsValid(t));
         }
 
-        public bool IsValid(T obj, int index) => _predicate.Invoke(obj, index);
+        public bool IsValid(T obj) => _predicate.Invoke(obj);
     }
 }

@@ -7,8 +7,8 @@ namespace Trady.Analysis.Pattern.Indicator
     {
         public class Full : PatternBase
         {
-            public Full(Equity series, int periodCount, int smaPeriodCountK, int smaPeriodCountD)
-                : base(series, new Stochastics.Full(series, periodCount, smaPeriodCountK, smaPeriodCountD))
+            public Full(Equity equity, int periodCount, int smaPeriodCountK, int smaPeriodCountD)
+                : base(equity, new Stochastics.Full(equity, periodCount, smaPeriodCountK, smaPeriodCountD))
             {
             }
         }

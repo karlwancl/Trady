@@ -7,13 +7,13 @@ namespace Trady.Analysis.Indicator
     {
         public abstract class IndicatorBase : Indicator.IndicatorBase
         {
-            protected IndicatorBase(Equity series, int periodCount, int smaPeriodCountK, int smaPeriodCountD) 
-                : base(series, periodCount, smaPeriodCountK, smaPeriodCountD)
+            protected IndicatorBase(Equity equity, int periodCount, int smaPeriodCountK, int smaPeriodCountD) 
+                : base(equity, periodCount, smaPeriodCountK, smaPeriodCountD)
             {
             }
 
             public IndicatorResultTimeSeries<IndicatorResult> Compute(DateTime? startTime = null, DateTime? endTime = null)
-                => new IndicatorResultTimeSeries<IndicatorResult>(Series.Name, ComputeResults<IndicatorResult>(startTime, endTime), Series.Period, Series.MaxTickCount);
+                => new IndicatorResultTimeSeries<IndicatorResult>(Equity.Name, ComputeResults<IndicatorResult>(startTime, endTime), Equity.Period, Equity.MaxTickCount);
 
             public IndicatorResult ComputeByDateTime(DateTime dateTime)
                 => ComputeResultByDateTime<IndicatorResult>(dateTime);

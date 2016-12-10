@@ -8,10 +8,10 @@ namespace Trady.Analysis.Indicator
         {
             private RawStochasticsValue _rsvIndicator;
 
-            public Fast(Equity series, int periodCount, int smaPeriodCount) 
-                : base(series, periodCount, smaPeriodCount, 0)
+            public Fast(Equity equity, int periodCount, int smaPeriodCount) 
+                : base(equity, periodCount, smaPeriodCount, 0)
             {
-                _rsvIndicator = new RawStochasticsValue(series, periodCount);
+                _rsvIndicator = new RawStochasticsValue(equity, periodCount);
             }
 
             public int PeriodCount => Parameters[0];
@@ -21,7 +21,7 @@ namespace Trady.Analysis.Indicator
             protected override IAnalyticResult<decimal> ComputeResultByIndex(int index)
             {
                 decimal rsv = _rsvIndicator.ComputeByIndex(index).Rsv;
-                var candle = Series[index];
+                var candle = Equity[index];
 
                 var tuple = (K: 50m, D: 50m, J: 50m);
                 if (index >= SmaPeriodCount - 1)

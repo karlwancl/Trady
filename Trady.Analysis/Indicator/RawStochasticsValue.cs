@@ -10,10 +10,10 @@ namespace Trady.Analysis.Indicator
         private HighestHigh _highestHighIndicator;
         private LowestLow _lowestLowIndicator;
 
-        public RawStochasticsValue(Equity series, int periodCount) : base(series, periodCount)
+        public RawStochasticsValue(Equity equity, int periodCount) : base(equity, periodCount)
         {
-            _highestHighIndicator = new HighestHigh(series, periodCount);
-            _lowestLowIndicator = new LowestLow(series, periodCount);
+            _highestHighIndicator = new HighestHigh(equity, periodCount);
+            _lowestLowIndicator = new LowestLow(equity, periodCount);
         }
 
         public int PeriodCount => Parameters[0];
@@ -25,13 +25,13 @@ namespace Trady.Analysis.Indicator
             {
                 var highestHigh = _highestHighIndicator.ComputeByIndex(index).HighestHigh;
                 var lowestLow = _lowestLowIndicator.ComputeByIndex(index).LowestLow;
-                rsv = highestHigh == lowestLow ? 50 : 100 * (Series[index].Close - lowestLow) / (highestHigh - lowestLow);
+                rsv = highestHigh == lowestLow ? 50 : 100 * (Equity[index].Close - lowestLow) / (highestHigh - lowestLow);
             }
-            return new IndicatorResult(Series[index].DateTime, rsv);
+            return new IndicatorResult(Equity[index].DateTime, rsv);
         }
 
         public IndicatorResultTimeSeries<IndicatorResult> Compute(DateTime? startTime = null, DateTime? endTime = null)
-            => new IndicatorResultTimeSeries<IndicatorResult>(Series.Name, ComputeResults<IndicatorResult>(startTime, endTime), Series.Period, Series.MaxTickCount);
+            => new IndicatorResultTimeSeries<IndicatorResult>(Equity.Name, ComputeResults<IndicatorResult>(startTime, endTime), Equity.Period, Equity.MaxTickCount);
 
         public IndicatorResult ComputeByDateTime(DateTime dateTime)
             => ComputeResultByDateTime<IndicatorResult>(dateTime);

@@ -7,20 +7,20 @@ namespace Trady.Analysis.Indicator
     {
         private const string AccumDistTag = "AccumDist";
 
-        public AccumulationDistributionLine(Equity series) : base(series, null)
+        public AccumulationDistributionLine(Equity equity) : base(equity, null)
         {
         }
 
         protected override IAnalyticResult<decimal> ComputeResultByIndex(int index)
         {
             decimal accumDist = 0;
-            var candle = Series[index];
+            var candle = Equity[index];
 
             if (index == 0)
                 accumDist = candle.Volume;
             else
             {
-                var prevCandle = Series[index - 1];
+                var prevCandle = Equity[index - 1];
                 var prevAccumDist = GetComputed<IndicatorResult>(index - 1).AccumDist;
 
                 decimal ratio = (candle.Close / prevCandle.Close) - 1;
@@ -36,7 +36,7 @@ namespace Trady.Analysis.Indicator
         }
 
         public IndicatorResultTimeSeries<IndicatorResult> Compute(DateTime? startTime = null, DateTime? endTime = null)
-            => new IndicatorResultTimeSeries<IndicatorResult>(Series.Name, ComputeResults<IndicatorResult>(startTime, endTime), Series.Period, Series.MaxTickCount);
+            => new IndicatorResultTimeSeries<IndicatorResult>(Equity.Name, ComputeResults<IndicatorResult>(startTime, endTime), Equity.Period, Equity.MaxTickCount);
 
         public IndicatorResult ComputeByDateTime(DateTime dateTime)
             => ComputeResultByDateTime<IndicatorResult>(dateTime);

@@ -8,7 +8,7 @@ namespace Trady.Analysis.Indicator
     {
         private const string SmaTag = "Sma";
 
-        public SimpleMovingAverage(Equity series, int periodCount) : base(series, periodCount)
+        public SimpleMovingAverage(Equity equity, int periodCount) : base(equity, periodCount)
         {
         }
 
@@ -16,12 +16,12 @@ namespace Trady.Analysis.Indicator
 
         protected override IAnalyticResult<decimal> ComputeResultByIndex(int index)
         {
-            decimal sma = index == 0 ? 0 : Series.Skip(index - PeriodCount + 1).Take(PeriodCount).Sum(c => c.Close) / PeriodCount;
-            return new IndicatorResult(Series[index].DateTime, sma);
+            decimal sma = index == 0 ? 0 : Equity.Skip(index - PeriodCount + 1).Take(PeriodCount).Sum(c => c.Close) / PeriodCount;
+            return new IndicatorResult(Equity[index].DateTime, sma);
         }
 
         public IndicatorResultTimeSeries<IndicatorResult> Compute(DateTime? startTime = null, DateTime? endTime = null)
-            => new IndicatorResultTimeSeries<IndicatorResult>(Series.Name, ComputeResults<IndicatorResult>(startTime, endTime), Series.Period, Series.MaxTickCount);
+            => new IndicatorResultTimeSeries<IndicatorResult>(Equity.Name, ComputeResults<IndicatorResult>(startTime, endTime), Equity.Period, Equity.MaxTickCount);
 
         public IndicatorResult ComputeByDateTime(DateTime dateTime)
             => ComputeResultByDateTime<IndicatorResult>(dateTime);

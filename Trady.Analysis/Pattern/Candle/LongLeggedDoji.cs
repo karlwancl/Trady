@@ -6,9 +6,9 @@ namespace Trady.Analysis.Pattern.Candle
     /// <summary>
     /// Reference: http://stockcharts.com/school/doku.php?id=chart_school:chart_analysis:candlestick_pattern_dictionary
     /// </summary>
-    public class LongLeggedDoji : PatternBase<DirectionalPatternResult>
+    public class LongLeggedDoji : PatternBase<IsMatchedResult>
     {
-        public LongLeggedDoji(Equity series) : base(series)
+        public LongLeggedDoji(Equity equity) : base(equity)
         {
         }
 

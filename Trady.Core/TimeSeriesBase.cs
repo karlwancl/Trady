@@ -1,10 +1,10 @@
-﻿using Microsoft.Extensions.Logging;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Trady.Core.Helper;
 using Trady.Core.Period;
+using Trady.Logging;
 
 namespace Trady.Core
 {
@@ -13,8 +13,6 @@ namespace Trady.Core
         private IList<TTick> _ticks;
 
         private int _maxTickCount;
-
-        private static ILogger _logger = new LoggerFactory().CreateLogger<TimeSeriesBase<TTick>>();
 
         protected TimeSeriesBase(string name ,IList<TTick> ticks, PeriodOption period, int maxTickCount)
         {
@@ -52,7 +50,7 @@ namespace Trady.Core
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.ToString());
+                Logger.Error(ex);
                 throw;
             }
         }

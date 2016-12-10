@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Trady.Core.Helper
 {
-    static class DatetimeExtension
+    internal static class DatetimeExtension
     {
         public static DateTime Truncate(this DateTime dateTime, TimeSpan timeSpan)
         {

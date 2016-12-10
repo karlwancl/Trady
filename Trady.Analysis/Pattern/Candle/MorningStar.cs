@@ -6,9 +6,9 @@ namespace Trady.Analysis.Pattern.Candle
     /// <summary>
     /// Reference: http://stockcharts.com/school/doku.php?id=chart_school:chart_analysis:candlestick_pattern_dictionary
     /// </summary>
-    public class MorningStar : PatternBase<DirectionalPatternResult>
+    public class MorningStar : PatternBase<IsMatchedResult>
     {
-        public MorningStar(Equity series) : base(series)
+        public MorningStar(Equity equity) : base(equity)
         {
         }
 

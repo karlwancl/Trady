@@ -2,6 +2,6 @@
 {
     public interface IRule<T>
     {
-        bool IsValid(T obj, int index);
+        bool IsValid(T obj);
     }
 }

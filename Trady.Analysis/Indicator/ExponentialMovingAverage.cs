@@ -1,40 +1,26 @@
 ﻿using System;
+using Trady.Analysis.Indicator.Helper;
 using Trady.Core;
 
 namespace Trady.Analysis.Indicator
 {
-    public partial class ExponentialMovingAverage : CachedIndicatorBase
+    public partial class ExponentialMovingAverage : IndicatorBase
     {
         private const string EmaTag = "Ema";
+        private Ema _ema;
 
-        public ExponentialMovingAverage(Equity series, int periodCount) : base(series, periodCount)
+        public ExponentialMovingAverage(Equity equity, int periodCount) : base(equity, periodCount)
         {
+            _ema = new Ema(i => Equity[i].DateTime, i => Equity[i].Close, periodCount);
         }
 
         public int PeriodCount => Parameters[0];
 
-        private decimal SmoothingFactor => Convert.ToDecimal(2.0 / (PeriodCount + 1));
-
         protected override IAnalyticResult<decimal> ComputeResultByIndex(int index)
-        {
-            decimal ema = 0;
-            var candle = Series[index];
-
-            if (index == 0)
-                ema = candle.Close;
-            else
-            {
-                var prevEma = GetComputed<IndicatorResult>(index - 1).Ema;
-                ema = prevEma + (SmoothingFactor * (candle.Close - prevEma));
-            }
-
-            var result = new IndicatorResult(candle.DateTime, ema);
-            CacheComputed(result);
-            return result;
-        }
+            => new IndicatorResult(Equity[index].DateTime, _ema.Compute(index));
 
         public IndicatorResultTimeSeries<IndicatorResult> Compute(DateTime? startTime = null, DateTime? endTime = null)
-            => new IndicatorResultTimeSeries<IndicatorResult>(Series.Name, ComputeResults<IndicatorResult>(startTime, endTime), Series.Period, Series.MaxTickCount);
+            => new IndicatorResultTimeSeries<IndicatorResult>(Equity.Name, ComputeResults<IndicatorResult>(startTime, endTime), Equity.Period, Equity.MaxTickCount);
 
         public IndicatorResult ComputeByDateTime(DateTime dateTime)
             => ComputeResultByDateTime<IndicatorResult>(dateTime);

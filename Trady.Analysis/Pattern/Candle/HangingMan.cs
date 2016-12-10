@@ -6,9 +6,9 @@ namespace Trady.Analysis.Pattern.Candle
     /// <summary>
     /// Reference: http://stockcharts.com/school/doku.php?id=chart_school:chart_analysis:candlestick_pattern_dictionary
     /// </summary>
-    public class HangingMan : PatternBase<DirectionalPatternResult>
+    public class HangingMan : PatternBase<IsMatchedResult>
     {
-        public HangingMan(Equity series) : base(series)
+        public HangingMan(Equity equity) : base(equity)
         {
         }
 

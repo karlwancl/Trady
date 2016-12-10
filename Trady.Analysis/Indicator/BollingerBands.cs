@@ -13,9 +13,9 @@ namespace Trady.Analysis.Indicator
 
         private SimpleMovingAverage _smaIndicator;
 
-        public BollingerBands(Equity series, int periodCount, int sdCount) : base(series, periodCount, sdCount)
+        public BollingerBands(Equity equity, int periodCount, int sdCount) : base(equity, periodCount, sdCount)
         {
-            _smaIndicator = new SimpleMovingAverage(series, periodCount);
+            _smaIndicator = new SimpleMovingAverage(equity, periodCount);
         }
 
         public int PeriodCount => Parameters[0];
@@ -31,16 +31,16 @@ namespace Trady.Analysis.Indicator
                 tuple = (smaResult.Sma, smaResult.Sma, smaResult.Sma, 0);
             else
             {
-                var mean = Series.Skip(index - PeriodCount + 1).Take(PeriodCount).Sum(c => c.Close) / PeriodCount;
-                var sd = Convert.ToDecimal(Math.Sqrt(Series.Skip(index - PeriodCount + 1).Take(PeriodCount).Select(c => Math.Pow((double)(c.Close - mean), 2)).Sum() / (PeriodCount - 1)));
+                var mean = Equity.Skip(index - PeriodCount + 1).Take(PeriodCount).Sum(c => c.Close) / PeriodCount;
+                var sd = Convert.ToDecimal(Math.Sqrt(Equity.Skip(index - PeriodCount + 1).Take(PeriodCount).Select(c => Math.Pow((double)(c.Close - mean), 2)).Sum() / (PeriodCount - 1)));
                 tuple = (smaResult.Sma - SdCount * sd, smaResult.Sma, smaResult.Sma + SdCount * sd, 2 * sd * SdCount);
             }
 
-            return new IndicatorResult(Series[index].DateTime, tuple.LowerBand, tuple.MiddleBand, tuple.UpperBand, tuple.BandWidth);
+            return new IndicatorResult(Equity[index].DateTime, tuple.LowerBand, tuple.MiddleBand, tuple.UpperBand, tuple.BandWidth);
         }
 
         public IndicatorResultTimeSeries<IndicatorResult> Compute(DateTime? startTime = null, DateTime? endTime = null)
-           => new IndicatorResultTimeSeries<IndicatorResult>(Series.Name, ComputeResults<IndicatorResult>(startTime, endTime), Series.Period, Series.MaxTickCount);
+           => new IndicatorResultTimeSeries<IndicatorResult>(Equity.Name, ComputeResults<IndicatorResult>(startTime, endTime), Equity.Period, Equity.MaxTickCount);
 
         public IndicatorResult ComputeByDateTime(DateTime dateTime)
             => ComputeResultByDateTime<IndicatorResult>(dateTime);

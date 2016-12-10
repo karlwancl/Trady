@@ -14,8 +14,8 @@ namespace Trady.Strategy.Rule
 
         protected IRule<T> Operand => Operands.ElementAt(0);
 
-        public override IRule<T> Operate(T obj, int index)
-            => new Rule<T>(Operate(Operand.IsValid(obj, index)));
+        public override IRule<T> Operate(T obj)
+            => new Rule<T>(Operate(Operand.IsValid(obj)));
 
         protected abstract bool Operate(bool operandValue);
     }

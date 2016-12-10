@@ -16,10 +16,10 @@ namespace Trady.Strategy.Rule
 
         protected IRule<T> Operand2 => Operands.ElementAt(1);
 
-        public override IRule<T> Operate(T obj, int index)
+        public override IRule<T> Operate(T obj)
         {
-            var operand1Value = Operand1.IsValid(obj, index);
-            var result = Operate(operand1Value) ?? Operate(operand1Value, Operand2.IsValid(obj, index));
+            var operand1Value = Operand1.IsValid(obj);
+            var result = Operate(operand1Value) ?? Operate(operand1Value, Operand2.IsValid(obj));
             if (!result.HasValue)
                 throw new Exception("'Operate' method may be mis-implemented, please make sure it does not return null if two operands are input");
             return new Rule<T>(result.Value);

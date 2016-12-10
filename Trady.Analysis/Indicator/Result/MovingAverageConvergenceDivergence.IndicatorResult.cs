@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Trady.Analysis.Indicator
 {
-    public partial class MovingAverageConvergenceDivergence : CachedIndicatorBase
+    public partial class MovingAverageConvergenceDivergence : IndicatorBase
     {
 
         public class IndicatorResult : IndicatorResultBase

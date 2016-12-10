@@ -7,20 +7,20 @@ namespace Trady.Analysis.Indicator
     {
         private const string ObvTag = "Obv";
 
-        public OnBalanceVolume(Equity series) : base(series, null)
+        public OnBalanceVolume(Equity equity) : base(equity, null)
         {
         }
 
         protected override IAnalyticResult<decimal> ComputeResultByIndex(int index)
         {
             decimal obv = 0;
-            var candle = Series[index];
+            var candle = Equity[index];
 
             if (index == 0)
                 obv = candle.Volume;
             else
             {
-                var prevCandle = Series[index - 1];
+                var prevCandle = Equity[index - 1];
                 var prevObv = GetComputed<IndicatorResult>(index - 1).Obv;
                 long increment = candle.Volume * (candle.Close > prevCandle.Close ? 1 : (candle.Close == prevCandle.Close ? 0 : -1));
                 obv = prevObv + increment;
@@ -32,7 +32,7 @@ namespace Trady.Analysis.Indicator
         }
 
         public IndicatorResultTimeSeries<IndicatorResult> Compute(DateTime? startTime = null, DateTime? endTime = null)
-            => new IndicatorResultTimeSeries<IndicatorResult>(Series.Name, ComputeResults<IndicatorResult>(startTime, endTime), Series.Period, Series.MaxTickCount);
+            => new IndicatorResultTimeSeries<IndicatorResult>(Equity.Name, ComputeResults<IndicatorResult>(startTime, endTime), Equity.Period, Equity.MaxTickCount);
 
         public IndicatorResult ComputeByDateTime(DateTime dateTime)
             => ComputeResultByDateTime<IndicatorResult>(dateTime);

@@ -19,19 +19,19 @@ namespace Trady.Exporter
             _path = path;
         }
 
-        public override async Task<bool> ExportAsync(Equity candleTimeSeries, IList<IAnalyticResultTimeSeries> resultTimeSeriesList, DateTime? startTime = default(DateTime?), DateTime? endTime = default(DateTime?), bool ascending = false, CancellationToken token = default(CancellationToken))
+        public override async Task<bool> ExportAsync(Equity equity, IList<IAnalyticResultTimeSeries> resultTimeSeriesList, DateTime? startTime = default(DateTime?), DateTime? endTime = default(DateTime?), bool ascending = false, CancellationToken token = default(CancellationToken))
         {
             return await Task.Factory.StartNew(() =>
             {
-                if (candleTimeSeries == null)
-                    throw new ArgumentNullException(nameof(candleTimeSeries));
+                if (equity == null)
+                    throw new ArgumentNullException(nameof(equity));
 
                 using (var fs = File.OpenWrite(_path))
                 using (var sw = new StreamWriter(fs))
                 using (var csvWriter = new CsvWriter(sw))
                 {
                     WriteHeader(resultTimeSeriesList, csvWriter);
-                    WriteRecords(candleTimeSeries, resultTimeSeriesList, startTime, endTime, ascending, csvWriter);
+                    WriteRecords(equity, resultTimeSeriesList, startTime, endTime, ascending, csvWriter);
                 }
 
                 return true;
@@ -49,7 +49,7 @@ namespace Trady.Exporter
             {
                 foreach (var resultTimeSeries in resultTimeSeriesList)
                 {
-                    if (resultTimeSeries.Any())
+                    if (resultTimeSeries != null && resultTimeSeries.Any())
                     {
                         foreach (var valueKvp in resultTimeSeries.First().Values)
                         {
@@ -61,14 +61,14 @@ namespace Trady.Exporter
             csvWriter.NextRecord();
         }
 
-        private static void WriteRecords(Equity candleTimeSeries, IList<IAnalyticResultTimeSeries> resultTimeSeriesList, DateTime? startTime, DateTime? endTime, bool ascending, CsvWriter csvWriter)
+        private static void WriteRecords(Equity equity, IList<IAnalyticResultTimeSeries> resultTimeSeriesList, DateTime? startTime, DateTime? endTime, bool ascending, CsvWriter csvWriter)
         {
-            for (int i = 0; i < candleTimeSeries.Count; i++)
+            for (int i = 0; i < equity.Count; i++)
             {
-                var candle = candleTimeSeries[ascending ? i : candleTimeSeries.Count - i - 1];
+                var candle = equity[ascending ? i : equity.Count - i - 1];
 
                 var currentDateTime = candle.DateTime;
-                if (currentDateTime < startTime || currentDateTime >= endTime)
+                if (startTime.HasValue && currentDateTime < startTime.Value || endTime.HasValue && currentDateTime >= endTime.Value)
                     continue;
 
                 csvWriter.WriteField(candle.DateTime);
@@ -82,12 +82,15 @@ namespace Trady.Exporter
                 {
                     foreach (var resultTimeSeries in resultTimeSeriesList)
                     {
-                        var currentResult = resultTimeSeries.FirstOrDefault(r => r.DateTime == currentDateTime);
-                        if (currentResult == null)
-                            throw new KeyNotFoundException("You should ensure that the indicator result time series is computed from the input candle time series!");
-                        foreach (var valueKvp in currentResult.Values)
+                        if (resultTimeSeries != null)
                         {
-                            csvWriter.WriteField(valueKvp.Value);
+                            var currentResult = resultTimeSeries.FirstOrDefault(r => r.DateTime == currentDateTime);
+                            if (currentResult == null)
+                                throw new KeyNotFoundException("You should ensure that the indicator result time series is computed from the input candle time series!");
+                            foreach (var valueKvp in currentResult.Values)
+                            {
+                                csvWriter.WriteField(valueKvp.Value);
+                            }
                         }
                     }
                 }

@@ -10,10 +10,10 @@ namespace Trady.Analysis.Indicator
 
             private Full _fullStochasticsIndicator;
 
-            public Slow(Equity series, int periodCount, int smaPeriodCountD)
-                : base(series, periodCount, 0, smaPeriodCountD)
+            public Slow(Equity equity, int periodCount, int smaPeriodCountD)
+                : base(equity, periodCount, 0, smaPeriodCountD)
             {
-                _fullStochasticsIndicator = new Full(series, periodCount, SmaPeriodCountK, smaPeriodCountD);
+                _fullStochasticsIndicator = new Full(equity, periodCount, SmaPeriodCountK, smaPeriodCountD);
             }
 
             public int PeriodCount => Parameters[0];
