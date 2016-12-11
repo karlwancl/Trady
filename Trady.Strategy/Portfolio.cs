@@ -12,10 +12,10 @@ namespace Trady.Strategy
     public class Portfolio
     {
         private IList<Equity> _equities;
-        private IRule<EquityCandle> _buyRule;
-        private IRule<EquityCandle> _sellRule;
+        private IRule<ComputableCandle> _buyRule;
+        private IRule<ComputableCandle> _sellRule;
 
-        public Portfolio(IList<Equity> equities, IRule<EquityCandle> buyRule, IRule<EquityCandle> sellRule)
+        public Portfolio(IList<Equity> equities, IRule<ComputableCandle> buyRule, IRule<ComputableCandle> sellRule)
         {
             _equities = equities;
             _buyRule = buyRule;
@@ -38,13 +38,13 @@ namespace Trady.Strategy
                     var transactions = new Dictionary<DateTime, decimal>();
 
                     int startIndex = startTime.HasValue ? equity.FindFirstIndexOrDefault(c => c.DateTime >= startTime).Value : 0;
-                    int endIndex = endTime.HasValue ? equity.FindLastIndexOrDefault(c => c.DateTime < endTime).Value : equity.Count - 1;
+                    int endIndex = endTime.HasValue ? equity.FindLastIndexOrDefault(c => c.DateTime < endTime).Value : equity.TickCount - 1;
                     int? prevBuyIndex = null;
 
                     Console.WriteLine();
                     for (int i = startIndex; i <= endIndex; i++)
                     {
-                        if (_buyRule.IsValid(equity.GetCandleAt(i)) && !prevBuyIndex.HasValue)
+                        if (_buyRule.IsValid(equity.GetComputableCandleAt(i)) && !prevBuyIndex.HasValue)
                         {
                             transactions.Add(equity[i].DateTime, -cash);
                             asset = cash - premium;
@@ -53,7 +53,7 @@ namespace Trady.Strategy
                             prevBuyIndex = i;
                             Console.WriteLine("Buy on {0} @ {1:yyyy-MM-dd}", equity[i].Close, equity[i].DateTime);
                         }
-                        else if (_sellRule.IsValid(equity.GetCandleAt(i)) && prevBuyIndex.HasValue)
+                        else if (_sellRule.IsValid(equity.GetComputableCandleAt(i)) && prevBuyIndex.HasValue)
                         {
                             decimal percent = (equity[i].Close - equity[prevBuyIndex.Value].Close) / equity[prevBuyIndex.Value].Close;
 

@@ -20,7 +20,7 @@ namespace Trady.Analysis.Indicator
 
             public int SmaPeriodCountD => Parameters[2];
 
-            protected override IAnalyticResult<decimal> ComputeResultByIndex(int index)
+            protected override TickBase ComputeResultByIndex(int index)
                 => _fullStochasticsIndicator.ComputeByIndex(index);
         }
     }

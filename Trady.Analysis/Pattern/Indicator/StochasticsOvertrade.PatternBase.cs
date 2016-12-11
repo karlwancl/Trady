@@ -14,7 +14,7 @@ namespace Trady.Analysis.Pattern.Indicator
                 _stoIndicator = stoIndicator;
             }
 
-            protected override IAnalyticResult<bool> ComputeResultByIndex(int index)
+            protected override TickBase ComputeResultByIndex(int index)
             {
                 var result = _stoIndicator.ComputeByIndex(index);
                 return new MultistateResult<Overtrade>(Equity[index].DateTime, GetOvertrade(result.K));

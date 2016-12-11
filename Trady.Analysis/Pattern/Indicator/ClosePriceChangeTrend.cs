@@ -15,7 +15,7 @@ namespace Trady.Analysis.Pattern.Indicator
             _closePriceChangeIndicator = new ClosePriceChange(equity);
         }
 
-        protected override IAnalyticResult<bool> ComputeResultByIndex(int index)
+        protected override TickBase ComputeResultByIndex(int index)
         {
             var latest = _closePriceChangeIndicator.ComputeByIndex(index);
             return new MultistateResult<Trend>(Equity[index].DateTime, GetTrend(latest.Change));

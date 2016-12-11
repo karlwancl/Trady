@@ -11,6 +11,7 @@ using Trady.Core;
 using Trady.Exporter;
 using Trady.Importer;
 using Trady.Strategy;
+using Trady.Strategy.Helper;
 using Trady.Strategy.Rule;
 
 class Program
@@ -18,8 +19,9 @@ class Program
     static void Main(string[] args)
     {
         //DownloadData();
-        //CalculateIndicators();
-        PlayWithStrategy();
+        CalculateIndicators();
+        //PlayWithStrategy();
+        //PlayWithStrategy2();
         //DownloadSpx();
     }
 
@@ -105,7 +107,7 @@ class Program
         var endTime = DateTime.Now;
         Console.WriteLine($"Data computed: time elapsed: {(endTime - startTime).TotalMilliseconds}ms");
 
-        var tsList = new List<IAnalyticResultTimeSeries>();
+        var tsList = new List<ITimeSeries>();
         tsList.Add(smaTs);
         tsList.Add(emaTs);
         tsList.Add(rsiTs);
@@ -125,24 +127,42 @@ class Program
         Console.ReadLine();
     }
 
+    private static void PlayWithStrategy2()
+    {
+        Console.WriteLine("Importing data...");
+        var importer = new CsvImporter("data\\SPX.csv");
+        var equity = importer.ImportAsync("SPX").Result;
+
+        decimal result = equity.ToComputableCandles()
+            .Where(c => c.IsAboveSma(150))
+            //.Select(c => c.Next != null ? c.Next.PricePercentageChange() : 0)
+            .Select(c => c.Next != null ? (c.Next.PriceChange() > 0 ? 1 : 0) : 0)
+            .Sum();
+
+        int denominator = equity.ToComputableCandles().Count(c => c.IsAboveSma(150)) - 1;
+
+        Console.WriteLine("Result: {0:0.##} %", result / denominator * 100);
+        Console.ReadLine();
+    }
+
     private static void PlayWithStrategy()
     {
         Console.WriteLine("Importing data...");
         var importer = new CsvImporter("data\\SPX.csv");
         var equity = importer.ImportAsync("SPX").Result;
-        //equity.MaxTickCount = 256;
+        equity.MaxTickCount = 256;
 
         Console.WriteLine("Setting rules...");
         //var buyRule = Rule.Create(c => c.IsFullStoBullishCross(14, 3, 3))
         //    .And(c => c.IsMacdOscBullish(12, 26, 9))
         //    .And(c => c.IsSmaOscBullish(10, 30))
         //    .And(c => c.IsAccumDistBullish());
-        var buyRule = Rule.Create(c => c.IsAboveSma(30));
+        var buyRule = Rule.Create(c => c.IsAboveSma(10));
 
         //var sellRule = Rule.Create(c => c.IsFullStoBearishCross(14, 3, 3))
         //    .Or(c => c.IsMacdBearishCross(12, 24, 9))
         //    .Or(c => c.IsSmaBearishCross(10, 30));
-        var sellRule = Rule.Create(c => !c.IsAboveSma(30));
+        var sellRule = Rule.Create(c => !c.IsAboveSma(10));
 
         Console.WriteLine("Creating portfolio...");
         var portfolio = new PortfolioBuilder()

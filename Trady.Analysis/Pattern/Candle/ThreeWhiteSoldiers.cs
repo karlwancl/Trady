@@ -12,7 +12,7 @@ namespace Trady.Analysis.Pattern.Candle
         {
         }
 
-        protected override IAnalyticResult<bool> ComputeResultByIndex(int index)
+        protected override TickBase ComputeResultByIndex(int index)
         {
             throw new NotImplementedException();
         }

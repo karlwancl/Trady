@@ -1,19 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using Trady.Core;
 
 namespace Trady.Analysis.Indicator
 {
     public partial class SimpleMovingAverageOscillator : IndicatorBase
     {
-
-        public class IndicatorResult : IndicatorResultBase
+        public class IndicatorResult : TickBase
         {
-            public IndicatorResult(DateTime dateTime, decimal osc)
-                : base(dateTime, new Dictionary<string, decimal> { { OscTag, osc } })
+            public IndicatorResult(DateTime dateTime, decimal osc) : base(dateTime)
             {
+                Osc = osc;
             }
 
-            public decimal Osc => Values[OscTag];
+            public decimal Osc { get; private set; }
         }
     }
 }

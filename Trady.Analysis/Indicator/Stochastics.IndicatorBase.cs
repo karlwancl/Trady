@@ -12,8 +12,8 @@ namespace Trady.Analysis.Indicator
             {
             }
 
-            public IndicatorResultTimeSeries<IndicatorResult> Compute(DateTime? startTime = null, DateTime? endTime = null)
-                => new IndicatorResultTimeSeries<IndicatorResult>(Equity.Name, ComputeResults<IndicatorResult>(startTime, endTime), Equity.Period, Equity.MaxTickCount);
+            public TimeSeries<IndicatorResult> Compute(DateTime? startTime = null, DateTime? endTime = null)
+                => new TimeSeries<IndicatorResult>(Equity.Name, ComputeResults<IndicatorResult>(startTime, endTime), Equity.Period, Equity.MaxTickCount);
 
             public IndicatorResult ComputeByDateTime(DateTime dateTime)
                 => ComputeResultByDateTime<IndicatorResult>(dateTime);

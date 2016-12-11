@@ -15,7 +15,7 @@ namespace Trady.Analysis.Pattern.Indicator
             _rsiIndicator = new RelativeStrengthIndex(equity, periodCount);
         }
 
-        protected override IAnalyticResult<bool> ComputeResultByIndex(int index)
+        protected override TickBase ComputeResultByIndex(int index)
         {
             var result = _rsiIndicator.ComputeByIndex(index);
             return new MultistateResult<SevereOvertrade>(Equity[index].DateTime, GetOvertrade(result.Rsi));

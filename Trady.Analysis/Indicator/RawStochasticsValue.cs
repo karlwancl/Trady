@@ -5,8 +5,6 @@ namespace Trady.Analysis.Indicator
 {
     public partial class RawStochasticsValue : IndicatorBase
     {
-        private const string RsvTag = "Rsv";
-
         private HighestHigh _highestHighIndicator;
         private LowestLow _lowestLowIndicator;
 
@@ -18,7 +16,7 @@ namespace Trady.Analysis.Indicator
 
         public int PeriodCount => Parameters[0];
 
-        protected override IAnalyticResult<decimal> ComputeResultByIndex(int index)
+        protected override TickBase ComputeResultByIndex(int index)
         {
             decimal rsv = 50;
             if (index >= PeriodCount - 1)
@@ -30,8 +28,8 @@ namespace Trady.Analysis.Indicator
             return new IndicatorResult(Equity[index].DateTime, rsv);
         }
 
-        public IndicatorResultTimeSeries<IndicatorResult> Compute(DateTime? startTime = null, DateTime? endTime = null)
-            => new IndicatorResultTimeSeries<IndicatorResult>(Equity.Name, ComputeResults<IndicatorResult>(startTime, endTime), Equity.Period, Equity.MaxTickCount);
+        public TimeSeries<IndicatorResult> Compute(DateTime? startTime = null, DateTime? endTime = null)
+            => new TimeSeries<IndicatorResult>(Equity.Name, ComputeResults<IndicatorResult>(startTime, endTime), Equity.Period, Equity.MaxTickCount);
 
         public IndicatorResult ComputeByDateTime(DateTime dateTime)
             => ComputeResultByDateTime<IndicatorResult>(dateTime);

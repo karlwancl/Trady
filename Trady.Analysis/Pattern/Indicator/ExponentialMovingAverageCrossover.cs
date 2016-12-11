@@ -12,7 +12,7 @@ namespace Trady.Analysis.Pattern.Indicator
             _emaOscillator = new ExponentialMovingAverageOscillator(equity, periodCount1, periodCount2);
         }
 
-        protected override IAnalyticResult<bool> ComputeResultByIndex(int index)
+        protected override TickBase ComputeResultByIndex(int index)
         {
             if (index < 1)
                 return new IsMatchedMultistateResult<Trend>(Equity[index].DateTime, false, Trend.NonTrended);

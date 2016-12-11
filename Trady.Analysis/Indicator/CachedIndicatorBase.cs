@@ -6,16 +6,16 @@ namespace Trady.Analysis.Indicator
 {
     public abstract class CachedIndicatorBase : IndicatorBase
     {
-        private IList<IAnalyticResult<decimal>> _cache;
+        private IList<TickBase> _cache;
 
         public CachedIndicatorBase(Equity equity, params int[] parameters) : base(equity, parameters)
         {
-            _cache = new List<IAnalyticResult<decimal>>();
+            _cache = new List<TickBase>();
         }
 
         protected long CacheSize { get; set; } = 256;
 
-        protected TIndicatorResult GetComputed<TIndicatorResult>(int index) where TIndicatorResult: IAnalyticResult<decimal>
+        protected TIndicatorResult GetComputed<TIndicatorResult>(int index) where TIndicatorResult: TickBase
         {
             var candleDateTime = Equity[index].DateTime;
 
@@ -26,7 +26,7 @@ namespace Trady.Analysis.Indicator
             return (TIndicatorResult)item;
         }
 
-        protected void CacheComputed(IAnalyticResult<decimal> result)
+        protected void CacheComputed(TickBase result)
         {
             var item = _cache.FirstOrDefault(r => r.DateTime.Equals(result.DateTime));
             if (item != null)

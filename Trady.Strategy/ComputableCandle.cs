@@ -4,20 +4,38 @@ using System.Text;
 using Trady.Analysis.Pattern.Indicator;
 using Trady.Analysis.Pattern;
 using Trady.Core;
+using Trady.Analysis.Indicator;
+using Trady.Strategy.Helper;
 
 namespace Trady.Strategy
 {
-    public class EquityCandle : Candle
+    public class ComputableCandle : Candle
     {
         private Equity _equity;
         private int _index;
 
-        public EquityCandle(Equity equity, int index) 
+        public ComputableCandle(Equity equity, int index) 
             : base(equity[index].DateTime, equity[index].Open, equity[index].High, equity[index].Low, equity[index].Close, equity[index].Volume)
         {
             _equity = equity;
             _index = index;
         }
+
+        public Equity Equity => _equity;
+
+        public int Index => _index;
+
+        public ComputableCandle Next => _index + 1 < _equity.TickCount ? _equity.GetComputableCandleAt(_index + 1) : null;
+
+        #region Computation
+
+        public decimal PriceChange()
+            => new ClosePriceChange(_equity).ComputeByIndex(_index).Change;
+
+        public decimal PricePercentageChange()
+            => new ClosePricePercentageChange(_equity).ComputeByIndex(_index).PercentageChange;
+
+        #endregion  
 
         #region Patterns
 
@@ -74,6 +92,9 @@ namespace Trady.Strategy
 
         public bool IsAboveSma(int periodCount)
             => new IsAboveSimpleMovingAverage(_equity, periodCount).ComputeByIndex(_index).IsMatched;
+
+        public bool IsAboveEma(int periodCount)
+            => new IsAboveExponentialMovingAverage(_equity, periodCount).ComputeByIndex(_index).IsMatched;
 
         #endregion
 

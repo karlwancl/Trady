@@ -1,11 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using Trady.Core;
 
 namespace Trady.Importer.Helper
 {
     internal static class ImporterExtension
     {
-        internal static bool IsRowNullOrWhiteSpace(this object[] row)
+        public static bool IsRowNullOrWhiteSpace(this object[] row)
         {
             foreach (var r in row)
             {
@@ -15,7 +18,7 @@ namespace Trady.Importer.Helper
             return false;
         }
 
-        internal static Candle CreateCandleFromRow(this object[] row)
+        public static Candle CreateCandleFromRow(this object[] row)
         {
             return new Candle(
                 Convert.ToDateTime(row[0]),

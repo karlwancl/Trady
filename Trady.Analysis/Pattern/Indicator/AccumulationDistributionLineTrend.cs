@@ -15,7 +15,7 @@ namespace Trady.Analysis.Pattern.Indicator
             _accumDistIndicator = new AccumulationDistributionLine(series);
         }
 
-        protected override IAnalyticResult<bool> ComputeResultByIndex(int index)
+        protected override TickBase ComputeResultByIndex(int index)
         {
             if (index < 1)
                 return new IsMatchedResult(Equity[index].DateTime, false);

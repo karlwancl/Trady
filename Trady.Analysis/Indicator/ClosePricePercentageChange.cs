@@ -1,22 +1,16 @@
 ﻿using System;
-using System.Linq;
 using Trady.Core;
 
 namespace Trady.Analysis.Indicator
 {
-    public partial class SimpleMovingAverage : IndicatorBase
+    public partial class ClosePricePercentageChange : IndicatorBase
     {
-        public SimpleMovingAverage(Equity equity, int periodCount) : base(equity, periodCount)
+        public ClosePricePercentageChange(Equity equity) : base(equity, null)
         {
         }
-
-        public int PeriodCount => Parameters[0];
 
         protected override TickBase ComputeResultByIndex(int index)
-        {
-            decimal sma = index > 0 ? Equity.Skip(index - PeriodCount + 1).Take(PeriodCount).Average(c => c.Close) : 0;
-            return new IndicatorResult(Equity[index].DateTime, sma);
-        }
+           => new IndicatorResult(Equity[index].DateTime, index > 0 ? (Equity[index].Close - Equity[index - 1].Close) / Equity[index - 1].Close : 0);
 
         public TimeSeries<IndicatorResult> Compute(DateTime? startTime = null, DateTime? endTime = null)
             => new TimeSeries<IndicatorResult>(Equity.Name, ComputeResults<IndicatorResult>(startTime, endTime), Equity.Period, Equity.MaxTickCount);

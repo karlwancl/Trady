@@ -5,13 +5,11 @@ namespace Trady.Analysis.Indicator
 {
     public partial class AccumulationDistributionLine : CachedIndicatorBase
     {
-        private const string AccumDistTag = "AccumDist";
-
         public AccumulationDistributionLine(Equity equity) : base(equity, null)
         {
         }
 
-        protected override IAnalyticResult<decimal> ComputeResultByIndex(int index)
+        protected override TickBase ComputeResultByIndex(int index)
         {
             decimal accumDist = 0;
             var candle = Equity[index];
@@ -23,9 +21,9 @@ namespace Trady.Analysis.Indicator
                 var prevCandle = Equity[index - 1];
                 var prevAccumDist = GetComputed<IndicatorResult>(index - 1).AccumDist;
 
-                decimal ratio = (candle.Close / prevCandle.Close) - 1;
-                if (candle.High != candle.Low)
-                    ratio = (candle.Close * 2 - candle.Low - candle.High) / (candle.High - candle.Low);
+                decimal ratio = (candle.High == candle.Low) ?
+                    (candle.Close / prevCandle.Close) - 1 :
+                    (candle.Close * 2 - candle.Low - candle.High) / (candle.High - candle.Low);
 
                 accumDist = prevAccumDist + ratio * candle.Volume;
             }
@@ -35,8 +33,8 @@ namespace Trady.Analysis.Indicator
             return result;
         }
 
-        public IndicatorResultTimeSeries<IndicatorResult> Compute(DateTime? startTime = null, DateTime? endTime = null)
-            => new IndicatorResultTimeSeries<IndicatorResult>(Equity.Name, ComputeResults<IndicatorResult>(startTime, endTime), Equity.Period, Equity.MaxTickCount);
+        public TimeSeries<IndicatorResult> Compute(DateTime? startTime = null, DateTime? endTime = null)
+            => new TimeSeries<IndicatorResult>(Equity.Name, ComputeResults<IndicatorResult>(startTime, endTime), Equity.Period, Equity.MaxTickCount);
 
         public IndicatorResult ComputeByDateTime(DateTime dateTime)
             => ComputeResultByDateTime<IndicatorResult>(dateTime);

@@ -8,16 +8,16 @@ using Trady.Logging;
 
 namespace Trady.Core
 {
-    public abstract class TimeSeriesBase<TTick> : IFixedTimeSeries<TTick> where TTick : ITick
+    public class TimeSeries<TTick> : IFixedTimeSeries<TTick> where TTick : ITick
     {
-        private IList<TTick> _ticks;
+        private IList<ITick> _ticks;
 
         private int _maxTickCount;
 
-        protected TimeSeriesBase(string name ,IList<TTick> ticks, PeriodOption period, int maxTickCount)
+        public TimeSeries(string name, IList<TTick> ticks, PeriodOption period, int maxTickCount)
         {
             Name = name;
-            _ticks = (ticks ?? new List<TTick>()).OrderBy(t => t.DateTime).ToList();
+            _ticks = (ticks?.Select(t => (ITick)t) ?? new List<ITick>()).OrderBy(t => t.DateTime).ToList();
             MaxTickCount = maxTickCount;
 
             Period = period;
@@ -27,9 +27,38 @@ namespace Trady.Core
 
         public string Name { get; private set; }
 
-        public TTick this[int index] => _ticks[index];
+        public void Reset()
+        {
+            _ticks.Clear();
+        }
 
-        public void Add(TTick tick)
+        public int TickCount => _ticks.Count;
+
+        public PeriodOption Period { get; private set; }
+
+        public int MaxTickCount
+        {
+            get
+            {
+                return _maxTickCount;
+            }
+            set
+            {
+                _maxTickCount = value;
+                if (_ticks.Count > _maxTickCount)
+                    _ticks = _ticks.Skip(_ticks.Count - _maxTickCount).Take(_maxTickCount).ToList();
+            }
+        }
+
+        protected IList<TTick> Ticks => _ticks.Select(t => (TTick)t).ToList();
+
+        ITick ITimeSeries.this[int index] => _ticks[index];
+
+        public TTick this[int index] => (TTick)_ticks[index];
+
+        public void Add(TTick tick) => Add((ITick)tick);
+
+        public void Add(ITick tick)
         {
             var periodInstance = Period.CreateInstance();
             try
@@ -55,35 +84,6 @@ namespace Trady.Core
             }
         }
 
-        public void Clear()
-        {
-            _ticks.Clear();
-        }
-
-        public int Count => _ticks.Count;
-
-        public PeriodOption Period { get; private set; }
-
-        public int MaxTickCount
-        {
-            get
-            {
-                return _maxTickCount;
-            }
-            set
-            {
-                _maxTickCount = value;
-                if (_ticks.Count > _maxTickCount)
-                    _ticks = _ticks.Skip(_ticks.Count - _maxTickCount).Take(_maxTickCount).ToList();
-            }
-        }
-
-        protected IList<TTick> Ticks => _ticks;
-
-        public IEnumerator<TTick> GetEnumerator() => _ticks.GetEnumerator();
-
-        IEnumerator IEnumerable.GetEnumerator() => _ticks.GetEnumerator();
-
         private static bool IsTimeframeOverlap<TConstraintTick>(IList<TConstraintTick> ticks, PeriodOption period, out TConstraintTick tick)
             where TConstraintTick : ITick
         {
@@ -101,5 +101,9 @@ namespace Trady.Core
             }
             return false;
         }
+
+        IEnumerator<TTick> IEnumerable<TTick>.GetEnumerator() => _ticks.Select(t => (TTick)t).GetEnumerator();
+
+        public IEnumerator GetEnumerator() => _ticks.GetEnumerator();
     }
 }

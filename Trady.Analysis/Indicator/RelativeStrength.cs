@@ -7,10 +7,6 @@ namespace Trady.Analysis.Indicator
 {
     public partial class RelativeStrength : IndicatorBase
     {
-        private const string GainTag = "Gain";
-        private const string LossTag = "Loss";
-        private const string RsTag = "Rs";
-
         private ClosePriceChange _closePriceChangeIndicator;
         private Ema _uEma, _dEma;
 
@@ -49,18 +45,15 @@ namespace Trady.Analysis.Indicator
 
         public int PeriodCount => Parameters[0];
 
-        protected override IAnalyticResult<decimal> ComputeResultByIndex(int index)
+        protected override TickBase ComputeResultByIndex(int index)
         {
-            if (index < PeriodCount - 1)
-                return new IndicatorResult(Equity[index].DateTime, 0);
-
-            decimal gain = _uEma.Compute(index);
-            decimal loss = _dEma.Compute(index);
-            return new IndicatorResult(Equity[index].DateTime, gain / loss);
+            decimal gain = index >= PeriodCount - 1 ? _uEma.Compute(index) : 0;
+            decimal loss = index >= PeriodCount - 1 ? _dEma.Compute(index) : 0;
+            return new IndicatorResult(Equity[index].DateTime, loss != 0 ? gain / loss : 0);
         }
 
-        public IndicatorResultTimeSeries<IndicatorResult> Compute(DateTime? startTime = null, DateTime? endTime = null)
-            => new IndicatorResultTimeSeries<IndicatorResult>(Equity.Name, ComputeResults<IndicatorResult>(startTime, endTime), Equity.Period, Equity.MaxTickCount);
+        public TimeSeries<IndicatorResult> Compute(DateTime? startTime = null, DateTime? endTime = null)
+            => new TimeSeries<IndicatorResult>(Equity.Name, ComputeResults<IndicatorResult>(startTime, endTime), Equity.Period, Equity.MaxTickCount);
 
         public IndicatorResult ComputeByDateTime(DateTime dateTime)
             => ComputeResultByDateTime<IndicatorResult>(dateTime);

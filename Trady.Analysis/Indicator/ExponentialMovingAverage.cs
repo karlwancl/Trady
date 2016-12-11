@@ -6,7 +6,6 @@ namespace Trady.Analysis.Indicator
 {
     public partial class ExponentialMovingAverage : IndicatorBase
     {
-        private const string EmaTag = "Ema";
         private Ema _ema;
 
         public ExponentialMovingAverage(Equity equity, int periodCount) : base(equity, periodCount)
@@ -16,11 +15,11 @@ namespace Trady.Analysis.Indicator
 
         public int PeriodCount => Parameters[0];
 
-        protected override IAnalyticResult<decimal> ComputeResultByIndex(int index)
+        protected override TickBase ComputeResultByIndex(int index)
             => new IndicatorResult(Equity[index].DateTime, _ema.Compute(index));
 
-        public IndicatorResultTimeSeries<IndicatorResult> Compute(DateTime? startTime = null, DateTime? endTime = null)
-            => new IndicatorResultTimeSeries<IndicatorResult>(Equity.Name, ComputeResults<IndicatorResult>(startTime, endTime), Equity.Period, Equity.MaxTickCount);
+        public TimeSeries<IndicatorResult> Compute(DateTime? startTime = null, DateTime? endTime = null)
+            => new TimeSeries<IndicatorResult>(Equity.Name, ComputeResults<IndicatorResult>(startTime, endTime), Equity.Period, Equity.MaxTickCount);
 
         public IndicatorResult ComputeByDateTime(DateTime dateTime)
             => ComputeResultByDateTime<IndicatorResult>(dateTime);

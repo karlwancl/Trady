@@ -1,4 +1,6 @@
-﻿using Trady.Core;
+﻿using System;
+using System.Linq;
+using Trady.Core;
 
 namespace Trady.Analysis.Indicator
 {
@@ -18,23 +20,13 @@ namespace Trady.Analysis.Indicator
 
             public int SmaPeriodCount => Parameters[1];
 
-            protected override IAnalyticResult<decimal> ComputeResultByIndex(int index)
+            protected override TickBase ComputeResultByIndex(int index)
             {
                 decimal rsv = _rsvIndicator.ComputeByIndex(index).Rsv;
-                var candle = Equity[index];
 
-                var tuple = (K: 50m, D: 50m, J: 50m);
-                if (index >= SmaPeriodCount - 1)
-                {
-                    decimal sum = 0;
-                    for (int i = 0; i < SmaPeriodCount; i++)
-                    {
-                        sum += _rsvIndicator.ComputeByIndex(index - SmaPeriodCount + i + 1).Rsv;
-                    }
-                    tuple = (rsv, sum / SmaPeriodCount, 3 * rsv - 2 * sum / SmaPeriodCount);
-                }
-
-                return new IndicatorResult(candle.DateTime, tuple.K, tuple.D, tuple.J);
+                Func<int, decimal> rsvFunc = i => _rsvIndicator.ComputeByIndex(index - SmaPeriodCount + i + 1).Rsv;
+                decimal rsvAvg = index >= SmaPeriodCount - 1 ? Enumerable.Range(0, SmaPeriodCount).Average(i => rsvFunc(i)) : 0;
+                return new IndicatorResult(Equity[index].DateTime, rsv, rsvAvg, 3 * rsv - 2 * rsvAvg);
             }
         }
     }

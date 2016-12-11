@@ -7,61 +7,61 @@ namespace Trady.Analysis.Indicator
 {
     public static class IndicatorExtension
     {
-        public static IndicatorResultTimeSeries<AccumulationDistributionLine.IndicatorResult> AccumDist(this Equity equity)
+        public static TimeSeries<AccumulationDistributionLine.IndicatorResult> AccumDist(this Equity equity)
             => new AccumulationDistributionLine(equity).Compute();
 
-        public static IndicatorResultTimeSeries<AverageDirectionalIndex.IndicatorResult> Adx(this Equity equity, int periodCount)
-            => new AverageDirectionalIndex(equity, periodCount).Compute();
+        public static TimeSeries<DirectionalMovementIndex.IndicatorResult> Adx(this Equity equity, int periodCount, int adxrPeriodCount = 0)
+            => new DirectionalMovementIndex(equity, periodCount, adxrPeriodCount).Compute();
 
-        public static IndicatorResultTimeSeries<AverageTrueRange.IndicatorResult> Atr(this Equity equity, int periodCount)
+        public static TimeSeries<AverageTrueRange.IndicatorResult> Atr(this Equity equity, int periodCount)
             => new AverageTrueRange(equity, periodCount).Compute();
 
-        public static IndicatorResultTimeSeries<BollingerBands.IndicatorResult> Bb(this Equity equity, int periodCount, int sdCount)
+        public static TimeSeries<BollingerBands.IndicatorResult> Bb(this Equity equity, int periodCount, int sdCount)
             => new BollingerBands(equity, periodCount, sdCount).Compute();
 
-        public static IndicatorResultTimeSeries<ClosePriceChange.IndicatorResult> PriceChange(this Equity equity)
+        public static TimeSeries<ClosePriceChange.IndicatorResult> PriceChange(this Equity equity)
             => new ClosePriceChange(equity).Compute();
 
-        public static IndicatorResultTimeSeries<ExponentialMovingAverage.IndicatorResult> Ema(this Equity equity, int periodCount)
+        public static TimeSeries<ExponentialMovingAverage.IndicatorResult> Ema(this Equity equity, int periodCount)
             => new ExponentialMovingAverage(equity, periodCount).Compute();
 
-        public static IndicatorResultTimeSeries<ExponentialMovingAverageOscillator.IndicatorResult> EmaOsc(this Equity equity, int periodCount1, int periodCount2)
+        public static TimeSeries<ExponentialMovingAverageOscillator.IndicatorResult> EmaOsc(this Equity equity, int periodCount1, int periodCount2)
             => new ExponentialMovingAverageOscillator(equity, periodCount1, periodCount2).Compute();
 
-        public static IndicatorResultTimeSeries<HighestHigh.IndicatorResult> HighestHigh(this Equity equity, int periodCount)
+        public static TimeSeries<HighestHigh.IndicatorResult> HighestHigh(this Equity equity, int periodCount)
             => new HighestHigh(equity, periodCount).Compute();
 
-        public static IndicatorResultTimeSeries<LowestLow.IndicatorResult> LowestLow(this Equity equity, int periodCount)
+        public static TimeSeries<LowestLow.IndicatorResult> LowestLow(this Equity equity, int periodCount)
             => new LowestLow(equity, periodCount).Compute();
 
-        public static IndicatorResultTimeSeries<MovingAverageConvergenceDivergence.IndicatorResult> Macd(this Equity equity, int emaPeriodCount1, int emaPeriodCount2, int demPeriodCount)
+        public static TimeSeries<MovingAverageConvergenceDivergence.IndicatorResult> Macd(this Equity equity, int emaPeriodCount1, int emaPeriodCount2, int demPeriodCount)
             => new MovingAverageConvergenceDivergence(equity, emaPeriodCount1, emaPeriodCount2, demPeriodCount).Compute();
 
-        public static IndicatorResultTimeSeries<OnBalanceVolume.IndicatorResult> Obv(this Equity equity)
+        public static TimeSeries<OnBalanceVolume.IndicatorResult> Obv(this Equity equity)
             => new OnBalanceVolume(equity).Compute();
 
-        public static IndicatorResultTimeSeries<RawStochasticsValue.IndicatorResult> Rsv(this Equity equity, int periodCount)
+        public static TimeSeries<RawStochasticsValue.IndicatorResult> Rsv(this Equity equity, int periodCount)
             => new RawStochasticsValue(equity, periodCount).Compute();
 
-        public static IndicatorResultTimeSeries<RelativeStrength.IndicatorResult> Rs(this Equity equity, int periodCount)
+        public static TimeSeries<RelativeStrength.IndicatorResult> Rs(this Equity equity, int periodCount)
             => new RelativeStrength(equity, periodCount).Compute();
 
-        public static IndicatorResultTimeSeries<RelativeStrengthIndex.IndicatorResult> Rsi(this Equity equity, int periodCount)
+        public static TimeSeries<RelativeStrengthIndex.IndicatorResult> Rsi(this Equity equity, int periodCount)
             => new RelativeStrengthIndex(equity, periodCount).Compute();
 
-        public static IndicatorResultTimeSeries<SimpleMovingAverage.IndicatorResult> Sma(this Equity equity, int periodCount)
+        public static TimeSeries<SimpleMovingAverage.IndicatorResult> Sma(this Equity equity, int periodCount)
             => new SimpleMovingAverage(equity, periodCount).Compute();
 
-        public static IndicatorResultTimeSeries<SimpleMovingAverageOscillator.IndicatorResult> SmaOsc(this Equity equity, int periodCount1, int periodCount2)
+        public static TimeSeries<SimpleMovingAverageOscillator.IndicatorResult> SmaOsc(this Equity equity, int periodCount1, int periodCount2)
             => new SimpleMovingAverageOscillator(equity, periodCount1, periodCount2).Compute();
 
-        public static IndicatorResultTimeSeries<Stochastics.IndicatorResult> FastSto(this Equity equity, int periodCount, int smaPeriodCount)
+        public static TimeSeries<Stochastics.IndicatorResult> FastSto(this Equity equity, int periodCount, int smaPeriodCount)
             => new Stochastics.Fast(equity, periodCount, smaPeriodCount).Compute();
 
-        public static IndicatorResultTimeSeries<Stochastics.IndicatorResult> FullSto(this Equity equity, int periodCount, int smaPeriodCountK, int smaPeriodCountD)
+        public static TimeSeries<Stochastics.IndicatorResult> FullSto(this Equity equity, int periodCount, int smaPeriodCountK, int smaPeriodCountD)
             => new Stochastics.Full(equity, periodCount, smaPeriodCountK, smaPeriodCountD).Compute();
 
-        public static IndicatorResultTimeSeries<Stochastics.IndicatorResult> SlowSto(this Equity equity, int periodCount, int smaPeriodCountD)
+        public static TimeSeries<Stochastics.IndicatorResult> SlowSto(this Equity equity, int periodCount, int smaPeriodCountD)
             => new Stochastics.Slow(equity, periodCount, smaPeriodCountD).Compute();
     }
 }

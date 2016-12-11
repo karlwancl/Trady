@@ -12,7 +12,7 @@ namespace Trady.Analysis.Pattern.Indicator
             _bbIndicator = new BollingerBands(equity, periodCount, sdCount);
         }
 
-        protected override IAnalyticResult<bool> ComputeResultByIndex(int index)
+        protected override TickBase ComputeResultByIndex(int index)
         {
             var result = _bbIndicator.ComputeByIndex(index);
             var current = Equity[index];

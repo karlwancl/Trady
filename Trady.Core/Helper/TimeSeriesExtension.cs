@@ -10,7 +10,7 @@ namespace Trady.Core.Helper
         public static IPeriod CreateInstance(this PeriodOption period)
         {
             string periodName = Enum.GetName(typeof(PeriodOption), period);
-            var periodType = Type.GetType($"{typeof(TimeSeriesBase<>).Namespace}.Period.{periodName}");
+            var periodType = Type.GetType($"{typeof(TimeSeries<>).Namespace}.Period.{periodName}");
             return (IPeriod)Activator.CreateInstance(periodType);
         }
 

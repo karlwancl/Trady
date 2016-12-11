@@ -1,17 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using Trady.Core;
 
 namespace Trady.Analysis.Pattern
 {
-    public class IsMatchedResult : PatternResultBase
+    public class IsMatchedResult : TickBase
     {
-        private const string IsMatchedTag = "IsMatched";
-
-        public IsMatchedResult(DateTime dateTime, bool isMatched)
-            : base(dateTime, new Dictionary<string, bool> { { IsMatchedTag, isMatched } })
+        public IsMatchedResult(DateTime dateTime, bool isMatched) : base(dateTime)
         {
+            IsMatched = isMatched;
         }
 
-        public bool IsMatched => Values[IsMatchedTag];
+        public bool IsMatched { get; private set; }
     }
 }

@@ -1,35 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
+using Trady.Core;
 
 namespace Trady.Analysis.Indicator
 {
     public partial class BollingerBands : IndicatorBase
     {
-
-        public class IndicatorResult : IndicatorResultBase
+        public class IndicatorResult : TickBase
         {
-            public IndicatorResult(DateTime dateTime, decimal lowerBand, decimal middleBand, decimal upperBand, decimal bandWidth) 
-                : base(dateTime, ComposeDictionary(lowerBand, middleBand, upperBand, bandWidth))
+            public IndicatorResult(DateTime dateTime, decimal lowerBand, decimal middleBand, decimal upperBand, decimal bandWidth) :base(dateTime)
             {
+                Lower = lowerBand;
+                Middle = middleBand;
+                Upper = upperBand;
+                Width = bandWidth;
             }
 
-            private static IDictionary<string, decimal> ComposeDictionary(decimal lowerBand, decimal middleBand, decimal upperBand, decimal bandWith)
-            {
-                var values = new Dictionary<string, decimal>();
-                values.Add(LowerTag, lowerBand);
-                values.Add(MiddleTag, middleBand);
-                values.Add(UpperTag, upperBand);
-                values.Add(WidthTag, bandWith);
-                return values;
-            }
+            public decimal Lower { get; private set; }
 
-            public decimal Lower => Values[LowerTag];
+            public decimal Middle { get; private set; }
 
-            public decimal Middle => Values[MiddleTag];
+            public decimal Upper { get; private set; }
 
-            public decimal Upper => Values[UpperTag];
-
-            public decimal Width => Values[WidthTag];
+            public decimal Width { get; private set; }
         }
     }
 }

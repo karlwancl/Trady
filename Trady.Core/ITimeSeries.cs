@@ -1,18 +1,28 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using Trady.Core.Period;
 
 namespace Trady.Core
 {
-    public interface ITimeSeries<TTick>: IEnumerable<TTick> where TTick: ITick 
+    public interface ITimeSeries : IEnumerable
     {
-        TTick this[int index] { get; }
+        string Name { get; }
 
-        void Add(TTick tick);
+        void Reset();
 
-        void Clear();
-
-        int Count { get; }
+        int TickCount { get; }
 
         PeriodOption Period { get; }
+
+        ITick this[int index] { get; }
+
+        void Add(ITick tick);
+    }
+
+    public interface ITimeSeries<TTick>: IEnumerable<TTick>, ITimeSeries where TTick: ITick 
+    {
+        new TTick this[int index] { get; }
+
+        void Add(TTick tick);
     }
 }

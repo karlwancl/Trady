@@ -6,7 +6,7 @@ using Trady.Core.Period;
 
 namespace Trady.Core
 {
-    public class Equity : TimeSeriesBase<Candle>
+    public class Equity : TimeSeries<Candle>
     {
         public Equity(string name, IList<Candle> candles = null, PeriodOption period = PeriodOption.Daily, int maxTickCount = 65536)
             : base(name, candles, period, maxTickCount)

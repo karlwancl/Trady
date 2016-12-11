@@ -1,4 +1,6 @@
-﻿using Trady.Core;
+﻿using System;
+using System.Linq;
+using Trady.Core;
 
 namespace Trady.Analysis.Indicator
 {
@@ -20,22 +22,13 @@ namespace Trady.Analysis.Indicator
 
             public int SmaPeriodCountD => Parameters[2];
 
-            protected override IAnalyticResult<decimal> ComputeResultByIndex(int index)
+            protected override TickBase ComputeResultByIndex(int index)
             {
                 var d = _fastStochasticsIndicator.ComputeByIndex(index).D;
-                var tuple = (K: 50m, D: 50m, J: 50m);
 
-                if (index >= SmaPeriodCountK - 1)
-                {
-                    decimal sum = 0;
-                    for (int i = 0; i < SmaPeriodCountD; i++)
-                    {
-                        sum += _fastStochasticsIndicator.ComputeByIndex(index - SmaPeriodCountD + i + 1).D;
-                    }
-                    tuple = (d, sum / SmaPeriodCountD, 3 * d - 2 * sum / SmaPeriodCountD);
-                }
-
-                return new IndicatorResult(Equity[index].DateTime, tuple.K, tuple.D, tuple.J);
+                Func<int, decimal> dFunc = i => _fastStochasticsIndicator.ComputeByIndex(index - SmaPeriodCountD + i + 1).D;
+                decimal dAvg = index >= SmaPeriodCountK - 1 ? Enumerable.Range(0, SmaPeriodCountD).Average(i => dFunc(i)): 0;
+                return new IndicatorResult(Equity[index].DateTime, d, dAvg, 3 * d - 2 * dAvg);
             }
         }
     }

@@ -15,7 +15,7 @@ namespace Trady.Analysis.Pattern.Indicator
             _smaIndicator = new SimpleMovingAverage(equity, periodCount);
         }
 
-        protected override IAnalyticResult<bool> ComputeResultByIndex(int index)
+        protected override TickBase ComputeResultByIndex(int index)
         {
             var result = _smaIndicator.ComputeByIndex(index);
             return new IsMatchedResult(Equity[index].DateTime, Equity[index].Close >= result.Sma);
