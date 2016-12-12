@@ -1,44 +1,47 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using Trady.Analysis.Indicator.Helper;
 using Trady.Core;
 
 namespace Trady.Analysis.Indicator
 {
-    public abstract class CachedIndicatorBase : IndicatorBase
+    public abstract class CachedIndicatorBase<TTick> : IndicatorBase<TTick> where TTick: ITick
     {
-        private IList<TickBase> _cache;
+        private const int MaxStackCount = 192;
+        private int _stackCount;
 
-        public CachedIndicatorBase(Equity equity, params int[] parameters) : base(equity, parameters)
+        private Cache<TTick> _cache;
+
+        protected CachedIndicatorBase(Equity equity, params int[] parameters) : base(equity, parameters)
         {
-            _cache = new List<TickBase>();
+            _stackCount = 0;
+            _cache = new Cache<TTick>();
         }
 
-        protected long CacheSize { get; set; } = 256;
+        protected abstract Func<int, TTick> FirstValueFunction { get; }
 
-        protected TIndicatorResult GetComputed<TIndicatorResult>(int index) where TIndicatorResult: TickBase
+        public sealed override TTick ComputeByIndex(int index)
         {
-            var candleDateTime = Equity[index].DateTime;
-
-            var item = _cache.FirstOrDefault(r => r.DateTime.Equals(candleDateTime));
+            var dateTime = Equity[index].DateTime;
+            var item = _cache.GetFromCacheOrDefault(dateTime);
             if (item == null)
-                item = ComputeResultByIndex<TIndicatorResult>(index);
-
-            return (TIndicatorResult)item;
-        }
-
-        protected void CacheComputed(TickBase result)
-        {
-            var item = _cache.FirstOrDefault(r => r.DateTime.Equals(result.DateTime));
-            if (item != null)
-                _cache.Remove(item);
-
-            if (_cache.Count > CacheSize)
             {
-                for (int i = 0; i < _cache.Count - CacheSize + 1; i++)
-                    _cache.RemoveAt(0);
+                if (_stackCount < MaxStackCount)
+                {
+                    _stackCount++;
+                    item = ComputeByIndexUncached(index);
+                }
+                else
+                {
+                    item = FirstValueFunction(index);
+                    _stackCount = 0;
+                }
             }
-
-            _cache.Add(result);
+            _cache.AddToCache(item);
+            return item;
         }
+
+        protected abstract TTick ComputeByIndexUncached(int index);
     }
 }

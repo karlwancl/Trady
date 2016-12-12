@@ -2,10 +2,11 @@
 using System.Linq;
 using Trady.Analysis.Indicator.Helper;
 using Trady.Core;
+using static Trady.Analysis.Indicator.RelativeStrength;
 
 namespace Trady.Analysis.Indicator
 {
-    public partial class RelativeStrength : IndicatorBase
+    public partial class RelativeStrength : IndicatorBase<IndicatorResult>
     {
         private ClosePriceChange _closePriceChangeIndicator;
         private Ema _uEma, _dEma;
@@ -16,49 +17,34 @@ namespace Trady.Analysis.Indicator
 
             _uEma = new Ema(
                 i => Equity[i].DateTime,
-                i =>
-                {
-                    var change = _closePriceChangeIndicator.ComputeByIndex(i).Change;
-                    return change > 0 ? Math.Abs(change) : 0;
-                },
+                i => MathExt.Max(_closePriceChangeIndicator.ComputeByIndex(i).Change, 0).Abs(),
+                i => Enumerable
+                    .Range(i - PeriodCount + 1, PeriodCount)
+                    .Select(j => _closePriceChangeIndicator.ComputeByIndex(j).Change)
+                    .Average(v => MathExt.Max(v, 0).Abs()),
                 periodCount,
-                Enumerable
-                    .Range(0, PeriodCount)
-                    .Select(i => _closePriceChangeIndicator.ComputeByIndex(i).Change)
-                    .Average(v => v > 0 ? Math.Abs(v) : 0),
+                periodCount,
                 true);
 
             _dEma = new Ema(
                 i => Equity[i].DateTime,
-                i =>
-                {
-                    var change = _closePriceChangeIndicator.ComputeByIndex(i).Change;
-                    return change < 0 ? Math.Abs(change) : 0;
-                },
+                i => MathExt.Min(_closePriceChangeIndicator.ComputeByIndex(i).Change, 0).Abs(),
+                i => Enumerable
+                    .Range(i - PeriodCount + 1, PeriodCount)
+                    .Select(j => _closePriceChangeIndicator.ComputeByIndex(j).Change)
+                    .Average(v => MathExt.Min(v, 0).Abs()),
                 periodCount,
-                Enumerable
-                    .Range(0, PeriodCount)
-                    .Select(i => _closePriceChangeIndicator.ComputeByIndex(i).Change)
-                    .Average(v => v < 0 ? Math.Abs(v) : 0),
+                periodCount,
                 true);
         }
 
         public int PeriodCount => Parameters[0];
 
-        protected override TickBase ComputeResultByIndex(int index)
+        public override IndicatorResult ComputeByIndex(int index)
         {
-            decimal gain = index >= PeriodCount - 1 ? _uEma.Compute(index) : 0;
-            decimal loss = index >= PeriodCount - 1 ? _dEma.Compute(index) : 0;
-            return new IndicatorResult(Equity[index].DateTime, loss != 0 ? gain / loss : 0);
+            decimal? gain = _uEma.Compute(index);
+            decimal? loss = _dEma.Compute(index);
+            return new IndicatorResult(Equity[index].DateTime, gain / loss);
         }
-
-        public TimeSeries<IndicatorResult> Compute(DateTime? startTime = null, DateTime? endTime = null)
-            => new TimeSeries<IndicatorResult>(Equity.Name, ComputeResults<IndicatorResult>(startTime, endTime), Equity.Period, Equity.MaxTickCount);
-
-        public IndicatorResult ComputeByDateTime(DateTime dateTime)
-            => ComputeResultByDateTime<IndicatorResult>(dateTime);
-
-        public IndicatorResult ComputeByIndex(int index)
-            => ComputeResultByIndex<IndicatorResult>(index);
     }
 }

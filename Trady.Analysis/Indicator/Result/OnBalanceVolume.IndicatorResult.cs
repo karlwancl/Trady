@@ -1,19 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using Trady.Core;
+using static Trady.Analysis.Indicator.OnBalanceVolume;
 
 namespace Trady.Analysis.Indicator
 {
-    public partial class OnBalanceVolume : CachedIndicatorBase
+    public partial class OnBalanceVolume : CachedIndicatorBase<IndicatorResult>
     {
         public class IndicatorResult : TickBase
         {
-            public IndicatorResult(DateTime dateTime, decimal obv) : base(dateTime)
+            public IndicatorResult(DateTime dateTime, long? obv) : base(dateTime)
             {
                 Obv = obv;
             }
 
-            public decimal Obv { get; private set; }
+            public long? Obv { get; private set; }
         }
     }
 }

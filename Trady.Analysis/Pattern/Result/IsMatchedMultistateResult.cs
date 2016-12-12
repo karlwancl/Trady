@@ -8,7 +8,7 @@ namespace Trady.Analysis.Pattern
     {
         private TTristate _state;
 
-        public IsMatchedMultistateResult(DateTime dateTime, bool isMatched, TTristate state) 
+        public IsMatchedMultistateResult(DateTime dateTime, bool? isMatched, TTristate state) 
             : base(dateTime, isMatched)
         {
             _state = state;

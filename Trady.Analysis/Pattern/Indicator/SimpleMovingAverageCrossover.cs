@@ -1,9 +1,10 @@
 ﻿using Trady.Analysis.Indicator;
+using Trady.Analysis.Pattern.Helper;
 using Trady.Core;
 
 namespace Trady.Analysis.Pattern.Indicator
 {
-    public class SimpleMovingAverageCrossover : PatternBase<IsMatchedMultistateResult<Trend>>
+    public class SimpleMovingAverageCrossover : AnalyticBase<IsMatchedMultistateResult<Trend?>>
     {
         private SimpleMovingAverageOscillator _smaOscillator;
 
@@ -12,21 +13,16 @@ namespace Trady.Analysis.Pattern.Indicator
             _smaOscillator = new SimpleMovingAverageOscillator(equity, periodCount1, periodCount2);
         }
 
-        protected override TickBase ComputeResultByIndex(int index)
+        public override IsMatchedMultistateResult<Trend?> ComputeByIndex(int index)
         {
             if (index < 1)
-                return new IsMatchedMultistateResult<Trend>(Equity[index].DateTime, false, Trend.NonTrended);
+                return new IsMatchedMultistateResult<Trend?>(Equity[index].DateTime, null, null);
 
             var latest = _smaOscillator.ComputeByIndex(index);
             var secondLatest = _smaOscillator.ComputeByIndex(index - 1);
-            return new IsMatchedMultistateResult<Trend>(Equity[index].DateTime, latest.Osc * secondLatest.Osc < 0, GetTrend(latest.Osc));
-        }
 
-        private Trend GetTrend(decimal value)
-        {
-            if (value > 0) return Trend.Bullish;
-            if (value < 0) return Trend.Bearish;
-            return Trend.NonTrended;
+            return new IsMatchedMultistateResult<Trend?>(Equity[index].DateTime, 
+                ResultExt.IsCrossOver(latest.Osc, secondLatest.Osc), ResultExt.IsTrending(latest.Osc));
         }
     }
 }

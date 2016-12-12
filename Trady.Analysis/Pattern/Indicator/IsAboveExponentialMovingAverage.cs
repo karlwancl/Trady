@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using System.Text;
 using Trady.Analysis.Indicator;
+using Trady.Analysis.Pattern.Helper;
 using Trady.Core;
 
 namespace Trady.Analysis.Pattern.Indicator
 {
-    public class IsAboveExponentialMovingAverage : PatternBase<IsMatchedResult>
+    public class IsAboveExponentialMovingAverage : AnalyticBase<IsMatchedResult>
     {
         private ExponentialMovingAverage _emaIndicator;
 
@@ -15,10 +16,10 @@ namespace Trady.Analysis.Pattern.Indicator
             _emaIndicator = new ExponentialMovingAverage(equity, periodCount);
         }
 
-        protected override TickBase ComputeResultByIndex(int index)
+        public override IsMatchedResult ComputeByIndex(int index)
         {
             var result = _emaIndicator.ComputeByIndex(index);
-            return new IsMatchedResult(Equity[index].DateTime, Equity[index].Close >= result.Ema);
+            return new IsMatchedResult(Equity[index].DateTime, Equity[index].Close.IsLargerThan(result.Ema));
         }
     }
 }

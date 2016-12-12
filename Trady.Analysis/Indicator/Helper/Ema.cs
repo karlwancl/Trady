@@ -1,56 +1,86 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Trady.Analysis.Indicator.Helper
 {
     internal class Ema
     {
+        private const int MaxStackCount = 192;
+        private int _stackCount;
+
+        private Cache<SimpleValueResult<decimal?>> _cache;
+
         private Func<int, DateTime> _dateTimeFunction;
-        private Func<int, decimal> _indexedFunction;
+        private Func<int, decimal?> _valueFunction;
+        private Func<int, decimal?> _firstValueFunction;
+        private int _firstValueIndex;
+
         private int _periodCount;
-        private IDictionary<DateTime, decimal> _cache;
-        private decimal? _defaultValue;
         private bool _modified;
 
-        public Ema(Func<int, DateTime> dateTimeFunction, Func<int, decimal> indexedFunction, int periodCount, decimal? defaultValue = null, bool modified = false)
+        public Ema(Func<int, DateTime> dateTimeFunction, Func<int, decimal?> valueFunction, Func<int, decimal?> firstValueFunction, int periodCount, int firstValueIndex, bool modified = false)
         {
+            _cache = new Cache<SimpleValueResult<decimal?>>();
+
             _dateTimeFunction = dateTimeFunction;
-            _indexedFunction = indexedFunction;
+            _valueFunction = valueFunction;
+            _firstValueFunction = firstValueFunction;
+
             _periodCount = periodCount;
-            _defaultValue = defaultValue;
+            _firstValueIndex = firstValueIndex;
             _modified = modified;
-            _cache = new Dictionary<DateTime, decimal>();
         }
 
         public Func<int, DateTime> DateTimeFunction => _dateTimeFunction;
 
-        public Func<int, decimal> IndexedFunction => _indexedFunction;
+        public Func<int, decimal?> ValueFunction => _valueFunction;
+
+        public Func<int, decimal?> FirstValueFunction => _firstValueFunction;
+
+        public int FirstValueIndex => _firstValueIndex;
 
         public decimal SmoothingFactor => _modified ? 1.0m / _periodCount : 2.0m / (_periodCount + 1);
         
-        public decimal Compute(int index)
+        public decimal? Compute(int index)
         {
-            var currDateTime = _dateTimeFunction(index);
-            if (_cache.TryGetValue(currDateTime, out decimal v))
-                return v;
+            var dateTime = _dateTimeFunction(index);
+            var svr = _cache.GetFromCacheOrDefault(dateTime);
+            if (svr != null) return svr.Value;
 
-            decimal value;
-            if (index == 0)
-                value = _defaultValue.HasValue ? 0 : _indexedFunction(index);
+            decimal? value;
+            if (index < _firstValueIndex)
+                value = null;
+            else if (index == _firstValueIndex)
+                value = _firstValueFunction(index);
             else
             {
-                if (_defaultValue.HasValue && index < _periodCount)
-                    value = index == _periodCount - 1 ? _defaultValue.Value : 0;
-                else
+                var prevDateTime = _dateTimeFunction(index - 1);
+
+                decimal? prevValue;
+                var prevSvr = _cache.GetFromCacheOrDefault(prevDateTime);
+                if (prevSvr == null)
                 {
-                    var prevDateTime = _dateTimeFunction(index - 1);
-                    var prevValue = _cache.ContainsKey(prevDateTime) ? _cache[prevDateTime] : Compute(index - 1);
-                    value = prevValue + (SmoothingFactor * (_indexedFunction(index) - prevValue));
+                    if (_stackCount < MaxStackCount)
+                    {
+                        _stackCount++;
+                        prevValue = Compute(index - 1);
+                    }
+                    else
+                    {
+                        prevValue = _firstValueFunction(index - 1);
+                        _stackCount = 0;
+                    }
                 }
+                else
+                    prevValue = prevSvr.Value;
+
+                // Nullable arithematic operation returns null if either oprand is null
+                value = prevValue + (SmoothingFactor * (_valueFunction(index) - prevValue));
             }
-            if (!_cache.ContainsKey(currDateTime))
-                _cache.Add(new KeyValuePair<DateTime, decimal>(currDateTime, value));
+
+            _cache.AddToCache(new SimpleValueResult<decimal?>(dateTime, value));
             return value;
         }
     }

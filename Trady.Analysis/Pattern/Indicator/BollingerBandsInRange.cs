@@ -1,9 +1,10 @@
 ﻿using Trady.Analysis.Indicator;
+using Trady.Analysis.Pattern.Helper;
 using Trady.Core;
 
 namespace Trady.Analysis.Pattern.Indicator
 {
-    public class BollingerBandsInRange : PatternBase<MultistateResult<Overboundary>>
+    public class BollingerBandsInRange : AnalyticBase<MultistateResult<Overboundary?>>
     {
         private BollingerBands _bbIndicator;
 
@@ -12,18 +13,13 @@ namespace Trady.Analysis.Pattern.Indicator
             _bbIndicator = new BollingerBands(equity, periodCount, sdCount);
         }
 
-        protected override TickBase ComputeResultByIndex(int index)
+        public override MultistateResult<Overboundary?> ComputeByIndex(int index)
         {
             var result = _bbIndicator.ComputeByIndex(index);
             var current = Equity[index];
-            return new MultistateResult<Overboundary>(current.DateTime, GetOverboundary(current.Close, result.Lower, result.Upper));
-        }
 
-        private Overboundary GetOverboundary(decimal value, decimal lower, decimal upper)
-        {
-            if (value <= lower) return Overboundary.BelowLower;
-            if (value >= upper) return Overboundary.AboveUpper;
-            return Overboundary.InRange;
+            return new MultistateResult<Overboundary?>(current.DateTime, 
+                ResultExt.IsOverbound(current.Close, result.Lower, result.Upper));
         }
     }
 }

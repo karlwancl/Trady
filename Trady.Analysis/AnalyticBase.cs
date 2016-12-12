@@ -5,7 +5,7 @@ using Trady.Core.Helper;
 
 namespace Trady.Analysis
 {
-    public abstract class AnalyticBase
+    public abstract class AnalyticBase<TTick> where TTick : ITick
     {
         public AnalyticBase(Equity equity)
         {
@@ -14,31 +14,25 @@ namespace Trady.Analysis
 
         protected Equity Equity { get; private set; }
 
-        protected IList<TAnalyticResult> ComputeResults<TAnalyticResult>(DateTime? startTime, DateTime? endTime)
-            where TAnalyticResult : TickBase
+        public TimeSeries<TTick> Compute(DateTime? startTime, DateTime? endTime)
         {
-            var results = new List<TAnalyticResult>();
+            var ticks = new List<TTick>();
 
-            int startIndex = startTime == null ? 0 : Equity.FindFirstIndexOrDefault(c => c.DateTime >= startTime) ?? 0;
-            int endIndex = endTime == null ? Equity.TickCount - 1 : Equity.FindLastIndexOrDefault(c => c.DateTime < endTime) ?? Equity.TickCount - 1;
+            int startIndex = startTime.HasValue ? Equity.FindFirstIndexOrDefault(c => c.DateTime >= startTime) ?? 0 : 0;
+            int endIndex = endTime.HasValue ? Equity.FindLastIndexOrDefault(c => c.DateTime < endTime) ?? Equity.TickCount - 1 : Equity.TickCount - 1;
 
             for (int i = startIndex; i <= endIndex; i++)
-                results.Add(ComputeResultByIndex<TAnalyticResult>(i));
+                ticks.Add(ComputeByIndex(i));
 
-            return results;
+            return new TimeSeries<TTick>(Equity.Name, ticks, Equity.Period, Equity.MaxTickCount);
         }
 
-        protected TAnalyticResult ComputeResultByDateTime<TAnalyticResult>(DateTime dateTime) where TAnalyticResult: TickBase
+        public TTick ComputeByDateTime(DateTime dateTime)
         {
             int? index = Equity.FindLastIndexOrDefault(c => c.DateTime <= dateTime);
-            if (!index.HasValue)
-                return default(TAnalyticResult);
-            return ComputeResultByIndex<TAnalyticResult>(index.Value);
+            return index.HasValue ? ComputeByIndex(index.Value) : default(TTick);
         }
 
-        protected TAnalyticResult ComputeResultByIndex<TAnalyticResult>(int index) where TAnalyticResult : TickBase
-            => (TAnalyticResult)ComputeResultByIndex(index);
-
-        protected abstract TickBase ComputeResultByIndex(int index);
+        public abstract TTick ComputeByIndex(int index);
     }
 }

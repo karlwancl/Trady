@@ -1,9 +1,10 @@
 ﻿using System;
 using Trady.Core;
+using static Trady.Analysis.Indicator.ExponentialMovingAverageOscillator;
 
 namespace Trady.Analysis.Indicator
 {
-    public partial class ExponentialMovingAverageOscillator : IndicatorBase
+    public partial class ExponentialMovingAverageOscillator : IndicatorBase<IndicatorResult>
     {
         private ExponentialMovingAverage _emaIndicator1, _emaIndicator2;
 
@@ -18,19 +19,10 @@ namespace Trady.Analysis.Indicator
 
         public int PeriodCount2 => Parameters[1];
 
-        protected override TickBase ComputeResultByIndex(int index)
+        public override IndicatorResult ComputeByIndex(int index)
         {
             var osc = _emaIndicator1.ComputeByIndex(index).Ema - _emaIndicator2.ComputeByIndex(index).Ema;
             return new IndicatorResult(Equity[index].DateTime, osc);
         }
-
-        public TimeSeries<IndicatorResult> Compute(DateTime? startTime = null, DateTime? endTime = null)
-            => new TimeSeries<IndicatorResult>(Equity.Name, ComputeResults<IndicatorResult>(startTime, endTime), Equity.Period, Equity.MaxTickCount);
-
-        public IndicatorResult ComputeByDateTime(DateTime dateTime)
-            => ComputeResultByDateTime<IndicatorResult>(dateTime);
-
-        public IndicatorResult ComputeByIndex(int index)
-            => ComputeResultByIndex<IndicatorResult>(index);
     }
 }

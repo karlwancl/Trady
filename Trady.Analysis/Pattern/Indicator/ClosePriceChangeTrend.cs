@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using System.Text;
 using Trady.Analysis.Indicator;
+using Trady.Analysis.Pattern.Helper;
 using Trady.Core;
 
 namespace Trady.Analysis.Pattern.Indicator
 {
-    public class ClosePriceChangeTrend : PatternBase<MultistateResult<Trend>>
+    public class ClosePriceChangeTrend : AnalyticBase<MultistateResult<Trend?>>
     {
         private ClosePriceChange _closePriceChangeIndicator;
 
@@ -15,17 +16,10 @@ namespace Trady.Analysis.Pattern.Indicator
             _closePriceChangeIndicator = new ClosePriceChange(equity);
         }
 
-        protected override TickBase ComputeResultByIndex(int index)
+        public override MultistateResult<Trend?> ComputeByIndex(int index)
         {
             var latest = _closePriceChangeIndicator.ComputeByIndex(index);
-            return new MultistateResult<Trend>(Equity[index].DateTime, GetTrend(latest.Change));
-        }
-
-        private Trend GetTrend(decimal change)
-        {
-            if (change > 0) return Trend.Bullish;
-            if (change < 0) return Trend.Bearish;
-            return Trend.NonTrended;
+            return new MultistateResult<Trend?>(Equity[index].DateTime, ResultExt.IsTrending(latest.Change));
         }
     }
 }

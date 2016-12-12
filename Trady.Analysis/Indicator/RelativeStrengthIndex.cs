@@ -1,9 +1,10 @@
 ﻿using System;
 using Trady.Core;
+using static Trady.Analysis.Indicator.RelativeStrengthIndex;
 
 namespace Trady.Analysis.Indicator
 {
-    public partial class RelativeStrengthIndex : IndicatorBase
+    public partial class RelativeStrengthIndex : IndicatorBase<IndicatorResult>
     {
         private RelativeStrength _rsIndicator;
 
@@ -14,19 +15,10 @@ namespace Trady.Analysis.Indicator
 
         public int PeriodCount => Parameters[0];
 
-        protected override TickBase ComputeResultByIndex(int index)
+        public override IndicatorResult ComputeByIndex(int index)
         {
             var rsi = 100 - (100 / (1 + _rsIndicator.ComputeByIndex(index).Rs));
             return new IndicatorResult(Equity[index].DateTime, rsi);
         }
-
-        public TimeSeries<IndicatorResult> Compute(DateTime? startTime = null, DateTime? endTime = null)
-            => new TimeSeries<IndicatorResult>(Equity.Name, ComputeResults<IndicatorResult>(startTime, endTime), Equity.Period, Equity.MaxTickCount);
-
-        public IndicatorResult ComputeByDateTime(DateTime dateTime)
-            => ComputeResultByDateTime<IndicatorResult>(dateTime);
-
-        public IndicatorResult ComputeByIndex(int index)
-            => ComputeResultByIndex<IndicatorResult>(index);
     }
 }

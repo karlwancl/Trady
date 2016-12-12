@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Linq;
 using Trady.Core;
+using static Trady.Analysis.Indicator.HighestHigh;
 
 namespace Trady.Analysis.Indicator
 {
-    public partial class HighestHigh : IndicatorBase
+    public partial class HighestHigh : IndicatorBase<IndicatorResult>
     {
         public HighestHigh(Equity equity, int periodCount) : base(equity, periodCount)
         {
@@ -12,19 +13,10 @@ namespace Trady.Analysis.Indicator
 
         public int PeriodCount => Parameters[0];
 
-        protected override TickBase ComputeResultByIndex(int index)
+        public override IndicatorResult ComputeByIndex(int index)
         {
-            var highestHigh = Equity.Skip(index - PeriodCount + 1).Take(PeriodCount).Max(c => c.High);
+            decimal? highestHigh = index >= PeriodCount - 1 ? Equity.Skip(index - PeriodCount + 1).Take(PeriodCount).Max(c => c.High) : (decimal?)null;
             return new IndicatorResult(Equity[index].DateTime, highestHigh);
         }
-
-        public TimeSeries<IndicatorResult> Compute(DateTime? startTime = null, DateTime? endTime = null)
-            => new TimeSeries<IndicatorResult>(Equity.Name, ComputeResults<IndicatorResult>(startTime, endTime), Equity.Period, Equity.MaxTickCount);
-
-        public IndicatorResult ComputeByDateTime(DateTime dateTime)
-            => ComputeResultByDateTime<IndicatorResult>(dateTime);
-
-        public IndicatorResult ComputeByIndex(int index)
-            => ComputeResultByIndex<IndicatorResult>(index);
     }
 }

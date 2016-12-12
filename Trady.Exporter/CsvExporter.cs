@@ -76,7 +76,7 @@ namespace Trady.Exporter
                             .GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly)
                             .Select(p => p.GetValue(result, null))
                             .ToList()
-                            .ForEach(o => csvWriter.WriteField(o));
+                            .ForEach(o => csvWriter.WriteField(o ?? ""));
                     });
 
                 csvWriter.NextRecord();

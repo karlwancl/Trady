@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using System.Text;
 using Trady.Analysis.Indicator;
+using Trady.Analysis.Pattern.Helper;
 using Trady.Core;
 
 namespace Trady.Analysis.Pattern.Indicator
 {
-    public class RelativeStrengthIndexOvertrade : PatternBase<MultistateResult<SevereOvertrade>>
+    public class RelativeStrengthIndexOvertrade : AnalyticBase<MultistateResult<SevereOvertrade?>>
     {
         private RelativeStrengthIndex _rsiIndicator;
 
@@ -15,19 +16,12 @@ namespace Trady.Analysis.Pattern.Indicator
             _rsiIndicator = new RelativeStrengthIndex(equity, periodCount);
         }
 
-        protected override TickBase ComputeResultByIndex(int index)
+        public override MultistateResult<SevereOvertrade?> ComputeByIndex(int index)
         {
             var result = _rsiIndicator.ComputeByIndex(index);
-            return new MultistateResult<SevereOvertrade>(Equity[index].DateTime, GetOvertrade(result.Rsi));
-        }
 
-        private SevereOvertrade GetOvertrade(decimal value)
-        {
-            if (value <= 20) return SevereOvertrade.SevereOversold;
-            if (value <= 30) return SevereOvertrade.Oversold;
-            if (value >= 80) return SevereOvertrade.SevereOverbought;
-            if (value >= 70) return SevereOvertrade.Overbought;
-            return SevereOvertrade.Normal;
+            return new MultistateResult<SevereOvertrade?>(Equity[index].DateTime, 
+                ResultExt.IsSeverelyOvertrade(result.Rsi));
         }
     }
 }

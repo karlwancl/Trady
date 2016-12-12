@@ -27,17 +27,11 @@ namespace Trady.Strategy
 
         public ComputableCandle Next => _index + 1 < _equity.TickCount ? _equity.GetComputableCandleAt(_index + 1) : null;
 
-        #region Computation
-
-        public decimal PriceChange()
+        public decimal? PriceChange()
             => new ClosePriceChange(_equity).ComputeByIndex(_index).Change;
 
-        public decimal PricePercentageChange()
+        public decimal? PricePercentageChange()
             => new ClosePricePercentageChange(_equity).ComputeByIndex(_index).PercentageChange;
-
-        #endregion  
-
-        #region Patterns
 
         public bool IsEquityBullish()
             => new ClosePriceChangeTrend(_equity).ComputeByIndex(_index).State == Trend.Bullish;
@@ -61,10 +55,16 @@ namespace Trady.Strategy
             => new BollingerBandsInRange(_equity, periodCount, sdCount).ComputeByIndex(_index).State == Overboundary.InRange;
 
         public bool IsHighest(int periodCount)
-            => new IsHighestPrice(_equity, periodCount).ComputeByIndex(_index).IsMatched;
+        {
+            var isMatched = new IsHighestPrice(_equity, periodCount).ComputeByIndex(_index).IsMatched;
+            return isMatched.HasValue && isMatched.Value;
+        }
 
         public bool IsLowest(int periodCount)
-            => new IsLowestPrice(_equity, periodCount).ComputeByIndex(_index).IsMatched;
+        {
+            var isMatched = new IsLowestPrice(_equity, periodCount).ComputeByIndex(_index).IsMatched;
+            return isMatched.HasValue && isMatched.Value;
+        }
 
         public bool IsRsiOverbought(int periodCount)
             => new RelativeStrengthIndexOvertrade(_equity, periodCount).ComputeByIndex(_index).State == SevereOvertrade.Overbought;
@@ -91,20 +91,34 @@ namespace Trady.Strategy
             => new StochasticsOvertrade.Slow(_equity, periodCount, smaPeriodCountD).ComputeByIndex(_index).State == Overtrade.Oversold;
 
         public bool IsAboveSma(int periodCount)
-            => new IsAboveSimpleMovingAverage(_equity, periodCount).ComputeByIndex(_index).IsMatched;
+        {
+            var isMatched = new IsAboveSimpleMovingAverage(_equity, periodCount).ComputeByIndex(_index).IsMatched;
+            return isMatched.HasValue && isMatched.Value;
+        }
 
         public bool IsAboveEma(int periodCount)
-            => new IsAboveExponentialMovingAverage(_equity, periodCount).ComputeByIndex(_index).IsMatched;
+        {
+            var isMatched = new IsAboveExponentialMovingAverage(_equity, periodCount).ComputeByIndex(_index).IsMatched;
+            return isMatched.HasValue && isMatched.Value;
+        }
 
-        #endregion
+        public bool IsSmaBullish(int periodCount)
+            => new SimpleMovingAverageTrend(_equity, periodCount).ComputeByIndex(_index).State == Trend.Bullish;
 
-        #region Oscillators
+        public bool IsSmaBearish(int periodCount)
+            => new SimpleMovingAverageTrend(_equity, periodCount).ComputeByIndex(_index).State == Trend.Bearish;
 
         public bool IsSmaOscBullish(int periodCount1, int periodCount2)
             => new SimpleMovingAverageCrossover(_equity, periodCount1, periodCount2).ComputeByIndex(_index).State == Trend.Bullish;
 
         public bool IsSmaOscBearish(int periodCount1, int periodCount2)
             => new SimpleMovingAverageCrossover(_equity, periodCount1, periodCount2).ComputeByIndex(_index).State == Trend.Bearish;
+
+        public bool IsEmaBullish(int periodCount)
+            => new ExponentialMovingAverageTrend(_equity, periodCount).ComputeByIndex(_index).State == Trend.Bullish;
+
+        public bool IsEmaBearish(int periodCount)
+            => new ExponentialMovingAverageTrend(_equity, periodCount).ComputeByIndex(_index).State == Trend.Bearish;
 
         public bool IsEmaOscBullish(int periodCount1, int periodCount2)
             => new ExponentialMovingAverageCrossover(_equity, periodCount1, periodCount2).ComputeByIndex(_index).State == Trend.Bullish;
@@ -136,82 +150,76 @@ namespace Trady.Strategy
         public bool IsSlowStoOscBearish(int periodCount, int smaPeriodCountD)
             => new StochasticsCrossover.Slow(_equity, periodCount, smaPeriodCountD).ComputeByIndex(_index).State == Trend.Bearish;
 
-        #endregion
-
-        #region Crosses
-
         public bool IsSmaBullishCross(int periodCount1, int periodCount2)
         {
             var result = new SimpleMovingAverageCrossover(_equity, periodCount1, periodCount2).ComputeByIndex(_index);
-            return result.IsMatched && result.State == Trend.Bullish;
+            return result.IsMatched.HasValue && result.IsMatched.Value && result.State == Trend.Bullish;
         }
 
         public bool IsSmaBearishCross(int periodCount1, int periodCount2)
         {
             var result = new SimpleMovingAverageCrossover(_equity, periodCount1, periodCount2).ComputeByIndex(_index);
-            return result.IsMatched && result.State == Trend.Bearish;
+            return result.IsMatched.HasValue && result.IsMatched.Value && result.State == Trend.Bearish;
         }
 
         public bool IsEmaBullishCross(int periodCount1, int periodCount2)
         {
             var result = new ExponentialMovingAverageCrossover(_equity, periodCount1, periodCount2).ComputeByIndex(_index);
-            return result.IsMatched && result.State == Trend.Bullish;
+            return result.IsMatched.HasValue && result.IsMatched.Value && result.State == Trend.Bullish;
         }
 
         public bool IsEmaBearishCross(int periodCount1, int periodCount2)
         {
             var result = new ExponentialMovingAverageCrossover(_equity, periodCount1, periodCount2).ComputeByIndex(_index);
-            return result.IsMatched && result.State == Trend.Bearish;
+            return result.IsMatched.HasValue && result.IsMatched.Value && result.State == Trend.Bearish;
         }
 
         public bool IsMacdBullishCross(int emaPeriodCount1, int emaPeriodCount2, int demPeriodCount)
         {
             var result = new MovingAverageConvergenceDivergenceCrossover(_equity, emaPeriodCount1, emaPeriodCount2, demPeriodCount).ComputeByIndex(_index);
-            return result.IsMatched && result.State == Trend.Bullish;
+            return result.IsMatched.HasValue && result.IsMatched.Value && result.State == Trend.Bullish;
         }
 
         public bool IsMacdBearishCross(int emaPeriodCount1, int emaPeriodCount2, int demPeriodCount)
         {
             var result = new MovingAverageConvergenceDivergenceCrossover(_equity, emaPeriodCount1, emaPeriodCount2, demPeriodCount).ComputeByIndex(_index);
-            return result.IsMatched && result.State == Trend.Bearish;
+            return result.IsMatched.HasValue && result.IsMatched.Value && result.State == Trend.Bearish;
         }
 
         public bool IsFastStoBullishCross(int periodCount, int smaPeriodCount)
         {
             var result = new StochasticsCrossover.Fast(_equity, periodCount, smaPeriodCount).ComputeByIndex(_index);
-            return result.IsMatched && result.State == Trend.Bullish;
+            return result.IsMatched.HasValue && result.IsMatched.Value && result.State == Trend.Bullish;
         }
 
         public bool IsFastStoBearishCross(int periodCount, int smaPeriodCount)
         {
             var result = new StochasticsCrossover.Fast(_equity, periodCount, smaPeriodCount).ComputeByIndex(_index);
-            return result.IsMatched && result.State == Trend.Bearish;
+            return result.IsMatched.HasValue && result.IsMatched.Value && result.State == Trend.Bearish;
         }
 
         public bool IsFullStoBullishCross(int periodCount, int smaPeriodCountK, int smaPeriodCountD)
         {
             var result = new StochasticsCrossover.Full(_equity, periodCount, smaPeriodCountK, smaPeriodCountD).ComputeByIndex(_index);
-            return result.IsMatched && result.State == Trend.Bullish;
+            return result.IsMatched.HasValue && result.IsMatched.Value && result.State == Trend.Bullish;
         }
 
         public bool IsFullStoBearishCross(int periodCount, int smaPeriodCountK, int smaPeriodCountD)
         {
             var result = new StochasticsCrossover.Full(_equity, periodCount, smaPeriodCountK, smaPeriodCountD).ComputeByIndex(_index);
-            return result.IsMatched && result.State == Trend.Bearish;
+            return result.IsMatched.HasValue && result.IsMatched.Value && result.State == Trend.Bearish;
         }
 
         public bool IsSlowStoBullishCross(int periodCount, int smaPeriodCountD)
         {
             var result = new StochasticsCrossover.Slow(_equity, periodCount, smaPeriodCountD).ComputeByIndex(_index);
-            return result.IsMatched && result.State == Trend.Bullish;
+            return result.IsMatched.HasValue && result.IsMatched.Value && result.State == Trend.Bullish;
         }
 
         public bool IsSlowStoBearishCross(int periodCount, int smaPeriodCountD)
         {
             var result = new StochasticsCrossover.Slow(_equity, periodCount, smaPeriodCountD).ComputeByIndex(_index);
-            return result.IsMatched && result.State == Trend.Bearish;
+            return result.IsMatched.HasValue && result.IsMatched.Value && result.State == Trend.Bearish;
         }
-
-        #endregion  
     }
 }

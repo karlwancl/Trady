@@ -1,25 +1,29 @@
 ﻿using System;
 using Trady.Core;
+using static Trady.Analysis.Indicator.AccumulationDistributionLine;
 
 namespace Trady.Analysis.Indicator
 {
-    public partial class AccumulationDistributionLine : CachedIndicatorBase
+    public partial class AccumulationDistributionLine : CachedIndicatorBase<IndicatorResult>
     {
         public AccumulationDistributionLine(Equity equity) : base(equity, null)
         {
         }
 
-        protected override TickBase ComputeResultByIndex(int index)
+        protected override Func<int, IndicatorResult> FirstValueFunction
+            => i => new IndicatorResult(Equity[i].DateTime, Equity[i].Volume);
+
+        protected override IndicatorResult ComputeByIndexUncached(int index)
         {
-            decimal accumDist = 0;
-            var candle = Equity[index];
+            var candle = Equity[index];            
+            decimal? accumDist = 0;
 
             if (index == 0)
                 accumDist = candle.Volume;
             else
             {
                 var prevCandle = Equity[index - 1];
-                var prevAccumDist = GetComputed<IndicatorResult>(index - 1).AccumDist;
+                var prevAccumDist = ComputeByIndex(index - 1).AccumDist;
 
                 decimal ratio = (candle.High == candle.Low) ?
                     (candle.Close / prevCandle.Close) - 1 :
@@ -28,18 +32,7 @@ namespace Trady.Analysis.Indicator
                 accumDist = prevAccumDist + ratio * candle.Volume;
             }
 
-            var result = new IndicatorResult(candle.DateTime, accumDist);
-            CacheComputed(result);
-            return result;
+            return new IndicatorResult(candle.DateTime, accumDist);
         }
-
-        public TimeSeries<IndicatorResult> Compute(DateTime? startTime = null, DateTime? endTime = null)
-            => new TimeSeries<IndicatorResult>(Equity.Name, ComputeResults<IndicatorResult>(startTime, endTime), Equity.Period, Equity.MaxTickCount);
-
-        public IndicatorResult ComputeByDateTime(DateTime dateTime)
-            => ComputeResultByDateTime<IndicatorResult>(dateTime);
-
-        public IndicatorResult ComputeByIndex(int index)
-            => ComputeResultByIndex<IndicatorResult>(index);
     }
 }

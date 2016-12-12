@@ -252,3 +252,6 @@ paket-files/
 *.sln.iml
 
 *.csv
+
+# MValue Folder
+Trady.Strategy/MValue
