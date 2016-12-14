@@ -5,7 +5,7 @@ using static Trady.Analysis.Indicator.AccumulationDistributionLine;
 
 namespace Trady.Analysis.Indicator
 {
-    public partial class AccumulationDistributionLine : CachedIndicatorBase<IndicatorResult>
+    public partial class AccumulationDistributionLine : CacheIndicatorBase<IndicatorResult>
     {
         public class IndicatorResult : TickBase
         {

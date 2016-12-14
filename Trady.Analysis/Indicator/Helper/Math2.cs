@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Trady.Analysis.Indicator.Helper
 {
-    internal static class MathExt
+    internal static class Math2
     {
         public static decimal Sd(this IEnumerable<decimal> values)
         {

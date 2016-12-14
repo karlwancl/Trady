@@ -9,31 +9,31 @@ namespace Trady.Analysis.Indicator
     public partial class RelativeStrength : IndicatorBase<IndicatorResult>
     {
         private ClosePriceChange _closePriceChangeIndicator;
-        private Ema _uEma, _dEma;
+        private GenericExponentialMovingAverage _uEma, _dEma;
 
         public RelativeStrength(Equity equity, int periodCount) : base(equity, periodCount)
         {
             _closePriceChangeIndicator = new ClosePriceChange(equity);
 
-            _uEma = new Ema(
-                i => Equity[i].DateTime,
-                i => MathExt.Max(_closePriceChangeIndicator.ComputeByIndex(i).Change, 0).Abs(),
+            _uEma = new GenericExponentialMovingAverage(
+                equity,
+                periodCount,
                 i => Enumerable
                     .Range(i - PeriodCount + 1, PeriodCount)
                     .Select(j => _closePriceChangeIndicator.ComputeByIndex(j).Change)
-                    .Average(v => MathExt.Max(v, 0).Abs()),
-                periodCount,
+                    .Average(v => Math2.Max(v, 0).Abs()),
+                i => Math2.Max(_closePriceChangeIndicator.ComputeByIndex(i).Change, 0).Abs(),
                 periodCount,
                 true);
 
-            _dEma = new Ema(
-                i => Equity[i].DateTime,
-                i => MathExt.Min(_closePriceChangeIndicator.ComputeByIndex(i).Change, 0).Abs(),
+            _dEma = new GenericExponentialMovingAverage(
+                equity,
+                periodCount,
                 i => Enumerable
                     .Range(i - PeriodCount + 1, PeriodCount)
                     .Select(j => _closePriceChangeIndicator.ComputeByIndex(j).Change)
-                    .Average(v => MathExt.Min(v, 0).Abs()),
-                periodCount,
+                    .Average(v => Math2.Min(v, 0).Abs()),
+                i => Math2.Min(_closePriceChangeIndicator.ComputeByIndex(i).Change, 0).Abs(),
                 periodCount,
                 true);
         }
@@ -42,8 +42,8 @@ namespace Trady.Analysis.Indicator
 
         public override IndicatorResult ComputeByIndex(int index)
         {
-            decimal? gain = _uEma.Compute(index);
-            decimal? loss = _dEma.Compute(index);
+            decimal? gain = _uEma.ComputeByIndex(index).Ema;
+            decimal? loss = _dEma.ComputeByIndex(index).Ema;
             return new IndicatorResult(Equity[index].DateTime, gain / loss);
         }
     }

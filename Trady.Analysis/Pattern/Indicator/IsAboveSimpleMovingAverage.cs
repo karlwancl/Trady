@@ -7,11 +7,12 @@ using Trady.Core;
 
 namespace Trady.Analysis.Pattern.Indicator
 {
-    public class IsAboveSimpleMovingAverage : AnalyticBase<IsMatchedResult>
+    public class IsAboveSimpleMovingAverage : IndicatorBase<IsMatchedResult>
     {
         private SimpleMovingAverage _smaIndicator;
 
-        public IsAboveSimpleMovingAverage(Equity equity, int periodCount) : base(equity)
+        public IsAboveSimpleMovingAverage(Equity equity, int periodCount) 
+            : base(equity, periodCount)
         {
             _smaIndicator = new SimpleMovingAverage(equity, periodCount);
         }

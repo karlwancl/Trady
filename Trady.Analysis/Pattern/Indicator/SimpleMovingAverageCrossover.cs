@@ -4,11 +4,12 @@ using Trady.Core;
 
 namespace Trady.Analysis.Pattern.Indicator
 {
-    public class SimpleMovingAverageCrossover : AnalyticBase<IsMatchedMultistateResult<Trend?>>
+    public class SimpleMovingAverageCrossover : IndicatorBase<IsMatchedMultistateResult<Trend?>>
     {
         private SimpleMovingAverageOscillator _smaOscillator;
 
-        public SimpleMovingAverageCrossover(Equity equity, int periodCount1, int periodCount2) : base(equity)
+        public SimpleMovingAverageCrossover(Equity equity, int periodCount1, int periodCount2) 
+            : base(equity, periodCount1, periodCount2)
         {
             _smaOscillator = new SimpleMovingAverageOscillator(equity, periodCount1, periodCount2);
         }
@@ -22,7 +23,7 @@ namespace Trady.Analysis.Pattern.Indicator
             var secondLatest = _smaOscillator.ComputeByIndex(index - 1);
 
             return new IsMatchedMultistateResult<Trend?>(Equity[index].DateTime, 
-                ResultExt.IsCrossOver(latest.Osc, secondLatest.Osc), ResultExt.IsTrending(latest.Osc));
+                Decision.IsCrossOver(latest.Osc, secondLatest.Osc), Decision.IsTrending(latest.Osc));
         }
     }
 }

@@ -7,11 +7,12 @@ using Trady.Core;
 
 namespace Trady.Analysis.Pattern.Indicator
 {
-    public class IsAboveExponentialMovingAverage : AnalyticBase<IsMatchedResult>
+    public class IsAboveExponentialMovingAverage : IndicatorBase<IsMatchedResult>
     {
         private ExponentialMovingAverage _emaIndicator;
 
-        public IsAboveExponentialMovingAverage(Equity equity, int periodCount) : base(equity)
+        public IsAboveExponentialMovingAverage(Equity equity, int periodCount) 
+            : base(equity, periodCount)
         {
             _emaIndicator = new ExponentialMovingAverage(equity, periodCount);
         }

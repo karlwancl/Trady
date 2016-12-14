@@ -3,18 +3,18 @@ using Trady.Core;
 
 namespace Trady.Analysis.Pattern.Indicator
 {
-    public class IsLowestPrice : AnalyticBase<IsMatchedResult>
+    public class IsLowestPrice : IndicatorBase<IsMatchedResult>
     {
-        private int _periodCount;
-
-        public IsLowestPrice(Equity equity, int periodCount) : base(equity)
+        public IsLowestPrice(Equity equity, int periodCount)
+            : base(equity, periodCount)
         {
-            _periodCount = periodCount;
         }
+
+        public int PeriodCount => Parameters[0];
 
         public override IsMatchedResult ComputeByIndex(int index)
         {
-            bool isLowest = Equity.Skip(Equity.TickCount - _periodCount).Min(c => c.Close) == Equity[index].Close;
+            bool isLowest = Equity.Skip(Equity.TickCount - PeriodCount).Min(c => c.Close) == Equity[index].Close;
             return new IsMatchedResult(Equity[index].DateTime, isLowest);
         }
     }

@@ -3,18 +3,18 @@ using Trady.Core;
 
 namespace Trady.Analysis.Pattern.Indicator
 {
-    public class IsHighestPrice : AnalyticBase<IsMatchedResult>
+    public class IsHighestPrice : IndicatorBase<IsMatchedResult>
     {
-        private int _periodCount;
-
-        public IsHighestPrice(Equity equity, int periodCount) : base(equity)
+        public IsHighestPrice(Equity equity, int periodCount) 
+            : base(equity, periodCount)
         {
-            _periodCount = periodCount;
         }
+
+        public int PeriodCount => Parameters[0];
 
         public override IsMatchedResult ComputeByIndex(int index)
         {
-            bool isHighest = Equity.Skip(Equity.TickCount - _periodCount).Max(c => c.Close) == Equity[index].Close;
+            bool isHighest = Equity.Skip(Equity.TickCount - PeriodCount).Max(c => c.Close) == Equity[index].Close;
             return new IsMatchedResult(Equity[index].DateTime, isHighest);
         }
     }

@@ -7,21 +7,21 @@ namespace Trady.Analysis.Indicator
 {
     public partial class ExponentialMovingAverage : IndicatorBase<IndicatorResult>
     {
-        private Ema _ema;
+        private GenericExponentialMovingAverage _ema;
 
         public ExponentialMovingAverage(Equity equity, int periodCount) : base(equity, periodCount)
         {
-            _ema = new Ema(
-                i => Equity[i].DateTime, 
+            _ema = new GenericExponentialMovingAverage(
+                equity,
+                0,
                 i => Equity[i].Close, 
                 i => Equity[i].Close, 
-                periodCount,
-                0);
+                periodCount);
         }
 
         public int PeriodCount => Parameters[0];
 
         public override IndicatorResult ComputeByIndex(int index)
-            => new IndicatorResult(Equity[index].DateTime, _ema.Compute(index));
+            => new IndicatorResult(Equity[index].DateTime, _ema.ComputeByIndex(index).Ema);
     }
 }

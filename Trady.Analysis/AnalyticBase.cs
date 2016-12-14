@@ -5,14 +5,14 @@ using Trady.Core.Helper;
 
 namespace Trady.Analysis
 {
-    public abstract class AnalyticBase<TTick> where TTick : ITick
+    public abstract class AnalyticBase<TTick> : IAnalytic where TTick : ITick
     {
         public AnalyticBase(Equity equity)
         {
             Equity = equity;
         }
 
-        protected Equity Equity { get; private set; }
+        public Equity Equity { get; private set; }
 
         public TimeSeries<TTick> Compute(DateTime? startTime, DateTime? endTime)
         {

@@ -5,7 +5,7 @@ namespace Trady.Analysis.Pattern.Indicator
 {
     public partial class StochasticsCrossover
     {
-        public class Slow : AnalyticBase
+        public class Slow : IndicatorBase
         {
             public Slow(Equity equity, int periodCount, int smaPeriodCountD)
                 : base(equity, new Stochastics.Slow(equity, periodCount, smaPeriodCountD))

@@ -5,7 +5,7 @@ using static Trady.Analysis.Indicator.OnBalanceVolume;
 
 namespace Trady.Analysis.Indicator
 {
-    public partial class OnBalanceVolume : CachedIndicatorBase<IndicatorResult>
+    public partial class OnBalanceVolume : CacheIndicatorBase<IndicatorResult>
     {
         public class IndicatorResult : TickBase
         {

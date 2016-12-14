@@ -15,9 +15,12 @@ using Trady.Strategy;
 using Trady.Strategy.Helper;
 using Trady.Strategy.MValue;
 using Trady.Strategy.Rule;
+using System.Reflection;
 
 class Program
 {
+	private static string ExecutingAssembly = Path.Combine(Directory.GetCurrentDirectory(), "data");
+
     static void Main(string[] args)
     {
         //DownloadData();
@@ -25,35 +28,7 @@ class Program
         //PlayWithStrategy();
         PlayWithMValue();
         //DownloadSpx();
-        //TestBetweenUsingRecursiveOrPrecache();
-    }
-
-    private static void TestBetweenUsingRecursiveOrPrecache()
-    {
-        Console.WriteLine("Importing data...");
-        var importer = new CsvImporter("data\\SPX.csv");
-        var equity = importer.ImportAsync("SPX").Result;
-
-        var startTime1 = DateTime.Now;
-        Console.WriteLine("Start computing by using recursion: {0}", startTime1);
-        var result1 = new List<ExponentialMovingAverage.IndicatorResult>();
-        for (int i = 0; i < equity.Count(); i++)
-        {
-            result1.Add(new ExponentialMovingAverage(equity, 30).ComputeByIndex(i));
-        }
-        var endTime1 = DateTime.Now;
-        Console.WriteLine("End computing by using recursion: {0}, Time elapsed: {1:0.##}s", endTime1, (endTime1-startTime1).TotalSeconds);
-        Console.WriteLine("Value @ i=256: {0}", result1.ElementAt(256).Ema);
-        Console.WriteLine();
-
-        var startTime2 = DateTime.Now;
-        Console.WriteLine("Start computing by using iteration: {0}", startTime2);
-        var ts = new ExponentialMovingAverage(equity, 30).Compute(null, null);
-        var endTime2 = DateTime.Now;
-        Console.WriteLine("End computing by using iteration: {0}, Time elapsed: {1:0.##}s", endTime2, (endTime2 - startTime2).TotalSeconds);
-        Console.WriteLine("Value @ i=256: {0}", ts.ElementAt(256).Ema);
-
-        Console.ReadLine();
+        //TestHashCode();
     }
 
     private static void DownloadSpx()
@@ -64,7 +39,7 @@ class Program
         var importer = new QuandlYahooImporter(ApiKey);
         var spx = importer.ImportAsync("INDEX_GSPC").Result;
 
-        var exporter = new CsvExporter("data\\SPX.csv");
+        var exporter = new CsvExporter(Path.Combine(ExecutingAssembly, "SPX.csv"));
         bool? success = exporter.ExportAsync(spx).Result;
     }
 
@@ -77,8 +52,6 @@ class Program
 
         var importer = new QuandlWikiImporter(ApiKey);
         var equities = new List<Equity>();
-
-        Directory.CreateDirectory("data");
 
         var startTime = DateTime.Now;
         Console.WriteLine($"Download start: {startTime}");
@@ -107,21 +80,19 @@ class Program
 
             Interlocked.Add(ref completedCount, 1);
             equities.Add(equity);
-            var exporter = new CsvExporter($"data\\{equity.Name}.csv");
+            var exporter = new CsvExporter(Path.Combine(ExecutingAssembly, $"{equity.Name}.csv"));
             bool success = exporter.ExportAsync(equity).Result;
         });
 
         var endTime = DateTime.Now;
         Console.WriteLine($"End: {endTime}");
-
-        File.WriteAllText("DownloadTime.txt", $"start: {startTime}, end: {endTime}");
     }
 
     private static void CalculateIndicators()
     {
         Console.WriteLine("Importing data...");
-        var importer = new CsvImporter("data\\FB.csv");
-        var equity = importer.ImportAsync("FB").Result;
+        var importer = new CsvImporter(Path.Combine(ExecutingAssembly, "SPX.csv"));
+        var equity = importer.ImportAsync("SPX").Result;
         //var importer = new YahooFinanceImporter();
         //var equity = importer.ImportAsync("00392.HK").Result;
 
@@ -153,7 +124,7 @@ class Program
         tsList.Add(adxTs);
 
         Console.WriteLine("Exporting results...");
-        var exporter = new CsvExporter("result\\FB.csv");
+        var exporter = new CsvExporter(Path.Combine(ExecutingAssembly, "SPXResult.csv"));
         bool success = exporter.ExportAsync(equity, tsList).Result;
 
         Console.WriteLine("Process completed!");
@@ -163,7 +134,7 @@ class Program
     private static void PlayWithMValue()
     {
         Console.WriteLine("Importing data...");
-        var importer = new CsvImporter("data\\SPX.csv");
+        var importer = new CsvImporter(Path.Combine(ExecutingAssembly, "SPX.csv"));
         var equity = importer.ImportAsync("SPX").Result;
 
         var list = Enumerable.Range(4, 17).ToList();
@@ -187,6 +158,7 @@ class Program
         var mValueResults = new ConcurrentDictionary<string, MValueResult>();
         var allStartTime = DateTime.Now;
         Console.WriteLine($"Start process @ {allStartTime} ...");
+
         list.ForEach(p =>
         {
             var startTime = DateTime.Now;
@@ -205,9 +177,10 @@ class Program
             var endTime = DateTime.Now;
             Console.WriteLine($"Processed SMA({p}) @ {endTime}, Time elapsed: {(endTime - startTime).TotalSeconds}s");
         });
+
         var allEndTime = DateTime.Now;
         Console.WriteLine($"All processed @ {allEndTime}. Time elapsed: {(allEndTime - allStartTime).TotalSeconds}s. Start saving result...");
-        var exporter = new MValueExporter("mValueResult.csv");
+        var exporter = new MValueExporter(Path.Combine(ExecutingAssembly, "SPX_MValue_Result.csv"));
         bool success = exporter.ExportAsync(mValueResults.OrderBy(kvp => kvp.Key).ToDictionary(kvp => kvp.Key, kvp => kvp.Value)).Result;
         Console.WriteLine("Result saved");
 
@@ -217,23 +190,18 @@ class Program
     private static void PlayWithStrategy()
     {
         Console.WriteLine("Importing data...");
-        //var importer = new CsvImporter("data\\SPX.csv");
-        //var equity = importer.ImportAsync("SPX").Result;
-        var importer = new YahooFinanceImporter();
-        var equity = importer.ImportAsync("0392.HK").Result;
+        var importer = new CsvImporter("data\\FB.csv");
+        var equity = importer.ImportAsync("FB").Result;
+        //var importer = new YahooFinanceImporter();
+        //var equity = importer.ImportAsync("0392.HK").Result;
         //equity.MaxTickCount = 256;
 
         Console.WriteLine("Setting rules...");
-        //var buyRule = Rule.Create(c => c.IsFullStoBullishCross(14, 3, 3))
-        //    .And(c => c.IsMacdOscBullish(12, 26, 9))
-        //    .And(c => c.IsSmaOscBullish(10, 30))
-        //    .And(c => c.IsAccumDistBullish());
-        var buyRule = Rule.Create(c => c.IsEmaBullish(30));
+        var buyRule = Rule.Create(c => c.IsFullStoBullishCross(13, 3, 3))
+            .And(c => c.IsMacdOscBullish(12, 26, 9))
+            .And(c => c.IsEmaBullish(30));
 
-        //var sellRule = Rule.Create(c => c.IsFullStoBearishCross(14, 3, 3))
-        //    .Or(c => c.IsMacdBearishCross(12, 24, 9))
-        //    .Or(c => c.IsSmaBearishCross(10, 30));
-        var sellRule = Rule.Create(c => !c.IsEmaBearish(30));
+        var sellRule = Rule.Create(c => c.IsFullStoBearishCross(13, 3, 3));
 
         Console.WriteLine("Creating portfolio...");
         var portfolio = new PortfolioBuilder()
@@ -246,22 +214,16 @@ class Program
         Console.WriteLine($"Runnning backtest... @ {startTime}");
 
         PortfolioResult result;
-        try
-        {
-            result = portfolio.RunAsync(10000).Result;
-            var endTime = DateTime.Now;
-            Console.WriteLine($"Backtest completed @ {endTime}. Time elapsed: {(endTime - startTime).TotalSeconds} s.");
+        Console.WriteLine();
+        result = portfolio.RunAsync(10000, 1.0m, new DateTime(2016, 1, 1)).Result;
+        var endTime = DateTime.Now;
+        Console.WriteLine($"Backtest completed @ {endTime}. Time elapsed: {(endTime - startTime).TotalSeconds} s.");
 
-            Console.WriteLine(string.Format("Transaction count: {0:#.##}, P/L ratio: {1:0.##}%, Principal: {2:#}, Total: {3:#}",
-                result.TransactionCount,
-                result.ProfitLossRatio * 100,
-                result.Principal,
-                result.Total));
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine(ex.ToString());
-        }
+        Console.WriteLine("Transaction count: {0:#.##}, P/L ratio: {1:0.##}%, Principal: {2:#}, Total: {3:#}",
+            result.TotalTransactionsCount,
+            result.ProfitLossRatio * 100,
+            result.Principal,
+            result.Total);
 
         Console.ReadLine();
     }

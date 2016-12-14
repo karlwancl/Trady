@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Trady.Analysis.Pattern.Helper
 {
-    internal static class ResultExt
+    internal static class Decision
     {
         public static bool? IsLargerThan(this decimal value1, decimal? value2)
             => IsLargerThan((decimal?)value1, value2);

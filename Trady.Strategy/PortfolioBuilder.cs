@@ -9,20 +9,23 @@ namespace Trady.Strategy
 {
     public class PortfolioBuilder
     {
-        private IList<Equity> _equities;
+        private IDictionary<Equity, int> _equityPairs;
         private IList<IRule<ComputableCandle>> _buyRules;
         private IList<IRule<ComputableCandle>> _sellRules;
 
         public PortfolioBuilder()
         {
-            _equities = new List<Equity>();
+            _equityPairs = new Dictionary<Equity, int>();
             _buyRules = new List<IRule<ComputableCandle>>();
             _sellRules = new List<IRule<ComputableCandle>>();
         }
 
-        public PortfolioBuilder Add(Equity equity)
+        public PortfolioBuilder Add(Equity equity, int portion = 1)
         {
-            _equities.Add(equity);
+            if (_equityPairs.TryGetValue(equity, out int equityPortion))
+                _equityPairs[equity] = equityPortion + portion;
+            else
+                _equityPairs.Add(equity, portion);
             return this;
         }
 
@@ -42,7 +45,7 @@ namespace Trady.Strategy
         {
             var buyRule = _buyRules.Aggregate((r0, r) => r0.Or(r));
             var sellRule = _sellRules.Aggregate((r0, r) => r0.Or(r));
-            return new Portfolio(_equities, buyRule, sellRule);
+            return new Portfolio(_equityPairs, buyRule, sellRule);
         }
     }
 }

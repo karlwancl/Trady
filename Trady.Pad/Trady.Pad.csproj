@@ -16,14 +16,35 @@
       <Version>1.0.0-alpha-20161104-2</Version>
       <PrivateAssets>All</PrivateAssets>
     </PackageReference>
+    <PackageReference Include="System.Reflection">
+      <Version>4.3.0</Version>
+    </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Trady.Analysis\Trady.Analysis.csproj" />
-    <ProjectReference Include="..\Trady.Core\Trady.Core.csproj" />
-    <ProjectReference Include="..\Trady.Exporter\Trady.Exporter.csproj" />
-    <ProjectReference Include="..\Trady.Importer\Trady.Importer.csproj" />
-    <ProjectReference Include="..\Trady.Logging\Trady.Logging.csproj" />
-    <ProjectReference Include="..\Trady.Strategy\Trady.Strategy.csproj" />
+    <ProjectReference Include="..\Trady.Analysis\Trady.Analysis.csproj">
+      <Project>{164C4731-C6A3-41A6-8C32-88F55DB4D5C2}</Project>
+      <Name>Trady.Analysis</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Trady.Core\Trady.Core.csproj">
+      <Project>{4C37B65D-3423-4679-836E-98DB29B0FE07}</Project>
+      <Name>Trady.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Trady.Exporter\Trady.Exporter.csproj">
+      <Project>{6C985DE9-FEB7-4670-9158-6472C023186F}</Project>
+      <Name>Trady.Exporter</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Trady.Importer\Trady.Importer.csproj">
+      <Project>{5BEE518C-42E4-4221-87C8-1AD18225E87B}</Project>
+      <Name>Trady.Importer</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Trady.Logging\Trady.Logging.csproj">
+      <Project>{3F0DD561-FFDF-4090-96E0-05D638DE0A53}</Project>
+      <Name>Trady.Logging</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Trady.Strategy\Trady.Strategy.csproj">
+      <Project>{3E09F54F-71F9-4B75-926D-F2BCC3143D24}</Project>
+      <Name>Trady.Strategy</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

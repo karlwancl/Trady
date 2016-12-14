@@ -4,11 +4,12 @@ using Trady.Core;
 
 namespace Trady.Analysis.Pattern.Indicator
 {
-    public class MovingAverageConvergenceDivergenceCrossover : AnalyticBase<IsMatchedMultistateResult<Trend?>>
+    public class MovingAverageConvergenceDivergenceCrossover : IndicatorBase<IsMatchedMultistateResult<Trend?>>
     {
         private MovingAverageConvergenceDivergence _macdIndicator;
 
-        public MovingAverageConvergenceDivergenceCrossover(Equity equity, int emaPeriodCount1, int emaPeriodCount2, int demPeriodCount) : base(equity)
+        public MovingAverageConvergenceDivergenceCrossover(Equity equity, int emaPeriodCount1, int emaPeriodCount2, int demPeriodCount) 
+            : base(equity, emaPeriodCount1, emaPeriodCount2, demPeriodCount)
         {
             _macdIndicator = new MovingAverageConvergenceDivergence(equity, emaPeriodCount1, emaPeriodCount2, demPeriodCount);
         }
@@ -22,7 +23,7 @@ namespace Trady.Analysis.Pattern.Indicator
             var secondLatest = _macdIndicator.ComputeByIndex(index - 1);
 
             return new IsMatchedMultistateResult<Trend?>(Equity[index].DateTime, 
-                ResultExt.IsCrossOver(latest.Osc, secondLatest.Osc), ResultExt.IsTrending(latest.Osc));
+                Decision.IsCrossOver(latest.Osc, secondLatest.Osc), Decision.IsTrending(latest.Osc));
         }
     }
 }

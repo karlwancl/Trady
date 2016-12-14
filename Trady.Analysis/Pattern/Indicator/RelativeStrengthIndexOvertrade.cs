@@ -7,11 +7,12 @@ using Trady.Core;
 
 namespace Trady.Analysis.Pattern.Indicator
 {
-    public class RelativeStrengthIndexOvertrade : AnalyticBase<MultistateResult<SevereOvertrade?>>
+    public class RelativeStrengthIndexOvertrade : IndicatorBase<MultistateResult<SevereOvertrade?>>
     {
         private RelativeStrengthIndex _rsiIndicator;
 
-        public RelativeStrengthIndexOvertrade(Equity equity, int periodCount) : base(equity)
+        public RelativeStrengthIndexOvertrade(Equity equity, int periodCount) 
+            : base(equity, periodCount)
         {
             _rsiIndicator = new RelativeStrengthIndex(equity, periodCount);
         }
@@ -21,7 +22,7 @@ namespace Trady.Analysis.Pattern.Indicator
             var result = _rsiIndicator.ComputeByIndex(index);
 
             return new MultistateResult<SevereOvertrade?>(Equity[index].DateTime, 
-                ResultExt.IsSeverelyOvertrade(result.Rsi));
+                Decision.IsSeverelyOvertrade(result.Rsi));
         }
     }
 }

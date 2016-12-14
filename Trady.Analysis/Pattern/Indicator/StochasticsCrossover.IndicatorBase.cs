@@ -6,11 +6,12 @@ namespace Trady.Analysis.Pattern.Indicator
 {
     public partial class StochasticsCrossover
     {
-        public abstract class AnalyticBase : AnalyticBase<IsMatchedMultistateResult<Trend?>>
+        public abstract class IndicatorBase : IndicatorBase<IsMatchedMultistateResult<Trend?>>
         {
             private IndicatorBase<Stochastics.IndicatorResult> _stoIndicator;
 
-            protected AnalyticBase(Equity equity, IndicatorBase<Stochastics.IndicatorResult> stoIndicator) : base(equity)
+            protected IndicatorBase(Equity equity, IndicatorBase<Stochastics.IndicatorResult> stoIndicator) 
+                : base(equity, stoIndicator.Parameters)
             {
                 _stoIndicator = stoIndicator;
             }
@@ -27,7 +28,7 @@ namespace Trady.Analysis.Pattern.Indicator
                 var secondLatestKsOsc = secondLatest.K - secondLatest.D;
 
                 return new IsMatchedMultistateResult<Trend?>(Equity[index].DateTime, 
-                    ResultExt.IsCrossOver(latestKdOsc, secondLatestKsOsc), ResultExt.IsTrending(latestKdOsc));
+                    Decision.IsCrossOver(latestKdOsc, secondLatestKsOsc), Decision.IsTrending(latestKdOsc));
             }
         }
     }

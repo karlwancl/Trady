@@ -7,7 +7,7 @@ using Trady.Core;
 
 namespace Trady.Analysis.Pattern.Indicator
 {
-    public class AccumulationDistributionLineTrend : AnalyticBase<MultistateResult<Trend?>>
+    public class AccumulationDistributionLineTrend : IndicatorBase<MultistateResult<Trend?>>
     {
         private AccumulationDistributionLine _accumDistIndicator;
 
@@ -25,7 +25,7 @@ namespace Trady.Analysis.Pattern.Indicator
             var secondLatest = _accumDistIndicator.ComputeByIndex(index - 1);
 
             return new MultistateResult<Trend?>(Equity[index].DateTime, 
-                ResultExt.IsTrending(latest.AccumDist - secondLatest.AccumDist));
+                Decision.IsTrending(latest.AccumDist - secondLatest.AccumDist));
         }
     }
 }

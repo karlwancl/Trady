@@ -9,81 +9,95 @@ namespace Trady.Strategy
     public class PortfolioResult
     {
         private decimal _principal, _premium;
-        private IDictionary<Equity, IDictionary<DateTime, decimal>> _transactions;
+        private IDictionary<Equity, Dictionary<DateTime, decimal>> _equitiesTransactions;
+        private Func<Dictionary<DateTime, decimal>, int, decimal> _change, _profitRateSum, _lossRateSum;
 
-        public PortfolioResult(decimal principal, decimal premium, IDictionary<Equity, IDictionary<DateTime, decimal>> transactions)
+        public PortfolioResult(decimal principal, decimal premium, IList<(Equity equity, DateTime transactionDateTime, decimal amount)> equitiesTransactions)
         {
             _principal = principal;
             _premium = premium;
-            _transactions = transactions.ToDictionary(
-                kvp => kvp.Key, 
-                kvp => (IDictionary<DateTime, decimal>)kvp.Value.OrderBy(v => v.Key).ToDictionary(ikvp => ikvp.Key, ikvp => ikvp.Value));
+            _equitiesTransactions = equitiesTransactions
+                .GroupBy(t => t.equity)
+                .ToDictionary(t => t.Key, t => t.OrderBy(t2 => t2.transactionDateTime).ToDictionary(t2 => t2.transactionDateTime, t2 => t2.amount));
+            _change = (dict, i) => Convert.ToDecimal((Math.Abs(dict.ElementAt(i).Value) - Math.Abs(dict.ElementAt(i - 1).Value)) / Math.Abs(dict.ElementAt(i - 1).Value));
         }
 
-        public IDictionary<Equity, IDictionary<DateTime, decimal>> Transaction => _transactions;
+        public IDictionary<Equity, Dictionary<DateTime, decimal>> EquityTransactions => _equitiesTransactions;
 
-        public int TransactionCount => _transactions.SelectMany(t => t.Value).Count();
-
-        public double ProfitRateSum
+        public int TotalTransactionsCount
         {
             get
             {
-                double sum = 0;
-                foreach (var eq in _transactions)
+                int sum = 0;
+                foreach (var equityTransaction in _equitiesTransactions)
                 {
-                    for (int i = 1; i < eq.Value.Count; i++)
+                    sum += (equityTransaction.Value.Count % 2 == 0) ? 
+                        equityTransaction.Value.Count : equityTransaction.Value.Count - 1;
+                }
+                return sum;
+            }
+        }
+
+        public decimal TotalProfitRate
+        {
+            get
+            {
+                decimal sum = 0;
+                foreach (var equityTransaction in _equitiesTransactions)
+                {
+                    for (int i = 0; i < (equityTransaction.Value.Count - 1) / 2; i++)
                     {
-                        var current = Math.Abs(eq.Value.ElementAt(i).Value);
-                        var previous = Math.Abs(eq.Value.ElementAt(i - 1).Value);
-                        var plPercent = Convert.ToDouble((current - previous) / previous);
-                        if (plPercent > 0)
-                            sum += Math.Abs(plPercent);
+                        int j = 2 * i + 1;
+                        decimal change = _change(equityTransaction.Value, j);
+                        if (change > 0)
+                            sum += Math.Abs(change);
                     }
                 }
                 return sum;
             }
         }
 
-        public double LossRateSum
+        public decimal TotalLossRate
         {
             get
             {
-                double sum = 0;
-                foreach (var eq in _transactions)
+                decimal sum = 0;
+                foreach (var equityTransaction in _equitiesTransactions)
                 {
-                    for (int i = 1; i < eq.Value.Count; i++)
+                    for (int i = 0; i < (equityTransaction.Value.Count - 1) / 2; i++)
                     {
-                        var current = Math.Abs(eq.Value.ElementAt(i).Value);
-                        var previous = Math.Abs(eq.Value.ElementAt(i - 1).Value);
-                        var plPercent = Convert.ToDouble((current - previous) / previous);
-                        if (plPercent < 0)
-                            sum += Math.Abs(plPercent);
+                        int j = 2 * i + 1;
+                        decimal change = _change(equityTransaction.Value, j);
+                        if (change < 0)
+                            sum += Math.Abs(change);
                     }
                 }
                 return sum;
             }
         }
 
-        public double ProfitLossRatio => ProfitRateSum / (ProfitRateSum + LossRateSum);
+        public decimal ProfitLossRatio => TotalProfitRate / (TotalProfitRate + TotalLossRate);
 
         public decimal Principal => _principal;
 
-        public decimal TotalPremium => _premium * TransactionCount;
+        public decimal TotalPremium => _premium * TotalTransactionsCount;
 
         public decimal Total
         {
             get
             {
                 decimal sum = 0;
-                foreach (var eq in _transactions)
+                foreach (var equityTransaction in _equitiesTransactions)
                 {
-                    if (eq.Value.Count > 1)
-                        sum += Math.Abs(eq.Value.Last(kvp => kvp.Value > 0).Value);
+                    var index = (equityTransaction.Value.Count % 2 == 0) ? 
+                        equityTransaction.Value.Count - 1 : equityTransaction.Value.Count - 2;
+
+                    sum += equityTransaction.Value.ElementAt(index).Value;
                 }
                 return sum;
             }
         }
 
-        public decimal NetProfitLoss => Total - Principal;
+        public decimal ProfitLoss => Total - Principal;
     }
 }

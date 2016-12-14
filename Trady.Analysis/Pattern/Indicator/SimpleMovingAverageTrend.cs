@@ -7,11 +7,12 @@ using Trady.Core;
 
 namespace Trady.Analysis.Pattern.Indicator
 {
-    public class SimpleMovingAverageTrend : AnalyticBase<MultistateResult<Trend?>>
+    public class SimpleMovingAverageTrend : IndicatorBase<MultistateResult<Trend?>>
     {
         private SimpleMovingAverage _smaIndicator;
 
-        public SimpleMovingAverageTrend(Equity equity, int periodCount) : base(equity)
+        public SimpleMovingAverageTrend(Equity equity, int periodCount)
+            : base(equity, periodCount)
         {
             _smaIndicator = new SimpleMovingAverage(equity, periodCount);
         }
@@ -25,7 +26,7 @@ namespace Trady.Analysis.Pattern.Indicator
             var previousValue = _smaIndicator.ComputeByIndex(index - 1).Sma;
 
             return new MultistateResult<Trend?>(Equity[index].DateTime, 
-                ResultExt.IsTrending(currentValue - previousValue));
+                Decision.IsTrending(currentValue - previousValue));
         }
     }
 }

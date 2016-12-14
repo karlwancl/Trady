@@ -1,14 +1,14 @@
 ﻿using Trady.Core;
 
-namespace Trady.Analysis.Indicator
+namespace Trady.Analysis
 {
-    public abstract class IndicatorBase<TTick> : AnalyticBase<TTick> where TTick: ITick
+    public abstract class IndicatorBase<TTick> : AnalyticBase<TTick>, IIndicator where TTick: ITick
     {
         public IndicatorBase(Equity equity, params int[] parameters) : base(equity)
         {
             Parameters = parameters;
         }
 
-        protected int[] Parameters { get; private set; }
+        public int[] Parameters { get; private set; }
     }
 }

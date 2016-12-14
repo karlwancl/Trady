@@ -7,7 +7,7 @@ using Trady.Core;
 
 namespace Trady.Analysis.Pattern.Indicator
 {
-    public class OnBalanceVolumeTrend : AnalyticBase<MultistateResult<Trend?>>
+    public class OnBalanceVolumeTrend : IndicatorBase<MultistateResult<Trend?>>
     {
         private OnBalanceVolume _obvIndicator;
 
@@ -25,7 +25,7 @@ namespace Trady.Analysis.Pattern.Indicator
             var secondLatest = _obvIndicator.ComputeByIndex(index - 1);
 
             return new MultistateResult<Trend?>(Equity[index].DateTime, 
-                ResultExt.IsTrending(latest.Obv - secondLatest.Obv));
+                Decision.IsTrending(latest.Obv - secondLatest.Obv));
         }
     }
 }

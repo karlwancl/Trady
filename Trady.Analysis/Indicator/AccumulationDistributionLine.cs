@@ -4,35 +4,30 @@ using static Trady.Analysis.Indicator.AccumulationDistributionLine;
 
 namespace Trady.Analysis.Indicator
 {
-    public partial class AccumulationDistributionLine : CachedIndicatorBase<IndicatorResult>
+    public partial class AccumulationDistributionLine : CacheIndicatorBase<IndicatorResult>
     {
         public AccumulationDistributionLine(Equity equity) : base(equity, null)
         {
         }
 
-        protected override Func<int, IndicatorResult> FirstValueFunction
-            => i => new IndicatorResult(Equity[i].DateTime, Equity[i].Volume);
+        protected override int FirstValueIndex => 0;
 
-        protected override IndicatorResult ComputeByIndexUncached(int index)
+        protected override IndicatorResult ComputeNullValue(int index)
+            => new IndicatorResult(Equity[index].DateTime, null);
+
+        protected override IndicatorResult ComputeFirstValue(int index) 
+            => new IndicatorResult(Equity[index].DateTime, Equity[index].Volume);
+
+        protected override IndicatorResult ComputeIndexValue(int index, IndicatorResult prevTick)
         {
-            var candle = Equity[index];            
-            decimal? accumDist = 0;
+            var candle = Equity[index];
+            var prevCandle = Equity[index - 1];
 
-            if (index == 0)
-                accumDist = candle.Volume;
-            else
-            {
-                var prevCandle = Equity[index - 1];
-                var prevAccumDist = ComputeByIndex(index - 1).AccumDist;
+            decimal ratio = (candle.High == candle.Low) ?
+                (candle.Close / prevCandle.Close) - 1 :
+                (candle.Close * 2 - candle.Low - candle.High) / (candle.High - candle.Low);
 
-                decimal ratio = (candle.High == candle.Low) ?
-                    (candle.Close / prevCandle.Close) - 1 :
-                    (candle.Close * 2 - candle.Low - candle.High) / (candle.High - candle.Low);
-
-                accumDist = prevAccumDist + ratio * candle.Volume;
-            }
-
-            return new IndicatorResult(candle.DateTime, accumDist);
+            return new IndicatorResult(candle.DateTime, prevTick.AccumDist + ratio * candle.Volume);
         }
     }
 }

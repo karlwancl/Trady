@@ -6,7 +6,7 @@ namespace Trady.Analysis.Indicator
 {
     public partial class ClosePriceChange : IndicatorBase<IndicatorResult>
     {
-        public ClosePriceChange(Equity equity) : base(equity, null)
+        public ClosePriceChange(Equity equity) : base(equity)
         {
         }
 

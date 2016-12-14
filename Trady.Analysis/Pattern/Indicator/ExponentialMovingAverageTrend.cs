@@ -7,11 +7,12 @@ using Trady.Core;
 
 namespace Trady.Analysis.Pattern.Indicator
 {
-    public class ExponentialMovingAverageTrend : AnalyticBase<MultistateResult<Trend?>>
+    public class ExponentialMovingAverageTrend : IndicatorBase<MultistateResult<Trend?>>
     {
         private ExponentialMovingAverage _emaIndicator;
 
-        public ExponentialMovingAverageTrend(Equity equity, int periodCount) : base(equity)
+        public ExponentialMovingAverageTrend(Equity equity, int periodCount) 
+            : base(equity, periodCount)
         {
             _emaIndicator = new ExponentialMovingAverage(equity, periodCount);
         }
@@ -19,7 +20,7 @@ namespace Trady.Analysis.Pattern.Indicator
         public override MultistateResult<Trend?> ComputeByIndex(int index)
         {
             var result = _emaIndicator.ComputeByIndex(index);
-            return new MultistateResult<Trend?>(Equity[index].DateTime, ResultExt.IsTrending(result.Ema));
+            return new MultistateResult<Trend?>(Equity[index].DateTime, Decision.IsTrending(result.Ema));
         }
     }
 }
