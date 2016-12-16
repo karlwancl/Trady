@@ -24,10 +24,11 @@ class Program
     static void Main(string[] args)
     {
         //DownloadData();
-        //CalculateIndicators();
-        //PlayWithStrategy();
-        PlayWithMValue();
         //DownloadSpx();
+        DownloadFB();
+        CalculateIndicators();
+        //PlayWithStrategy();
+        //PlayWithMValue();
         //TestHashCode();
     }
 
@@ -41,6 +42,18 @@ class Program
 
         var exporter = new CsvExporter(Path.Combine(ExecutingAssembly, "SPX.csv"));
         bool? success = exporter.ExportAsync(spx).Result;
+    }
+
+    private static void DownloadFB()
+    {
+        Console.WriteLine("Downloading Fb...");
+        const string ApiKey = "M185pFZuSebc4Qr5MRz2";
+
+        var importer = new QuandlWikiImporter(ApiKey);
+        var fb = importer.ImportAsync("FB").Result;
+
+        var exporter = new CsvExporter(Path.Combine(ExecutingAssembly, "FB.csv"));
+        bool? success = exporter.ExportAsync(fb).Result;
     }
 
     private static void DownloadData()
@@ -91,8 +104,8 @@ class Program
     private static void CalculateIndicators()
     {
         Console.WriteLine("Importing data...");
-        var importer = new CsvImporter(Path.Combine(ExecutingAssembly, "SPX.csv"));
-        var equity = importer.ImportAsync("SPX").Result;
+        var importer = new CsvImporter(Path.Combine(ExecutingAssembly, "FB.csv"));
+        var equity = importer.ImportAsync("FB").Result;
         //var importer = new YahooFinanceImporter();
         //var equity = importer.ImportAsync("00392.HK").Result;
 
@@ -108,23 +121,28 @@ class Program
         var bbTs = equity.Bb(20, 2);
         var atrTs = equity.Atr(14);
         var adxTs = equity.Adx(14);
+        var aroonTs = equity.Aroon(25);
+        var chandlrTs = equity.Chandlr(22, 3);
         var endTime = DateTime.Now;
         Console.WriteLine($"Data computed: time elapsed: {(endTime - startTime).TotalMilliseconds}ms");
 
-        var tsList = new List<ITimeSeries>();
-        tsList.Add(smaTs);
-        tsList.Add(emaTs);
-        tsList.Add(rsiTs);
-        tsList.Add(macdTs);
-        tsList.Add(stoTs);
-        tsList.Add(obvTs);
-        tsList.Add(accumDistTs);
-        tsList.Add(bbTs);
-        tsList.Add(atrTs);
-        tsList.Add(adxTs);
-
+        var tsList = new List<ITimeSeries>
+        {
+            smaTs,
+            emaTs,
+            rsiTs,
+            macdTs,
+            stoTs,
+            obvTs,
+            accumDistTs,
+            bbTs,
+            atrTs,
+            adxTs,
+            aroonTs,
+            chandlrTs
+        };
         Console.WriteLine("Exporting results...");
-        var exporter = new CsvExporter(Path.Combine(ExecutingAssembly, "SPXResult.csv"));
+        var exporter = new CsvExporter(Path.Combine(ExecutingAssembly, "FBResult.csv"));
         bool success = exporter.ExportAsync(equity, tsList).Result;
 
         Console.WriteLine("Process completed!");
@@ -140,21 +158,22 @@ class Program
         var list = Enumerable.Range(4, 17).ToList();
         list.AddRange(Enumerable.Range(5, 44).Select(v => v * 5));
 
-        var oscList = new List<Tuple<int, int>>();
-        oscList.Add(new Tuple<int, int>(10, 20));
-        oscList.Add(new Tuple<int, int>(10, 30));
-        oscList.Add(new Tuple<int, int>(20, 40));
-        oscList.Add(new Tuple<int, int>(20, 50));
-        oscList.Add(new Tuple<int, int>(30, 50));
-        oscList.Add(new Tuple<int, int>(30, 100));
-        oscList.Add(new Tuple<int, int>(30, 150));
-        oscList.Add(new Tuple<int, int>(50, 100));
-        oscList.Add(new Tuple<int, int>(50, 150));
-        oscList.Add(new Tuple<int, int>(50, 200));
-        oscList.Add(new Tuple<int, int>(50, 250));
-        oscList.Add(new Tuple<int, int>(100, 200));
-        oscList.Add(new Tuple<int, int>(100, 250));
-
+        var oscList = new List<Tuple<int, int>>
+        {
+            new Tuple<int, int>(10, 20),
+            new Tuple<int, int>(10, 30),
+            new Tuple<int, int>(20, 40),
+            new Tuple<int, int>(20, 50),
+            new Tuple<int, int>(30, 50),
+            new Tuple<int, int>(30, 100),
+            new Tuple<int, int>(30, 150),
+            new Tuple<int, int>(50, 100),
+            new Tuple<int, int>(50, 150),
+            new Tuple<int, int>(50, 200),
+            new Tuple<int, int>(50, 250),
+            new Tuple<int, int>(100, 200),
+            new Tuple<int, int>(100, 250)
+        };
         var mValueResults = new ConcurrentDictionary<string, MValueResult>();
         var allStartTime = DateTime.Now;
         Console.WriteLine($"Start process @ {allStartTime} ...");

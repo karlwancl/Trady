@@ -38,6 +38,7 @@ namespace Trady.Analysis.Indicator
             _pdi = i => _pdmEma.ComputeByIndex(i).Ema / _atrIndicator.ComputeByIndex(i).Atr * 100;
             _mdi = i =>  _mdmEma.ComputeByIndex(i).Ema / _atrIndicator.ComputeByIndex(i).Atr * 100;
             _dx = i => ((_pdi(i) - _mdi(i)) / (_pdi(i) + _mdi(i))).Abs() * 100;
+
             _adx = new GenericExponentialMovingAverage(
                 equity,
                 periodCount,

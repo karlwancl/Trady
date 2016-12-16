@@ -10,7 +10,7 @@ namespace Trady.Strategy
     {
         private decimal _principal, _premium;
         private IDictionary<Equity, Dictionary<DateTime, decimal>> _equitiesTransactions;
-        private Func<Dictionary<DateTime, decimal>, int, decimal> _change, _profitRateSum, _lossRateSum;
+        private Func<Dictionary<DateTime, decimal>, int, decimal> _change;
 
         public PortfolioResult(decimal principal, decimal premium, IList<(Equity equity, DateTime transactionDateTime, decimal amount)> equitiesTransactions)
         {

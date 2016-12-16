@@ -34,6 +34,5 @@ namespace Trady.Analysis.Indicator
 
         protected override IndicatorResult ComputeIndexValue(int index, IndicatorResult prevTick)
             => new IndicatorResult(Equity[index].DateTime, prevTick.Ema + (SmoothingFactor * (_indexValueFunction(index) - prevTick.Ema)));
-
     }
 }

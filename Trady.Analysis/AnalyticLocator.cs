@@ -18,7 +18,7 @@ namespace Trady.Analysis
             SlidingExpiration = TimeSpan.FromMinutes(10)
         };
 
-        public static TAnalytic GetOrCreateAnayltic<TAnalytic>(this Equity equity, params int[] parameters) 
+        public static TAnalytic GetOrCreateAnalytic<TAnalytic>(this Equity equity, params int[] parameters) 
             where TAnalytic: IAnalytic
         {
             string key = $"{equity.GetHashCode()}#{typeof(TAnalytic).Name}#{string.Join("|", parameters)}";
