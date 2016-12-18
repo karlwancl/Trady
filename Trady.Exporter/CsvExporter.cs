@@ -54,9 +54,9 @@ namespace Trady.Exporter
 
         private static void WriteRecords(Equity equity, IList<ITimeSeries> resultTimeSeriesList, DateTime? startTime, DateTime? endTime, bool ascending, CsvWriter csvWriter)
         {
-            for (int i = 0; i < equity.TickCount; i++)
+            for (int i = 0; i < equity.Count; i++)
             {
-                var candle = equity[ascending ? i : equity.TickCount - i - 1];
+                var candle = equity[ascending ? i : equity.Count - i - 1];
 
                 var currentDateTime = candle.DateTime;
                 if (startTime.HasValue && currentDateTime < startTime.Value || endTime.HasValue && currentDateTime >= endTime.Value)
@@ -70,7 +70,7 @@ namespace Trady.Exporter
                     .ToList()
                     .ForEach(ts =>
                     {
-                        var result = ts.Cast<ITick>().First(r => r.DateTime == currentDateTime);
+                        var result = ts.Ticks.First(r => r.DateTime == currentDateTime);
                         result
                             .GetType()
                             .GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly)

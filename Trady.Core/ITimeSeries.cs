@@ -4,25 +4,15 @@ using Trady.Core.Period;
 
 namespace Trady.Core
 {
-    public interface ITimeSeries : IEnumerable
+    public interface ITimeSeries
+    {
+        IList<ITick> Ticks { get; }
+    }
+
+    public interface ITimeSeries<TTick>: IList<TTick> , ITimeSeries where TTick: ITick 
     {
         string Name { get; }
 
-        void Reset();
-
-        int TickCount { get; }
-
         PeriodOption Period { get; }
-
-        ITick this[int index] { get; }
-
-        void Add(ITick tick);
-    }
-
-    public interface ITimeSeries<TTick>: IEnumerable<TTick>, ITimeSeries where TTick: ITick 
-    {
-        new TTick this[int index] { get; }
-
-        void Add(TTick tick);
     }
 }

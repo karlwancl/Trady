@@ -46,22 +46,15 @@ namespace Trady.Core
                 var inputInstance = inputPeriodType.CreateInstance();
                 var outputInstance = outputPeriodType.CreateInstance();
 
-                var input = inputInstance as IIntradayPeriod;
-                if (input != null)
-                {
-                    var output = outputInstance as IIntradayPeriod;
-                    if (output != null && input.NumPerSecond >= output.NumPerSecond)
-                        return false;
-                    return true;
-                }
+                if (inputInstance is IIntradayPeriod input)
+                    return !(outputInstance is IIntradayPeriod output) || (input.NumberOfSecond < output.NumberOfSecond);
 
                 var input2 = inputInstance as IInterdayPeriod;
-                var output2 = outputInstance as IIntradayPeriod;
-                if (output2 != null)
+                if (outputInstance is IIntradayPeriod output2)
                     return false;
 
                 var output3 = outputInstance as IInterdayPeriod;
-                if (input2.NumPerDay >= output3.NumPerDay)
+                if (input2.OrderOfTransformation >= output3.OrderOfTransformation)
                     return false;
 
                 return true;

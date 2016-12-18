@@ -14,20 +14,16 @@ namespace Trady.Core.Helper
             return (IPeriod)Activator.CreateInstance(periodType);
         }
 
-        public static int? FindFirstIndexOrDefault<T>(this IEnumerable<T> items, Predicate<T> predicate)
+        public static int? FindIndexOrDefault<T>(this List<T> items, Predicate<T> predicate)
         {
-            for (int i = 0; i < items.Count(); i++)
-                if (predicate(items.ElementAt(i)))
-                    return i;
-            return null;
+            int index = items.FindIndex(predicate);
+            return index == -1 ? (int?)null : index;
         }
 
-        public static int? FindLastIndexOrDefault<T>(this IEnumerable<T> items, Predicate<T> predicate)
+        public static int? FindLastIndexOrDefault<T>(this List<T> items, Predicate<T> predicate)
         {
-            for (int i = items.Count() - 1; i >= 0; i--)
-                if (predicate(items.ElementAt(i)))
-                    return i;
-            return null;
+            int index = items.FindLastIndex(predicate);
+            return index == -1 ? (int?)null : index;
         }
     }
 }

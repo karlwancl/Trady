@@ -28,11 +28,13 @@ namespace Trady.Analysis.Indicator
             var highestCloseIndex = index - PeriodCount + Equity
                 .Skip(index - PeriodCount + 1)
                 .Take(PeriodCount)
+                .ToList()
                 .FindLastIndexOrDefault(c => c.High == _highestHigh.ComputeByIndex(index).HighestHigh).Value;
 
             var lowestCloseIndex = index - PeriodCount + Equity
                 .Skip(index - PeriodCount + 1)
                 .Take(PeriodCount)
+                .ToList()
                 .FindLastIndexOrDefault(c => c.Low == _lowestLow.ComputeByIndex(index).LowestLow).Value;
 
             var up = 100.0m * (PeriodCount - (index - highestCloseIndex)) / PeriodCount;

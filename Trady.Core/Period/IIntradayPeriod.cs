@@ -12,6 +12,6 @@ namespace Trady.Core.Period
         /// <summary>
         /// Interval of the period, per second
         /// </summary>
-        uint NumPerSecond { get; }
+        uint NumberOfSecond { get; }
     }
 }

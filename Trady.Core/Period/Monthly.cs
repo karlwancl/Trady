@@ -4,17 +4,14 @@ using System.Text;
 
 namespace Trady.Core.Period
 {
-    public class Monthly : IPeriod, IInterdayPeriod
+    public class Monthly : PeriodBase, IInterdayPeriod
     {
-        public uint NumPerDay => 30;
+        public uint OrderOfTransformation => 30;
 
-        public bool IsTimestamp(DateTime dateTime)
+        public override bool IsTimestamp(DateTime dateTime)
             => dateTime.Day == 1 && dateTime.TimeOfDay == new TimeSpan(0, 0, 0);
 
-        public DateTime NextTimestamp(DateTime dateTime)
-        {
-            var newDateTime = dateTime.AddMonths(1);
-            return new DateTime(newDateTime.Year, newDateTime.Month, 1);
-        }
+        protected override DateTime ComputeTimestampByCorrectedPeriodCount(DateTime dateTime, int correctedPeriodCount)
+            => new DateTime(dateTime.Year, dateTime.Month, 1).AddMonths(correctedPeriodCount);
     }
 }

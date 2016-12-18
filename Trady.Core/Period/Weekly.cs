@@ -2,18 +2,14 @@
 
 namespace Trady.Core.Period
 {
-    public class Weekly : IPeriod, IInterdayPeriod
+    public class Weekly : PeriodBase, IInterdayPeriod
     {
-        public uint NumPerDay => 7;
+        public uint OrderOfTransformation => 7;
 
-        public bool IsTimestamp(DateTime dateTime)
+        public override bool IsTimestamp(DateTime dateTime)
             => dateTime.DayOfWeek == DayOfWeek.Sunday && dateTime.TimeOfDay == new TimeSpan(0, 0, 0);
 
-        public DateTime NextTimestamp(DateTime dateTime)
-        {
-            int day = (int)dateTime.DayOfWeek;
-            const int numDayInWeek = 7;
-            return dateTime.AddDays(numDayInWeek - day).Date;
-        }
+        protected override DateTime ComputeTimestampByCorrectedPeriodCount(DateTime dateTime, int correctedPeriodCount)
+            => dateTime.AddDays(-(int) dateTime.DayOfWeek).AddDays(correctedPeriodCount* 7).Date;
     }
 }

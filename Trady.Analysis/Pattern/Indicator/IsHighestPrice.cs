@@ -14,7 +14,7 @@ namespace Trady.Analysis.Pattern.Indicator
 
         public override IsMatchedResult ComputeByIndex(int index)
         {
-            bool isHighest = Equity.Skip(Equity.TickCount - PeriodCount).Max(c => c.Close) == Equity[index].Close;
+            bool isHighest = Equity.Skip(Equity.Count - PeriodCount).Max(c => c.Close) == Equity[index].Close;
             return new IsMatchedResult(Equity[index].DateTime, isHighest);
         }
     }

@@ -48,8 +48,8 @@ namespace Trady.Strategy
                     var nextDateTimeCursor = period.NextTimestamp(dateTimeCursor);
                     foreach (var pair in _processedPairs)
                     {
-                        var candleIndex = pair.Key.FindFirstIndexOrDefault(c => c.DateTime.Equals(dateTimeCursor));
-                        var nextCandleIndex = pair.Key.FindFirstIndexOrDefault(c => c.DateTime >= nextDateTimeCursor);
+                        var candleIndex = pair.Key.ToList().FindIndexOrDefault(c => c.DateTime.Equals(dateTimeCursor));
+                        var nextCandleIndex = pair.Key.ToList().FindIndexOrDefault(c => c.DateTime >= nextDateTimeCursor);
                         if (candleIndex == null || nextCandleIndex == null)
                             continue;
 

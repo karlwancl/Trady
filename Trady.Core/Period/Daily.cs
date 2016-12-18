@@ -3,14 +3,14 @@ using Trady.Core.Helper;
 
 namespace Trady.Core.Period
 {
-    public class Daily : IPeriod, IInterdayPeriod
+    public class Daily : PeriodBase, IInterdayPeriod
     {
-        public uint NumPerDay => 1;
+        public uint OrderOfTransformation => 1;
 
-        public bool IsTimestamp(DateTime dateTime)
+        public override bool IsTimestamp(DateTime dateTime)
             => dateTime.TimeOfDay == new TimeSpan(0, 0, 0);
 
-        public DateTime NextTimestamp(DateTime dateTime)
-            => dateTime.Truncate(TimeSpan.FromDays(1)).AddDays(1);
+        protected override DateTime ComputeTimestampByCorrectedPeriodCount(DateTime dateTime, int correctedPeriodCount)
+            => dateTime.Truncate(TimeSpan.FromDays(1)).AddDays(correctedPeriodCount);
     }
 }

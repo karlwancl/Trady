@@ -2,6 +2,6 @@
 {
     public interface IFixedTimeSeries<TTick> : ITimeSeries<TTick> where TTick: ITick
     {
-        int MaxTickCount { get; }
+        int MaxCount { get; }
     }
 }

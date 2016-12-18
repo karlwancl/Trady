@@ -26,7 +26,7 @@ namespace Trady.Strategy
 
         public int Index => _index;
 
-        public ComputableCandle Next => _index + 1 < _equity.TickCount ? _equity.GetComputableCandleAt(_index + 1) : null;
+        public ComputableCandle Next => _index + 1 < _equity.Count ? _equity.GetComputableCandleAt(_index + 1) : null;
 
         public decimal? PriceChange()
             => _equity.GetOrCreateAnalytic<ClosePriceChange>().ComputeByIndex(_index).Change;

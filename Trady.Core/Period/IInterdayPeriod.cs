@@ -12,6 +12,6 @@ namespace Trady.Core.Period
         /// <summary>
         /// Any number representing order of transformation, recommend using number of days
         /// </summary>
-        uint NumPerDay { get; }
+        uint OrderOfTransformation { get; }
     }
 }

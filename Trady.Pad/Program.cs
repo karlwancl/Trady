@@ -24,8 +24,8 @@ class Program
     static void Main(string[] args)
     {
         //DownloadData();
-        //DownloadSpx();
-        DownloadFB();
+        DownloadSpx();
+        //DownloadFB();
         CalculateIndicators();
         //PlayWithStrategy();
         //PlayWithMValue();
@@ -107,7 +107,7 @@ class Program
         var importer = new CsvImporter(Path.Combine(ExecutingAssembly, "FB.csv"));
         var equity = importer.ImportAsync("FB").Result;
         //var importer = new YahooFinanceImporter();
-        //var equity = importer.ImportAsync("00392.HK").Result;
+        //var equity = importer.ImportAsync("0392.HK").Result;
 
         Console.WriteLine("Computing data...");
         var startTime = DateTime.Now;
@@ -123,6 +123,7 @@ class Program
         var adxTs = equity.Adx(14);
         var aroonTs = equity.Aroon(25);
         var chandlrTs = equity.Chandlr(22, 3);
+        //var cloudTs = 
         var endTime = DateTime.Now;
         Console.WriteLine($"Data computed: time elapsed: {(endTime - startTime).TotalMilliseconds}ms");
 
@@ -155,25 +156,25 @@ class Program
         var importer = new CsvImporter(Path.Combine(ExecutingAssembly, "SPX.csv"));
         var equity = importer.ImportAsync("SPX").Result;
 
-        var list = Enumerable.Range(4, 17).ToList();
-        list.AddRange(Enumerable.Range(5, 44).Select(v => v * 5));
+        var list = Enumerable.Range(91, 60).ToList();
+        //list.AddRange(Enumerable.Range(5, 44).Select(v => v * 5));
 
-        var oscList = new List<Tuple<int, int>>
-        {
-            new Tuple<int, int>(10, 20),
-            new Tuple<int, int>(10, 30),
-            new Tuple<int, int>(20, 40),
-            new Tuple<int, int>(20, 50),
-            new Tuple<int, int>(30, 50),
-            new Tuple<int, int>(30, 100),
-            new Tuple<int, int>(30, 150),
-            new Tuple<int, int>(50, 100),
-            new Tuple<int, int>(50, 150),
-            new Tuple<int, int>(50, 200),
-            new Tuple<int, int>(50, 250),
-            new Tuple<int, int>(100, 200),
-            new Tuple<int, int>(100, 250)
-        };
+        //var oscList = new List<Tuple<int, int>>
+        //{
+        //    new Tuple<int, int>(10, 20),
+        //    new Tuple<int, int>(10, 30),
+        //    new Tuple<int, int>(20, 40),
+        //    new Tuple<int, int>(20, 50),
+        //    new Tuple<int, int>(30, 50),
+        //    new Tuple<int, int>(30, 100),
+        //    new Tuple<int, int>(30, 150),
+        //    new Tuple<int, int>(50, 100),
+        //    new Tuple<int, int>(50, 150),
+        //    new Tuple<int, int>(50, 200),
+        //    new Tuple<int, int>(50, 250),
+        //    new Tuple<int, int>(100, 200),
+        //    new Tuple<int, int>(100, 250)
+        //};
         var mValueResults = new ConcurrentDictionary<string, MValueResult>();
         var allStartTime = DateTime.Now;
         Console.WriteLine($"Start process @ {allStartTime} ...");
@@ -181,20 +182,15 @@ class Program
         list.ForEach(p =>
         {
             var startTime = DateTime.Now;
-            Console.WriteLine($"Processing SMA({p}) @ {startTime}...");
-            Parallel.ForEach(oscList, pair =>
-            {
-                string name = $"AboveSma({p})&SmaOscBullish({pair.Item1},{pair.Item2})";
-                Console.WriteLine($"Processing {name}...");
-                var mValue = equity.ComputeMValue(c => c.IsAboveSma(p) && c.IsSmaBullish(50) && c.IsSmaOscBullish(pair.Item1, pair.Item2));
-                bool addedSuccess = mValueResults.TryAdd(name, mValue);
-                if (!addedSuccess)
-                    Console.WriteLine($"{p} add fails");
-                Console.WriteLine("{0}: {1:0.####}%, {2:0.####}%, {3:0.####}%, {4}, {5}", name, mValue.MValue1, mValue.MValue2, mValue.MValue3, mValue.EventCount, mValue.SampleCount);
-            });
-
+            string name = $"Above Sma(2,{p})";
+            Console.WriteLine($"Processing {name}...");
+            var mValue = equity.ComputeMValue(c => c.IsAboveSma(2) && c.IsAboveSma(p));
+            bool addedSuccess = mValueResults.TryAdd(name, mValue);
+            if (!addedSuccess)
+                Console.WriteLine($"{p} add failed");
+            Console.WriteLine("{0}: {1:0.####}%, {2:0.####}%, {3:0.####}%, {4}, {5}", name, mValue.MValue1, mValue.MValue2, mValue.MValue3, mValue.EventCount, mValue.SampleCount);
             var endTime = DateTime.Now;
-            Console.WriteLine($"Processed SMA({p}) @ {endTime}, Time elapsed: {(endTime - startTime).TotalSeconds}s");
+            Console.WriteLine($"Processed {name} @ {endTime}, Time elapsed: {(endTime - startTime).TotalSeconds}s");
         });
 
         var allEndTime = DateTime.Now;
@@ -209,18 +205,20 @@ class Program
     private static void PlayWithStrategy()
     {
         Console.WriteLine("Importing data...");
-        var importer = new CsvImporter("data\\FB.csv");
-        var equity = importer.ImportAsync("FB").Result;
+        var importer = new CsvImporter(Path.Combine(ExecutingAssembly, "SPX.csv"));
+        var equity = importer.ImportAsync("SPX").Result;
         //var importer = new YahooFinanceImporter();
         //var equity = importer.ImportAsync("0392.HK").Result;
         //equity.MaxTickCount = 256;
 
         Console.WriteLine("Setting rules...");
-        var buyRule = Rule.Create(c => c.IsFullStoBullishCross(13, 3, 3))
-            .And(c => c.IsMacdOscBullish(12, 26, 9))
-            .And(c => c.IsEmaBullish(30));
+        //var buyRule = Rule.Create(c => c.IsFullStoBullishCross(13, 3, 3))
+        //    .And(c => c.IsMacdOscBullish(12, 26, 9))
+        //    .And(c => c.IsEmaBullish(30));
+        var buyRule = Rule.Create(c => c.IsAboveSma(2));
 
-        var sellRule = Rule.Create(c => c.IsFullStoBearishCross(13, 3, 3));
+        //var sellRule = Rule.Create(c => c.IsFullStoBearishCross(13, 3, 3));
+        var sellRule = Rule.Create(c => !c.IsAboveSma(2));
 
         Console.WriteLine("Creating portfolio...");
         var portfolio = new PortfolioBuilder()

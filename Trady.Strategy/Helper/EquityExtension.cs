@@ -12,6 +12,6 @@ namespace Trady.Strategy.Helper
             => new ComputableCandle(equity, index);
 
         public static IList<ComputableCandle> ToComputableCandles(this Equity equity)
-            => Enumerable.Range(0, equity.TickCount).Select(i => new ComputableCandle(equity, i)).ToList();
+            => Enumerable.Range(0, equity.Count).Select(i => new ComputableCandle(equity, i)).ToList();
     }
 }
