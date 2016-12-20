@@ -11,12 +11,6 @@
     <PackageReference Include="CsvHelper">
       <Version>2.16.3</Version>
     </PackageReference>
-    <PackageReference Include="Flurl">
-      <Version>2.2.1</Version>
-    </PackageReference>
-    <PackageReference Include="Flurl.Http">
-      <Version>1.1.1</Version>
-    </PackageReference>
     <PackageReference Include="NETStandard.Library">
       <Version>1.6.1</Version>
     </PackageReference>
@@ -27,6 +21,7 @@
     <PackageReference Include="Quandl.NET">
       <Version>1.0.7</Version>
     </PackageReference>
+    <PackageReference Include="YahooFinanceApi" Version="1.0.1" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Trady.Core\Trady.Core.csproj" />

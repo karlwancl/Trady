@@ -5,7 +5,7 @@ Trady targets to be an automated trading system that provides stock data feeding
 This system is still in early-stage, and it's still immature to use in production environment, please use it wisely.
 
 ### Currently Available Features
-* Stock data feeding (via [Quandl.NET](https://github.com/salmonthinlion/Quandl.NET))
+* Stock data feeding (via [Quandl.NET](https://github.com/salmonthinlion/Quandl.NET), [YahooFinanceApi](https://github.com/salmonthinlion/YahooFinanceApi))
 * Indicator computing (including SMA, EMA, RSI, MACD, BB, etc.)
 * Strategy building & backtesting
 
@@ -24,6 +24,9 @@ There is no nuget package available yet. You can check out the project and use i
     // From Quandl wiki database
     var importer = new QuandlWikiImporter(apiKey);
 
+    // From Yahoo Finance
+    var importer = new YahooFinanceImporter();
+
     // Or from dedicated csv file
     var importer = new CsvImporter("FB.csv");
 
@@ -31,7 +34,7 @@ There is no nuget package available yet. You can check out the project and use i
     var equity = await importer.ImportAsync("FB");
 
 #### Compute indicators
-    // Currently available indicators: SMA, EMA, RSI, MACD, BB, Stochastics, OBV, AccumDist, ATR, ADX
+    // Currently available indicator
     var smaTs = equity.Sma(30);
     var emaTs = equity.Ema(30);
     var rsiTs = equity.Rsi(14);
@@ -41,7 +44,10 @@ There is no nuget package available yet. You can check out the project and use i
     var accumDistTs = equity.AccumDist();
     var bbTs = equity.Bb(20, 2);
     var atrTs = equity.Atr(14);
-    var adxTs = equity.Adx(14);
+    var dmiTs = equity.Dmi(14);
+    var aroonTs = equity.Aroon(25);
+    var chandlerTs = equity.Chandlr(22, 3);
+    var ichimokuTs = equity.Ichimoku(9, 26, 52);
 
 #### Strategy building & backtesting
     // Build buy rule & sell rule based on various patterns
@@ -56,13 +62,14 @@ There is no nuget package available yet. You can check out the project and use i
 
     // Create portfolio instance by using PortfolioBuilder
     var portfolio = new PortfolioBuilder()
-        .Add(equity)
+        .Add(equity, 10)
+        .Add(equity2, 30)
         .Buy(buyRule)
         .Sell(sellRule)
         .Build();
     
     // Start backtesting with the portfolio
-    var result = await portfolio.RunAsync(10000);
+    var result = await portfolio.RunAsync(10000, 1);
 
     // Get backtest result for the portfolio
     Console.WriteLine(string.Format("Transaction count: {0:#.##}, P/L ratio: {1:0.##}%, Principal: {2:#}, Total: {3:#}",
@@ -72,13 +79,10 @@ There is no nuget package available yet. You can check out the project and use i
         result.Total));
 
 ### Backlog
-* Complete other indicators (e.g. ADX, Aroon, etc.)
-* Complete candlestick patterns
-* Add more indicator filtering patterns (e.g. IsOverSma(30), IsBelowSma(30), etc.)
-* Add more rule for strategy building
+* Complete other indicators (e.g. Keltner Channels, KAMA, MA Envelopes, etc.)
+* Complete candlestick patterns (Low priority)
+* Add more indicator filtering patterns (Add patterns on demand)
 * Add broker adaptor for real-time trade (e.g. interactive broker, etc.)
-* Add stock feed provider for real-time trade (e.g. Yahoo!, etc.)
-* Maybe reporting for backtesting result/ real-time trade result
 * MORE, MORE AND MORE!!!!
 
 ### Powered by

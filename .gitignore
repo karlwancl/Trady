@@ -251,6 +251,6 @@ paket-files/
 .idea/
 *.sln.iml
 
-# MValue Folder
-Trady.Strategy/MValue
+# Ignore intended
 Trady.Pad/data
+Trady.Strategy/MValue

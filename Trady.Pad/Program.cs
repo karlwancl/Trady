@@ -24,8 +24,8 @@ class Program
     static void Main(string[] args)
     {
         //DownloadData();
-        DownloadSpx();
-        //DownloadFB();
+        //DownloadSpx();
+        DownloadFB();
         CalculateIndicators();
         //PlayWithStrategy();
         //PlayWithMValue();
@@ -111,40 +111,41 @@ class Program
 
         Console.WriteLine("Computing data...");
         var startTime = DateTime.Now;
-        var smaTs = equity.Sma(30);
-        var emaTs = equity.Ema(30);
-        var rsiTs = equity.Rsi(14);
-        var macdTs = equity.Macd(12, 26, 9);
-        var stoTs = equity.FullSto(14, 3, 3);
-        var obvTs = equity.Obv();
-        var accumDistTs = equity.AccumDist();
-        var bbTs = equity.Bb(20, 2);
-        var atrTs = equity.Atr(14);
-        var adxTs = equity.Adx(14);
-        var aroonTs = equity.Aroon(25);
-        var chandlrTs = equity.Chandlr(22, 3);
-        //var cloudTs = 
+        //var smaTs = equity.Sma(30);
+        //var emaTs = equity.Ema(30);
+        //var rsiTs = equity.Rsi(14);
+        //var macdTs = equity.Macd(12, 26, 9);
+        //var stoTs = equity.FullSto(14, 3, 3);
+        //var obvTs = equity.Obv();
+        //var accumDistTs = equity.AccumDist();
+        //var bbTs = equity.Bb(20, 2);
+        //var atrTs = equity.Atr(14);
+        //var adxTs = equity.Adx(14);
+        //var aroonTs = equity.Aroon(25);
+        //var chandlrTs = equity.Chandlr(22, 3);
+        var ichimokuTs = equity.Ichimoku(9, 26, 52);
         var endTime = DateTime.Now;
         Console.WriteLine($"Data computed: time elapsed: {(endTime - startTime).TotalMilliseconds}ms");
 
         var tsList = new List<ITimeSeries>
         {
-            smaTs,
-            emaTs,
-            rsiTs,
-            macdTs,
-            stoTs,
-            obvTs,
-            accumDistTs,
-            bbTs,
-            atrTs,
-            adxTs,
-            aroonTs,
-            chandlrTs
+            //smaTs,
+            //emaTs,
+            //rsiTs,
+            //macdTs,
+            //stoTs,
+            //obvTs,
+            //accumDistTs,
+            //bbTs,
+            //atrTs,
+            //adxTs,
+            //aroonTs,
+            //chandlrTs,
+            ichimokuTs
         };
         Console.WriteLine("Exporting results...");
         var exporter = new CsvExporter(Path.Combine(ExecutingAssembly, "FBResult.csv"));
-        bool success = exporter.ExportAsync(equity, tsList).Result;
+        bool success = exporter.ExportAsync(equity, tsList, ascending: false).Result;
 
         Console.WriteLine("Process completed!");
         Console.ReadLine();
@@ -195,7 +196,7 @@ class Program
 
         var allEndTime = DateTime.Now;
         Console.WriteLine($"All processed @ {allEndTime}. Time elapsed: {(allEndTime - allStartTime).TotalSeconds}s. Start saving result...");
-        var exporter = new MValueExporter(Path.Combine(ExecutingAssembly, "SPX_MValue_Result.csv"));
+        var exporter = new MValueExporter(Path.Combine(ExecutingAssembly, $"SPX_MValue_Result_{DateTime.Now.ToString("yyyyMMddhhmmss")}.csv"));
         bool success = exporter.ExportAsync(mValueResults.OrderBy(kvp => kvp.Key).ToDictionary(kvp => kvp.Key, kvp => kvp.Value)).Result;
         Console.WriteLine("Result saved");
 
@@ -205,10 +206,10 @@ class Program
     private static void PlayWithStrategy()
     {
         Console.WriteLine("Importing data...");
-        var importer = new CsvImporter(Path.Combine(ExecutingAssembly, "SPX.csv"));
-        var equity = importer.ImportAsync("SPX").Result;
-        //var importer = new YahooFinanceImporter();
-        //var equity = importer.ImportAsync("0392.HK").Result;
+        //var importer = new CsvImporter(Path.Combine(ExecutingAssembly, "SPX.csv"));
+        //var equity = importer.ImportAsync("SPX").Result;
+        var importer = new YahooFinanceImporter();
+        var equity = importer.ImportAsync("0327.HK").Result;
         //equity.MaxTickCount = 256;
 
         Console.WriteLine("Setting rules...");
@@ -232,7 +233,7 @@ class Program
 
         PortfolioResult result;
         Console.WriteLine();
-        result = portfolio.RunAsync(10000, 1.0m, new DateTime(2016, 1, 1)).Result;
+        result = portfolio.RunAsync(10000, 1, new DateTime(2016, 1, 1)).Result;
         var endTime = DateTime.Now;
         Console.WriteLine($"Backtest completed @ {endTime}. Time elapsed: {(endTime - startTime).TotalSeconds} s.");
 

@@ -54,29 +54,42 @@ namespace Trady.Exporter
 
         private static void WriteRecords(Equity equity, IList<ITimeSeries> resultTimeSeriesList, DateTime? startTime, DateTime? endTime, bool ascending, CsvWriter csvWriter)
         {
-            for (int i = 0; i < equity.Count; i++)
-            {
-                var candle = equity[ascending ? i : equity.Count - i - 1];
+            var maxTickCountAmongTs = resultTimeSeriesList?.Max(ts => ts.Ticks.Count) ?? equity.Count;
+            var tsWithMaxTickCount = resultTimeSeriesList?.First(ts => ts.Ticks.Count == maxTickCountAmongTs) ?? equity;
 
-                var currentDateTime = candle.DateTime;
+            for (int i = 0; i < maxTickCountAmongTs; i++)
+            {
+                var currentDateTime = tsWithMaxTickCount.Ticks[i].DateTime;
                 if (startTime.HasValue && currentDateTime < startTime.Value || endTime.HasValue && currentDateTime >= endTime.Value)
                     continue;
 
-                new List<object> { candle.DateTime, candle.Open, candle.High, candle.Low, candle.Close, candle.Volume }
-                    .ForEach(o => csvWriter.WriteField(o));
+                var candle = equity.FirstOrDefault(c => c.DateTime == currentDateTime);
+
+                new List<object> { currentDateTime, candle?.Open, candle?.High, candle?.Low, candle?.Close, candle?.Volume }
+                    .ForEach(o => csvWriter.WriteField(o ?? ""));
 
                 resultTimeSeriesList?
-                    .Where(ts => ts != null)
+                    .Where(ts => ts != null && ts.Ticks != null && ts.Ticks.Any())
                     .ToList()
                     .ForEach(ts =>
                     {
-                        var result = ts.Ticks.First(r => r.DateTime == currentDateTime);
-                        result
+                        var result = ts.Ticks.FirstOrDefault(r => r.DateTime == currentDateTime);
+                        if (result != null)
+                            result
                             .GetType()
                             .GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly)
                             .Select(p => p.GetValue(result, null))
                             .ToList()
                             .ForEach(o => csvWriter.WriteField(o ?? ""));
+                        else
+                        {
+                            ts.Ticks
+                            .First()
+                            .GetType()
+                            .GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly)
+                            .ToList()
+                            .ForEach(p => csvWriter.WriteField(""));
+                        }
                     });
 
                 csvWriter.NextRecord();

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using Trady.Core;
+using Trady.Core.Period;
 
 namespace Trady.Analysis.Indicator
 {
@@ -10,7 +11,7 @@ namespace Trady.Analysis.Indicator
         public static TimeSeries<AccumulationDistributionLine.IndicatorResult> AccumDist(this Equity equity, DateTime? startTime = null, DateTime? endTime = null)
             => equity.GetOrCreateAnalytic< AccumulationDistributionLine>().Compute(startTime, endTime);
 
-        public static TimeSeries<DirectionalMovementIndex.IndicatorResult> Adx(this Equity equity, int periodCount, int adxrPeriodCount = 0, DateTime? startTime = null, DateTime? endTime = null)
+        public static TimeSeries<DirectionalMovementIndex.IndicatorResult> Dmi(this Equity equity, int periodCount, int adxrPeriodCount = 0, DateTime? startTime = null, DateTime? endTime = null)
             => equity.GetOrCreateAnalytic< DirectionalMovementIndex>( periodCount, adxrPeriodCount).Compute(startTime, endTime);
 
         public static TimeSeries<AverageTrueRange.IndicatorResult> Atr(this Equity equity, int periodCount, DateTime? startTime = null, DateTime? endTime = null)
@@ -69,5 +70,8 @@ namespace Trady.Analysis.Indicator
 
         public static TimeSeries<ChandelierExit.IndicatorResult> Chandlr(this Equity equity, int periodCount, int atrCount, DateTime? startTime = null, DateTime? endTime = null)
             => equity.GetOrCreateAnalytic<ChandelierExit>(periodCount, atrCount).Compute(startTime, endTime);
+
+        public static TimeSeries<IchimokuCloud.IndicatorResult> Ichimoku(this Equity equity, int shortPeriodCount, int middlePeriodCount, int longPeriodCount, Country? country = null, DateTime? startTime = null, DateTime? endTime = null)
+            => equity.GetOrCreateAnalytic<IchimokuCloud>(shortPeriodCount, middlePeriodCount, longPeriodCount, country).Compute(startTime, endTime);
     }
 }
