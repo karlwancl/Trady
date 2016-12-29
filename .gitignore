@@ -251,6 +251,6 @@ paket-files/
 .idea/
 *.sln.iml
 
-# Ignore intended
+# Skip all downloaded data & non-public code
 Trady.Pad/data
 Trady.Strategy/MValue

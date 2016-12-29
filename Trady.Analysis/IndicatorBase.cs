@@ -2,7 +2,7 @@
 
 namespace Trady.Analysis
 {
-    public abstract class IndicatorBase<TTick> : AnalyticBase<TTick>, IIndicator where TTick: ITick
+    public abstract class IndicatorBase<TTick> : AnalyzableBase<TTick>, IIndicator where TTick: ITick
     {
         public IndicatorBase(Equity equity, params int[] parameters) : base(equity)
         {

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Trady.Core.Exception;
 using Trady.Core.Helper;
 using Trady.Core.Period;
 
@@ -19,7 +20,7 @@ namespace Trady.Core
                 return this;
 
             if (!IsTransformValid(Period, outputPeriod))
-                throw new ArgumentException("Only conversion from lower period to higher period is allowed");
+                throw new InvalidTransformationException(Period, outputPeriod);
 
             var outputSeries = new Equity(Name);
             var outputPeriodInstance = outputPeriod.CreateInstance();
@@ -28,14 +29,12 @@ namespace Trady.Core
             while (periodStartTime <= Ticks.Last().DateTime)
             {
                 var periodNextStartTime = outputPeriodInstance.NextTimestamp(periodStartTime);
-
                 if (outputPeriodInstance.IsTimestamp(periodStartTime))
                 {
                     var candle = ComputeCandle(Ticks, periodStartTime, periodNextStartTime);
                     if (candle != null)
                         outputSeries.Add(candle);
                 }
-
                 periodStartTime = periodNextStartTime;
             }
 
@@ -63,7 +62,6 @@ namespace Trady.Core
             Candle ComputeCandle(IList<Candle> candles, DateTime startTime, DateTime endTime)
             {
                 var candlesSubset = candles.Where(c => c.DateTime >= startTime && c.DateTime < endTime);
-
                 if (candlesSubset.Any())
                 {
                     var startTimeOfFirstCandle = candlesSubset.First().DateTime;
@@ -72,7 +70,6 @@ namespace Trady.Core
                     var low = candlesSubset.Min(stick => stick.Low);
                     var close = candlesSubset.Last().Close;
                     var volume = candlesSubset.Sum(stick => stick.Volume);
-
                     return new Candle(startTimeOfFirstCandle, open, high, low, close, volume);
                 }
                 return null;

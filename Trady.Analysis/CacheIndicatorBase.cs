@@ -10,18 +10,16 @@ namespace Trady.Analysis
     public abstract class CacheIndicatorBase<TTick> : IndicatorBase<TTick> where TTick: ITick
     {
         private IMemoryCache _cache;
-        private readonly Func<int, int?> _getPriorCacheAvailableIndex;
+        private readonly Func<int, int?> _getNearestCachedIndex;
 
         public CacheIndicatorBase(Equity equity, params int[] parameters) : base(equity, parameters)
         {
             _cache = new MemoryCache(new MemoryCacheOptions());
-            _getPriorCacheAvailableIndex = i =>
+            _getNearestCachedIndex = i =>
             {
                 for (int j = i - 1; j >= 0; j--)
-                {
                     if (_cache.TryGetValue(Equity[j].DateTime, out TTick tick))
                         return j;
-                }
                 return null;
             };
         }
@@ -43,11 +41,10 @@ namespace Trady.Analysis
             }
             else
             {
-                int startIndex = _getPriorCacheAvailableIndex(index) ?? 0;
+                int startIndex = _getNearestCachedIndex(index) ?? 0;
                 for (int i = startIndex; i < index; i++)
                 {
-                    bool canGetCached = _cache.TryGetValue(Equity[i].DateTime, out TTick prevTick);
-                    if (!canGetCached)
+                    if (!_cache.TryGetValue(Equity[i].DateTime, out TTick prevTick))
                         prevTick = ComputeByIndex(i);
                     tick = ComputeIndexValue(i + 1, prevTick);
                     _cache.GetOrCreate(Equity[index].DateTime, entry => tick);

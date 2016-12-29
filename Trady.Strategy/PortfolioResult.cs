@@ -12,7 +12,7 @@ namespace Trady.Strategy
         private IDictionary<Equity, Dictionary<DateTime, decimal>> _equitiesTransactions;
         private Func<Dictionary<DateTime, decimal>, int, decimal> _change;
 
-        public PortfolioResult(decimal principal, decimal premium, IList<(Equity equity, DateTime transactionDateTime, decimal amount)> equitiesTransactions)
+        internal PortfolioResult(decimal principal, decimal premium, IList<(Equity equity, DateTime transactionDateTime, decimal amount)> equitiesTransactions)
         {
             _principal = principal;
             _premium = premium;

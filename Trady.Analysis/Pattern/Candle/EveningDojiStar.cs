@@ -6,7 +6,7 @@ namespace Trady.Analysis.Pattern.Candle
     /// <summary>
     /// Reference: http://stockcharts.com/school/doku.php?id=chart_school:chart_analysis:candlestick_pattern_dictionary
     /// </summary>
-    public class EveningDojiStar : AnalyticBase<IsMatchedResult>
+    public class EveningDojiStar : AnalyzableBase<IsMatchedResult>
     {
         public EveningDojiStar(Equity equity) : base(equity)
         {

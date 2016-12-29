@@ -2,112 +2,138 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Trady.Analysis;
 using Trady.Core;
 using Trady.Core.Helper;
-using Trady.Strategy.Helper;
 using Trady.Strategy.Rule;
 
 namespace Trady.Strategy
 {
     public class Portfolio
     {
-        private IDictionary<Equity, int> _pairs;
-        private IRule<ComputableCandle> _buyRule;
-        private IRule<ComputableCandle> _sellRule;
+        private IDictionary<Equity, int> _equityPairs;
+        private IRule<AnalyzableCandle> _buyRule;
+        private IRule<AnalyzableCandle> _sellRule;
 
-        public Portfolio(IDictionary<Equity, int> equityPairs, IRule<ComputableCandle> buyRule, IRule<ComputableCandle> sellRule)
+        public event BuyHandler OnBought;
+        public delegate void BuyHandler(int quantity, string symbol, decimal currentPrice, DateTime currentDate, decimal balance);
+
+        public event SellHandler OnSold;
+        public delegate void SellHandler(int quantity, string symbol, decimal currentPrice, DateTime currentDate, decimal balance, decimal plRatio);
+
+        #region Builder
+
+        public Portfolio() : this(null, null, null) { }
+
+        private Portfolio(IDictionary<Equity, int> equityPairs, IRule<AnalyzableCandle> buyRule, IRule<AnalyzableCandle> sellRule)
         {
-            _pairs = equityPairs;
+            _equityPairs = equityPairs ?? new Dictionary<Equity, int>();
             _buyRule = buyRule;
             _sellRule = sellRule;
         }
 
-        public async Task<PortfolioResult> RunAsync(decimal principal, decimal premium = 1.0m, DateTime? startTime = null, DateTime? endTime = null)
+        public Portfolio Add(Equity equity, int portion = 1)
+        {
+            if (_equityPairs.TryGetValue(equity, out int equityPortion))
+                _equityPairs[equity] = equityPortion + portion;
+            else
+                _equityPairs.Add(equity, portion);
+            return new Portfolio(_equityPairs, _buyRule, _sellRule);
+        }
+
+        public Portfolio Buy(IRule<AnalyzableCandle> rule)
+            => new Portfolio(_equityPairs, (_buyRule?.Or(rule)) ?? rule , _sellRule);
+
+        public Portfolio Sell(IRule<AnalyzableCandle> rule)
+            => new Portfolio(_equityPairs, _buyRule, (_sellRule?.Or(rule)) ?? rule);
+
+        #endregion
+
+        public async Task<PortfolioResult> RunBacktestAsync(decimal principal, decimal premium = 1.0m, DateTime? startTime = null, DateTime? endTime = null)
         {
             return await Task.Factory.StartNew(() =>
             {
-                if (_pairs == null || !_pairs.Any())
+                if (_equityPairs == null || !_equityPairs.Any())
                     throw new ArgumentException("You should have at least one equity for calculation");
 
+                // Initialization: transaction history, period instance, fund map, asset map
                 var transactions = new List<(Equity equity, DateTime transactionDatetime, decimal amount)>();
+                var pairs = UnifyEquitiesPeriod(_equityPairs);
+                var periodInstance = pairs.First().Key.Period.CreateInstance();
+                var balanceMap = pairs.ToDictionary(kvp => kvp.Key, kvp => principal * Convert.ToDecimal(kvp.Value * 1.0 / pairs.Sum(p => p.Value)));
+                var assetMap = new Dictionary<Equity, (AnalyzableCandle candle, int quantity)>();
 
-                var _processedPairs = UnifyEquitiesPeriod(_pairs);
-                var period = _processedPairs.First().Key.Period.CreateInstance();
+                // Get the earliest start time among the equities, use it as the start time for looping. Ignore the very first record if the time is not a timestamp
+                DateTime dateTimeCursor = startTime ?? pairs.Min(kvp => kvp.Key.Min(c => c.DateTime));
+                if (!periodInstance.IsTimestamp(dateTimeCursor))
+                    dateTimeCursor = periodInstance.NextTimestamp(dateTimeCursor);
 
-                DateTime dateTimeCursor = startTime ?? _processedPairs.Min(kvp => kvp.Key.Min(c => c.DateTime));
-                if (!period.IsTimestamp(dateTimeCursor))
-                    dateTimeCursor = period.NextTimestamp(dateTimeCursor);
+                // Get the latest end time among the equities, use it as the end time for looping
+                DateTime dateTimeEnd = endTime ?? pairs.Max(kvp => kvp.Key.Max(c => c.DateTime));
 
-                DateTime dateTimeEnd = endTime ?? _processedPairs.Max(kvp => kvp.Key.Max(c => c.DateTime));
-
-                var fundMap = _processedPairs.ToDictionary(kvp => kvp.Key, kvp => principal * Convert.ToDecimal(kvp.Value * 1.0 / _processedPairs.Sum(p => p.Value)));
-                var assetMap = new Dictionary<Equity, (ComputableCandle candle, int quantity)>();
-
-                while (period.NextTimestamp(dateTimeCursor) < dateTimeEnd)
+                // Loop when there is next timestamp before the end time, since we transact on next timestamp when the previous day fulfill the trade requirement
+                while (periodInstance.NextTimestamp(dateTimeCursor) < dateTimeEnd)
                 {
-                    var nextDateTimeCursor = period.NextTimestamp(dateTimeCursor);
-                    foreach (var pair in _processedPairs)
+                    var nextDateTimeCursor = periodInstance.NextTimestamp(dateTimeCursor);
+                    foreach (var pair in pairs)
                     {
+                        // For each pair, skip if the current timestamp does not exist / the next timestamp does not exist, reason is the same as stated above
                         var candleIndex = pair.Key.ToList().FindIndexOrDefault(c => c.DateTime.Equals(dateTimeCursor));
                         var nextCandleIndex = pair.Key.ToList().FindIndexOrDefault(c => c.DateTime >= nextDateTimeCursor);
                         if (candleIndex == null || nextCandleIndex == null)
                             continue;
 
-                        var candle = pair.Key.GetComputableCandleAt(candleIndex.Value);
-                        var nextCandle = pair.Key.GetComputableCandleAt(nextCandleIndex.Value);
+                        var candle = new AnalyzableCandle(pair.Key, candleIndex.Value);
+                        var nextCandle = new AnalyzableCandle(pair.Key, nextCandleIndex.Value);
                         bool isBought = assetMap.TryGetValue(pair.Key, out var bought);
 
+                        // Transact if current timestamp fulfill the trade requirement
                         if (!isBought && _buyRule.IsValid(candle))
-                        {
-                            int quantity = Convert.ToInt32(Math.Floor((fundMap[pair.Key] - premium) / nextCandle.Open));
-                            decimal moneyOut = nextCandle.Open * quantity + premium;
-
-                            fundMap[pair.Key] -= moneyOut;
-                            assetMap.Add(pair.Key, (nextCandle, quantity));
-
-                            transactions.Add((pair.Key, nextCandle.DateTime, -moneyOut));
-                            Console.WriteLine("Buy {0} units of {1} @ {2:0.##} on {3}, Fund: $ {4}", quantity, pair.Key.Name, nextCandle.Open, nextCandle.DateTime, fundMap[pair.Key]);
-                        }
+                            BuyEquity(premium, transactions, balanceMap, assetMap, pair, nextCandle);
                         else if (isBought && _sellRule.IsValid(candle))
-                        {
-                            decimal pl = 100 * (nextCandle.Open - bought.candle.Open) / bought.candle.Open;
-                            decimal moneyIn = nextCandle.Open * bought.quantity - premium;
-
-                            fundMap[pair.Key] += moneyIn;
-                            assetMap.Remove(pair.Key);
-
-                            transactions.Add((pair.Key, nextCandle.DateTime, moneyIn));
-                            Console.WriteLine("Sell {0} units of {1} @ {2:0.##} on {3}, P/L: {4:0.##}%, Fund: $ {5}", bought.quantity, pair.Key.Name, nextCandle.Open, nextCandle.DateTime, pl, fundMap[pair.Key]);
-                            Console.WriteLine();
-                        }
+                            SellEquity(premium, transactions, balanceMap, assetMap, pair, nextCandle, bought);
                     }
 
-                    dateTimeCursor = period.NextTimestamp(dateTimeCursor);
+                    // Move cursor to next timestamp
+                    dateTimeCursor = periodInstance.NextTimestamp(dateTimeCursor);
                 }
                 return new PortfolioResult(principal, premium, transactions);
             }
             );
         }
 
+        private void SellEquity(decimal premium, List<(Equity equity, DateTime transactionDatetime, decimal amount)> transactions, Dictionary<Equity, decimal> fundMap, Dictionary<Equity, (AnalyzableCandle candle, int quantity)> assetMap, KeyValuePair<Equity, int> pair, AnalyzableCandle nextCandle, (AnalyzableCandle candle, int quantity) bought)
+        {
+            decimal plRatio = 100 * (nextCandle.Open - bought.candle.Open) / bought.candle.Open;
+            decimal moneyIn = nextCandle.Open * bought.quantity - premium;
+
+            fundMap[pair.Key] += moneyIn;
+            assetMap.Remove(pair.Key);
+
+            transactions.Add((pair.Key, nextCandle.DateTime, moneyIn));
+            OnSold?.Invoke(bought.quantity, pair.Key.Name, nextCandle.Open, nextCandle.DateTime, fundMap[pair.Key], plRatio);
+        }
+
+        private void BuyEquity(decimal premium, List<(Equity equity, DateTime transactionDatetime, decimal amount)> transactions, Dictionary<Equity, decimal> fundMap, Dictionary<Equity, (AnalyzableCandle candle, int quantity)> assetMap, KeyValuePair<Equity, int> pair, AnalyzableCandle nextCandle)
+        {
+            int quantity = Convert.ToInt32(Math.Floor((fundMap[pair.Key] - premium) / nextCandle.Open));
+            decimal moneyOut = nextCandle.Open * quantity + premium;
+
+            fundMap[pair.Key] -= moneyOut;
+            assetMap.Add(pair.Key, (nextCandle, quantity));
+
+            transactions.Add((pair.Key, nextCandle.DateTime, -moneyOut));
+            OnBought?.Invoke(quantity, pair.Key.Name, nextCandle.Open, nextCandle.DateTime, fundMap[pair.Key]);
+        }
+
         private static IDictionary<Equity, int> UnifyEquitiesPeriod(IDictionary<Equity, int> equityPairs)
         {
             var output = new Dictionary<Equity, int>();
+            var defaultPeriod = equityPairs.Keys.First().Period;
             foreach (var pair in equityPairs)
             {
-                if (!pair.Key.Period.Equals(equityPairs.Keys.First().Period))
-                {
-                    try
-                    {
-                        // Try upcast the period for calculation
-                        output.Add(pair.Key.Transform(equityPairs.Keys.First().Period), pair.Value);
-                    }
-                    catch (Exception)
-                    {
-                        throw new Exception($"Upcast period fails for equity: {pair.Key.Name}, the process is terminated");
-                    }
-                }
-                else
-                    output.Add(pair.Key, pair.Value);
+                bool isPeriodEquals = pair.Key.Period.Equals(defaultPeriod);
+                output.Add(isPeriodEquals ? pair.Key : pair.Key.Transform(defaultPeriod), pair.Value);
             }
             return output;
         }

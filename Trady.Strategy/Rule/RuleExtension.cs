@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Trady.Analysis;
 
 namespace Trady.Strategy.Rule
 {
@@ -36,13 +37,13 @@ namespace Trady.Strategy.Rule
 
     public static class Rule
     {
-        public static IRule<ComputableCandle> Create(this bool value)
-            => new Rule<ComputableCandle>(value);
+        public static IRule<AnalyzableCandle> Create(this bool value)
+            => new Rule<AnalyzableCandle>(value);
 
-        public static IRule<ComputableCandle> Create(this Predicate<ComputableCandle> predicate)
-            => new Rule<ComputableCandle>(predicate);
+        public static IRule<AnalyzableCandle> Create(this Predicate<AnalyzableCandle> predicate)
+            => new Rule<AnalyzableCandle>(predicate);
 
-        public static IRule<ComputableCandle> Create(this IOperation<ComputableCandle> @operator)
-            => new Rule<ComputableCandle>(@operator);
+        public static IRule<AnalyzableCandle> Create(this IOperation<AnalyzableCandle> @operator)
+            => new Rule<AnalyzableCandle>(@operator);
     }
 }

@@ -6,7 +6,7 @@ namespace Trady.Analysis.Pattern.Candle
     /// <summary>
     /// Reference: http://stockcharts.com/school/doku.php?id=chart_school:chart_analysis:candlestick_pattern_dictionary
     /// </summary>
-    public class Harami : AnalyticBase<IsMatchedResult>
+    public class Harami : AnalyzableBase<IsMatchedResult>
     {
         public Harami(Equity equity) : base(equity)
         {

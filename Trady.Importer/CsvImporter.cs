@@ -1,5 +1,4 @@
 ﻿using CsvHelper;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -9,14 +8,12 @@ using System.Threading.Tasks;
 using Trady.Core;
 using Trady.Core.Period;
 using Trady.Importer.Helper;
-using Trady.Logging;
 
 namespace Trady.Importer
 {
     public class CsvImporter : IImporter
     {
         private string _path;
-        private static ILogger _logger = new LoggerFactory().CreateLogger<CsvImporter>();
 
         public CsvImporter(string path)
         {
@@ -35,19 +32,10 @@ namespace Trady.Importer
                     while (csvReader.Read())
                     {
                         var record = csvReader.CurrentRecord;
-
-                        try
-                        {
-                            var recordDatetime = Convert.ToDateTime(record[0]);
-                            if (startTime.HasValue && recordDatetime < startTime.Value || endTime.HasValue && recordDatetime >= endTime.Value)
-                                continue;
-
-                            candles.Add(record.CreateCandleFromRow());
-                        }
-                        catch (Exception ex)
-                        {
-                            Logger.Warn($"The record {record[0]} will be skipped. ex: {ex.ToString()}");
-                        }
+                        var recordDatetime = Convert.ToDateTime(record[0]);
+                        if (startTime.HasValue && recordDatetime < startTime.Value || endTime.HasValue && recordDatetime >= endTime.Value)
+                            continue;
+                        candles.Add(record.CreateCandleFromRow());
                     }
                     return new Equity(symbol, candles).Transform(period);
                 }

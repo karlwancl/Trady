@@ -2,7 +2,7 @@
 
 namespace Trady.Analysis
 {
-    public interface IAnalytic
+    public interface IAnalyzable
     {
         Equity Equity { get; }
     }

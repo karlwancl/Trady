@@ -1,5 +1,4 @@
-﻿using Quandl.NET;
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
@@ -12,7 +11,6 @@ using Trady.Core;
 using Trady.Exporter;
 using Trady.Importer;
 using Trady.Strategy;
-using Trady.Strategy.Helper;
 using Trady.Strategy.MValue;
 using Trady.Strategy.Rule;
 using System.Reflection;
@@ -26,8 +24,8 @@ class Program
         //DownloadData();
         //DownloadSpx();
         DownloadFB();
-        CalculateIndicators();
-        //PlayWithStrategy();
+        //CalculateIndicators();
+        PlayWithStrategy();
         //PlayWithMValue();
         //TestHashCode();
     }
@@ -56,50 +54,50 @@ class Program
         bool? success = exporter.ExportAsync(fb).Result;
     }
 
-    private static void DownloadData()
-    {
-        Console.WriteLine("Downloading data...");
-        var sp500Constituents = UsefulDataAndLists.GetSP500IndexConstituentsAsync().Result;
+    //private static void DownloadData()
+    //{
+    //    Console.WriteLine("Downloading data...");
+    //    var sp500Constituents = UsefulDataAndLists.GetSP500IndexConstituentsAsync().Result;
 
-        const string ApiKey = "M185pFZuSebc4Qr5MRz2";
+    //    const string ApiKey = "M185pFZuSebc4Qr5MRz2";
 
-        var importer = new QuandlWikiImporter(ApiKey);
-        var equities = new List<Equity>();
+    //    var importer = new QuandlWikiImporter(ApiKey);
+    //    var equities = new List<Equity>();
 
-        var startTime = DateTime.Now;
-        Console.WriteLine($"Download start: {startTime}");
+    //    var startTime = DateTime.Now;
+    //    Console.WriteLine($"Download start: {startTime}");
 
-        int completedCount = 0;
-        Parallel.ForEach(sp500Constituents, new ParallelOptions { MaxDegreeOfParallelism = 4 }, c =>
-        {
-            var ticker = c.Ticker.Replace("-", "_");
+    //    int completedCount = 0;
+    //    Parallel.ForEach(sp500Constituents, new ParallelOptions { MaxDegreeOfParallelism = 4 }, c =>
+    //    {
+    //        var ticker = c.Ticker.Replace("-", "_");
 
-            bool downloadSuccess = false;
-            Equity equity = null;
-            while (!downloadSuccess)
-            {
-                try
-                {
-                    Console.WriteLine($"Downloading data: {ticker} ({completedCount}/{sp500Constituents.Count()})...");
-                    equity = importer.ImportAsync(ticker).Result;
-                    downloadSuccess = true;
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Fails to download history: {ex.Message}, Retry after 10 seconds...");
-                    Thread.Sleep(10000);
-                }
-            }
+    //        bool downloadSuccess = false;
+    //        Equity equity = null;
+    //        while (!downloadSuccess)
+    //        {
+    //            try
+    //            {
+    //                Console.WriteLine($"Downloading data: {ticker} ({completedCount}/{sp500Constituents.Count()})...");
+    //                equity = importer.ImportAsync(ticker).Result;
+    //                downloadSuccess = true;
+    //            }
+    //            catch (Exception ex)
+    //            {
+    //                Console.WriteLine($"Fails to download history: {ex.Message}, Retry after 10 seconds...");
+    //                Thread.Sleep(10000);
+    //            }
+    //        }
 
-            Interlocked.Add(ref completedCount, 1);
-            equities.Add(equity);
-            var exporter = new CsvExporter(Path.Combine(ExecutingAssembly, $"{equity.Name}.csv"));
-            bool success = exporter.ExportAsync(equity).Result;
-        });
+    //        Interlocked.Add(ref completedCount, 1);
+    //        equities.Add(equity);
+    //        var exporter = new CsvExporter(Path.Combine(ExecutingAssembly, $"{equity.Name}.csv"));
+    //        bool success = exporter.ExportAsync(equity).Result;
+    //    });
 
-        var endTime = DateTime.Now;
-        Console.WriteLine($"End: {endTime}");
-    }
+    //    var endTime = DateTime.Now;
+    //    Console.WriteLine($"End: {endTime}");
+    //}
 
     private static void CalculateIndicators()
     {
@@ -222,18 +220,20 @@ class Program
         var sellRule = Rule.Create(c => !c.IsAboveSma(2));
 
         Console.WriteLine("Creating portfolio...");
-        var portfolio = new PortfolioBuilder()
+        var portfolio = new Portfolio()
             .Add(equity)
             .Buy(buyRule)
-            .Sell(sellRule)
-            .Build();
+            .Sell(sellRule);
+
+        portfolio.OnBought += Portfolio_OnBought;
+        portfolio.OnSold += Portfolio_OnSold;
 
         var startTime = DateTime.Now;
         Console.WriteLine($"Runnning backtest... @ {startTime}");
 
         PortfolioResult result;
         Console.WriteLine();
-        result = portfolio.RunAsync(10000, 1, new DateTime(2016, 1, 1)).Result;
+        result = portfolio.RunBacktestAsync(10000, 1, new DateTime(2016, 1, 1)).Result;
         var endTime = DateTime.Now;
         Console.WriteLine($"Backtest completed @ {endTime}. Time elapsed: {(endTime - startTime).TotalSeconds} s.");
 
@@ -244,5 +244,16 @@ class Program
             result.Total);
 
         Console.ReadLine();
+    }
+
+    private static void Portfolio_OnSold(int quantity, string symbol, decimal currentPrice, DateTime currentDate, decimal balance, decimal plRatio)
+    {
+        Console.WriteLine("Sell {0} units of {1} @ {2:0.##} on {3}, P/L: {4:0.##}%, Fund: $ {5}", quantity, symbol, currentPrice, currentDate, plRatio, balance);
+        Console.WriteLine();
+    }
+
+    private static void Portfolio_OnBought(int quantity, string symbol, decimal currentPrice, DateTime currentDate, decimal balance)
+    {
+        Console.WriteLine("Buy {0} units of {1} @ {2:0.##} on {3}, Fund: $ {4}", quantity, symbol, currentPrice, currentDate, balance);
     }
 }

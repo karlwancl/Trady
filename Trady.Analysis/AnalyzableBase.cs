@@ -6,9 +6,9 @@ using System.Linq;
 
 namespace Trady.Analysis
 {
-    public abstract class AnalyticBase<TTick> : IAnalytic where TTick : ITick
+    public abstract class AnalyzableBase<TTick> : IAnalyzable where TTick : ITick
     {
-        public AnalyticBase(Equity equity)
+        public AnalyzableBase(Equity equity)
         {
             Equity = equity;
         }
@@ -19,8 +19,8 @@ namespace Trady.Analysis
         {
             var ticks = new List<TTick>();
 
-            int startIndex = GetStartIndex(startTime);
-            int endIndex = GetEndIndex(endTime);
+            int startIndex = ComputeStartIndex(startTime);
+            int endIndex = ComputeEndIndex(endTime);
 
             for (int i = startIndex; i <= endIndex; i++)
                 ticks.Add(ComputeByIndex(i));
@@ -36,10 +36,10 @@ namespace Trady.Analysis
 
         public abstract TTick ComputeByIndex(int index);
 
-        protected virtual int GetStartIndex(DateTime? startTime)
+        protected virtual int ComputeStartIndex(DateTime? startTime)
             => startTime.HasValue ? Equity.ToList().FindIndexOrDefault(c => c.DateTime >= startTime) ?? 0 : 0;
 
-        protected virtual int GetEndIndex(DateTime? endTime)
+        protected virtual int ComputeEndIndex(DateTime? endTime)
             => endTime.HasValue ? Equity.ToList().FindLastIndexOrDefault(c => c.DateTime < endTime) ?? Equity.Count - 1 : Equity.Count - 1;
     }
 }

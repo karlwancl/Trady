@@ -14,5 +14,7 @@ namespace Trady.Core
         string Name { get; }
 
         PeriodOption Period { get; }
+
+        int MaxCount { get; }
     }
 }

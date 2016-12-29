@@ -75,10 +75,10 @@ namespace Trady.Analysis.Indicator
             return dateTime;
         }
 
-        protected override int GetStartIndex(DateTime? startTime)
-            => base.GetStartIndex(startTime) - MiddlePeriodCount + 1;
+        protected override int ComputeStartIndex(DateTime? startTime)
+            => base.ComputeStartIndex(startTime) - MiddlePeriodCount + 1;
 
-        protected override int GetEndIndex(DateTime? endTime)
-            => base.GetEndIndex(endTime) + MiddlePeriodCount - 1;
+        protected override int ComputeEndIndex(DateTime? endTime)
+            => base.ComputeEndIndex(endTime) + MiddlePeriodCount - 1;
     }
 }

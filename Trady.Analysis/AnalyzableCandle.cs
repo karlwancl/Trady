@@ -5,17 +5,15 @@ using Trady.Analysis.Pattern.Indicator;
 using Trady.Analysis.Pattern;
 using Trady.Core;
 using Trady.Analysis.Indicator;
-using Trady.Strategy.Helper;
-using Trady.Analysis;
 
-namespace Trady.Strategy
+namespace Trady.Analysis
 {
-    public class ComputableCandle : Candle
+    public class AnalyzableCandle : Candle, IAnalyzable
     {
         private Equity _equity;
         private int _index;
 
-        public ComputableCandle(Equity equity, int index) 
+        public AnalyzableCandle(Equity equity, int index) 
             : base(equity[index].DateTime, equity[index].Open, equity[index].High, equity[index].Low, equity[index].Close, equity[index].Volume)
         {
             _equity = equity;
@@ -26,7 +24,9 @@ namespace Trady.Strategy
 
         public int Index => _index;
 
-        public ComputableCandle Next => _index + 1 < _equity.Count ? _equity.GetComputableCandleAt(_index + 1) : null;
+        public AnalyzableCandle Prev => _index - 1 >= 0 ? new AnalyzableCandle(_equity, _index - 1) : null;
+
+        public AnalyzableCandle Next => _index + 1 < _equity.Count ? new AnalyzableCandle(_equity, _index + 1) : null;
 
         public decimal? PriceChange()
             => _equity.GetOrCreateAnalytic<ClosePriceChange>().ComputeByIndex(_index).Change;

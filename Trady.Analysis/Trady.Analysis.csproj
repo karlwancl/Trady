@@ -30,7 +30,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Trady.Core\Trady.Core.csproj" />
-    <ProjectReference Include="..\Trady.Logging\Trady.Logging.csproj" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

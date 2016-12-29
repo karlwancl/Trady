@@ -2,30 +2,35 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Trady.Core.Exception;
 using Trady.Core.Helper;
 using Trady.Core.Period;
-using Trady.Logging;
 
 namespace Trady.Core
 {
-    public class TimeSeries<TTick> : IFixedTimeSeries<TTick> where TTick : ITick
+    public class TimeSeries<TTick> : ITimeSeries<TTick> where TTick : ITick
     {
-        private int _maxCount;
-
         public TimeSeries(string name, IList<TTick> ticks, PeriodOption period, int maxTickCount)
         {
             Name = name;
             Ticks = (ticks ?? new List<TTick>()).OrderBy(t => t.DateTime).ToList();
+            Period = period;
             MaxCount = maxTickCount;
 
-            Period = period;
-            if (IsTimeframeOverlap(Ticks, period, out var tick))
-                throw new ArgumentException($"Timeframe has overlapped: {tick.DateTime}");
+            // Check if time frame is overlapped before construction finishes
+            if (IsTimeFrameOverlapped(Ticks, period, out var tick))
+                throw new InvalidTimeFrameException(tick.DateTime);
         }
 
         public string Name { get; private set; }
 
+        protected IList<TTick> Ticks { get; private set; }
+
+        IList<ITick> ITimeSeries.Ticks => Ticks.Select(t => (ITick)t).ToList();
+
         public PeriodOption Period { get; private set; }
+
+        private int _maxCount;
 
         public int MaxCount
         {
@@ -41,56 +46,32 @@ namespace Trady.Core
             }
         }
 
-        protected IList<TTick> Ticks { get; private set; }
-
         public int Count => Ticks.Count;
 
         public bool IsReadOnly => Ticks.IsReadOnly;
 
-        IList<ITick> ITimeSeries.Ticks => Ticks.Select(t => (ITick)t).ToList();
-
-        public TTick this[int index]
-        {
-            get
-            {
-                return Ticks[index];
-            }
-            set
-            {
-                throw new NotSupportedException();
-            }
-        }
+        public TTick this[int index] { get => Ticks[index]; set => throw new InvalidOperationException(); }
 
         public int IndexOf(TTick item) => Ticks.IndexOf(item);
 
-        public void Insert(int index, TTick item) => throw new NotSupportedException();
+        public void Insert(int index, TTick item) => throw new InvalidOperationException();
 
-        public void RemoveAt(int index) => throw new NotSupportedException();
+        public void RemoveAt(int index) => throw new InvalidOperationException();
 
         public void Add(TTick item)
         {
             var periodInstance = Period.CreateInstance();
-            try
+            if (Ticks.Any())
             {
-                if (Ticks.Any())
-                {
-                    var tickEndTime = periodInstance.NextTimestamp(Ticks.Last().DateTime);
-                    if (tickEndTime > item.DateTime)
-                        throw new ArgumentException("The added candle should be more recent than the latest in the series");
+                var tickEndTime = periodInstance.NextTimestamp(Ticks.Last().DateTime);
+                if (item.DateTime <= tickEndTime)
+                    throw new InvalidTimeFrameException(item.DateTime);
 
-                    if (Ticks.Count >= MaxCount)
-                    {
-                        for (int i = 0; i < Ticks.Count - MaxCount + 1; i++)
-                            Ticks.RemoveAt(0);
-                    }
-                }
-                Ticks.Add(item);
+                if (Ticks.Count >= MaxCount)
+                    for (int i = 0; i < Ticks.Count - MaxCount + 1; i++)
+                        Ticks.RemoveAt(0);
             }
-            catch (Exception ex)
-            {
-                Logger.Error(ex);
-                throw;
-            }
+            Ticks.Add(item);
         }
 
         public void Clear() => Ticks.Clear();
@@ -99,14 +80,14 @@ namespace Trady.Core
 
         public void CopyTo(TTick[] array, int arrayIndex) => Ticks.CopyTo(array, arrayIndex);
 
-        public bool Remove(TTick item) => throw new NotSupportedException();
+        public bool Remove(TTick item) => throw new InvalidOperationException();
 
         public IEnumerator<TTick> GetEnumerator() => Ticks.GetEnumerator();
 
         IEnumerator IEnumerable.GetEnumerator() => Ticks.GetEnumerator();
 
-        private static bool IsTimeframeOverlap<TConstraintTick>(IList<TConstraintTick> ticks, PeriodOption period, out TConstraintTick tick)
-where TConstraintTick : ITick
+        private static bool IsTimeFrameOverlapped<TConstraintTick>(IList<TConstraintTick> ticks, PeriodOption period, out TConstraintTick tick)
+            where TConstraintTick : ITick
         {
             var periodInstance = period.CreateInstance();
             tick = default(TConstraintTick);
