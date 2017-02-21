@@ -22,6 +22,7 @@ Nuget package is available in modules, please install the package according to t
     PM > Install-Package Trady.XXXXX
 
 ### How To Use
+<a name="Content"></a>
 * Importing
     * [Import Stock Data](#ImportStockData)
     * [Implement Your Own Importer](#ImplementYourOwnImporter)
@@ -56,6 +57,7 @@ Nuget package is available in modules, please install the package according to t
 
     // Get stock data from the above importer
     var equity = await importer.ImportAsync("FB");
+[Back to content](#Content)
 
 <a name="ImplementYourOwnImporter"></a>
 #### Implement your own importer (Requires Trady.Importer module)
@@ -69,6 +71,7 @@ Nuget package is available in modules, please install the package according to t
     }
     var importer = new MyImporter();
     var equity = await importer.ImportAsync("FB");
+[Back to content](#Content)
 
 <a name="TransformStockData"></a>
 #### Transform stock data to specified period before computation
@@ -76,6 +79,7 @@ Nuget package is available in modules, please install the package according to t
     // Supported period: PerSecond, PerMinute, Per15Minutes, Per30Minutes, Hourly, BiHourly, Daily, Weekly, Monthly
 
     var transformedEquity = equity.Transform(PeriodOption.Weekly);
+[Back to content](#Content)
 
 <a name="ComputeIndicators"></a>
 #### Compute indicators (Requires Trady.Analysis module)
@@ -91,6 +95,7 @@ Nuget package is available in modules, please install the package according to t
 
     3. By instantiation (no caching for indicator instance, better for one-off usage)
         var smaTs = new SimplemMovingAverage(equity, 30).Compute(startTime, endTime);
+[Back to content](#Content)
 
 <a name="ImplementYourOwnIndicatorSimpleType"></a>
 #### Implement your own indicator - Simple Type (Requires Trady.Analysis module)
@@ -138,6 +143,7 @@ Nuget package is available in modules, please install the package according to t
     {
         Console.WriteLine($"{value.Value1},{value.Value2}");
     }
+[Back to content](#Content)
 
 <a name="ImplementYourOwnIndicatorCummulativeType"></a>
 #### Implement your own indicator - Cummulative Type (Requires Trady.Analysis module)
@@ -198,6 +204,7 @@ Nuget package is available in modules, please install the package according to t
     {
         Console.WriteLine($"{value.Value1},{value.Value2}");
     }   
+[Back to content](#Content)
 
 <a name="ImplementYourOwnIndicatorMovingAverageType"></a>
 #### Implement your own indicator - Moving-Average Type (Requires Trady.Analysis module)
@@ -230,6 +237,7 @@ Nuget package is available in modules, please install the package according to t
 
         // The rest is the same as Simple Type...
     }
+[Back to content](#Content)
 
 <a name="DataProviderCache"></a>
 #### IndicatorResult cache through IDataProvider (Requires Trady.Analysis module)
@@ -302,12 +310,14 @@ Nuget package is available in modules, please install the package according to t
     var smaIndicator = equity.GetOrCreateAnalytic<SimpleMovingAverage>(30);
     var provider = new MyDataProvider(context);
     await smaIndicator.InitWithDataProviderAsync(provider);
+[Back to content](#Content)
 
 <a name="ExportIndicators"></a>
 #### Export computed indicators to CSV (Requires Trady.Exporter module)
     var tsList = new List<ITimeSeries> {smaTs, emaTs, bbTs};
     var exporter = new CsvExporter("tss.csv");
     bool success = await exporter.ExportAsync(equity, tsList, ascending: false);
+[Back to content](#Content)
 
 <a name="ImplementYourOwnExporter"></a>
 #### Implement your own exporter (Requires Trady.Exporter module)
@@ -321,6 +331,7 @@ Nuget package is available in modules, please install the package according to t
     }
     var exporter = new MyExporter();
     bool success = await exporter.ExportAsync(equity, tsList, ascending: false);
+[Back to content](#Content)
 
 <a name="StrategyBuildingAndBacktesting"></a>
 #### Strategy building & backtesting (Requires Trady.Strategy module)
@@ -351,6 +362,7 @@ Nuget package is available in modules, please install the package according to t
         result.ProfitLossRatio * 100,
         result.Principal,
         result.Total));
+[Back to content](#Content)
 
 <a name="ImplementYourOwnPattern"></a>
 #### Implement your own pattern through Extension (Requires Trady.Strategy module)
@@ -369,6 +381,7 @@ Nuget package is available in modules, please install the package according to t
     var buyRule = Rule.Create(c => c.IsSma30LargerThanSma10());
     var portfolio = new PortfolioBuilder().Add(equity, 10).Buy(buyRule).Build();
     var result = await portfolio.RunAsync(10000, 1);
+[Back to content](#Content)
 
 ### Backlog
 * Complete other indicators (e.g. Keltner Channels, KAMA, MA Envelopes, etc.)
