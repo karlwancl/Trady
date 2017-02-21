@@ -23,11 +23,11 @@ Nuget package is available in modules, please install the package according to t
 
 ### How To Use
 <a name="Content"></a>
-* Importing
+* Importing (Requires Trady.Importer)
     * [Import Stock Data](#ImportStockData)
     * [Implement Your Own Importer](#ImplementYourOwnImporter)
     
-* Computing
+* Computing (Requires Trady.Analysis)
     * [Transform Stock Data](#TransformStockData)
     * [Compute Indicators](#ComputeIndicators)
     * [Implement Your Own Indicator - Simple Type](#ImplementYourOwnIndicatorSimpleType)
@@ -35,11 +35,11 @@ Nuget package is available in modules, please install the package according to t
     * [Implement Your Own Indicator - Moving Average Type](#ImplementYourOwnIndicatorMovingAverageType)
     * [IndicatorResult cache through IDataProvider](#DataProviderCache)
     
-* Exporting
+* Exporting (Requires Trady.Exporter)
     * [Export Indicators](#ExportIndicators)
     * [Implement Your Own Exporter](#ImplementYourOwnExporter)
     
-* Backtesting
+* Backtesting (Requires Trady.Strategy)
     * [Strategy Building And Backtesting](#StrategyBuildingAndBacktesting)
     * [Implement Your Own Pattern](#ImplementYourOwnPattern)
 
