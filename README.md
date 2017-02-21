@@ -69,6 +69,8 @@ Nuget package is available in modules, please install the package according to t
             // Your implementation to return Equity instance
         }
     }
+    
+    // Use case
     var importer = new MyImporter();
     var equity = await importer.ImportAsync("FB");
 [Back to content](#Content)
@@ -136,7 +138,7 @@ Nuget package is available in modules, please install the package according to t
         }
     }
 
-    // Use it as following
+    // Use case
     var myIndicator = equity.GetOrCreateAnalytic<MyIndicator>(1, 2, 3);
     var myIndicatorTs = myIndicator.Compute(startTime, endTime);
     foreach (var value in myIndicatorTs)
@@ -197,7 +199,7 @@ Nuget package is available in modules, please install the package according to t
         }
     }
 
-    // Use it as following
+    // Use case
     var myIndicator = equity.GetOrCreateAnalytic<MyCummulativeIndicator>(1);
     var myIndicatorTs = myIndicator.Compute(startTime, endTime);
     foreach (var value in myIndicatorTs)
@@ -305,7 +307,7 @@ Nuget package is available in modules, please install the package according to t
         }
     }
 
-    // Use it as following
+    // Use case
     var context = _serviceProvider.GetService<ApplicationDbContext>();  // Get ApplicationDbContext through service locator
     var smaIndicator = equity.GetOrCreateAnalytic<SimpleMovingAverage>(30);
     var provider = new MyDataProvider(context);
@@ -329,6 +331,8 @@ Nuget package is available in modules, please install the package according to t
             // Your implementation to export indicators values
         }
     }
+    
+    // Use case
     var exporter = new MyExporter();
     bool success = await exporter.ExportAsync(equity, tsList, ascending: false);
 [Back to content](#Content)
@@ -377,7 +381,7 @@ Nuget package is available in modules, please install the package according to t
         }
     }
 
-    // Use it as the following
+    // Use case
     var buyRule = Rule.Create(c => c.IsSma30LargerThanSma10());
     var portfolio = new PortfolioBuilder().Add(equity, 10).Buy(buyRule).Build();
     var result = await portfolio.RunAsync(10000, 1);
