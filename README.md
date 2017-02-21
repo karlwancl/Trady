@@ -235,7 +235,7 @@ Nuget package is available in modules, please install the package according to t
         {
             _indicator = indicator;
             _dbEquity = await _context.Equities.FirstOrDefaultAsync(e => e.Name == indicator.Equity.Name);
-            _dbIndicator = await _context.Indicators.FirstOrDefaultAsync(i => i.Name == indicator.GetType().Name && i.Parameter1 == indicator.Parameters[1]);
+            _dbIndicator = await _context.Indicators.FirstOrDefaultAsync(i => i.Name == indicator.GetType().Name && i.Parameter1 == indicator.Parameters[0]);
         }
 
         // Main stub for data retrieval, all async method uses in this method should add a ConfigureAwait(false) to prevent deadlocks
