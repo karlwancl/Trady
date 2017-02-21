@@ -22,6 +22,28 @@ Nuget package is available in modules, please install the package according to t
     PM > Install-Package Trady.XXXXX
 
 ### How To Use
+* Importing
+    * [Import Stock Data](#ImportStockData)
+    * [Implement Your Own Importer](#ImplementYourOwnImporter)
+    
+* Computing
+    * [Transform Stock Data](#TransformStockData)
+    * [Compute Indicators](#ComputeIndicators)
+    * [Implement Your Own Indicator - Simple Type](#ImplementYourOwnIndicatorSimpleType)
+    * [Implement Your Own Indicator - Cummulative Type](#ImplementYourOwnIndicatorCummulativeType)
+    * [Implement Your Own Indicator - Moving Average Type](#ImplementYourOwnIndicatorMovingAverageType)
+    * [IndicatorResult cache through IDataProvider](#DataProviderCache)
+    
+* Exporting
+    * [Export Indicators](#ExportIndicators)
+    * [Implement Your Own Exporter](#ImplementYourOwnExporter)
+    
+* Backtesting
+    * [Strategy Building And Backtesting](#StrategyBuildingAndBacktesting)
+    * [Implement Your Own Pattern](#ImplementYourOwnPattern)
+
+
+<a name="ImportStockData"></a>
 #### Import stock data (Requires Trady.Importer module)
     // From Quandl wiki database
     var importer = new QuandlWikiImporter(apiKey);
@@ -35,6 +57,7 @@ Nuget package is available in modules, please install the package according to t
     // Get stock data from the above importer
     var equity = await importer.ImportAsync("FB");
 
+<a name="ImplementYourOwnImporter"></a>
 #### Implement your own importer (Requires Trady.Importer module)
     // You can also implement your own importer by implementing the IImporter interface
     public class MyImporter : IImporter
@@ -47,12 +70,14 @@ Nuget package is available in modules, please install the package according to t
     var importer = new MyImporter();
     var equity = await importer.ImportAsync("FB");
 
+<a name="TransformStockData"></a>
 #### Transform stock data to specified period before computation
     // Transform the series for computation, downcast is forbidden
     // Supported period: PerSecond, PerMinute, Per15Minutes, Per30Minutes, Hourly, BiHourly, Daily, Weekly, Monthly
 
     var transformedEquity = equity.Transform(PeriodOption.Weekly);
 
+<a name="ComputeIndicators"></a>
 #### Compute indicators (Requires Trady.Analysis module)
     // Supported indicators: Sma, Ema, Rsi, Macd, Sto(Fast, Full, Slow), Obv, AccumDist, Bb, Atr, Dmi, Aroon, Chandlr, Ichimoku & some related indicator (i.e. HighestHigh, LowestLow, etc.)
 
@@ -67,6 +92,7 @@ Nuget package is available in modules, please install the package according to t
     3. By instantiation (no caching for indicator instance, better for one-off usage)
         var smaTs = new SimplemMovingAverage(equity, 30).Compute(startTime, endTime);
 
+<a name="ImplementYourOwnIndicatorSimpleType"></a>
 #### Implement your own indicator - Simple Type (Requires Trady.Analysis module)
     // You can also implement your own indicator by extending the IndicatorBase<IndicatorResult> class
     public class MyIndicator : IndicatorBase<IndicatorResult>
@@ -113,6 +139,7 @@ Nuget package is available in modules, please install the package according to t
         Console.WriteLine($"{value.Value1},{value.Value2}");
     }
 
+<a name="ImplementYourOwnIndicatorCummulativeType"></a>
 #### Implement your own indicator - Cummulative Type (Requires Trady.Analysis module)
     // You can implement your own indicator by extending the CachedIndicatorBase<IndicatorResult> class
     public class MyCummulativeIndicator : CachedIndicatorBase<IndicatorResult>
@@ -172,6 +199,7 @@ Nuget package is available in modules, please install the package according to t
         Console.WriteLine($"{value.Value1},{value.Value2}");
     }   
 
+<a name="ImplementYourOwnIndicatorMovingAverageType"></a>
 #### Implement your own indicator - Moving-Average Type (Requires Trady.Analysis module)
     // You can make use of the GenericExponentialMovingAverage class to get rid of implementing MA-related indicator on your own
     public class MyMAIndicator : IndicatorBase<IndicatorResult>
@@ -203,6 +231,7 @@ Nuget package is available in modules, please install the package according to t
         // The rest is the same as Simple Type...
     }
 
+<a name="DataProviderCache"></a>
 #### IndicatorResult cache through IDataProvider (Requires Trady.Analysis module)
     // In the use case of cummulative indicator computation, you may have to use an external data source to help computing the next indicator value
     // Or, you may find it better to retrieve a value that is already computed before
@@ -274,11 +303,13 @@ Nuget package is available in modules, please install the package according to t
     var provider = new MyDataProvider(context);
     await smaIndicator.InitWithDataProviderAsync(provider);
 
+<a name="ExportIndicators"></a>
 #### Export computed indicators to CSV (Requires Trady.Exporter module)
     var tsList = new List<ITimeSeries> {smaTs, emaTs, bbTs};
     var exporter = new CsvExporter("tss.csv");
     bool success = await exporter.ExportAsync(equity, tsList, ascending: false);
 
+<a name="ImplementYourOwnExporter"></a>
 #### Implement your own exporter (Requires Trady.Exporter module)
     // You can also implement your own exporter by extending the ExporterBase abstract class
     public class MyExporter
@@ -291,6 +322,7 @@ Nuget package is available in modules, please install the package according to t
     var exporter = new MyExporter();
     bool success = await exporter.ExportAsync(equity, tsList, ascending: false);
 
+<a name="StrategyBuildingAndBacktesting"></a>
 #### Strategy building & backtesting (Requires Trady.Strategy module)
     // Build buy rule & sell rule based on various patterns
     var buyRule = Rule.Create(c => c.IsFullStoBullishCross(14, 3, 3))
@@ -320,6 +352,7 @@ Nuget package is available in modules, please install the package according to t
         result.Principal,
         result.Total));
 
+<a name="ImplementYourOwnPattern"></a>
 #### Implement your own pattern through Extension (Requires Trady.Strategy module)
     // Implement your pattern by creating a static class for extending AnalyzableCandle class
     public static class AnalyzableCandleExtension
