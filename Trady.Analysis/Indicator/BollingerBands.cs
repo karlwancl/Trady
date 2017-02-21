@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using Trady.Analysis.Indicator.Helper;
 using Trady.Core;
 using static Trady.Analysis.Indicator.BollingerBands;
@@ -13,13 +12,14 @@ namespace Trady.Analysis.Indicator
         public BollingerBands(Equity equity, int periodCount, int sdCount) : base(equity, periodCount, sdCount)
         {
             _smaIndicator = new SimpleMovingAverage(equity, periodCount);
+            RegisterDependents(_smaIndicator);
         }
 
         public int PeriodCount => Parameters[0];
 
         public int SdCount => Parameters[1];
 
-        public override IndicatorResult ComputeByIndex(int index)
+        protected override IndicatorResult ComputeByIndexImpl(int index)
         {
             decimal? middleBand = _smaIndicator.ComputeByIndex(index).Sma;
             decimal? sd = index >= PeriodCount - 1 ? Equity.Skip(index - PeriodCount + 1).Take(PeriodCount).Select(c => c.Close).Sd() : (decimal?)null;

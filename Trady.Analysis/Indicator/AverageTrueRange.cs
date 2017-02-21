@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Trady.Analysis.Indicator.Helper;
 using Trady.Core;
 using static Trady.Analysis.Indicator.AverageTrueRange;
 
@@ -23,9 +22,10 @@ namespace Trady.Analysis.Indicator
                 i => _tr(i),
                 periodCount,
                 true);
+            RegisterDependents(_trEma);
         }
 
-        public override IndicatorResult ComputeByIndex(int index)
+        protected override IndicatorResult ComputeByIndexImpl(int index)
             => new IndicatorResult(Equity[index].DateTime, _trEma.ComputeByIndex(index).Ema);
     }
 }

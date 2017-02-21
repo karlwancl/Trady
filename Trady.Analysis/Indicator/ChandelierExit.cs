@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Text;
-using Trady.Core;
+﻿using Trady.Core;
 using static Trady.Analysis.Indicator.ChandelierExit;
 
 namespace Trady.Analysis.Indicator
@@ -16,13 +14,14 @@ namespace Trady.Analysis.Indicator
             _highestHigh = new HighestHigh(equity, periodCount);
             _lowestLow = new LowestLow(equity, periodCount);
             _atrIndicator = new AverageTrueRange(equity, periodCount);
+            RegisterDependents(_highestHigh, _lowestLow, _atrIndicator);
         }
 
         public int PeriodCount => Parameters[0];
 
         public int AtrCount => Parameters[1];
 
-        public override IndicatorResult ComputeByIndex(int index)
+        protected override IndicatorResult ComputeByIndexImpl(int index)
         {
             var @long = _highestHigh.ComputeByIndex(index).HighestHigh - _atrIndicator.ComputeByIndex(index).Atr * AtrCount;
             var @short = _lowestLow.ComputeByIndex(index).LowestLow + _atrIndicator.ComputeByIndex(index).Atr * AtrCount;

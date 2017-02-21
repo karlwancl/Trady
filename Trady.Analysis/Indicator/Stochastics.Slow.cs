@@ -6,7 +6,7 @@ namespace Trady.Analysis.Indicator
     {
         public class Slow : IndicatorBase<IndicatorResult>
         {
-            const int SmaPeriodCountK = 3;
+            private const int SmaPeriodCountK = 3;
 
             private Full _fullStochasticsIndicator;
 
@@ -14,13 +14,15 @@ namespace Trady.Analysis.Indicator
                 : base(equity, periodCount, smaPeriodCountD)
             {
                 _fullStochasticsIndicator = new Full(equity, periodCount, SmaPeriodCountK, smaPeriodCountD);
+
+                RegisterDependents(_fullStochasticsIndicator);
             }
 
             public int PeriodCount => Parameters[0];
 
             public int SmaPeriodCountD => Parameters[1];
 
-            public override IndicatorResult ComputeByIndex(int index)
+            protected override IndicatorResult ComputeByIndexImpl(int index)
                 => _fullStochasticsIndicator.ComputeByIndex(index);
         }
     }

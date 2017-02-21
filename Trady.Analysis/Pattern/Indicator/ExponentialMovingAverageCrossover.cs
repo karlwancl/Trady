@@ -14,7 +14,7 @@ namespace Trady.Analysis.Pattern.Indicator
             _emaOscillator = new ExponentialMovingAverageOscillator(equity, periodCount1, periodCount2);
         }
 
-        public override IsMatchedMultistateResult<Trend?> ComputeByIndex(int index)
+        protected override IsMatchedMultistateResult<Trend?> ComputeByIndexImpl(int index)
         {
             if (index < 1)
                 return new IsMatchedMultistateResult<Trend?>(Equity[index].DateTime, null, null);
@@ -22,7 +22,7 @@ namespace Trady.Analysis.Pattern.Indicator
             var latest = _emaOscillator.ComputeByIndex(index);
             var secondLatest = _emaOscillator.ComputeByIndex(index - 1);
 
-            return new IsMatchedMultistateResult<Trend?>(Equity[index].DateTime, 
+            return new IsMatchedMultistateResult<Trend?>(Equity[index].DateTime,
                 Decision.IsCrossOver(latest.Osc, secondLatest.Osc), Decision.IsTrending(latest.Osc));
         }
     }

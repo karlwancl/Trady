@@ -1,17 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Trady.Core;
+using Trady.Core.Helper;
 using Trady.Core.Period;
-using Flurl;
-using Flurl.Http;
-using System.IO;
-using CsvHelper;
-using Trady.Importer.Helper;
 using YahooFinanceApi;
-using System.Linq;
 
 namespace Trady.Importer
 {
@@ -36,7 +31,7 @@ namespace Trady.Importer
                 output.Add(new Core.Candle(yCandle.DateTime, yCandle.Open, yCandle.High, yCandle.Low, yCandle.Close, yCandle.Volume));
 
             PeriodMap.ToDictionary(kvp => kvp.Value, kvp => kvp.Key).TryGetValue(yPeriod, out PeriodOption ryPeriod);
-            return new Equity(symbol, output, ryPeriod);
+            return output.ToEquity(symbol, ryPeriod);
         }
     }
 }

@@ -4,7 +4,7 @@ using static Trady.Analysis.Indicator.GenericExponentialMovingAverage;
 
 namespace Trady.Analysis.Indicator
 {
-    public partial class GenericExponentialMovingAverage: CacheIndicatorBase<IndicatorResult>
+    public partial class GenericExponentialMovingAverage : CacheIndicatorBase<IndicatorResult>
     {
         public class IndicatorResult : TickBase
         {

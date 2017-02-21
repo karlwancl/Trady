@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Trady.Core.Period;
 
 namespace Trady.Core.Helper
@@ -28,5 +27,8 @@ namespace Trady.Core.Helper
             int index = items.FindLastIndex(predicate);
             return index == -1 ? (int?)null : index;
         }
+
+        public static Equity ToEquity(this IList<Candle> candles, string name, PeriodOption period = PeriodOption.Daily, int maxTickCount = 65536)
+            => new Equity(name, candles, period, maxTickCount);
     }
 }

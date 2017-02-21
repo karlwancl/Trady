@@ -6,7 +6,6 @@ namespace Trady.Analysis.Indicator
 {
     public partial class ChandelierExit : IndicatorBase<IndicatorResult>
     {
-
         public class IndicatorResult : TickBase
         {
             public IndicatorResult(DateTime dateTime, decimal? @long, decimal? @short) : base(dateTime)

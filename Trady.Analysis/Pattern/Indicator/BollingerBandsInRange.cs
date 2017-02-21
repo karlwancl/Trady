@@ -8,18 +8,18 @@ namespace Trady.Analysis.Pattern.Indicator
     {
         private BollingerBands _bbIndicator;
 
-        public BollingerBandsInRange(Equity equity, int periodCount, int sdCount) 
+        public BollingerBandsInRange(Equity equity, int periodCount, int sdCount)
             : base(equity, periodCount, sdCount)
         {
             _bbIndicator = new BollingerBands(equity, periodCount, sdCount);
         }
 
-        public override MultistateResult<Overboundary?> ComputeByIndex(int index)
+        protected override MultistateResult<Overboundary?> ComputeByIndexImpl(int index)
         {
             var result = _bbIndicator.ComputeByIndex(index);
             var current = Equity[index];
 
-            return new MultistateResult<Overboundary?>(current.DateTime, 
+            return new MultistateResult<Overboundary?>(current.DateTime,
                 Decision.IsOverbound(current.Close, result.Lower, result.Upper));
         }
     }

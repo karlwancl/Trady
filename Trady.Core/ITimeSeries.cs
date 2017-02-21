@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Trady.Core.Period;
 
 namespace Trady.Core
@@ -9,7 +8,7 @@ namespace Trady.Core
         IList<ITick> Ticks { get; }
     }
 
-    public interface ITimeSeries<TTick>: IList<TTick> , ITimeSeries where TTick: ITick 
+    public interface ITimeSeries<TTick> : IList<TTick>, ITimeSeries where TTick : ITick
     {
         string Name { get; }
 

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading.Tasks;
 using Trady.Core.Helper;
 
 namespace Trady.Core.Period
@@ -8,7 +7,6 @@ namespace Trady.Core.Period
     {
         public Daily() : base()
         {
-
         }
 
         public Daily(Country country) : base(country)

@@ -13,7 +13,7 @@ namespace Trady.Analysis.Indicator
         private Func<int, decimal?> _conversionLine, _baseLine, _leadingSpanB;
         private IPeriod _periodInstance;
 
-        public IchimokuCloud(Equity equity, int shortPeriodCount, int middlePeriodCount, int longPeriodCount, Country? country = null) 
+        public IchimokuCloud(Equity equity, int shortPeriodCount, int middlePeriodCount, int longPeriodCount, Country? country = null)
             : base(equity, shortPeriodCount, middlePeriodCount, longPeriodCount)
         {
             _periodInstance = equity.Period.CreateInstance(country ?? Country.UnitedStatesOfAmerica);
@@ -29,6 +29,8 @@ namespace Trady.Analysis.Indicator
             _longHighestHigh = new HighestHigh(equity, longPeriodCount);
             _longLowestLow = new LowestLow(equity, longPeriodCount);
             _leadingSpanB = i => (_longHighestHigh.ComputeByIndex(i).HighestHigh + _longLowestLow.ComputeByIndex(i).LowestLow) / 2;
+
+            RegisterDependents(_shortHighestHigh, _shortLowestLow, _middleHighestHigh, _middleLowestLow, _longHighestHigh, _longLowestLow);
         }
 
         public int ShortPeriodCount => Parameters[0];
@@ -37,7 +39,7 @@ namespace Trady.Analysis.Indicator
 
         public int LongPeriodCount => Parameters[2];
 
-        public override IndicatorResult ComputeByIndex(int index)
+        protected override IndicatorResult ComputeByIndexImpl(int index)
         {
             // Current
             var conversionLine = (index >= 0 && index < Equity.Count) ? _conversionLine(index) : null;

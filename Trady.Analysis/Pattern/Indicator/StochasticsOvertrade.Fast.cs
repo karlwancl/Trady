@@ -7,7 +7,7 @@ namespace Trady.Analysis.Pattern.Indicator
     {
         public class Fast : IndicatorBase
         {
-            public Fast(Equity equity, int periodCount, int smaPeriodCount) 
+            public Fast(Equity equity, int periodCount, int smaPeriodCount)
                 : base(equity, new Stochastics.Fast(equity, periodCount, smaPeriodCount))
             {
             }

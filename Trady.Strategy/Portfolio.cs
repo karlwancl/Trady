@@ -16,14 +16,18 @@ namespace Trady.Strategy
         private IRule<AnalyzableCandle> _sellRule;
 
         public event BuyHandler OnBought;
+
         public delegate void BuyHandler(int quantity, string symbol, decimal currentPrice, DateTime currentDate, decimal balance);
 
         public event SellHandler OnSold;
+
         public delegate void SellHandler(int quantity, string symbol, decimal currentPrice, DateTime currentDate, decimal balance, decimal plRatio);
 
         #region Builder
 
-        public Portfolio() : this(null, null, null) { }
+        public Portfolio() : this(null, null, null)
+        {
+        }
 
         private Portfolio(IDictionary<Equity, int> equityPairs, IRule<AnalyzableCandle> buyRule, IRule<AnalyzableCandle> sellRule)
         {
@@ -42,12 +46,12 @@ namespace Trady.Strategy
         }
 
         public Portfolio Buy(IRule<AnalyzableCandle> rule)
-            => new Portfolio(_equityPairs, (_buyRule?.Or(rule)) ?? rule , _sellRule);
+            => new Portfolio(_equityPairs, (_buyRule?.Or(rule)) ?? rule, _sellRule);
 
         public Portfolio Sell(IRule<AnalyzableCandle> rule)
             => new Portfolio(_equityPairs, _buyRule, (_sellRule?.Or(rule)) ?? rule);
 
-        #endregion
+        #endregion Builder
 
         public async Task<PortfolioResult> RunBacktestAsync(decimal principal, decimal premium = 1.0m, DateTime? startTime = null, DateTime? endTime = null)
         {

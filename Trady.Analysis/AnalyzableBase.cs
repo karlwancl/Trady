@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Trady.Core;
 using Trady.Core.Helper;
-using System.Linq;
 
 namespace Trady.Analysis
 {
@@ -34,7 +34,9 @@ namespace Trady.Analysis
             return index.HasValue ? ComputeByIndex(index.Value) : default(TTick);
         }
 
-        public abstract TTick ComputeByIndex(int index);
+        public virtual TTick ComputeByIndex(int index) => ComputeByIndexImpl(index);
+
+        protected abstract TTick ComputeByIndexImpl(int index);
 
         protected virtual int ComputeStartIndex(DateTime? startTime)
             => startTime.HasValue ? Equity.ToList().FindIndexOrDefault(c => c.DateTime >= startTime) ?? 0 : 0;

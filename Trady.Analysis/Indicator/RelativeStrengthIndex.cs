@@ -1,5 +1,4 @@
-﻿using System;
-using Trady.Core;
+﻿using Trady.Core;
 using static Trady.Analysis.Indicator.RelativeStrengthIndex;
 
 namespace Trady.Analysis.Indicator
@@ -11,11 +10,13 @@ namespace Trady.Analysis.Indicator
         public RelativeStrengthIndex(Equity equity, int periodCount) : base(equity, periodCount)
         {
             _rsIndicator = new RelativeStrength(equity, periodCount);
+
+            RegisterDependents(_rsIndicator);
         }
 
         public int PeriodCount => Parameters[0];
 
-        public override IndicatorResult ComputeByIndex(int index)
+        protected override IndicatorResult ComputeByIndexImpl(int index)
         {
             var rsi = 100 - (100 / (1 + _rsIndicator.ComputeByIndex(index).Rs));
             return new IndicatorResult(Equity[index].DateTime, rsi);

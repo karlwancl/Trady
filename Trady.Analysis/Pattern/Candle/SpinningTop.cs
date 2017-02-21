@@ -12,7 +12,7 @@ namespace Trady.Analysis.Pattern.Candle
         {
         }
 
-        public override IsMatchedResult ComputeByIndex(int index)
+        protected override IsMatchedResult ComputeByIndexImpl(int index)
         {
             throw new NotImplementedException();
         }

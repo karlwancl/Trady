@@ -10,17 +10,19 @@ namespace Trady.Analysis.Indicator
         {
             private RawStochasticsValue _rsvIndicator;
 
-            public Fast(Equity equity, int periodCount, int smaPeriodCount) 
+            public Fast(Equity equity, int periodCount, int smaPeriodCount)
                 : base(equity, periodCount, smaPeriodCount)
             {
                 _rsvIndicator = new RawStochasticsValue(equity, periodCount);
+
+                RegisterDependents(_rsvIndicator);
             }
 
             public int PeriodCount => Parameters[0];
 
             public int SmaPeriodCount => Parameters[1];
 
-            public override IndicatorResult ComputeByIndex(int index)
+            protected override IndicatorResult ComputeByIndexImpl(int index)
             {
                 decimal? rsv = _rsvIndicator.ComputeByIndex(index).Rsv;
                 Func<int, decimal?> rsvFunc = i => _rsvIndicator.ComputeByIndex(index - SmaPeriodCount + i + 1).Rsv;

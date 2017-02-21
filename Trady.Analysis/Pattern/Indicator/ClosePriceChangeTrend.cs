@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Trady.Analysis.Indicator;
+﻿using Trady.Analysis.Indicator;
 using Trady.Analysis.Pattern.Helper;
 using Trady.Core;
 
@@ -16,7 +13,7 @@ namespace Trady.Analysis.Pattern.Indicator
             _closePriceChangeIndicator = new ClosePriceChange(equity);
         }
 
-        public override MultistateResult<Trend?> ComputeByIndex(int index)
+        protected override MultistateResult<Trend?> ComputeByIndexImpl(int index)
         {
             var latest = _closePriceChangeIndicator.ComputeByIndex(index);
             return new MultistateResult<Trend?>(Equity[index].DateTime, Decision.IsTrending(latest.Change));

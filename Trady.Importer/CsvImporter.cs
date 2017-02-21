@@ -2,10 +2,10 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Trady.Core;
+using Trady.Core.Helper;
 using Trady.Core.Period;
 using Trady.Importer.Helper;
 
@@ -37,7 +37,7 @@ namespace Trady.Importer
                             continue;
                         candles.Add(record.CreateCandleFromRow());
                     }
-                    return new Equity(symbol, candles).Transform(period);
+                    return candles.ToEquity(symbol).Transform(period);
                 }
             });
         }

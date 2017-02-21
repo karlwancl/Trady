@@ -14,6 +14,8 @@ namespace Trady.Analysis.Indicator
                 : base(equity, periodCount, smaPeriodCountK, smaPeriodCountD)
             {
                 _fastStochasticsIndicator = new Fast(equity, periodCount, smaPeriodCountK);
+
+                RegisterDependents(_fastStochasticsIndicator);
             }
 
             public int PeriodCount => Parameters[0];
@@ -22,7 +24,7 @@ namespace Trady.Analysis.Indicator
 
             public int SmaPeriodCountD => Parameters[2];
 
-            public override IndicatorResult ComputeByIndex(int index)
+            protected override IndicatorResult ComputeByIndexImpl(int index)
             {
                 var d = _fastStochasticsIndicator.ComputeByIndex(index).D;
                 Func<int, decimal?> dFunc = i => _fastStochasticsIndicator.ComputeByIndex(index - SmaPeriodCountD + i + 1).D;

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using Trady.Analysis.Indicator.Helper;
 using Trady.Core;
 using static Trady.Analysis.Indicator.RelativeStrength;
@@ -36,11 +35,13 @@ namespace Trady.Analysis.Indicator
                 i => Math2.Min(_closePriceChangeIndicator.ComputeByIndex(i).Change, 0).Abs(),
                 periodCount,
                 true);
+
+            RegisterDependents(_closePriceChangeIndicator, _uEma, _dEma);
         }
 
         public int PeriodCount => Parameters[0];
 
-        public override IndicatorResult ComputeByIndex(int index)
+        protected override IndicatorResult ComputeByIndexImpl(int index)
         {
             decimal? gain = _uEma.ComputeByIndex(index).Ema;
             decimal? loss = _dEma.ComputeByIndex(index).Ema;

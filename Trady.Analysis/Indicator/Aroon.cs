@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Linq;
 using Trady.Core;
 using Trady.Core.Helper;
 using static Trady.Analysis.Indicator.Aroon;
@@ -16,11 +14,12 @@ namespace Trady.Analysis.Indicator
         {
             _highestHigh = new HighestHigh(equity, periodCount);
             _lowestLow = new LowestLow(equity, periodCount);
+            RegisterDependents(_highestHigh, _lowestLow);
         }
 
         public int PeriodCount => Parameters[0];
 
-        public override IndicatorResult ComputeByIndex(int index)
+        protected override IndicatorResult ComputeByIndexImpl(int index)
         {
             if (index < PeriodCount - 1)
                 return new IndicatorResult(Equity[index].DateTime, null, null, null);

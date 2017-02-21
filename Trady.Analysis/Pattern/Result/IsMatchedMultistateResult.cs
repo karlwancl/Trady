@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Trady.Analysis.Pattern
 {
@@ -8,7 +6,7 @@ namespace Trady.Analysis.Pattern
     {
         private TTristate _state;
 
-        public IsMatchedMultistateResult(DateTime dateTime, bool? isMatched, TTristate state) 
+        public IsMatchedMultistateResult(DateTime dateTime, bool? isMatched, TTristate state)
             : base(dateTime, isMatched)
         {
             _state = state;

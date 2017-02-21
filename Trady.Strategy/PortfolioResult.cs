@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Trady.Core;
 
 namespace Trady.Strategy
@@ -31,7 +30,7 @@ namespace Trady.Strategy
                 int sum = 0;
                 foreach (var equityTransaction in _equitiesTransactions)
                 {
-                    sum += (equityTransaction.Value.Count % 2 == 0) ? 
+                    sum += (equityTransaction.Value.Count % 2 == 0) ?
                         equityTransaction.Value.Count : equityTransaction.Value.Count - 1;
                 }
                 return sum;
@@ -89,7 +88,7 @@ namespace Trady.Strategy
                 decimal sum = 0;
                 foreach (var equityTransaction in _equitiesTransactions)
                 {
-                    var index = (equityTransaction.Value.Count % 2 == 0) ? 
+                    var index = (equityTransaction.Value.Count % 2 == 0) ?
                         equityTransaction.Value.Count - 1 : equityTransaction.Value.Count - 2;
 
                     sum += equityTransaction.Value.ElementAt(index).Value;

@@ -10,13 +10,13 @@ namespace Trady.Analysis.Pattern.Indicator
         {
             private IndicatorBase<Stochastics.IndicatorResult> _stoIndicator;
 
-            public IndicatorBase(Equity equity, IndicatorBase<Stochastics.IndicatorResult> stoIndicator) 
+            public IndicatorBase(Equity equity, IndicatorBase<Stochastics.IndicatorResult> stoIndicator)
                 : base(equity, stoIndicator.Parameters)
             {
                 _stoIndicator = stoIndicator;
             }
 
-            public override MultistateResult<Overtrade?> ComputeByIndex(int index)
+            protected override MultistateResult<Overtrade?> ComputeByIndexImpl(int index)
             {
                 var result = _stoIndicator.ComputeByIndex(index);
                 return new MultistateResult<Overtrade?>(Equity[index].DateTime, Decision.IsOvertrade(result.K));

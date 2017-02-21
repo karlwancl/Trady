@@ -6,7 +6,6 @@ namespace Trady.Analysis.Indicator
 {
     public partial class IchimokuCloud : IndicatorBase<IndicatorResult>
     {
-
         public class IndicatorResult : TickBase
         {
             public IndicatorResult(DateTime dateTime, decimal? conversionLine, decimal? baseLine, decimal? leadingSpanA, decimal? leadingSpanB, decimal? laggingSpan) : base(dateTime)

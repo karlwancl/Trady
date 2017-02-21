@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Trady.Analysis.Pattern.Helper
+﻿namespace Trady.Analysis.Pattern.Helper
 {
     internal static class Decision
     {

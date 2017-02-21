@@ -253,4 +253,9 @@ paket-files/
 
 # Skip all downloaded data & non-public code
 Trady.Analysis.Vic/
+Trady.App.Computer/
 Trady.App.Console/
+Trady.App.Core/
+Trady.App.Downloader/
+Trady.App.Infrastructure/
+Trady.App.Web/

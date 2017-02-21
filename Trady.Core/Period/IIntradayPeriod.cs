@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Trady.Core.Period
+﻿namespace Trady.Core.Period
 {
     /// <summary>
     /// Use for time-series transformation, applied to period narrower than daily

@@ -1,11 +1,6 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using Trady.Analysis.Pattern.Indicator;
 using Trady.Core;
 
 namespace Trady.Analysis
@@ -13,13 +8,14 @@ namespace Trady.Analysis
     public static class AnalyzableLocator
     {
         private static IMemoryCache _cache = new MemoryCache(new MemoryCacheOptions());
+
         private static MemoryCacheEntryOptions _policy = new MemoryCacheEntryOptions
         {
             SlidingExpiration = TimeSpan.FromMinutes(15)
         };
 
-        public static TAnalytic GetOrCreateAnalytic<TAnalytic>(this Equity equity, params object[] parameters) 
-            where TAnalytic: IAnalyzable
+        public static TAnalytic GetOrCreateAnalytic<TAnalytic>(this Equity equity, params object[] parameters)
+            where TAnalytic : IAnalyzable
         {
             string key = $"{equity.GetHashCode()}#{typeof(TAnalytic).Name}#{string.Join("|", parameters)}";
             if (!_cache.TryGetValue(key, out TAnalytic output))

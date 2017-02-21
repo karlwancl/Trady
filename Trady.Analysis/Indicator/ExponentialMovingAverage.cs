@@ -1,6 +1,4 @@
-﻿using System;
-using Trady.Analysis.Indicator.Helper;
-using Trady.Core;
+﻿using Trady.Core;
 using static Trady.Analysis.Indicator.ExponentialMovingAverage;
 
 namespace Trady.Analysis.Indicator
@@ -14,14 +12,16 @@ namespace Trady.Analysis.Indicator
             _ema = new GenericExponentialMovingAverage(
                 equity,
                 0,
-                i => Equity[i].Close, 
-                i => Equity[i].Close, 
+                i => Equity[i].Close,
+                i => Equity[i].Close,
                 periodCount);
+
+            RegisterDependents(_ema);
         }
 
         public int PeriodCount => Parameters[0];
 
-        public override IndicatorResult ComputeByIndex(int index)
+        protected override IndicatorResult ComputeByIndexImpl(int index)
             => new IndicatorResult(Equity[index].DateTime, _ema.ComputeByIndex(index).Ema);
     }
 }

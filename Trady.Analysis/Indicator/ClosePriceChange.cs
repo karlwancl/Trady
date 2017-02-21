@@ -1,5 +1,4 @@
-﻿using System;
-using Trady.Core;
+﻿using Trady.Core;
 using static Trady.Analysis.Indicator.ClosePriceChange;
 
 namespace Trady.Analysis.Indicator
@@ -10,7 +9,7 @@ namespace Trady.Analysis.Indicator
         {
         }
 
-        public override IndicatorResult ComputeByIndex(int index)
+        protected override IndicatorResult ComputeByIndexImpl(int index)
            => new IndicatorResult(Equity[index].DateTime, index > 0 ? Equity[index].Close - Equity[index - 1].Close : (decimal?)null);
     }
 }

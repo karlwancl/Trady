@@ -1,5 +1,4 @@
-﻿using System;
-using Trady.Core;
+﻿using Trady.Core;
 using static Trady.Analysis.Indicator.RawStochasticsValue;
 
 namespace Trady.Analysis.Indicator
@@ -13,11 +12,13 @@ namespace Trady.Analysis.Indicator
         {
             _highestHighIndicator = new HighestHigh(equity, periodCount);
             _lowestLowIndicator = new LowestLow(equity, periodCount);
+
+            RegisterDependents(_highestHighIndicator, _lowestLowIndicator);
         }
 
         public int PeriodCount => Parameters[0];
 
-        public override IndicatorResult ComputeByIndex(int index)
+        protected override IndicatorResult ComputeByIndexImpl(int index)
         {
             var highestHigh = _highestHighIndicator.ComputeByIndex(index).HighestHigh;
             var lowestLow = _lowestLowIndicator.ComputeByIndex(index).LowestLow;

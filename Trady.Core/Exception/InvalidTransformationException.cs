@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Trady.Core.Period;
+﻿using Trady.Core.Period;
 
 namespace Trady.Core.Exception
 {

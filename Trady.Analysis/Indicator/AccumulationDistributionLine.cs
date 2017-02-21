@@ -1,5 +1,4 @@
-﻿using System;
-using Trady.Core;
+﻿using Trady.Core;
 using static Trady.Analysis.Indicator.AccumulationDistributionLine;
 
 namespace Trady.Analysis.Indicator
@@ -15,7 +14,7 @@ namespace Trady.Analysis.Indicator
         protected override IndicatorResult ComputeNullValue(int index)
             => new IndicatorResult(Equity[index].DateTime, null);
 
-        protected override IndicatorResult ComputeFirstValue(int index) 
+        protected override IndicatorResult ComputeFirstValue(int index)
             => new IndicatorResult(Equity[index].DateTime, Equity[index].Volume);
 
         protected override IndicatorResult ComputeIndexValue(int index, IndicatorResult prevTick)

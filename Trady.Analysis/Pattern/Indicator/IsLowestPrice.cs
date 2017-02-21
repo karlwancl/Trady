@@ -12,7 +12,7 @@ namespace Trady.Analysis.Pattern.Indicator
 
         public int PeriodCount => Parameters[0];
 
-        public override IsMatchedResult ComputeByIndex(int index)
+        protected override IsMatchedResult ComputeByIndexImpl(int index)
         {
             bool isLowest = Equity.Skip(Equity.Count - PeriodCount).Min(c => c.Close) == Equity[index].Close;
             return new IsMatchedResult(Equity[index].DateTime, isLowest);

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Trady.Analysis.Indicator;
+﻿using Trady.Analysis.Indicator;
 using Trady.Analysis.Pattern.Helper;
 using Trady.Core;
 
@@ -11,17 +8,17 @@ namespace Trady.Analysis.Pattern.Indicator
     {
         private RelativeStrengthIndex _rsiIndicator;
 
-        public RelativeStrengthIndexOvertrade(Equity equity, int periodCount) 
+        public RelativeStrengthIndexOvertrade(Equity equity, int periodCount)
             : base(equity, periodCount)
         {
             _rsiIndicator = new RelativeStrengthIndex(equity, periodCount);
         }
 
-        public override MultistateResult<SevereOvertrade?> ComputeByIndex(int index)
+        protected override MultistateResult<SevereOvertrade?> ComputeByIndexImpl(int index)
         {
             var result = _rsiIndicator.ComputeByIndex(index);
 
-            return new MultistateResult<SevereOvertrade?>(Equity[index].DateTime, 
+            return new MultistateResult<SevereOvertrade?>(Equity[index].DateTime,
                 Decision.IsSeverelyOvertrade(result.Rsi));
         }
     }

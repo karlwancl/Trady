@@ -1,13 +1,10 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using Trady.Analysis.Indicator.Helper;
 using Trady.Core;
 
 namespace Trady.Analysis
 {
-    public abstract class CacheIndicatorBase<TTick> : IndicatorBase<TTick> where TTick: ITick
+    public abstract class CacheIndicatorBase<TTick> : IndicatorBase<TTick> where TTick : ITick
     {
         private IMemoryCache _cache;
         private readonly Func<int, int?> _getNearestCachedIndex;
@@ -24,7 +21,7 @@ namespace Trady.Analysis
             };
         }
 
-        public sealed override TTick ComputeByIndex(int index)
+        protected sealed override TTick ComputeByIndexImpl(int index)
         {
             if (_cache.TryGetValue(Equity[index].DateTime, out TTick tick))
                 return tick;
@@ -45,7 +42,7 @@ namespace Trady.Analysis
                 for (int i = startIndex; i < index; i++)
                 {
                     if (!_cache.TryGetValue(Equity[i].DateTime, out TTick prevTick))
-                        prevTick = ComputeByIndex(i);
+                        prevTick = ComputeByIndexImpl(i);
                     tick = ComputeIndexValue(i + 1, prevTick);
                     _cache.GetOrCreate(Equity[index].DateTime, entry => tick);
                 }

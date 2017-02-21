@@ -1,13 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Trady.Strategy.Rule
 {
     public abstract class BinaryOperationBase<T> : OperationBase<T>
     {
-        protected BinaryOperationBase(IRule<T> operand1, IRule<T> operand2) 
+        protected BinaryOperationBase(IRule<T> operand1, IRule<T> operand2)
             : base(operand1 ?? throw new ArgumentNullException(nameof(operand1)), operand2 ?? throw new ArgumentNullException(nameof(operand2)))
         {
         }

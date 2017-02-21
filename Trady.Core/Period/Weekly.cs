@@ -1,6 +1,4 @@
-﻿using EnricoApi;
-using System;
-using System.Threading.Tasks;
+﻿using System;
 
 namespace Trady.Core.Period
 {
@@ -8,7 +6,6 @@ namespace Trady.Core.Period
     {
         public Weekly() : base()
         {
-
         }
 
         public Weekly(Country country) : base(country)
@@ -21,7 +18,7 @@ namespace Trady.Core.Period
             => dateTime.DayOfWeek == DayOfWeek.Sunday && dateTime.TimeOfDay == new TimeSpan(0, 0, 0);
 
         protected override DateTime ComputeTimestampByCorrectedPeriodCount(DateTime dateTime, int correctedPeriodCount)
-            => dateTime.AddDays(-(int) dateTime.DayOfWeek).AddDays(correctedPeriodCount* 7).Date;
+            => dateTime.AddDays(-(int)dateTime.DayOfWeek).AddDays(correctedPeriodCount * 7).Date;
 
         protected override DateTime FloorByDay(DateTime dateTime, bool isPositivePeriodCount)
             => dateTime.AddDays(1);

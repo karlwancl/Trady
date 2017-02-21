@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using Trady.Core;
 using static Trady.Analysis.Indicator.HighestHigh;
 
@@ -9,7 +8,7 @@ namespace Trady.Analysis.Indicator
     {
         public class IndicatorResult : TickBase
         {
-            public IndicatorResult(DateTime dateTime, decimal? highestHigh) : base(dateTime) 
+            public IndicatorResult(DateTime dateTime, decimal? highestHigh) : base(dateTime)
             {
                 HighestHigh = highestHigh;
             }

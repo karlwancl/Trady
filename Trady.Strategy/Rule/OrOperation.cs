@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Trady.Strategy.Rule
+﻿namespace Trady.Strategy.Rule
 {
-    public class OrOperation<T> : BinaryOperationBase<T> 
+    public class OrOperation<T> : BinaryOperationBase<T>
     {
         public OrOperation(IRule<T> operand1, IRule<T> operand2) : base(operand1, operand2)
         {

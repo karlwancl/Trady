@@ -1,5 +1,4 @@
 ﻿using System;
-using Trady.Analysis.Indicator.Helper;
 using Trady.Core;
 using static Trady.Analysis.Indicator.MovingAverageConvergenceDivergence;
 
@@ -11,7 +10,7 @@ namespace Trady.Analysis.Indicator
         private GenericExponentialMovingAverage _dem;
         private Func<int, decimal?> _diff;
 
-        public MovingAverageConvergenceDivergence(Equity equity, int emaPeriodCount1, int emaPeriodCount2, int demPeriodCount) 
+        public MovingAverageConvergenceDivergence(Equity equity, int emaPeriodCount1, int emaPeriodCount2, int demPeriodCount)
             : base(equity, emaPeriodCount1, emaPeriodCount2, demPeriodCount)
         {
             _emaIndicator1 = new ExponentialMovingAverage(equity, emaPeriodCount1);
@@ -21,9 +20,11 @@ namespace Trady.Analysis.Indicator
             _dem = new GenericExponentialMovingAverage(
                 equity,
                 0,
-                i => _diff(i) ,
+                i => _diff(i),
                 i => _diff(i),
                 demPeriodCount);
+
+            RegisterDependents(_emaIndicator1, _emaIndicator2);
         }
 
         public int EmaPeriodCount1 => Parameters[0];
@@ -32,7 +33,7 @@ namespace Trady.Analysis.Indicator
 
         public int DemPeriodCount => Parameters[2];
 
-        public override IndicatorResult ComputeByIndex(int index)
+        protected override IndicatorResult ComputeByIndexImpl(int index)
         {
             decimal? diff = _diff(index);
             decimal? dem = _dem.ComputeByIndex(index).Ema;

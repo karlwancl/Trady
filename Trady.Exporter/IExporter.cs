@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Trady.Analysis;
-using Trady.Analysis.Indicator;
 using Trady.Core;
 
 namespace Trady.Exporter

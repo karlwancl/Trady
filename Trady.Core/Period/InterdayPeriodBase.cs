@@ -1,17 +1,17 @@
 ﻿using EnricoApi;
+using Microsoft.Extensions.Caching.Memory;
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
 using System.Globalization;
-using Microsoft.Extensions.Caching.Memory;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Trady.Core.Period
 {
     public abstract class InterdayPeriodBase : PeriodBase, IInterdayPeriod
     {
         private IMemoryCache _cache;
+
         private MemoryCacheEntryOptions _policy = new MemoryCacheEntryOptions
         {
             SlidingExpiration = TimeSpan.FromDays(1)
@@ -27,7 +27,6 @@ namespace Trady.Core.Period
 
         protected InterdayPeriodBase() : this(GetCurrentCountry())
         {
-
         }
 
         protected InterdayPeriodBase(Country country)

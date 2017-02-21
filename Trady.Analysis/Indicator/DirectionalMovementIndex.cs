@@ -36,7 +36,7 @@ namespace Trady.Analysis.Indicator
                 true);
 
             _pdi = i => _pdmEma.ComputeByIndex(i).Ema / _atrIndicator.ComputeByIndex(i).Atr * 100;
-            _mdi = i =>  _mdmEma.ComputeByIndex(i).Ema / _atrIndicator.ComputeByIndex(i).Atr * 100;
+            _mdi = i => _mdmEma.ComputeByIndex(i).Ema / _atrIndicator.ComputeByIndex(i).Atr * 100;
             _dx = i => ((_pdi(i) - _mdi(i)) / (_pdi(i) + _mdi(i))).Abs() * 100;
 
             _adx = new GenericExponentialMovingAverage(
@@ -46,13 +46,15 @@ namespace Trady.Analysis.Indicator
                 i => _dx(i),
                 periodCount,
                 true);
+
+            RegisterDependents(_atrIndicator, _pdmEma, _mdmEma, _adx);
         }
 
         public int PeriodCount => Parameters[0];
 
         public int AdxrPeriodCount => Parameters[1];
 
-        public override IndicatorResult ComputeByIndex(int index)
+        protected override IndicatorResult ComputeByIndexImpl(int index)
         {
             var adx = _adx.ComputeByIndex(index).Ema;
             var adxr = index >= AdxrPeriodCount ? (adx + _adx.ComputeByIndex(index - AdxrPeriodCount).Ema) / 2 : null;

@@ -1,5 +1,4 @@
 ﻿using System;
-using Trady.Core.Helper;
 
 namespace Trady.Core.Period
 {

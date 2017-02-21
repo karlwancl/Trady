@@ -6,7 +6,6 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
-using Trady.Analysis;
 using Trady.Core;
 using Trady.Exporter.Helper;
 
@@ -39,6 +38,7 @@ namespace Trady.Exporter
                 return true;
             }, token);
         }
+
         private static void WriteHeader(IList<ITimeSeries> resultTimeSeriesList, CsvWriter csvWriter)
         {
             new List<string> { "DateTime", "Open", "High", "Low", "Close", "Volume" }

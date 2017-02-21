@@ -8,11 +8,11 @@ namespace Trady.Analysis.Pattern.Candle
     /// </summary>
     public class Stars : AnalyzableBase<IsMatchedResult>
     {
-        public Stars(Equity equity) :  base(equity)
+        public Stars(Equity equity) : base(equity)
         {
         }
 
-        public override IsMatchedResult ComputeByIndex(int index)
+        protected override IsMatchedResult ComputeByIndexImpl(int index)
         {
             throw new NotImplementedException();
         }

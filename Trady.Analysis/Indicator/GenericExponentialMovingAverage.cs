@@ -4,14 +4,14 @@ using static Trady.Analysis.Indicator.GenericExponentialMovingAverage;
 
 namespace Trady.Analysis.Indicator
 {
-    public partial class GenericExponentialMovingAverage: CacheIndicatorBase<IndicatorResult>
+    public partial class GenericExponentialMovingAverage : CacheIndicatorBase<IndicatorResult>
     {
         private int _firstValueIndex;
         private Func<int, decimal?> _firstValueFunction;
         private Func<int, decimal?> _indexValueFunction;
         private bool _modified;
 
-        public GenericExponentialMovingAverage(Equity equity, int firstValueIndex, Func<int, decimal?> firstValueFunction, Func<int, decimal?> indexValueFunction, int periodCount, bool modified = false) 
+        public GenericExponentialMovingAverage(Equity equity, int firstValueIndex, Func<int, decimal?> firstValueFunction, Func<int, decimal?> indexValueFunction, int periodCount, bool modified = false)
             : base(equity, periodCount)
         {
             _firstValueIndex = firstValueIndex;

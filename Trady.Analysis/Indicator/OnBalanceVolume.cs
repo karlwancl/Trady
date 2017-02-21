@@ -1,5 +1,4 @@
-﻿using System;
-using Trady.Core;
+﻿using Trady.Core;
 using static Trady.Analysis.Indicator.OnBalanceVolume;
 
 namespace Trady.Analysis.Indicator

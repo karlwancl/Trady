@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Trady.Core.Period
 {
@@ -9,7 +6,6 @@ namespace Trady.Core.Period
     {
         public Monthly() : base()
         {
-
         }
 
         public Monthly(Country country) : base(country)

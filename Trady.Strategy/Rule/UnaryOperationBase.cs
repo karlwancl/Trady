@@ -1,13 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Trady.Strategy.Rule
 {
     public abstract class UnaryOperationBase<T> : OperationBase<T>
     {
-        protected UnaryOperationBase(IRule<T> operand) 
+        protected UnaryOperationBase(IRule<T> operand)
             : base(operand ?? throw new ArgumentNullException(nameof(operand)))
         {
         }

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Trady.Strategy.Rule
+﻿namespace Trady.Strategy.Rule
 {
     public class AndOperation<T> : BinaryOperationBase<T>
     {

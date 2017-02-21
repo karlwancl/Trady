@@ -10,13 +10,13 @@ namespace Trady.Analysis.Pattern.Indicator
         {
             private IndicatorBase<Stochastics.IndicatorResult> _stoIndicator;
 
-            protected IndicatorBase(Equity equity, IndicatorBase<Stochastics.IndicatorResult> stoIndicator) 
+            protected IndicatorBase(Equity equity, IndicatorBase<Stochastics.IndicatorResult> stoIndicator)
                 : base(equity, stoIndicator.Parameters)
             {
                 _stoIndicator = stoIndicator;
             }
 
-            public override IsMatchedMultistateResult<Trend?> ComputeByIndex(int index)
+            protected override IsMatchedMultistateResult<Trend?> ComputeByIndexImpl(int index)
             {
                 if (index < 1)
                     return new IsMatchedMultistateResult<Trend?>(Equity[index].DateTime, null, null);
@@ -27,7 +27,7 @@ namespace Trady.Analysis.Pattern.Indicator
                 var latestKdOsc = latest.K - latest.D;
                 var secondLatestKsOsc = secondLatest.K - secondLatest.D;
 
-                return new IsMatchedMultistateResult<Trend?>(Equity[index].DateTime, 
+                return new IsMatchedMultistateResult<Trend?>(Equity[index].DateTime,
                     Decision.IsCrossOver(latestKdOsc, secondLatestKsOsc), Decision.IsTrending(latestKdOsc));
             }
         }
