@@ -85,14 +85,13 @@ Nuget package is available in modules, please install the package according to t
 
 <a name="ComputeIndicators"></a>
 #### Compute indicators (Requires Trady.Analysis module)
-    // Supported indicators: Sma, Ema, Rsi, Macd, Sto(Fast, Full, Slow), Obv, AccumDist, Bb, Atr, Dmi, Aroon, Chandlr, Ichimoku & some related indicator (i.e. HighestHigh, LowestLow, etc.)
+    // Supported indicators: Sma, Ema, Rsi, Macd, Sto(Fast, Full, Slow), Obv, AccumDist, Bb, Atr, Dmi, Aroon, Chandlr, Ichimoku & some related indicators (i.e. HighestHigh, LowestLow, etc.)
 
     // There are several ways to compute indicators
-    1. By direct extension (Some common indicators only, provide caching for indicator instance)
+    1. By indicator extension (Some common indicators only, provide caching for indicator instance)
         var smaTs = equity.Sma(30, startTime, endTime);
-        var emaTs = equity.Ema(30, startTime, endTime);
-
-    2. By extension using indicator locator (provide caching for indicator instance)
+        
+    2. By indicator locator (provide caching for indicator instance)
         var smaTs = equity.GetOrCreateAnalytic<SimpleMovingAverage>(30).Compute(startTime, endTime);
 
     3. By instantiation (no caching for indicator instance, better for one-off usage)
@@ -111,7 +110,7 @@ Nuget package is available in modules, please install the package according to t
         {
             // Your construction code here
 
-            // You can make use of other indicators for computing your own indicator, and you should register your first-level dependency through RegisterDependents method
+            // You can make use of other indicators for computing your own indicator, and you should register your first-level dependencies through RegisterDependents method
             _smaIndicator = new SimpleMovingAverage(equity, param1);
             RegisterDependents(_smaIndicator);
         }
@@ -181,22 +180,8 @@ Nuget package is available in modules, please install the package according to t
             // Your implementation to return IndicatorResult
             // You can use the prevTick instance provided by the cache to calculate the new IndicatorResult here
         }
-
-        // IndicatorResult class that store the result from the indicator (depends on outer class)
-        public class IndicatorResult : TickBase
-        {
-            // The constructor should be public and have an dateTime parameter and the values (must be in decimal? type)
-            public IndicatorResult(DateTime dateTime, decimal? value1, decimal? value2) : base(dateTime)
-            {
-                Value1 = value1;
-                Value2 = value2;
-            }
-
-            // Must have public property for getting the indicator value
-            public decimal? Value1 { get; private set; }
-
-            public decimal? Value2 { get; private set; }
-        }
+        
+        // The rest is the same as Simple Type...
     }
 
     // Use case
@@ -326,7 +311,7 @@ Nuget package is available in modules, please install the package according to t
     // You can also implement your own exporter by extending the ExporterBase abstract class
     public class MyExporter
     {
-        public abstract Task<bool> ExportAsync(Equity equity, IList<ITimeSeries> resultTimeSeriesList, DateTime? startTime = default(DateTime?), DateTime? endTime = default(DateTime?), bool ascending = false, CancellationToken token = default(CancellationToken))
+        public async Task<bool> ExportAsync(Equity equity, IList<ITimeSeries> resultTimeSeriesList, DateTime? startTime = default(DateTime?), DateTime? endTime = default(DateTime?), bool ascending = false, CancellationToken token = default(CancellationToken))
         {
             // Your implementation to export indicators values
         }
@@ -379,11 +364,19 @@ Nuget package is available in modules, please install the package according to t
             var sma10 = candle.Equity.GetOrCreateAnalytic<SimpleMovingAverage>(10).ComputeByIndex(candle.Index);
             return sma30.Sma > sma10.Sma;
         }
+        
+        public static bool IsSma10LargerThanSma30(this AnalyzableCandle candle)
+        {
+            var sma30 = candle.Equity.GetOrCreateAnalytic<SimpleMovingAverage>(30).ComputeByIndex(candle.Index);
+            var sma10 = candle.Equity.GetOrCreateAnalytic<SimpleMovingAverage>(10).ComputeByIndex(candle.Index);
+            return sma10.Sma > sma30.Sma;
+        }
     }
 
     // Use case
-    var buyRule = Rule.Create(c => c.IsSma30LargerThanSma10());
-    var portfolio = new PortfolioBuilder().Add(equity, 10).Buy(buyRule).Build();
+    var buyRule = Rule.Create(c => c.IsSma10LargerThanSma30());
+    var sellRule = Rule.Create(c => c.IsSma30LargerThanSma10());
+    var portfolio = new PortfolioBuilder().Add(equity, 10).Buy(buyRule).Sell(sellRule).Build();
     var result = await portfolio.RunAsync(10000, 1);
 [Back to content](#Content)
 
