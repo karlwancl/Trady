@@ -110,9 +110,9 @@ Nuget package is available in modules, please install the package according to t
         {
             // Your construction code here
 
-            // You can make use of other indicators for computing your own indicator, and you should register your first-level dependencies through RegisterDependents method
+            // You can make use of other indicators for computing your own indicator, and you should register your first-level dependencies through RegisterDependencies method
             _smaIndicator = new SimpleMovingAverage(equity, param1);
-            RegisterDependents(_smaIndicator);
+            RegisterDependencies(_smaIndicator);
         }
 
         protected override IndicatorResult ComputeByIndexImpl(int index)
@@ -219,7 +219,7 @@ Nuget package is available in modules, please install the package according to t
                 true
             );
 
-            RegisterDependents(_gemaIndicator);
+            RegisterDependencies(_gemaIndicator);
         }
 
         // The rest is the same as Simple Type...
@@ -259,7 +259,7 @@ Nuget package is available in modules, please install the package according to t
         {
             _indicator = indicator;
             _dbEquity = await _context.Equities.FirstOrDefaultAsync(e => e.Name == indicator.Equity.Name);
-            _dbIndicator = await _context.Indicators.FirstOrDefaultAsync(i => i.Name == indicator.GetType().Name && i.Parameter1 == indicator.Parameters[0]);
+            _dbIndicator = await _context.Indicators.FirstOrDefaultAsync(i => i.Name == indicator.GetType().Name && i.Parameter1 == indicator.Parameters[0] && i.Parameter2 == indicator.Parameters[1] && i.Parameter3 == indicator.Parameters[2] && i.Parameter4 == indicator.Parameters[3]);
         }
 
         // Main stub for data retrieval, all async method uses in this method should add a ConfigureAwait(false) to prevent deadlocks
