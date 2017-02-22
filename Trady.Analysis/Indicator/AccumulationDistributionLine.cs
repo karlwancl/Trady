@@ -5,7 +5,7 @@ namespace Trady.Analysis.Indicator
 {
     public partial class AccumulationDistributionLine : CacheIndicatorBase<IndicatorResult>
     {
-        public AccumulationDistributionLine(Equity equity) : base(equity, null)
+        public AccumulationDistributionLine(Equity equity) : base(equity)
         {
         }
 

@@ -15,7 +15,7 @@ namespace Trady.Analysis.Indicator
             {
                 _rsvIndicator = new RawStochasticsValue(equity, periodCount);
 
-                RegisterDependents(_rsvIndicator);
+                RegisterDependencies(_rsvIndicator);
             }
 
             public int PeriodCount => Parameters[0];

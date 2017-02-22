@@ -13,7 +13,7 @@ namespace Trady.Analysis.Indicator
             _smaIndicator1 = new SimpleMovingAverage(equity, periodCount1);
             _smaIndicator2 = new SimpleMovingAverage(equity, periodCount2);
 
-            RegisterDependents(_smaIndicator1, _smaIndicator2);
+            RegisterDependencies(_smaIndicator1, _smaIndicator2);
         }
 
         public int PeriodCount1 => Parameters[0];

@@ -16,7 +16,7 @@ namespace Trady.Analysis.Indicator
                 i => Equity[i].Close,
                 periodCount);
 
-            RegisterDependents(_ema);
+            RegisterDependencies(_ema);
         }
 
         public int PeriodCount => Parameters[0];

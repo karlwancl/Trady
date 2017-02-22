@@ -22,7 +22,7 @@ namespace Trady.Analysis.Indicator
                 i => _tr(i),
                 periodCount,
                 true);
-            RegisterDependents(_trEma);
+            RegisterDependencies(_trEma);
         }
 
         protected override IndicatorResult ComputeByIndexImpl(int index)

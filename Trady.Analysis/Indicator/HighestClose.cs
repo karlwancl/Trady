@@ -6,7 +6,7 @@ namespace Trady.Analysis.Indicator
 {
     public partial class HighestClose : IndicatorBase<IndicatorResult>
     {
-        public HighestClose(Equity equity, params int[] parameters) : base(equity, parameters)
+        public HighestClose(Equity equity, int periodCount) : base(equity, periodCount)
         {
         }
 

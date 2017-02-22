@@ -6,7 +6,7 @@ namespace Trady.Analysis.Indicator
 {
     public partial class HighestHigh : IndicatorBase<IndicatorResult>
     {
-        public HighestHigh(Equity equity, params int[] parameters) : base(equity, parameters)
+        public HighestHigh(Equity equity, int periodCount) : base(equity, periodCount)
         {
         }
 

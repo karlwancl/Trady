@@ -13,10 +13,11 @@ namespace Trady.Analysis.Indicator
         private Func<int, decimal?> _conversionLine, _baseLine, _leadingSpanB;
         private IPeriod _periodInstance;
 
-        public IchimokuCloud(Equity equity, int shortPeriodCount, int middlePeriodCount, int longPeriodCount, Country? country = null)
+        public IchimokuCloud(Equity equity, int shortPeriodCount, int middlePeriodCount, int longPeriodCount)
             : base(equity, shortPeriodCount, middlePeriodCount, longPeriodCount)
         {
-            _periodInstance = equity.Period.CreateInstance(country ?? Country.UnitedStatesOfAmerica);
+            // Default country set to United States Of America
+            _periodInstance = equity.Period.CreateInstance(Country.UnitedStatesOfAmerica);
 
             _shortHighestHigh = new HighestHigh(equity, shortPeriodCount);
             _shortLowestLow = new LowestLow(equity, shortPeriodCount);
@@ -30,7 +31,12 @@ namespace Trady.Analysis.Indicator
             _longLowestLow = new LowestLow(equity, longPeriodCount);
             _leadingSpanB = i => (_longHighestHigh.ComputeByIndex(i).HighestHigh + _longLowestLow.ComputeByIndex(i).LowestLow) / 2;
 
-            RegisterDependents(_shortHighestHigh, _shortLowestLow, _middleHighestHigh, _middleLowestLow, _longHighestHigh, _longLowestLow);
+            RegisterDependencies(_shortHighestHigh, _shortLowestLow, _middleHighestHigh, _middleLowestLow, _longHighestHigh, _longLowestLow);
+        }
+
+        public void InitWithCountry(Country country)
+        {
+            _periodInstance = Equity.Period.CreateInstance(country);
         }
 
         public int ShortPeriodCount => Parameters[0];
@@ -63,14 +69,34 @@ namespace Trady.Analysis.Indicator
                 if (_periodInstance is IIntradayPeriod)
                     dateTime = _periodInstance.TimestampAt(Equity[0].DateTime, index);
                 else
-                    dateTime = ((IInterdayPeriod)_periodInstance).BusinessTimestampAtAsync(Equity[0].DateTime, index).Result;
+                {
+                    try
+                    {
+                        dateTime = ((IInterdayPeriod)_periodInstance).BusinessTimestampAtAsync(Equity[0].DateTime, index).Result;
+                    }
+                    catch
+                    {
+                        // Unable to get business datetime from enrico web service, use -1 directly in this case
+                        dateTime = _periodInstance.TimestampAt(Equity[0].DateTime, index);
+                    }
+                }
             }
             else if (index >= Equity.Count)
             {
                 if (_periodInstance is IIntradayPeriod)
                     dateTime = _periodInstance.TimestampAt(Equity[Equity.Count - 1].DateTime, index - Equity.Count + 1);
                 else
-                    dateTime = ((IInterdayPeriod)_periodInstance).BusinessTimestampAtAsync(Equity[Equity.Count - 1].DateTime, index - Equity.Count + 1).Result;
+                {
+                    try
+                    {
+                        dateTime = ((IInterdayPeriod)_periodInstance).BusinessTimestampAtAsync(Equity[Equity.Count - 1].DateTime, index - Equity.Count + 1).Result;
+                    }
+                    catch
+                    {
+                        // Unable to get business datetime from enrico web service, use +1 directly in this case
+                        dateTime = _periodInstance.TimestampAt(Equity[Equity.Count - 1].DateTime, index - Equity.Count + 1);
+                    }
+                }
             }
             else
                 dateTime = Equity[index].DateTime;

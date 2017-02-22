@@ -36,7 +36,7 @@ namespace Trady.Analysis.Indicator
                 periodCount,
                 true);
 
-            RegisterDependents(_closePriceChangeIndicator, _uEma, _dEma);
+            RegisterDependencies(_closePriceChangeIndicator, _uEma, _dEma);
         }
 
         public int PeriodCount => Parameters[0];

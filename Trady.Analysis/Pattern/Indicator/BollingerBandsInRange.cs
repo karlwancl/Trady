@@ -20,7 +20,7 @@ namespace Trady.Analysis.Pattern.Indicator
             var current = Equity[index];
 
             return new MultistateResult<Overboundary?>(current.DateTime,
-                Decision.IsOverbound(current.Close, result.Lower, result.Upper));
+                Decision.IsOverbound(current.Close, result.LowerBand, result.UpperBand));
         }
     }
 }

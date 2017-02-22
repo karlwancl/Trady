@@ -14,7 +14,7 @@ namespace Trady.Analysis.Indicator
         {
             _highestHigh = new HighestHigh(equity, periodCount);
             _lowestLow = new LowestLow(equity, periodCount);
-            RegisterDependents(_highestHigh, _lowestLow);
+            RegisterDependencies(_highestHigh, _lowestLow);
         }
 
         public int PeriodCount => Parameters[0];

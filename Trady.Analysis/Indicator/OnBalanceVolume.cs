@@ -5,7 +5,7 @@ namespace Trady.Analysis.Indicator
 {
     public partial class OnBalanceVolume : CacheIndicatorBase<IndicatorResult>
     {
-        public OnBalanceVolume(Equity equity) : base(equity, null)
+        public OnBalanceVolume(Equity equity) : base(equity)
         {
         }
 

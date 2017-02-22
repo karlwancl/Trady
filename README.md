@@ -33,7 +33,7 @@ Nuget package is available in modules, please install the package according to t
     * [Implement Your Own Indicator - Simple Type](#ImplementYourOwnIndicatorSimpleType)
     * [Implement Your Own Indicator - Cummulative Type](#ImplementYourOwnIndicatorCummulativeType)
     * [Implement Your Own Indicator - Moving Average Type](#ImplementYourOwnIndicatorMovingAverageType)
-    * [IndicatorResult cache through IDataProvider](#DataProviderCache)
+    * [IndicatorResult cache through IIndicatorResultProvider](#DataProviderCache)
     
 * Exporting (Requires Trady.Exporter)
     * [Export Indicators](#ExportIndicators)
@@ -227,20 +227,20 @@ Nuget package is available in modules, please install the package according to t
 [Back to content](#Content)
 
 <a name="DataProviderCache"></a>
-#### IndicatorResult cache through IDataProvider (Requires Trady.Analysis module)
-    // In the use case of cummulative indicator computation, you may have to use an external data source to help computing the next indicator value
-    // Or, you may find it better to retrieve a value that is already computed before
+#### IndicatorResult cache through IIndicatorResultProvider (Requires Trady.Analysis module)
+    // You may want to implement the IIndicatorResultProvider interface to do the following things:
+    // 1. Compute cummulative indicator that make use of pre-calculated values from external data source (e.g. database)
+    // 2. Directly retrieve the indicator results from external data source (e.g. database) without re-calculation
 
-    // By these two cases, You can implement the IDataProvider interface to direct retrieve those computed data
     // Let's say we want to retrieve computed data from database, for accessing database, we will use EntityFramework here as an example
-    public class MyDataProvider : IDataProvider
+    public class MyIndicatorResultProvider : IIndicatorResultProvider
     {
         private IIndicator _indicator;
         private ApplicationDbContext _context;
         private DatabaseEquity _dbEquity;
         private DatabaseIndicator _dbIndicator;
 
-        public MyDataProvider(ApplicationDbContext context)
+        public MyIndicatorResultProvider(ApplicationDbContext context)
         {
             _context = context;
         }
@@ -252,7 +252,7 @@ Nuget package is available in modules, please install the package according to t
         bool IsIndicatorExists => _dbIndicator != null;
 
         // For use when the indicator has dependencies registered, the provider is cloned along the hierarchy
-        public IDataProvider Clone() => new MyDataProvider(_context);
+        public IIndicatorResultProvider Clone() => new MyIndicatorResultProvider(_context);
 
         // Initialization stub, intends to reduce the number of data query from external data source (database)
         public async Task InitWithIndicatorAsync(IIndicator indicator)
@@ -282,7 +282,7 @@ Nuget package is available in modules, please install the package according to t
             {
                 if (@param.Name.Equals("datetime", StringComparison.OrdinalIgnoreCase))
                     continue;
-                var value = values.FirstOrDefault(v => @param.Name.Equals(v.Name, StringComparison.OrdinalIgnoreCase));
+                var value = values.FirstOrDefault(v => @param.Name.Replace("@","").Equals(v.Name, StringComparison.OrdinalIgnoreCase));
                 if (value != null)
                     args.Add(value.Value);
             }
@@ -295,8 +295,8 @@ Nuget package is available in modules, please install the package according to t
     // Use case
     var context = _serviceProvider.GetService<ApplicationDbContext>();  // Get ApplicationDbContext through service locator
     var smaIndicator = equity.GetOrCreateAnalytic<SimpleMovingAverage>(30);
-    var provider = new MyDataProvider(context);
-    await smaIndicator.InitWithDataProviderAsync(provider);
+    var provider = new MyIndicatorResultProvider(context);
+    await smaIndicator.InitWithIndicatorResultProviderAsync(provider);
 [Back to content](#Content)
 
 <a name="ExportIndicators"></a>

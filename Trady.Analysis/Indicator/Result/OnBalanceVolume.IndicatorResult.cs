@@ -8,12 +8,12 @@ namespace Trady.Analysis.Indicator
     {
         public class IndicatorResult : TickBase
         {
-            public IndicatorResult(DateTime dateTime, long? obv) : base(dateTime)
+            public IndicatorResult(DateTime dateTime, decimal? obv) : base(dateTime)
             {
                 Obv = obv;
             }
 
-            public long? Obv { get; private set; }
+            public decimal? Obv { get; private set; }
         }
     }
 }

@@ -4,13 +4,13 @@ using Trady.Core;
 
 namespace Trady.Analysis
 {
-    public interface IDataProvider
+    public interface IIndicatorResultProvider
     {
         bool IsEquityExists { get; }
 
         bool IsIndicatorExists { get; }
 
-        IDataProvider Clone();
+        IIndicatorResultProvider Clone();
 
         Task InitWithIndicatorAsync(IIndicator indicator);
 

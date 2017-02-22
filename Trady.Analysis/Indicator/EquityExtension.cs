@@ -70,7 +70,12 @@ namespace Trady.Analysis.Indicator
             => equity.GetOrCreateAnalytic<ChandelierExit>(periodCount, atrCount).Compute(startTime, endTime);
 
         public static TimeSeries<IchimokuCloud.IndicatorResult> Ichimoku(this Equity equity, int shortPeriodCount, int middlePeriodCount, int longPeriodCount, Country? country = null, DateTime? startTime = null, DateTime? endTime = null)
-            => equity.GetOrCreateAnalytic<IchimokuCloud>(shortPeriodCount, middlePeriodCount, longPeriodCount, country).Compute(startTime, endTime);
+        {
+            var ic = equity.GetOrCreateAnalytic<IchimokuCloud>(shortPeriodCount, middlePeriodCount, longPeriodCount);
+            if (country.HasValue)
+                ic.InitWithCountry(country.Value);
+            return ic.Compute(startTime, endTime);
+        }
 
         public static TimeSeries<HighestClose.IndicatorResult> HighestClose(this Equity equity, int periodCount, DateTime? startTime = null, DateTime? endTime = null)
             => equity.GetOrCreateAnalytic<HighestClose>(periodCount).Compute(startTime, endTime);

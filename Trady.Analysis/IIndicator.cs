@@ -4,7 +4,7 @@ namespace Trady.Analysis
 {
     public interface IIndicator : IAnalyzable
     {
-        Task InitWithDataProviderAsync(IDataProvider provider);
+        Task InitWithIndicatorResultProviderAsync(IIndicatorResultProvider provider);
 
         int[] Parameters { get; }
     }

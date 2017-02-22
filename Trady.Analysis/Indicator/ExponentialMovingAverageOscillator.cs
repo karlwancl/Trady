@@ -13,7 +13,7 @@ namespace Trady.Analysis.Indicator
             _emaIndicator1 = new ExponentialMovingAverage(equity, periodCount1);
             _emaIndicator2 = new ExponentialMovingAverage(equity, periodCount2);
 
-            RegisterDependents(_emaIndicator1, _emaIndicator2);
+            RegisterDependencies(_emaIndicator1, _emaIndicator2);
         }
 
         public int PeriodCount1 => Parameters[0];

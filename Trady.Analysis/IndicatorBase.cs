@@ -6,18 +6,18 @@ namespace Trady.Analysis
 {
     public abstract class IndicatorBase<TTick> : AnalyzableBase<TTick>, IIndicator where TTick : ITick
     {
-        private IDataProvider _provider;
-        private List<IIndicator> _dependents;
+        private IIndicatorResultProvider _provider;
+        private List<IIndicator> _dependencies;
 
         public IndicatorBase(Equity equity, params int[] parameters) : base(equity)
         {
             Parameters = parameters;
-            _dependents = new List<IIndicator>();
+            _dependencies = new List<IIndicator>();
         }
 
-        protected void RegisterDependents(params IIndicator[] indicators)
+        protected void RegisterDependencies(params IIndicator[] indicators)
         {
-            _dependents.AddRange(indicators);
+            _dependencies.AddRange(indicators);
         }
 
         public sealed override TTick ComputeByIndex(int index)
@@ -26,7 +26,6 @@ namespace Trady.Analysis
             bool isIndexValid = index >= 0 && index <= Equity.Count - 1;
             if (isProviderValid && isIndexValid)
             {
-                ///
                 var (hasValue, tick) = _provider.GetAsync<TTick>(Equity[index].DateTime).Result;
                 if (hasValue)
                     return tick;
@@ -34,11 +33,11 @@ namespace Trady.Analysis
             return ComputeByIndexImpl(index);;
         }
 
-        public async Task InitWithDataProviderAsync(IDataProvider provider)
+        public async Task InitWithIndicatorResultProviderAsync(IIndicatorResultProvider provider)
         {
             _provider = provider;
-            foreach (var dependent in _dependents)
-                await dependent.InitWithDataProviderAsync(_provider.Clone());
+            foreach (var dependency in _dependencies)
+                await dependency.InitWithIndicatorResultProviderAsync(_provider.Clone());
             await _provider.InitWithIndicatorAsync(this);
         }
 

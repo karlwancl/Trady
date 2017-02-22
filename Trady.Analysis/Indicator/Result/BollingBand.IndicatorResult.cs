@@ -10,19 +10,19 @@ namespace Trady.Analysis.Indicator
         {
             public IndicatorResult(DateTime dateTime, decimal? lowerBand, decimal? middleBand, decimal? upperBand, decimal? bandWidth) : base(dateTime)
             {
-                Lower = lowerBand;
-                Middle = middleBand;
-                Upper = upperBand;
-                Width = bandWidth;
+                LowerBand = lowerBand;
+                MiddleBand = middleBand;
+                UpperBand = upperBand;
+                BandWidth = bandWidth;
             }
 
-            public decimal? Lower { get; private set; }
+            public decimal? LowerBand { get; private set; }
 
-            public decimal? Middle { get; private set; }
+            public decimal? MiddleBand { get; private set; }
 
-            public decimal? Upper { get; private set; }
+            public decimal? UpperBand { get; private set; }
 
-            public decimal? Width { get; private set; }
+            public decimal? BandWidth { get; private set; }
         }
     }
 }

@@ -11,7 +11,7 @@ namespace Trady.Analysis.Indicator
         {
             _rsIndicator = new RelativeStrength(equity, periodCount);
 
-            RegisterDependents(_rsIndicator);
+            RegisterDependencies(_rsIndicator);
         }
 
         public int PeriodCount => Parameters[0];
