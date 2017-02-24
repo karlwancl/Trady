@@ -5,20 +5,17 @@ namespace Trady.Analysis.Indicator
 {
     public partial class Stochastics
     {
-        public class IndicatorResult : TickBase
+        public class IndicatorResult : IndicatorResultBase
         {
-            public IndicatorResult(DateTime dateTime, decimal? k, decimal? d, decimal? j) : base(dateTime)
+            public IndicatorResult(DateTime dateTime, decimal? k, decimal? d, decimal? j) : base(dateTime, k, d, j)
             {
-                K = k;
-                D = d;
-                J = j;
             }
 
-            public decimal? K { get; private set; }
+            public decimal? K => Values[0];
 
-            public decimal? D { get; private set; }
+            public decimal? D => Values[1];
 
-            public decimal? J { get; private set; }
+            public decimal? J => Values[2];
         }
     }
 }

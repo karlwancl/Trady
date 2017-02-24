@@ -6,13 +6,13 @@ namespace Trady.Analysis.Pattern.Candle
     /// <summary>
     /// Reference: http://stockcharts.com/school/doku.php?id=chart_school:chart_analysis:candlestick_pattern_dictionary
     /// </summary>
-    public class AbandonedBaby : AnalyzableBase<IsMatchedResult>
+    public class AbandonedBaby : AnalyzableBase<PatternResult<Match?>>
     {
         public AbandonedBaby(Equity equity) : base(equity)
         {
         }
 
-        protected override IsMatchedResult ComputeByIndexImpl(int index)
+        protected override PatternResult<Match?> ComputeByIndexImpl(int index)
         {
             throw new NotImplementedException();
         }

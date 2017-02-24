@@ -6,14 +6,13 @@ namespace Trady.Analysis.Indicator
 {
     public partial class LowestLow : IndicatorBase<IndicatorResult>
     {
-        public class IndicatorResult : TickBase
+        public class IndicatorResult : IndicatorResultBase
         {
-            public IndicatorResult(DateTime dateTime, decimal? lowestLow) : base(dateTime)
+            public IndicatorResult(DateTime dateTime, decimal? lowestLow) : base(dateTime, lowestLow)
             {
-                LowestLow = lowestLow;
             }
 
-            public decimal? LowestLow { get; private set; }
+            public decimal? LowestLow => Values[0];
         }
     }
 }

@@ -3,7 +3,7 @@ using static Trady.Analysis.Indicator.OnBalanceVolume;
 
 namespace Trady.Analysis.Indicator
 {
-    public partial class OnBalanceVolume : CacheIndicatorBase<IndicatorResult>
+    public partial class OnBalanceVolume : CummulativeIndicatorBase<IndicatorResult>
     {
         public OnBalanceVolume(Equity equity) : base(equity)
         {

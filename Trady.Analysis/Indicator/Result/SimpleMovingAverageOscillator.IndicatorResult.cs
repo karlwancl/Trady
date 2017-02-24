@@ -6,14 +6,13 @@ namespace Trady.Analysis.Indicator
 {
     public partial class SimpleMovingAverageOscillator : IndicatorBase<IndicatorResult>
     {
-        public class IndicatorResult : TickBase
+        public class IndicatorResult : IndicatorResultBase
         {
-            public IndicatorResult(DateTime dateTime, decimal? osc) : base(dateTime)
+            public IndicatorResult(DateTime dateTime, decimal? osc) : base(dateTime, osc)
             {
-                Osc = osc;
             }
 
-            public decimal? Osc { get; private set; }
+            public decimal? Osc => Values[0];
         }
     }
 }

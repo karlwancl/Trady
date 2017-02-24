@@ -6,17 +6,15 @@ namespace Trady.Analysis.Indicator
 {
     public partial class ChandelierExit : IndicatorBase<IndicatorResult>
     {
-        public class IndicatorResult : TickBase
+        public class IndicatorResult : IndicatorResultBase
         {
-            public IndicatorResult(DateTime dateTime, decimal? @long, decimal? @short) : base(dateTime)
+            public IndicatorResult(DateTime dateTime, decimal? @long, decimal? @short) : base(dateTime, @long, @short)
             {
-                Long = @long;
-                Short = @short;
             }
 
-            public decimal? Long { get; private set; }
+            public decimal? Long => Values[0];
 
-            public decimal? Short { get; private set; }
+            public decimal? Short => Values[1];
         }
     }
 }

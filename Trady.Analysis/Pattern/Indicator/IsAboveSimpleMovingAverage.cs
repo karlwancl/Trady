@@ -4,7 +4,7 @@ using Trady.Core;
 
 namespace Trady.Analysis.Pattern.Indicator
 {
-    public class IsAboveSimpleMovingAverage : IndicatorBase<IsMatchedResult>
+    public class IsAboveSimpleMovingAverage : IndicatorBase<PatternResult<Match?>>
     {
         private SimpleMovingAverage _smaIndicator;
 
@@ -14,10 +14,10 @@ namespace Trady.Analysis.Pattern.Indicator
             _smaIndicator = new SimpleMovingAverage(equity, periodCount);
         }
 
-        protected override IsMatchedResult ComputeByIndexImpl(int index)
+        protected override PatternResult<Match?> ComputeByIndexImpl(int index)
         {
             var result = _smaIndicator.ComputeByIndex(index);
-            return new IsMatchedResult(Equity[index].DateTime, Equity[index].Close.IsLargerThan(result.Sma));
+            return new PatternResult<Match?>(Equity[index].DateTime, Decision.IsMatch(Equity[index].Close.IsLargerThan(result.Sma)));
         }
     }
 }

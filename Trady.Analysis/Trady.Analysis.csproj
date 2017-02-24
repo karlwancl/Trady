@@ -7,15 +7,16 @@
     <Description>Analysis module of Trady, a handy library for computing technical indicators, based on .NET Standard 1.4</Description>
     <Copyright>Copyright (c) 2016 SalmonThinLion</Copyright>
     <AssemblyTitle>Trady.Analysis</AssemblyTitle>
-    <VersionPrefix>1.0.2</VersionPrefix>
+    <VersionPrefix>1.0.3</VersionPrefix>
     <Authors>SalmonThinLion</Authors>
     <TargetFramework>netstandard1.4</TargetFramework>
     <AssemblyName>Trady.Analysis</AssemblyName>
     <PackageId>Trady.Analysis</PackageId>
     <PackageTags>Trady;Technical;Analysis;Finance;Stock</PackageTags>
     <PackageReleaseNotes>
-      [23/1/2017] Renamed some classes and methods, some bug fix on indicator computation
-      [21/1/2017] First release
+[24/1/2017] Removed the needs of adding RegisterDependencies, added TickProviderBase class to help constructing tick provider for value retrieval      
+[23/1/2017] Renamed some classes and methods, some bug fix on indicator computation
+[21/1/2017] First release
     </PackageReleaseNotes>
     <PackageProjectUrl>https://github.com/salmonthinlion/Trady</PackageProjectUrl>
     <PackageLicenseUrl>https://github.com/salmonthinlion/Trady/blob/master/LICENSE</PackageLicenseUrl>

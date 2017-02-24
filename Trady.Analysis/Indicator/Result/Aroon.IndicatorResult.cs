@@ -6,20 +6,17 @@ namespace Trady.Analysis.Indicator
 {
     public partial class Aroon : IndicatorBase<IndicatorResult>
     {
-        public class IndicatorResult : TickBase
+        public class IndicatorResult : IndicatorResultBase
         {
-            public IndicatorResult(DateTime dateTime, decimal? up, decimal? down, decimal? osc) : base(dateTime)
+            public IndicatorResult(DateTime dateTime, decimal? up, decimal? down, decimal? osc) : base(dateTime, up, down, osc)
             {
-                Up = up;
-                Down = down;
-                Osc = osc;
             }
 
-            public decimal? Up { get; private set; }
+            public decimal? Up => Values[0];
 
-            public decimal? Down { get; private set; }
+            public decimal? Down => Values[1];
 
-            public decimal? Osc { get; private set; }
+            public decimal? Osc => Values[2];
         }
     }
 }

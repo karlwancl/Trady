@@ -4,7 +4,7 @@ using Trady.Core;
 
 namespace Trady.Analysis.Pattern.Indicator
 {
-    public class IsAboveExponentialMovingAverage : IndicatorBase<IsMatchedResult>
+    public class IsAboveExponentialMovingAverage : IndicatorBase<PatternResult<Match?>>
     {
         private ExponentialMovingAverage _emaIndicator;
 
@@ -14,10 +14,10 @@ namespace Trady.Analysis.Pattern.Indicator
             _emaIndicator = new ExponentialMovingAverage(equity, periodCount);
         }
 
-        protected override IsMatchedResult ComputeByIndexImpl(int index)
+        protected override PatternResult<Match?> ComputeByIndexImpl(int index)
         {
             var result = _emaIndicator.ComputeByIndex(index);
-            return new IsMatchedResult(Equity[index].DateTime, Equity[index].Close.IsLargerThan(result.Ema));
+            return new PatternResult<Match?>(Equity[index].DateTime, Decision.IsMatch(Equity[index].Close.IsLargerThan(result.Ema)));
         }
     }
 }

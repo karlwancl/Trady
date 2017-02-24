@@ -6,23 +6,20 @@ namespace Trady.Analysis.Indicator
 {
     public partial class DirectionalMovementIndex : IndicatorBase<IndicatorResult>
     {
-        public class IndicatorResult : TickBase
+        public class IndicatorResult : IndicatorResultBase
         {
-            public IndicatorResult(DateTime dateTime, decimal? pdi, decimal? mdi, decimal? adx, decimal? adxr) : base(dateTime)
+            public IndicatorResult(DateTime dateTime, decimal? pdi, decimal? mdi, decimal? adx, decimal? adxr) :
+                base(dateTime, pdi, mdi, adx, adxr)
             {
-                Pdi = pdi;
-                Mdi = mdi;
-                Adx = adx;
-                Adxr = adxr;
             }
 
-            public decimal? Pdi { get; private set; }
+            public decimal? Pdi => Values[0];
 
-            public decimal? Mdi { get; private set; }
+            public decimal? Mdi => Values[1];
 
-            public decimal? Adx { get; private set; }
+            public decimal? Adx => Values[2];
 
-            public decimal? Adxr { get; private set; }
+            public decimal? Adxr => Values[3];
         }
     }
 }

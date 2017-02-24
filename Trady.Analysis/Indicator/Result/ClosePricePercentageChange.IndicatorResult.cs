@@ -6,14 +6,13 @@ namespace Trady.Analysis.Indicator
 {
     public partial class ClosePricePercentageChange : IndicatorBase<IndicatorResult>
     {
-        public class IndicatorResult : TickBase
+        public class IndicatorResult : IndicatorResultBase
         {
-            public IndicatorResult(DateTime dateTime, decimal? percentageChange) : base(dateTime)
+            public IndicatorResult(DateTime dateTime, decimal? percentageChange) : base(dateTime, percentageChange)
             {
-                PercentageChange = percentageChange;
             }
 
-            public decimal? PercentageChange { get; private set; }
+            public decimal? PercentageChange => Values[0];
         }
     }
 }

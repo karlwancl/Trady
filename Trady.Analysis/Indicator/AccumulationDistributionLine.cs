@@ -3,7 +3,7 @@ using static Trady.Analysis.Indicator.AccumulationDistributionLine;
 
 namespace Trady.Analysis.Indicator
 {
-    public partial class AccumulationDistributionLine : CacheIndicatorBase<IndicatorResult>
+    public partial class AccumulationDistributionLine : CummulativeIndicatorBase<IndicatorResult>
     {
         public AccumulationDistributionLine(Equity equity) : base(equity)
         {

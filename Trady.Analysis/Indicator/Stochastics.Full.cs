@@ -14,8 +14,6 @@ namespace Trady.Analysis.Indicator
                 : base(equity, periodCount, smaPeriodCountK, smaPeriodCountD)
             {
                 _fastStochasticsIndicator = new Fast(equity, periodCount, smaPeriodCountK);
-
-                RegisterDependencies(_fastStochasticsIndicator);
             }
 
             public int PeriodCount => Parameters[0];

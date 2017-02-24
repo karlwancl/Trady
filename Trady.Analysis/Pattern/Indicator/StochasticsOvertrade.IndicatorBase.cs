@@ -6,7 +6,7 @@ namespace Trady.Analysis.Pattern.Indicator
 {
     public partial class StochasticsOvertrade
     {
-        public abstract class IndicatorBase : IndicatorBase<MultistateResult<Overtrade?>>
+        public abstract class IndicatorBase : IndicatorBase<PatternResult<Overtrade?>>
         {
             private IndicatorBase<Stochastics.IndicatorResult> _stoIndicator;
 
@@ -16,10 +16,10 @@ namespace Trady.Analysis.Pattern.Indicator
                 _stoIndicator = stoIndicator;
             }
 
-            protected override MultistateResult<Overtrade?> ComputeByIndexImpl(int index)
+            protected override PatternResult<Overtrade?> ComputeByIndexImpl(int index)
             {
                 var result = _stoIndicator.ComputeByIndex(index);
-                return new MultistateResult<Overtrade?>(Equity[index].DateTime, Decision.IsOvertrade(result.K));
+                return new PatternResult<Overtrade?>(Equity[index].DateTime, Decision.IsOvertrade(result.K));
             }
         }
     }

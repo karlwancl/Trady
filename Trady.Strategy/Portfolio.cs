@@ -12,8 +12,8 @@ namespace Trady.Strategy
     public class Portfolio
     {
         private IDictionary<Equity, int> _equityPairs;
-        private IRule<AnalyzableCandle> _buyRule;
-        private IRule<AnalyzableCandle> _sellRule;
+        private IRule<IndexCandle> _buyRule;
+        private IRule<IndexCandle> _sellRule;
 
         public event BuyHandler OnBought;
 
@@ -29,7 +29,7 @@ namespace Trady.Strategy
         {
         }
 
-        private Portfolio(IDictionary<Equity, int> equityPairs, IRule<AnalyzableCandle> buyRule, IRule<AnalyzableCandle> sellRule)
+        private Portfolio(IDictionary<Equity, int> equityPairs, IRule<IndexCandle> buyRule, IRule<IndexCandle> sellRule)
         {
             _equityPairs = equityPairs ?? new Dictionary<Equity, int>();
             _buyRule = buyRule;
@@ -45,10 +45,10 @@ namespace Trady.Strategy
             return new Portfolio(_equityPairs, _buyRule, _sellRule);
         }
 
-        public Portfolio Buy(IRule<AnalyzableCandle> rule)
+        public Portfolio Buy(IRule<IndexCandle> rule)
             => new Portfolio(_equityPairs, (_buyRule?.Or(rule)) ?? rule, _sellRule);
 
-        public Portfolio Sell(IRule<AnalyzableCandle> rule)
+        public Portfolio Sell(IRule<IndexCandle> rule)
             => new Portfolio(_equityPairs, _buyRule, (_sellRule?.Or(rule)) ?? rule);
 
         #endregion Builder
@@ -65,7 +65,7 @@ namespace Trady.Strategy
                 var pairs = UnifyEquitiesPeriod(_equityPairs);
                 var periodInstance = pairs.First().Key.Period.CreateInstance();
                 var balanceMap = pairs.ToDictionary(kvp => kvp.Key, kvp => principal * Convert.ToDecimal(kvp.Value * 1.0 / pairs.Sum(p => p.Value)));
-                var assetMap = new Dictionary<Equity, (AnalyzableCandle candle, int quantity)>();
+                var assetMap = new Dictionary<Equity, (IndexCandle candle, int quantity)>();
 
                 // Get the earliest start time among the equities, use it as the start time for looping. Ignore the very first record if the time is not a timestamp
                 DateTime dateTimeCursor = startTime ?? pairs.Min(kvp => kvp.Key.Min(c => c.DateTime));
@@ -87,8 +87,8 @@ namespace Trady.Strategy
                         if (candleIndex == null || nextCandleIndex == null)
                             continue;
 
-                        var candle = new AnalyzableCandle(pair.Key, candleIndex.Value);
-                        var nextCandle = new AnalyzableCandle(pair.Key, nextCandleIndex.Value);
+                        var candle = new IndexCandle(pair.Key, candleIndex.Value);
+                        var nextCandle = new IndexCandle(pair.Key, nextCandleIndex.Value);
                         bool isBought = assetMap.TryGetValue(pair.Key, out var bought);
 
                         // Transact if current timestamp fulfill the trade requirement
@@ -106,7 +106,7 @@ namespace Trady.Strategy
             );
         }
 
-        private void SellEquity(decimal premium, List<(Equity equity, DateTime transactionDatetime, decimal amount)> transactions, Dictionary<Equity, decimal> fundMap, Dictionary<Equity, (AnalyzableCandle candle, int quantity)> assetMap, KeyValuePair<Equity, int> pair, AnalyzableCandle nextCandle, (AnalyzableCandle candle, int quantity) bought)
+        private void SellEquity(decimal premium, List<(Equity equity, DateTime transactionDatetime, decimal amount)> transactions, Dictionary<Equity, decimal> fundMap, Dictionary<Equity, (IndexCandle candle, int quantity)> assetMap, KeyValuePair<Equity, int> pair, IndexCandle nextCandle, (IndexCandle candle, int quantity) bought)
         {
             decimal plRatio = 100 * (nextCandle.Open - bought.candle.Open) / bought.candle.Open;
             decimal moneyIn = nextCandle.Open * bought.quantity - premium;
@@ -118,7 +118,7 @@ namespace Trady.Strategy
             OnSold?.Invoke(bought.quantity, pair.Key.Name, nextCandle.Open, nextCandle.DateTime, fundMap[pair.Key], plRatio);
         }
 
-        private void BuyEquity(decimal premium, List<(Equity equity, DateTime transactionDatetime, decimal amount)> transactions, Dictionary<Equity, decimal> fundMap, Dictionary<Equity, (AnalyzableCandle candle, int quantity)> assetMap, KeyValuePair<Equity, int> pair, AnalyzableCandle nextCandle)
+        private void BuyEquity(decimal premium, List<(Equity equity, DateTime transactionDatetime, decimal amount)> transactions, Dictionary<Equity, decimal> fundMap, Dictionary<Equity, (IndexCandle candle, int quantity)> assetMap, KeyValuePair<Equity, int> pair, IndexCandle nextCandle)
         {
             int quantity = Convert.ToInt32(Math.Floor((fundMap[pair.Key] - premium) / nextCandle.Open));
             decimal moneyOut = nextCandle.Open * quantity + premium;

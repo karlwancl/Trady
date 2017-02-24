@@ -4,12 +4,12 @@ using Trady.Core;
 
 namespace Trady.Analysis
 {
-    public abstract class CacheIndicatorBase<TTick> : IndicatorBase<TTick> where TTick : ITick
+    public abstract class CummulativeIndicatorBase<TTick> : IndicatorBase<TTick> where TTick : ITick
     {
         private IMemoryCache _cache;
         private readonly Func<int, int?> _getNearestCachedIndex;
 
-        public CacheIndicatorBase(Equity equity, params int[] parameters) : base(equity, parameters)
+        public CummulativeIndicatorBase(Equity equity, params int[] parameters) : base(equity, parameters)
         {
             _cache = new MemoryCache(new MemoryCacheOptions());
             _getNearestCachedIndex = i =>

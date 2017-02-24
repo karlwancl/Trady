@@ -6,14 +6,13 @@ namespace Trady.Analysis.Indicator
 {
     public partial class HistoricalHighestClose : IndicatorBase<IndicatorResult>
     {
-        public class IndicatorResult : TickBase
+        public class IndicatorResult : IndicatorResultBase
         {
-            public IndicatorResult(DateTime dateTime, decimal? historicalHighestClose) : base(dateTime)
+            public IndicatorResult(DateTime dateTime, decimal? historicalHighestClose) : base(dateTime, historicalHighestClose)
             {
-                HistoricalHighestClose = historicalHighestClose;
             }
 
-            public decimal? HistoricalHighestClose { get; private set; }
+            public decimal? HistoricalHighestClose => Values[0];
         }
     }
 }

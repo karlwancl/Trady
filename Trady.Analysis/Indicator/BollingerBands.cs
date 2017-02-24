@@ -12,7 +12,6 @@ namespace Trady.Analysis.Indicator
         public BollingerBands(Equity equity, int periodCount, int sdCount) : base(equity, periodCount, sdCount)
         {
             _smaIndicator = new SimpleMovingAverage(equity, periodCount);
-            RegisterDependencies(_smaIndicator);
         }
 
         public int PeriodCount => Parameters[0];

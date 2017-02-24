@@ -23,8 +23,6 @@ namespace Trady.Analysis.Indicator
                 i => _diff(i),
                 i => _diff(i),
                 demPeriodCount);
-
-            RegisterDependencies(_emaIndicator1, _emaIndicator2);
         }
 
         public int EmaPeriodCount1 => Parameters[0];

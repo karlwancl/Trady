@@ -4,7 +4,7 @@ using Trady.Core;
 
 namespace Trady.Analysis.Pattern.Indicator
 {
-    public class ClosePriceChangeTrend : IndicatorBase<MultistateResult<Trend?>>
+    public class ClosePriceChangeTrend : IndicatorBase<PatternResult<Trend?>>
     {
         private ClosePriceChange _closePriceChangeIndicator;
 
@@ -13,10 +13,10 @@ namespace Trady.Analysis.Pattern.Indicator
             _closePriceChangeIndicator = new ClosePriceChange(equity);
         }
 
-        protected override MultistateResult<Trend?> ComputeByIndexImpl(int index)
+        protected override PatternResult<Trend?> ComputeByIndexImpl(int index)
         {
             var latest = _closePriceChangeIndicator.ComputeByIndex(index);
-            return new MultistateResult<Trend?>(Equity[index].DateTime, Decision.IsTrending(latest.Change));
+            return new PatternResult<Trend?>(Equity[index].DateTime, Decision.IsTrending(latest.Change));
         }
     }
 }

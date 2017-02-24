@@ -4,16 +4,15 @@ using static Trady.Analysis.Indicator.OnBalanceVolume;
 
 namespace Trady.Analysis.Indicator
 {
-    public partial class OnBalanceVolume : CacheIndicatorBase<IndicatorResult>
+    public partial class OnBalanceVolume : CummulativeIndicatorBase<IndicatorResult>
     {
-        public class IndicatorResult : TickBase
+        public class IndicatorResult : IndicatorResultBase
         {
-            public IndicatorResult(DateTime dateTime, decimal? obv) : base(dateTime)
+            public IndicatorResult(DateTime dateTime, decimal? obv) : base(dateTime, obv)
             {
-                Obv = obv;
             }
 
-            public decimal? Obv { get; private set; }
+            public decimal? Obv => Values[0];
         }
     }
 }

@@ -12,13 +12,6 @@
             return value1.Value > value2.Value;
         }
 
-        public static bool? IsCrossOver(decimal? value1, decimal? value2)
-        {
-            if (!value1.HasValue || !value2.HasValue)
-                return null;
-            return value1.Value * value2.Value < 0;
-        }
-
         public static Trend? IsTrending(decimal? change)
         {
             if (!change.HasValue)
@@ -36,22 +29,38 @@
             return Overboundary.InRange;
         }
 
-        public static SevereOvertrade? IsSeverelyOvertrade(decimal? value)
-        {
-            if (!value.HasValue) return null;
-            if (value <= 20) return SevereOvertrade.SevereOversold;
-            if (value <= 30) return SevereOvertrade.Oversold;
-            if (value >= 80) return SevereOvertrade.SevereOverbought;
-            if (value >= 70) return SevereOvertrade.Overbought;
-            return SevereOvertrade.Normal;
-        }
-
         public static Overtrade? IsOvertrade(decimal? value)
         {
             if (!value.HasValue) return null;
-            if (value <= 20) return Overtrade.Oversold;
-            if (value >= 80) return Overtrade.Overbought;
+            if (value <= 20) return Overtrade.SeverelyOversold;
+            if (value <= 30) return Overtrade.Oversold;
+            if (value >= 80) return Overtrade.SeverelyOverbought;
+            if (value >= 70) return Overtrade.Overbought;
             return Overtrade.Normal;
+        }
+
+        public static Crossover? IsCrossover(decimal? last, decimal? secondLast)
+        {
+            if (!last.HasValue || !secondLast.HasValue)
+                return null;
+            if (last.Value * secondLast.Value < 0)
+            {
+                var trending = IsTrending(last.Value).Value;
+                if (trending == Trend.Bullish)
+                    return Crossover.BullishCrossover;
+                else if (trending == Trend.Bearish)
+                    return Crossover.BearishCrossover;
+                else
+                    return Crossover.NonTrendedCrossover;
+            }
+            return Crossover.NoCrossover;
+        }
+
+        public static Match? IsMatch(bool? value)
+        {
+            if (!value.HasValue) return null;
+            if (value.Value) return Match.IsMatched;
+            return Match.NotMatched;
         }
     }
 }

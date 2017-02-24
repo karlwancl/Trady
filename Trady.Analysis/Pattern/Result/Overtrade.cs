@@ -4,6 +4,8 @@
     {
         Normal,
         Overbought,
-        Oversold
+        Oversold,
+        SeverelyOverbought,
+        SeverelyOversold
     }
 }

@@ -4,16 +4,15 @@ using static Trady.Analysis.Indicator.AccumulationDistributionLine;
 
 namespace Trady.Analysis.Indicator
 {
-    public partial class AccumulationDistributionLine : CacheIndicatorBase<IndicatorResult>
+    public partial class AccumulationDistributionLine : CummulativeIndicatorBase<IndicatorResult>
     {
-        public class IndicatorResult : TickBase
+        public class IndicatorResult : IndicatorResultBase
         {
-            public IndicatorResult(DateTime dateTime, decimal? accumDist) : base(dateTime)
+            public IndicatorResult(DateTime dateTime, decimal? accumDist) : base(dateTime, accumDist)
             {
-                AccumDist = accumDist;
             }
 
-            public decimal? AccumDist { get; private set; }
+            public decimal? AccumDist => Values[0];
         }
     }
 }

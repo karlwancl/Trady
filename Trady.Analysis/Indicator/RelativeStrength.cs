@@ -35,8 +35,6 @@ namespace Trady.Analysis.Indicator
                 i => Math2.Min(_closePriceChangeIndicator.ComputeByIndex(i).Change, 0).Abs(),
                 periodCount,
                 true);
-
-            RegisterDependencies(_closePriceChangeIndicator, _uEma, _dEma);
         }
 
         public int PeriodCount => Parameters[0];

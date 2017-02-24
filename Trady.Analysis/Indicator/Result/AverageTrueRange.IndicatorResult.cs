@@ -6,14 +6,13 @@ namespace Trady.Analysis.Indicator
 {
     public partial class AverageTrueRange : IndicatorBase<IndicatorResult>
     {
-        public class IndicatorResult : TickBase
+        public class IndicatorResult : IndicatorResultBase
         {
-            public IndicatorResult(DateTime dateTime, decimal? atr) : base(dateTime)
+            public IndicatorResult(DateTime dateTime, decimal? atr) : base(dateTime, atr)
             {
-                Atr = atr;
             }
 
-            public decimal? Atr { get; private set; }
+            public decimal? Atr => Values[0];
         }
     }
 }

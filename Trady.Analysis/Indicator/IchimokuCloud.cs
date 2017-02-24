@@ -30,8 +30,6 @@ namespace Trady.Analysis.Indicator
             _longHighestHigh = new HighestHigh(equity, longPeriodCount);
             _longLowestLow = new LowestLow(equity, longPeriodCount);
             _leadingSpanB = i => (_longHighestHigh.ComputeByIndex(i).HighestHigh + _longLowestLow.ComputeByIndex(i).LowestLow) / 2;
-
-            RegisterDependencies(_shortHighestHigh, _shortLowestLow, _middleHighestHigh, _middleLowestLow, _longHighestHigh, _longLowestLow);
         }
 
         public void InitWithCountry(Country country)

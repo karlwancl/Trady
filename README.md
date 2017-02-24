@@ -33,7 +33,7 @@ Nuget package is available in modules, please install the package according to t
     * [Implement Your Own Indicator - Simple Type](#ImplementYourOwnIndicatorSimpleType)
     * [Implement Your Own Indicator - Cummulative Type](#ImplementYourOwnIndicatorCummulativeType)
     * [Implement Your Own Indicator - Moving Average Type](#ImplementYourOwnIndicatorMovingAverageType)
-    * [IndicatorResult cache through IIndicatorResultProvider](#DataProviderCache)
+    * [IndicatorResult cache through TickProviderBase](#DataProviderCache)
     
 * Exporting (Requires Trady.Exporter)
     * [Export Indicators](#ExportIndicators)
@@ -112,7 +112,6 @@ Nuget package is available in modules, please install the package according to t
 
             // You can make use of other indicators for computing your own indicator, and you should register your first-level dependencies through RegisterDependencies method
             _smaIndicator = new SimpleMovingAverage(equity, param1);
-            RegisterDependencies(_smaIndicator);
         }
 
         protected override IndicatorResult ComputeByIndexImpl(int index)
@@ -121,19 +120,17 @@ Nuget package is available in modules, please install the package according to t
         }
 
         // IndicatorResult class that store the result from the indicator (depends on outer class)
-        public class IndicatorResult : TickBase
+        public class IndicatorResult : IndicatorResultBase
         {
             // The constructor should be public and have an dateTime parameter and the values (must be in decimal? type)
-            public IndicatorResult(DateTime dateTime, decimal? value1, decimal? value2) : base(dateTime)
+            public IndicatorResult(DateTime dateTime, decimal? value1, decimal? value2) : base(dateTime, value1, value2)
             {
-                Value1 = value1;
-                Value2 = value2;
             }
 
             // Must have public property for getting the indicator value
-            public decimal? Value1 { get; private set; }
+            public decimal? Value1 => Values[0];
 
-            public decimal? Value2 { get; private set; }
+            public decimal? Value2 => Values[1];
         }
     }
 
@@ -148,8 +145,8 @@ Nuget package is available in modules, please install the package according to t
 
 <a name="ImplementYourOwnIndicatorCummulativeType"></a>
 #### Implement your own indicator - Cummulative Type (Requires Trady.Analysis module)
-    // You can implement your own indicator by extending the CachedIndicatorBase<IndicatorResult> class
-    public class MyCummulativeIndicator : CachedIndicatorBase<IndicatorResult>
+    // You can implement your own indicator by extending the CummulativeIndicatorBase<IndicatorResult> class
+    public class MyCummulativeIndicator : CummulativeIndicatorBase<IndicatorResult>
     {
         // The constructor should have an equity parameter and the indicator integer parameters
         public MyCummulativeIndicator(Equity equity, int param1): base(equity, param1)
@@ -218,8 +215,6 @@ Nuget package is available in modules, please install the package according to t
                 periodCount,
                 true
             );
-
-            RegisterDependencies(_gemaIndicator);
         }
 
         // The rest is the same as Simple Type...
@@ -227,76 +222,52 @@ Nuget package is available in modules, please install the package according to t
 [Back to content](#Content)
 
 <a name="DataProviderCache"></a>
-#### IndicatorResult cache through IIndicatorResultProvider (Requires Trady.Analysis module)
-    // You may want to implement the IIndicatorResultProvider interface to do the following things:
+#### IndicatorResult cache through TickProviderBase (Requires Trady.Analysis module)
+    // You may want to extend the TickProviderBase class to do the following things:
     // 1. Compute cummulative indicator that make use of pre-calculated values from external data source (e.g. database)
     // 2. Directly retrieve the indicator results from external data source (e.g. database) without re-calculation
 
-    // Let's say we want to retrieve computed data from database, for accessing database, we will use EntityFramework here as an example
-    public class MyIndicatorResultProvider : IIndicatorResultProvider
+    // Let's say we want to retrieve computed data from database, for accessing database, we assume there is an UnitOfWork instance to inject
+    public class TickProvider : TickProviderBase
     {
-        private IIndicator _indicator;
-        private ApplicationDbContext _context;
-        private DatabaseEquity _dbEquity;
-        private DatabaseIndicator _dbIndicator;
+        private DbEquity _dbEquity;
+        private DbIndicator _dbIndicator;
 
-        public MyIndicatorResultProvider(ApplicationDbContext context)
+        // Indicate if database is ready for data retrieval
+        public override bool IsReady => _dbEquity != null && _dbIndicator != null;
+
+        // Must put all the input parameters to base class for cloning
+        public TickProvider(IUnitOfWork uow)
+            : base(uow)
         {
-            _context = context;
         }
 
-        // Indicate if the data store (database) contains the equity record
-        bool IsEquityExists => _dbEquity != null;
+        // You can get the input values from _parameters protected field
+        private IUnitOfWork Uow => (IUnitOfWork)_parameters[0];
 
-        // Indicate if the data store (database) contains the indicator record
-        bool IsIndicatorExists => _dbIndicator != null;
-
-        // For use when the indicator has dependencies registered, the provider is cloned along the hierarchy
-        public IIndicatorResultProvider Clone() => new MyIndicatorResultProvider(_context);
-
-        // Initialization stub, intends to reduce the number of data query from external data source (database)
-        public async Task InitWithIndicatorAsync(IIndicator indicator)
+        // Do what you want for initialization i.e. check if the equity is available for querying, etc. Must call base method before any additional implementation
+        // The analyzable object here will either be an indicator instance or pattern instance
+        public override async Task InitWithAnalyzableAsync(IAnalyzable analyzable)
         {
-            _indicator = indicator;
-            _dbEquity = await _context.Equities.FirstOrDefaultAsync(e => e.Name == indicator.Equity.Name);
-            _dbIndicator = await _context.Indicators.FirstOrDefaultAsync(i => i.Name == indicator.GetType().Name && i.Parameter1 == indicator.Parameters[0] && i.Parameter2 == indicator.Parameters[1] && i.Parameter3 == indicator.Parameters[2] && i.Parameter4 == indicator.Parameters[3]);
-        }
-
-        // Main stub for data retrieval, all async method uses in this method should add a ConfigureAwait(false) to prevent deadlocks
-        // The TTick generic parameter here is for Indicator's IndicatorResult class
-        public async Task<(bool HasValue, TTick Value)> GetAsync<TTick>(DateTime dateTime) where TTick : ITick
-        {
-            // It returns a list of value because there may be more than one property value for an indicator, for instance, BollingerBands has 4 property values - LowerBand, MiddleBand, UpperBand, BandWidth
-            var values = await _context.Values.Where(v => v.Equity == _dbEquity && v.Indicator == _dbIndicator && v.DateTime == dateTime).ToListAsync().ConfigureAwait(false);
-            if (!values.Any())
-                return (false, default(TTick));
+            await base.InitWithAnalyzableAsync(analyzable);
+            _dbEquity = await Uow.EquityRepository.GetEquityAsync(_analyzable.Equity.Name);
             
-            // Create arguments based on the retrieved values
-            var args = new List<object> { dateTime };
+            // For pattern instance, the Parameters property is absent while indicator instance has the Parameters property
+            int[] @params = typeof(IIndicator).GetTypeInfo().IsAssignableFrom(analyzable.GetType()) ? ((IIndicator)analyzable).Parameters : new int[] { };
 
-            // Reflection is used here for getting the default constructor of the TTick class
-            var ctor = typeof(TTick).GetConstructors(BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.Instance).First();
-
-            // Get parameters in the constructor & map the values to the parameters
-            foreach (var @param in ctor.GetParameters())
-            {
-                if (@param.Name.Equals("datetime", StringComparison.OrdinalIgnoreCase))
-                    continue;
-                var value = values.FirstOrDefault(v => @param.Name.Replace("@","").Equals(v.Name, StringComparison.OrdinalIgnoreCase));
-                if (value != null)
-                    args.Add(value.Value);
-            }
-
-            // Create and return TTick(IndicatorResult) instance indicator for further computation
-            return (true, (TTick)ctor.Invoke(args.ToArray()));
+            _dbIndicator = await Uow.IndicatorRepository.GetIndicatorAsync(_analyzable.GetType().Name, @params);
         }
+
+        // Retrieve all values from database for an equity with an indicator, you must also implement IPropertyTick interface for your value class
+        protected override async Task<IEnumerable<IPropertyTick>> GetPropertyTicks()
+            => await Uow.IndicatorRepository.GetValuesInDateTimeRangeAsync(_dbEquity, _dbIndicator, null, null);     
     }
 
     // Use case
-    var context = _serviceProvider.GetService<ApplicationDbContext>();  // Get ApplicationDbContext through service locator
+    var context = _serviceProvider.GetService<IUnitOfWork>();  // Get IUnitOfWork instance through service locator
     var smaIndicator = equity.GetOrCreateAnalytic<SimpleMovingAverage>(30);
-    var provider = new MyIndicatorResultProvider(context);
-    await smaIndicator.InitWithIndicatorResultProviderAsync(provider);
+    var provider = new TickProvider(context);
+    await smaIndicator.InitWithTickProviderAsync(provider);
 [Back to content](#Content)
 
 <a name="ExportIndicators"></a>
@@ -355,17 +326,17 @@ Nuget package is available in modules, please install the package according to t
 
 <a name="ImplementYourOwnPattern"></a>
 #### Implement your own pattern through Extension (Requires Trady.Strategy module)
-    // Implement your pattern by creating a static class for extending AnalyzableCandle class
-    public static class AnalyzableCandleExtension
+    // Implement your pattern by creating a static class for extending IndexCandle class
+    public static class IndexCandleExtension
     {
-        public static bool IsSma30LargerThanSma10(this AnalyzableCandle candle)
+        public static bool IsSma30LargerThanSma10(this IndexCandle candle)
         {
             var sma30 = candle.Equity.GetOrCreateAnalytic<SimpleMovingAverage>(30).ComputeByIndex(candle.Index);
             var sma10 = candle.Equity.GetOrCreateAnalytic<SimpleMovingAverage>(10).ComputeByIndex(candle.Index);
             return sma30.Sma > sma10.Sma;
         }
         
-        public static bool IsSma10LargerThanSma30(this AnalyzableCandle candle)
+        public static bool IsSma10LargerThanSma30(this IndexCandle candle)
         {
             var sma30 = candle.Equity.GetOrCreateAnalytic<SimpleMovingAverage>(30).ComputeByIndex(candle.Index);
             var sma10 = candle.Equity.GetOrCreateAnalytic<SimpleMovingAverage>(10).ComputeByIndex(candle.Index);

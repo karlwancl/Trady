@@ -6,26 +6,22 @@ namespace Trady.Analysis.Indicator
 {
     public partial class IchimokuCloud : IndicatorBase<IndicatorResult>
     {
-        public class IndicatorResult : TickBase
+        public class IndicatorResult : IndicatorResultBase
         {
-            public IndicatorResult(DateTime dateTime, decimal? conversionLine, decimal? baseLine, decimal? leadingSpanA, decimal? leadingSpanB, decimal? laggingSpan) : base(dateTime)
-            {
-                ConversionLine = conversionLine;
-                BaseLine = baseLine;
-                LeadingSpanA = leadingSpanA;
-                LeadingSpanB = leadingSpanB;
-                LaggingSpan = laggingSpan;
+            public IndicatorResult(DateTime dateTime, decimal? conversionLine, decimal? baseLine, decimal? leadingSpanA, decimal? leadingSpanB, decimal? laggingSpan) 
+                : base(dateTime, conversionLine, baseLine, leadingSpanA, leadingSpanB, laggingSpan)
+            { 
             }
 
-            public decimal? ConversionLine { get; private set; }
+            public decimal? ConversionLine => Values[0];
 
-            public decimal? BaseLine { get; private set; }
+            public decimal? BaseLine => Values[1];
 
-            public decimal? LeadingSpanA { get; private set; }
+            public decimal? LeadingSpanA => Values[2];
 
-            public decimal? LeadingSpanB { get; private set; }
+            public decimal? LeadingSpanB => Values[3];
 
-            public decimal? LaggingSpan { get; private set; }
+            public decimal? LaggingSpan => Values[4];
         }
     }
 }

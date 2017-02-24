@@ -6,14 +6,13 @@ namespace Trady.Analysis.Indicator
 {
     public partial class RawStochasticsValue : IndicatorBase<IndicatorResult>
     {
-        public class IndicatorResult : TickBase
+        public class IndicatorResult : IndicatorResultBase
         {
-            public IndicatorResult(DateTime dateTime, decimal? rsv) : base(dateTime)
+            public IndicatorResult(DateTime dateTime, decimal? rsv) : base(dateTime, rsv)
             {
-                Rsv = rsv;
             }
 
-            public decimal? Rsv { get; private set; }
+            public decimal? Rsv => Values[0];
         }
     }
 }

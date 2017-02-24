@@ -4,7 +4,7 @@ using Trady.Core;
 
 namespace Trady.Analysis.Pattern.Indicator
 {
-    public class ExponentialMovingAverageTrend : IndicatorBase<MultistateResult<Trend?>>
+    public class ExponentialMovingAverageTrend : IndicatorBase<PatternResult<Trend?>>
     {
         private ExponentialMovingAverage _emaIndicator;
 
@@ -14,10 +14,10 @@ namespace Trady.Analysis.Pattern.Indicator
             _emaIndicator = new ExponentialMovingAverage(equity, periodCount);
         }
 
-        protected override MultistateResult<Trend?> ComputeByIndexImpl(int index)
+        protected override PatternResult<Trend?> ComputeByIndexImpl(int index)
         {
             var result = _emaIndicator.ComputeByIndex(index);
-            return new MultistateResult<Trend?>(Equity[index].DateTime, Decision.IsTrending(result.Ema));
+            return new PatternResult<Trend?>(Equity[index].DateTime, Decision.IsTrending(result.Ema));
         }
     }
 }

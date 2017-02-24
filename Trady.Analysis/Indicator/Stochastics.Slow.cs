@@ -14,8 +14,6 @@ namespace Trady.Analysis.Indicator
                 : base(equity, periodCount, smaPeriodCountD)
             {
                 _fullStochasticsIndicator = new Full(equity, periodCount, SmaPeriodCountK, smaPeriodCountD);
-
-                RegisterDependencies(_fullStochasticsIndicator);
             }
 
             public int PeriodCount => Parameters[0];

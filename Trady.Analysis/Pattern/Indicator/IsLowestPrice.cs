@@ -1,9 +1,10 @@
 ﻿using System.Linq;
+using Trady.Analysis.Pattern.Helper;
 using Trady.Core;
 
 namespace Trady.Analysis.Pattern.Indicator
 {
-    public class IsLowestPrice : IndicatorBase<IsMatchedResult>
+    public class IsLowestPrice : IndicatorBase<PatternResult<Match?>>
     {
         public IsLowestPrice(Equity equity, int periodCount)
             : base(equity, periodCount)
@@ -12,10 +13,10 @@ namespace Trady.Analysis.Pattern.Indicator
 
         public int PeriodCount => Parameters[0];
 
-        protected override IsMatchedResult ComputeByIndexImpl(int index)
+        protected override PatternResult<Match?> ComputeByIndexImpl(int index)
         {
             bool isLowest = Equity.Skip(Equity.Count - PeriodCount).Min(c => c.Close) == Equity[index].Close;
-            return new IsMatchedResult(Equity[index].DateTime, isLowest);
+            return new PatternResult<Match?>(Equity[index].DateTime, Decision.IsMatch(isLowest));
         }
     }
 }

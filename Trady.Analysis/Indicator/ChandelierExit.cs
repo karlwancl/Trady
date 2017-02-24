@@ -14,7 +14,6 @@ namespace Trady.Analysis.Indicator
             _highestHigh = new HighestHigh(equity, periodCount);
             _lowestLow = new LowestLow(equity, periodCount);
             _atrIndicator = new AverageTrueRange(equity, periodCount);
-            RegisterDependencies(_highestHigh, _lowestLow, _atrIndicator);
         }
 
         public int PeriodCount => Parameters[0];

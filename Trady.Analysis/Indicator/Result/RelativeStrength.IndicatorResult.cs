@@ -6,14 +6,13 @@ namespace Trady.Analysis.Indicator
 {
     public partial class RelativeStrength : IndicatorBase<IndicatorResult>
     {
-        public class IndicatorResult : TickBase
+        public class IndicatorResult : IndicatorResultBase
         {
-            public IndicatorResult(DateTime dateTime, decimal? rs) : base(dateTime)
+            public IndicatorResult(DateTime dateTime, decimal? rs) : base(dateTime, rs)
             {
-                Rs = rs;
             }
 
-            public decimal? Rs { get; private set; }
+            public decimal? Rs => Values[0];
         }
     }
 }

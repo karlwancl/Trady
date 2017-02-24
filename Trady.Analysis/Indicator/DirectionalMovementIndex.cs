@@ -46,8 +46,6 @@ namespace Trady.Analysis.Indicator
                 i => _dx(i),
                 periodCount,
                 true);
-
-            RegisterDependencies(_atrIndicator, _pdmEma, _mdmEma, _adx);
         }
 
         public int PeriodCount => Parameters[0];

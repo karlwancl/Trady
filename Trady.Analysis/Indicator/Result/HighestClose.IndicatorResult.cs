@@ -6,14 +6,13 @@ namespace Trady.Analysis.Indicator
 {
     public partial class HighestClose : IndicatorBase<IndicatorResult>
     {
-        public class IndicatorResult : TickBase
+        public class IndicatorResult : IndicatorResultBase
         {
-            public IndicatorResult(DateTime dateTime, decimal? highestClose) : base(dateTime)
+            public IndicatorResult(DateTime dateTime, decimal? highestClose) : base(dateTime, highestClose)
             {
-                HighestClose = highestClose;
             }
 
-            public decimal? HighestClose { get; private set; }
+            public decimal? HighestClose => Values[0];
         }
     }
 }

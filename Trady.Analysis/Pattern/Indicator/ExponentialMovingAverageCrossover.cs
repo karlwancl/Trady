@@ -4,7 +4,7 @@ using Trady.Core;
 
 namespace Trady.Analysis.Pattern.Indicator
 {
-    public class ExponentialMovingAverageCrossover : IndicatorBase<IsMatchedMultistateResult<Trend?>>
+    public class ExponentialMovingAverageCrossover : IndicatorBase<PatternResult<Crossover?>>
     {
         private ExponentialMovingAverageOscillator _emaOscillator;
 
@@ -14,16 +14,15 @@ namespace Trady.Analysis.Pattern.Indicator
             _emaOscillator = new ExponentialMovingAverageOscillator(equity, periodCount1, periodCount2);
         }
 
-        protected override IsMatchedMultistateResult<Trend?> ComputeByIndexImpl(int index)
+        protected override PatternResult<Crossover?> ComputeByIndexImpl(int index)
         {
             if (index < 1)
-                return new IsMatchedMultistateResult<Trend?>(Equity[index].DateTime, null, null);
+                return new PatternResult<Crossover?>(Equity[index].DateTime, null);
 
             var latest = _emaOscillator.ComputeByIndex(index);
             var secondLatest = _emaOscillator.ComputeByIndex(index - 1);
 
-            return new IsMatchedMultistateResult<Trend?>(Equity[index].DateTime,
-                Decision.IsCrossOver(latest.Osc, secondLatest.Osc), Decision.IsTrending(latest.Osc));
+            return new PatternResult<Crossover?>(Equity[index].DateTime, Decision.IsCrossover(latest.Osc, secondLatest.Osc));
         }
     }
 }
