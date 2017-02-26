@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using Trady.Analysis.Indicator;
 using Trady.Analysis.Pattern.Helper;
 using Trady.Core;
 

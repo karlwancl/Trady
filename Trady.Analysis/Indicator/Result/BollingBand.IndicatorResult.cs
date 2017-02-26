@@ -1,5 +1,4 @@
 ﻿using System;
-using Trady.Core;
 using static Trady.Analysis.Indicator.BollingerBands;
 
 namespace Trady.Analysis.Indicator
@@ -8,7 +7,7 @@ namespace Trady.Analysis.Indicator
     {
         public class IndicatorResult : IndicatorResultBase
         {
-            public IndicatorResult(DateTime dateTime, decimal? lowerBand, decimal? middleBand, decimal? upperBand, decimal? bandWidth) 
+            public IndicatorResult(DateTime dateTime, decimal? lowerBand, decimal? middleBand, decimal? upperBand, decimal? bandWidth)
                 : base(dateTime, lowerBand, middleBand, upperBand, bandWidth)
             {
             }

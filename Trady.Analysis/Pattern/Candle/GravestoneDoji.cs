@@ -1,4 +1,5 @@
 ﻿using System;
+using Trady.Analysis.Infrastructure;
 using Trady.Core;
 
 namespace Trady.Analysis.Pattern.Candle

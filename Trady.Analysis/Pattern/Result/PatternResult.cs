@@ -1,5 +1,5 @@
 ﻿using System;
-using Trady.Core;
+using Trady.Core.Infrastructure;
 
 namespace Trady.Analysis.Pattern
 {

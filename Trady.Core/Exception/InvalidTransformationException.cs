@@ -12,6 +12,6 @@ namespace Trady.Core.Exception
             _targetPeriod = targetPeriod;
         }
 
-        public override string Message => $"Transformation From {_sourcePeriod} To {_targetPeriod} Is Invalid";
+        public override string Message => $"Invalid transformation from {_sourcePeriod} to {_targetPeriod}";
     }
 }

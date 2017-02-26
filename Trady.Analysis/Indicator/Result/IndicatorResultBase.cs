@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Trady.Core;
+using Trady.Core.Infrastructure;
 
 namespace Trady.Analysis.Indicator
 {

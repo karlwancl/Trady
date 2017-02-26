@@ -1,5 +1,4 @@
 ﻿using System;
-using Trady.Core;
 using static Trady.Analysis.Indicator.IchimokuCloud;
 
 namespace Trady.Analysis.Indicator
@@ -8,9 +7,9 @@ namespace Trady.Analysis.Indicator
     {
         public class IndicatorResult : IndicatorResultBase
         {
-            public IndicatorResult(DateTime dateTime, decimal? conversionLine, decimal? baseLine, decimal? leadingSpanA, decimal? leadingSpanB, decimal? laggingSpan) 
+            public IndicatorResult(DateTime dateTime, decimal? conversionLine, decimal? baseLine, decimal? leadingSpanA, decimal? leadingSpanB, decimal? laggingSpan)
                 : base(dateTime, conversionLine, baseLine, leadingSpanA, leadingSpanB, laggingSpan)
-            { 
+            {
             }
 
             public decimal? ConversionLine => Values[0];

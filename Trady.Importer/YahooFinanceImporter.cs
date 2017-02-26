@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Trady.Core;
@@ -12,7 +11,7 @@ namespace Trady.Importer
 {
     public class YahooFinanceImporter : IImporter
     {
-        private static IDictionary<PeriodOption, Period> PeriodMap = new Dictionary<PeriodOption, Period>
+        private static IDictionary<PeriodOption, Period> _periodMap = new Dictionary<PeriodOption, Period>
         {
             {PeriodOption.Daily, Period.Daily },
             {PeriodOption.Weekly, Period.Weekly },
@@ -21,17 +20,16 @@ namespace Trady.Importer
 
         public async Task<Equity> ImportAsync(string symbol, DateTime? startTime = default(DateTime?), DateTime? endTime = default(DateTime?), PeriodOption period = PeriodOption.Daily, CancellationToken token = default(CancellationToken))
         {
-            var yPeriod = Period.Daily;
-            PeriodMap.TryGetValue(period, out yPeriod);
+            if (period != PeriodOption.Daily && period != PeriodOption.Weekly && period != PeriodOption.Monthly)
+                throw new ArgumentException("This importer only supports daily, weekly & monthly data");
 
-            var yCandles = await Yahoo.GetHistoricalAsync(symbol, startTime, endTime, yPeriod, false, token);
+            var yahooCandles = await Yahoo.GetHistoricalAsync(symbol, startTime, endTime, _periodMap[period], false, token);
 
             var output = new List<Core.Candle>();
-            foreach (var yCandle in yCandles)
-                output.Add(new Core.Candle(yCandle.DateTime, yCandle.Open, yCandle.High, yCandle.Low, yCandle.Close, yCandle.Volume));
+            foreach (var yahooCandle in yahooCandles)
+                output.Add(new Core.Candle(yahooCandle.DateTime, yahooCandle.Open, yahooCandle.High, yahooCandle.Low, yahooCandle.Close, yahooCandle.Volume));
 
-            PeriodMap.ToDictionary(kvp => kvp.Value, kvp => kvp.Key).TryGetValue(yPeriod, out PeriodOption ryPeriod);
-            return output.ToEquity(symbol, ryPeriod);
+            return output.ToEquity(symbol, period, null);
         }
     }
 }

@@ -35,9 +35,9 @@ namespace Trady.Importer
                         var recordDatetime = Convert.ToDateTime(record[0]);
                         if (startTime.HasValue && recordDatetime < startTime.Value || endTime.HasValue && recordDatetime >= endTime.Value)
                             continue;
-                        candles.Add(record.CreateCandleFromRow());
+                        candles.Add(record.CreateCandle());
                     }
-                    return candles.ToEquity(symbol).Transform(period);
+                    return candles.ToEquity(symbol, period, null);
                 }
             });
         }

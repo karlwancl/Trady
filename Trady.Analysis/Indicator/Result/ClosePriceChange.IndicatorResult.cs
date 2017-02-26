@@ -1,5 +1,4 @@
 ﻿using System;
-using Trady.Core;
 using static Trady.Analysis.Indicator.ClosePriceChange;
 
 namespace Trady.Analysis.Indicator

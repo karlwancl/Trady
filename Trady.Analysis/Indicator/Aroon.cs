@@ -1,6 +1,6 @@
 ﻿using System.Linq;
+using Trady.Analysis.Indicator.Helper;
 using Trady.Core;
-using Trady.Core.Helper;
 using static Trady.Analysis.Indicator.Aroon;
 
 namespace Trady.Analysis.Indicator

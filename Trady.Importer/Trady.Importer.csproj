@@ -7,14 +7,15 @@
     <Description>Importer module of Trady, a handy library for computing technical indicators, based on .NET Standard 1.4</Description>
     <Copyright>Copyright (c) 2016 SalmonThinLion</Copyright>
     <AssemblyTitle>Trady.Importer</AssemblyTitle>
-    <VersionPrefix>1.0.0</VersionPrefix>
+    <VersionPrefix>1.1.0</VersionPrefix>
     <Authors>SalmonThinLion</Authors>
     <TargetFramework>netstandard1.4</TargetFramework>
     <AssemblyName>Trady.Importer</AssemblyName>
     <PackageId>Trady.Importer</PackageId>
     <PackageTags>Trady;Technical;Analysis;Finance;Stock</PackageTags>
     <PackageReleaseNotes>
-      [21/1/2017] First release
+[26/2/2017] System structure refinement
+[21/2/2017] First release
     </PackageReleaseNotes>
     <PackageProjectUrl>https://github.com/salmonthinlion/Trady</PackageProjectUrl>
     <PackageLicenseUrl>https://github.com/salmonthinlion/Trady/blob/master/LICENSE</PackageLicenseUrl>

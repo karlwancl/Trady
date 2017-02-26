@@ -252,8 +252,8 @@ paket-files/
 *.sln.iml
 
 # Skip all downloaded data & non-public code
-Trady.Analysis.Vic/
-Trady.App.Console/
+Trady.Vic/
+Trady.App.Pad/
 Trady.App.Core/
 Trady.App.Backend/
 Trady.App.Infrastructure/

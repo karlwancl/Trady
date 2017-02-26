@@ -5,7 +5,7 @@ namespace Trady.Importer.Helper
 {
     internal static class ImporterExtension
     {
-        public static bool IsRowNullOrWhiteSpace(this object[] row)
+        public static bool IsNullOrWhitespace(this object[] row)
         {
             foreach (var r in row)
             {
@@ -15,7 +15,7 @@ namespace Trady.Importer.Helper
             return false;
         }
 
-        public static Candle CreateCandleFromRow(this object[] row)
+        public static Candle CreateCandle(this object[] row)
         {
             return new Candle(
                 Convert.ToDateTime(row[0]),

@@ -11,6 +11,6 @@ namespace Trady.Core.Exception
             _invalidDateTime = invalidDateTime;
         }
 
-        public override string Message => $"Invalid Time Frame: {_invalidDateTime}";
+        public override string Message => $"Invalid timeframe: {_invalidDateTime}";
     }
 }

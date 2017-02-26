@@ -1,5 +1,4 @@
 ﻿using System;
-using Trady.Core;
 
 namespace Trady.Analysis.Indicator
 {

@@ -1,5 +1,4 @@
 ﻿using System;
-using Trady.Core;
 using static Trady.Analysis.Indicator.MovingAverageConvergenceDivergence;
 
 namespace Trady.Analysis.Indicator

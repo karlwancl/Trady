@@ -19,15 +19,19 @@ This library is intended for personal use, use with care for production environm
 ### How To Install
 Nuget package is available in modules, please install the package according to the needs
 
-    PM > Install-Package Trady.XXXXX
+    // For importing
+    PM > Install-Package Trady.Importer 
+
+    // For computing & backtesting
+    PM > Install-Package Trady.Analysis
 
 ### How To Use
 <a name="Content"></a>
-* Importing (Requires Trady.Importer)
+* Importing
     * [Import Stock Data](#ImportStockData)
     * [Implement Your Own Importer](#ImplementYourOwnImporter)
     
-* Computing (Requires Trady.Analysis)
+* Computing
     * [Transform Stock Data](#TransformStockData)
     * [Compute Indicators](#ComputeIndicators)
     * [Implement Your Own Indicator - Simple Type](#ImplementYourOwnIndicatorSimpleType)
@@ -35,17 +39,13 @@ Nuget package is available in modules, please install the package according to t
     * [Implement Your Own Indicator - Moving Average Type](#ImplementYourOwnIndicatorMovingAverageType)
     * [IndicatorResult cache through TickProviderBase](#DataProviderCache)
     
-* Exporting (Requires Trady.Exporter)
-    * [Export Indicators](#ExportIndicators)
-    * [Implement Your Own Exporter](#ImplementYourOwnExporter)
-    
-* Backtesting (Requires Trady.Strategy)
+* Backtesting
     * [Strategy Building And Backtesting](#StrategyBuildingAndBacktesting)
     * [Implement Your Own Pattern](#ImplementYourOwnPattern)
 
 
 <a name="ImportStockData"></a>
-#### Import stock data (Requires Trady.Importer module)
+#### Import stock data
     // From Quandl wiki database
     var importer = new QuandlWikiImporter(apiKey);
 
@@ -60,7 +60,7 @@ Nuget package is available in modules, please install the package according to t
 [Back to content](#Content)
 
 <a name="ImplementYourOwnImporter"></a>
-#### Implement your own importer (Requires Trady.Importer module)
+#### Implement your own importer
     // You can also implement your own importer by implementing the IImporter interface
     public class MyImporter : IImporter
     {
@@ -84,7 +84,7 @@ Nuget package is available in modules, please install the package according to t
 [Back to content](#Content)
 
 <a name="ComputeIndicators"></a>
-#### Compute indicators (Requires Trady.Analysis module)
+#### Compute indicators
     // Supported indicators: Sma, Ema, Rsi, Macd, Sto(Fast, Full, Slow), Obv, AccumDist, Bb, Atr, Dmi, Aroon, Chandlr, Ichimoku & some related indicators (i.e. HighestHigh, LowestLow, etc.)
 
     // There are several ways to compute indicators
@@ -99,7 +99,7 @@ Nuget package is available in modules, please install the package according to t
 [Back to content](#Content)
 
 <a name="ImplementYourOwnIndicatorSimpleType"></a>
-#### Implement your own indicator - Simple Type (Requires Trady.Analysis module)
+#### Implement your own indicator - Simple Type
     // You can also implement your own indicator by extending the IndicatorBase<IndicatorResult> class
     public class MyIndicator : IndicatorBase<IndicatorResult>
     {
@@ -144,7 +144,7 @@ Nuget package is available in modules, please install the package according to t
 [Back to content](#Content)
 
 <a name="ImplementYourOwnIndicatorCummulativeType"></a>
-#### Implement your own indicator - Cummulative Type (Requires Trady.Analysis module)
+#### Implement your own indicator - Cummulative Type
     // You can implement your own indicator by extending the CummulativeIndicatorBase<IndicatorResult> class
     public class MyCummulativeIndicator : CummulativeIndicatorBase<IndicatorResult>
     {
@@ -191,7 +191,7 @@ Nuget package is available in modules, please install the package according to t
 [Back to content](#Content)
 
 <a name="ImplementYourOwnIndicatorMovingAverageType"></a>
-#### Implement your own indicator - Moving-Average Type (Requires Trady.Analysis module)
+#### Implement your own indicator - Moving-Average Type
     // You can make use of the GenericExponentialMovingAverage class to get rid of implementing MA-related indicator on your own
     public class MyMAIndicator : IndicatorBase<IndicatorResult>
     {
@@ -222,7 +222,7 @@ Nuget package is available in modules, please install the package according to t
 [Back to content](#Content)
 
 <a name="DataProviderCache"></a>
-#### IndicatorResult cache through TickProviderBase (Requires Trady.Analysis module)
+#### IndicatorResult cache through TickProviderBase
     // You may want to extend the TickProviderBase class to do the following things:
     // 1. Compute cummulative indicator that make use of pre-calculated values from external data source (e.g. database)
     // 2. Directly retrieve the indicator results from external data source (e.g. database) without re-calculation
@@ -258,8 +258,8 @@ Nuget package is available in modules, please install the package according to t
             _dbIndicator = await Uow.IndicatorRepository.GetIndicatorAsync(_analyzable.GetType().Name, @params);
         }
 
-        // Retrieve all values from database for an equity with an indicator, you must also implement IPropertyTick interface for your value class
-        protected override async Task<IEnumerable<IPropertyTick>> GetPropertyTicks()
+        // Retrieve all values from database for an equity with an indicator, you must also implement IValueTick interface for your value class
+        protected override async Task<IEnumerable<IValueTick>> GetValueTicks()
             => await Uow.IndicatorRepository.GetValuesInDateTimeRangeAsync(_dbEquity, _dbIndicator, null, null);     
     }
 
@@ -270,31 +270,8 @@ Nuget package is available in modules, please install the package according to t
     await smaIndicator.InitWithTickProviderAsync(provider);
 [Back to content](#Content)
 
-<a name="ExportIndicators"></a>
-#### Export computed indicators to CSV (Requires Trady.Exporter module)
-    var tsList = new List<ITimeSeries> {smaTs, emaTs, bbTs};
-    var exporter = new CsvExporter("tss.csv");
-    bool success = await exporter.ExportAsync(equity, tsList, ascending: false);
-[Back to content](#Content)
-
-<a name="ImplementYourOwnExporter"></a>
-#### Implement your own exporter (Requires Trady.Exporter module)
-    // You can also implement your own exporter by extending the ExporterBase abstract class
-    public class MyExporter
-    {
-        public async Task<bool> ExportAsync(Equity equity, IList<ITimeSeries> resultTimeSeriesList, DateTime? startTime = default(DateTime?), DateTime? endTime = default(DateTime?), bool ascending = false, CancellationToken token = default(CancellationToken))
-        {
-            // Your implementation to export indicators values
-        }
-    }
-    
-    // Use case
-    var exporter = new MyExporter();
-    bool success = await exporter.ExportAsync(equity, tsList, ascending: false);
-[Back to content](#Content)
-
 <a name="StrategyBuildingAndBacktesting"></a>
-#### Strategy building & backtesting (Requires Trady.Strategy module)
+#### Strategy building & backtesting
     // Build buy rule & sell rule based on various patterns
     var buyRule = Rule.Create(c => c.IsFullStoBullishCross(14, 3, 3))
         .And(c => c.IsMacdOscBullish(12, 26, 9))
@@ -325,7 +302,7 @@ Nuget package is available in modules, please install the package according to t
 [Back to content](#Content)
 
 <a name="ImplementYourOwnPattern"></a>
-#### Implement your own pattern through Extension (Requires Trady.Strategy module)
+#### Implement your own pattern through Extension
     // Implement your pattern by creating a static class for extending IndexCandle class
     public static class IndexCandleExtension
     {
@@ -348,7 +325,7 @@ Nuget package is available in modules, please install the package according to t
     var buyRule = Rule.Create(c => c.IsSma10LargerThanSma30());
     var sellRule = Rule.Create(c => c.IsSma30LargerThanSma10());
     var portfolio = new PortfolioBuilder().Add(equity, 10).Buy(buyRule).Sell(sellRule).Build();
-    var result = await portfolio.RunAsync(10000, 1);
+    var result = await portfolio.RunBacktestAsync(10000, 1);
 [Back to content](#Content)
 
 ### Backlog

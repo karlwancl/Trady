@@ -1,4 +1,5 @@
 ﻿using System;
+using Trady.Core.Infrastructure;
 
 namespace Trady.Core
 {
@@ -22,15 +23,5 @@ namespace Trady.Core
         public decimal Close { get; private set; }
 
         public long Volume { get; private set; }
-
-        public decimal UpperShadow => Open < Close ? High - Close : High - Open;
-
-        public decimal LowerShadow => Open < Close ? Open - Low : Close - Low;
-
-        public decimal Body => Math.Abs(Open - Close);
-
-        public bool IsBullish => Open - Close > 0;
-
-        public bool IsBearish => Open - Close < 0;
     }
 }
