@@ -7,15 +7,13 @@ namespace Trady.Analysis.Indicator
     {
         public class IndicatorResult : IndicatorResultBase
         {
-            public IndicatorResult(DateTime dateTime, decimal? up, decimal? down, decimal? osc) : base(dateTime, up, down, osc)
+            public IndicatorResult(DateTime dateTime, decimal? up, decimal? down) : base(dateTime, up, down)
             {
             }
 
             public decimal? Up => Values[0];
 
             public decimal? Down => Values[1];
-
-            public decimal? Osc => Values[2];
         }
     }
 }

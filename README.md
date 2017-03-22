@@ -9,12 +9,27 @@ This library is intended for personal use, use with care for production environm
 * Indicator computing (including SMA, EMA, RSI, MACD, BB, etc.)
 * Strategy building & backtesting
 
+### Recent Update (22nd Mar, 2017)
+* Added test project
+* (Breaking-Change) Candle's volume property uses decimal instead of long
+* (Breaking-Change) GenericExponentialMovingAverage now intakes smoothing factor function instead of modified flag & periodCount
+* (Breaking-Change) GetValueTicks from TickProviderBase now intakes startTime instead of nothing, GetAllAsync method from ITickProvider is also changed to GetAsync(DateTime startTime)
+* Fix indicators: BbWidth, Adxr, IchimokuCloud, Atr
+* Add indicators: Er, Kama, Mema, Sd
+
 ### Supported Platforms
 * .NET Core 1.0 or above
 * .NET Framework 4.6.1 or above
 * Xamarin.iOS
 * Xamarin.Android
 * Universal Windows Platform 10.0 or above
+
+### Currently Supported Indicators
+||||||||||
+|---|---|---|---|---|---|---|---|---|---|
+| AccumDist | Aroon | AroonOsc | Adxr | Atr | Bb | BbWidth | Chandlr | ClosePriceChange | ClosePricePercentageChange |
+| Dmi | Er | Ema | EmaOsc | HighestHigh | Ichimoku | Kama | LowestLow | Mema | Macd |
+| Obv | Rsv | Rs | Rsi | Sma | SmaOsc | Sd | FastSto | FullSto | SlowSto |
 
 ### How To Install
 Nuget package is available in modules, please install the package according to the needs
@@ -27,6 +42,9 @@ Nuget package is available in modules, please install the package according to t
 
 ### How To Use
 <a name="Content"></a>
+* Tldr
+    * [Tldr](#tldr)
+
 * Importing
     * [Import Stock Data](#ImportStockData)
     * [Implement Your Own Importer](#ImplementYourOwnImporter)
@@ -43,6 +61,12 @@ Nuget package is available in modules, please install the package according to t
     * [Strategy Building And Backtesting](#StrategyBuildingAndBacktesting)
     * [Implement Your Own Pattern](#ImplementYourOwnPattern)
 
+<a name="tldr"></a>
+### Tldr
+    var importer = new QuandlWikiImporter(apiKey);
+    var equity = importer.ImportAsync("FB");
+    Console.WriteLine(equity.Sma(30)[equity.Count - 1].Sma;
+[Back to content](#Content)
 
 <a name="ImportStockData"></a>
 #### Import stock data
@@ -85,14 +109,14 @@ Nuget package is available in modules, please install the package according to t
 
 <a name="ComputeIndicators"></a>
 #### Compute indicators
-    // Supported indicators: Sma, Ema, Rsi, Macd, Sto(Fast, Full, Slow), Obv, AccumDist, Bb, Atr, Dmi, Aroon, Chandlr, Ichimoku & some related indicators (i.e. HighestHigh, LowestLow, etc.)
-
     // There are several ways to compute indicators
     1. By indicator extension (Some common indicators only, provide caching for indicator instance)
         var smaTs = equity.Sma(30, startTime, endTime);
         
     2. By indicator locator (provide caching for indicator instance)
         var smaTs = equity.GetOrCreateAnalytic<SimpleMovingAverage>(30).Compute(startTime, endTime);
+        // or with tick provider
+        var smaTs = await equity.GetOrCreateAnalyticWithTickProviderAsync<SimpleMovingAverage>(30).Compute(startTime, endTime);
 
     3. By instantiation (no caching for indicator instance, better for one-off usage)
         var smaTs = new SimplemMovingAverage(equity, 30).Compute(startTime, endTime);
@@ -110,7 +134,7 @@ Nuget package is available in modules, please install the package according to t
         {
             // Your construction code here
 
-            // You can make use of other indicators for computing your own indicator, and you should register your first-level dependencies through RegisterDependencies method
+            // You can make use of other indicators for computing your own indicator
             _smaIndicator = new SimpleMovingAverage(equity, param1);
         }
 
@@ -201,19 +225,17 @@ Nuget package is available in modules, please install the package according to t
         {
             // The constructor intakes the following parameters:
             //  1. Equity instance
-            //  2. First Value Index
-            //  3. First Value Function
+            //  2. Initial Value Index
+            //  3. Inital Value Function
             //  4. Index Value Function
-            //  5. Period Count for Moving Average
-            //  6. Moving Average Type (true = MMA, false = EMA)
+            //  5. Smoothing Factor Function (1.0m / periodCount for Mema, 2.0m / (periodCount + 1.0m) for Ema)
 
             _gemaIndicator = new GenericExponentialMovingAverage(
                 equity,
                 firstValueIndex,
                 i => firstValueFunction,
                 i => indexValueFunction,
-                periodCount,
-                true
+                i => smoothingFactorFunction
             );
         }
 
@@ -259,8 +281,8 @@ Nuget package is available in modules, please install the package according to t
         }
 
         // Retrieve all values from database for an equity with an indicator, you must also implement IValueTick interface for your value class
-        protected override async Task<IEnumerable<IValueTick>> GetValueTicks()
-            => await Uow.IndicatorRepository.GetValuesInDateTimeRangeAsync(_dbEquity, _dbIndicator, null, null);     
+        protected override async Task<IEnumerable<IValueTick>> GetValueTicks(DateTime startTime)
+            => await Uow.IndicatorRepository.GetValuesInDateTimeRangeAsync(_dbEquity, _dbIndicator, startTime, null);     
     }
 
     // Use case
@@ -291,7 +313,7 @@ Nuget package is available in modules, please install the package according to t
         .Build();
     
     // Start backtesting with the portfolio
-    var result = await portfolio.RunAsync(10000, 1);
+    var result = await portfolio.RunBacktestAsync(10000, 1);
 
     // Get backtest result for the portfolio
     Console.WriteLine(string.Format("Transaction count: {0:#.##}, P/L ratio: {1:0.##}%, Principal: {2:#}, Total: {3:#}",
@@ -329,7 +351,7 @@ Nuget package is available in modules, please install the package according to t
 [Back to content](#Content)
 
 ### Backlog
-* Complete other indicators (e.g. Keltner Channels, KAMA, MA Envelopes, etc.)
+* Complete other indicators (e.g. Keltner Channels, MA Envelopes, etc.)
 * Complete candlestick patterns (Low priority)
 * Add more indicator filtering patterns (Add patterns on demand)
 * Add broker adaptor for real-time trade (e.g. interactive broker, etc.)

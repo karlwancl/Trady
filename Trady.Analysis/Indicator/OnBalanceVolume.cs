@@ -21,7 +21,7 @@ namespace Trady.Analysis.Indicator
         {
             var candle = Equity[index];
             var prevCandle = Equity[index - 1];
-            long increment = candle.Volume * (candle.Close > prevCandle.Close ? 1 : (candle.Close == prevCandle.Close ? 0 : -1));
+            decimal increment = candle.Volume * (candle.Close > prevCandle.Close ? 1 : (candle.Close == prevCandle.Close ? 0 : -1));
             return new IndicatorResult(candle.DateTime, prevTick.Obv + increment);
         }
     }

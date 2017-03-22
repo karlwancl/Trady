@@ -9,14 +9,20 @@ namespace Trady.Analysis.Indicator
         public static TimeSeries<AccumulationDistributionLine.IndicatorResult> AccumDist(this Equity equity, DateTime? startTime = null, DateTime? endTime = null)
             => equity.GetOrCreateAnalytic<AccumulationDistributionLine>().Compute(startTime, endTime);
 
-        public static TimeSeries<DirectionalMovementIndex.IndicatorResult> Dmi(this Equity equity, int periodCount, int adxrPeriodCount = 0, DateTime? startTime = null, DateTime? endTime = null)
-            => equity.GetOrCreateAnalytic<DirectionalMovementIndex>(periodCount, adxrPeriodCount).Compute(startTime, endTime);
+        public static TimeSeries<DirectionalMovementIndex.IndicatorResult> Dmi(this Equity equity, int periodCount, DateTime? startTime = null, DateTime? endTime = null)
+            => equity.GetOrCreateAnalytic<DirectionalMovementIndex>(periodCount).Compute(startTime, endTime);
+
+        public static TimeSeries<AverageDirectionalMovementIndexRating.IndicatorResult> Adxr(this Equity equity, int periodCount, int adxrPeriodCount, DateTime? startTime = null, DateTime? endTime = null)
+            => equity.GetOrCreateAnalytic<AverageDirectionalMovementIndexRating>(periodCount, adxrPeriodCount).Compute(startTime, endTime);
 
         public static TimeSeries<AverageTrueRange.IndicatorResult> Atr(this Equity equity, int periodCount, DateTime? startTime = null, DateTime? endTime = null)
             => equity.GetOrCreateAnalytic<AverageTrueRange>(periodCount).Compute(startTime, endTime);
 
         public static TimeSeries<BollingerBands.IndicatorResult> Bb(this Equity equity, int periodCount, int sdCount, DateTime? startTime = null, DateTime? endTime = null)
             => equity.GetOrCreateAnalytic<BollingerBands>(periodCount, sdCount).Compute(startTime, endTime);
+
+        public static TimeSeries<BollingerBandWidth.IndicatorResult> BbWidth(this Equity equity, int periodCount, int sdCount, DateTime? startTime = null, DateTime? endTime = null)
+            => equity.GetOrCreateAnalytic<BollingerBandWidth>(periodCount, sdCount).Compute(startTime, endTime);
 
         public static TimeSeries<ClosePriceChange.IndicatorResult> PriceChange(this Equity equity, DateTime? startTime = null, DateTime? endTime = null)
             => equity.GetOrCreateAnalytic<ClosePriceChange>().Compute(startTime, endTime);
@@ -66,8 +72,20 @@ namespace Trady.Analysis.Indicator
         public static TimeSeries<Aroon.IndicatorResult> Aroon(this Equity equity, int periodCount, DateTime? startTime = null, DateTime? endTime = null)
             => equity.GetOrCreateAnalytic<Aroon>(periodCount).Compute(startTime, endTime);
 
+        public static TimeSeries<AroonOscillator.IndicatorResult> AroonOsc(this Equity equity, int periodCount, DateTime? startTime = null, DateTime? endTime = null)
+            => equity.GetOrCreateAnalytic<AroonOscillator>(periodCount).Compute(startTime, endTime);
+
         public static TimeSeries<ChandelierExit.IndicatorResult> Chandlr(this Equity equity, int periodCount, int atrCount, DateTime? startTime = null, DateTime? endTime = null)
             => equity.GetOrCreateAnalytic<ChandelierExit>(periodCount, atrCount).Compute(startTime, endTime);
+
+        public static TimeSeries<ClosePriceChange.IndicatorResult> ClosePriceChange(this Equity equity, DateTime? startTime = null, DateTime? endTime = null)
+            => equity.GetOrCreateAnalytic<ClosePriceChange>().Compute(startTime, endTime);
+
+        public static TimeSeries<ClosePricePercentageChange.IndicatorResult> ClosePricePercentageChange(this Equity equity, DateTime? startTime = null, DateTime? endTime = null)
+            => equity.GetOrCreateAnalytic<ClosePricePercentageChange>().Compute(startTime, endTime);
+
+        public static TimeSeries<EfficiencyRatio.IndicatorResult> Er(this Equity equity, int periodCount, DateTime? startTime = null, DateTime? endTime = null)
+            => equity.GetOrCreateAnalytic<EfficiencyRatio>(periodCount).Compute(startTime, endTime);
 
         public static TimeSeries<IchimokuCloud.IndicatorResult> Ichimoku(this Equity equity, int shortPeriodCount, int middlePeriodCount, int longPeriodCount, Country? country = null, DateTime? startTime = null, DateTime? endTime = null)
         {
@@ -77,10 +95,13 @@ namespace Trady.Analysis.Indicator
             return ic.Compute(startTime, endTime);
         }
 
-        public static TimeSeries<HighestClose.IndicatorResult> HighestClose(this Equity equity, int periodCount, DateTime? startTime = null, DateTime? endTime = null)
-            => equity.GetOrCreateAnalytic<HighestClose>(periodCount).Compute(startTime, endTime);
+        public static TimeSeries<KaufmanAdaptiveMovingAverage.IndicatorResult> Kama(this Equity equity, int periodCount, int emaFastPeriodCount, int emaSlowPeriodCount, DateTime? startTime = null, DateTime? endTime = null)
+            => equity.GetOrCreateAnalytic<KaufmanAdaptiveMovingAverage>(periodCount, emaFastPeriodCount, emaSlowPeriodCount).Compute(startTime, endTime);
 
-        public static TimeSeries<HistoricalHighestClose.IndicatorResult> HistoricalHighestClose(this Equity equity, DateTime? startTime = null, DateTime? endTime = null)
-            => equity.GetOrCreateAnalytic<HistoricalHighestClose>().Compute(startTime, endTime);
+        public static TimeSeries<ModifiedExponentialMovingAverage.IndicatorResult> Mema(this Equity equity, int periodCount, DateTime? startTime = null, DateTime? endTime = null)
+            => equity.GetOrCreateAnalytic<ModifiedExponentialMovingAverage>(periodCount).Compute(startTime, endTime);
+
+        public static TimeSeries<StandardDeviation.IndicatorResult> Sd(this Equity equity, int periodCount, DateTime? startTime = null, DateTime? endTime = null)
+            => equity.GetOrCreateAnalytic<StandardDeviation>(periodCount).Compute(startTime, endTime);
     }
 }

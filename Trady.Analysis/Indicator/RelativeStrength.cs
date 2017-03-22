@@ -1,5 +1,5 @@
-﻿using System.Linq;
-using Trady.Analysis.Indicator.Helper;
+﻿using System;
+using System.Linq;
 using Trady.Core;
 using static Trady.Analysis.Indicator.RelativeStrength;
 
@@ -14,27 +14,22 @@ namespace Trady.Analysis.Indicator
         {
             _closePriceChangeIndicator = new ClosePriceChange(equity);
 
+            Func<int, decimal> u = i => Math.Max(_closePriceChangeIndicator.ComputeByIndex(i).Change.Value, 0);
+            Func<int, decimal> l = i => Math.Abs(Math.Min(_closePriceChangeIndicator.ComputeByIndex(i).Change.Value, 0));
+
             _uEma = new GenericExponentialMovingAverage(
                 equity,
                 periodCount,
-                i => Enumerable
-                    .Range(i - PeriodCount + 1, PeriodCount)
-                    .Select(j => _closePriceChangeIndicator.ComputeByIndex(j).Change)
-                    .Average(v => Math2.Max(v, 0).Abs()),
-                i => Math2.Max(_closePriceChangeIndicator.ComputeByIndex(i).Change, 0).Abs(),
-                periodCount,
-                true);
+                i => i > 0 ? Enumerable.Range(i - PeriodCount + 1, PeriodCount).Average(j => u(j)) : (decimal?)null,
+                i => u(i),
+                i => 1.0m / periodCount);
 
             _dEma = new GenericExponentialMovingAverage(
                 equity,
                 periodCount,
-                i => Enumerable
-                    .Range(i - PeriodCount + 1, PeriodCount)
-                    .Select(j => _closePriceChangeIndicator.ComputeByIndex(j).Change)
-                    .Average(v => Math2.Min(v, 0).Abs()),
-                i => Math2.Min(_closePriceChangeIndicator.ComputeByIndex(i).Change, 0).Abs(),
-                periodCount,
-                true);
+                i => i > 0 ? Enumerable.Range(i - PeriodCount + 1, PeriodCount).Average(j => l(j)) : (decimal?)null,
+                i => l(i),
+                i => 1.0m / periodCount);
         }
 
         public int PeriodCount => Parameters[0];

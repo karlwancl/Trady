@@ -7,13 +7,14 @@
     <Description>Analysis module of Trady, a handy library for computing technical indicators, based on .NET Standard 1.4</Description>
     <Copyright>Copyright (c) 2016 SalmonThinLion</Copyright>
     <AssemblyTitle>Trady.Analysis</AssemblyTitle>
-    <VersionPrefix>1.1.0</VersionPrefix>
+    <VersionPrefix>1.2.0</VersionPrefix>
     <Authors>SalmonThinLion</Authors>
     <TargetFramework>netstandard1.4</TargetFramework>
     <AssemblyName>Trady.Analysis</AssemblyName>
     <PackageId>Trady.Analysis</PackageId>
     <PackageTags>Trady;Technical;Analysis;Finance;Stock</PackageTags>
     <PackageReleaseNotes>
+[22/3/2017] Some breaking changes (refer to: https://github.com/salmonthinlion/Trady), fix indicators: BbWidth, Adxr, IchimokuCloud, Atr, indicators added: Er, Kama, Mema, Sd
 [26/2/2017] System structure refinement, merged with Trady.Strategy project
 [24/2/2017] Removed the needs of adding RegisterDependencies, added TickProviderBase class to help constructing tick provider for value retrieval      
 [23/2/2017] Renamed some classes and methods, some bug fix on indicator computation
@@ -36,17 +37,13 @@
     <EmbeddedResource Include="**\*.resx" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.Caching.Memory">
-      <Version>1.1.0</Version>
+    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="1.1.0">
     </PackageReference>
-    <PackageReference Include="System.Reflection">
-      <Version>4.3.0</Version>
+    <PackageReference Include="System.Reflection" Version="4.3.0">
     </PackageReference>
-    <PackageReference Include="System.Reflection.TypeExtensions">
-      <Version>4.3.0</Version>
+    <PackageReference Include="System.Reflection.TypeExtensions" Version="4.3.0">
     </PackageReference>
-    <PackageReference Include="System.ValueTuple">
-      <Version>4.3.0</Version>
+    <PackageReference Include="System.ValueTuple" Version="4.3.0">
     </PackageReference>
   </ItemGroup>
   <ItemGroup>

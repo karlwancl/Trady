@@ -37,7 +37,7 @@ namespace Trady.Importer
                             continue;
                         candles.Add(record.CreateCandle());
                     }
-                    return candles.ToEquity(symbol, period, null);
+                    return candles.ToEquity(symbol, period);
                 }
             });
         }

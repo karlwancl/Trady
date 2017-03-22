@@ -5,8 +5,8 @@ namespace Trady.Core
 {
     public class Equity : TimeSeries<Candle>
     {
-        public Equity(string name, IEnumerable<Candle> candles, PeriodOption period, int? maxTickCount)
-            : base(name, candles, period, maxTickCount)
+        public Equity(string name, IEnumerable<Candle> candles, PeriodOption period)
+            : base(name, candles, period)
         {
         }
     }

@@ -22,7 +22,7 @@ namespace Trady.Analysis.Indicator
                 0,
                 i => _diff(i),
                 i => _diff(i),
-                demPeriodCount);
+                i => 2.0m / (demPeriodCount + 1));
         }
 
         public int EmaPeriodCount1 => Parameters[0];

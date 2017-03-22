@@ -22,6 +22,9 @@ namespace Trady.Analysis.Indicator
 
         protected override IndicatorResult ComputeByIndexImpl(int index)
         {
+            if (index < PeriodCount)
+                return new IndicatorResult(Equity[index].DateTime, null, null);
+
             var @long = _highestHigh.ComputeByIndex(index).HighestHigh - _atrIndicator.ComputeByIndex(index).Atr * AtrCount;
             var @short = _lowestLow.ComputeByIndex(index).LowestLow + _atrIndicator.ComputeByIndex(index).Atr * AtrCount;
             return new IndicatorResult(Equity[index].DateTime, @long, @short);

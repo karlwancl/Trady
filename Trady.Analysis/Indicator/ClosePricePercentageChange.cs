@@ -10,6 +10,6 @@ namespace Trady.Analysis.Indicator
         }
 
         protected override IndicatorResult ComputeByIndexImpl(int index)
-           => new IndicatorResult(Equity[index].DateTime, index > 0 ? (Equity[index].Close - Equity[index - 1].Close) / Equity[index - 1].Close : (decimal?)null);
+           => new IndicatorResult(Equity[index].DateTime, index > 0 ? (Equity[index].Close - Equity[index - 1].Close) / Equity[index - 1].Close * 100 : (decimal?)null);
     }
 }

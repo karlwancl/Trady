@@ -20,8 +20,8 @@ namespace Trady.Core.Helper
             return index == -1 ? (int?)null : index;
         }
 
-        public static Equity ToEquity(this IEnumerable<Candle> candles, string name, PeriodOption period, int? maxTickCount)
-            => new Equity(name, candles, period, maxTickCount);
+        public static Equity ToEquity(this IEnumerable<Candle> candles, string name, PeriodOption period)
+            => new Equity(name, candles, period);
 
         public static Equity Transform(this Equity sourceEquity, PeriodOption targetPeriod)
         {
@@ -47,7 +47,7 @@ namespace Trady.Core.Helper
                 startTime = nextStartTime;
             }
 
-            return new Equity(sourceEquity.Name, candles, targetPeriod, sourceEquity.MaxTickCount);
+            return new Equity(sourceEquity.Name, candles, targetPeriod);
         }
 
         private static bool IsTransformationValid(PeriodOption inputPeriod, PeriodOption outputPeriod)

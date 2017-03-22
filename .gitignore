@@ -251,10 +251,10 @@ paket-files/
 .idea/
 *.sln.iml
 
-# Skip all downloaded data & non-public code
-Trady.Vic/
-Trady.App.Pad/
+# Ignore non-public code
+Trady.App.Background/
 Trady.App.Core/
-Trady.App.Backend/
 Trady.App.Infrastructure/
+Trady.App.Pad/
 Trady.App.Web/
+Trady.Vic/

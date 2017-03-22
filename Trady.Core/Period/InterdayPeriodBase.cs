@@ -45,6 +45,7 @@ namespace Trady.Core.Period
                 throw new ArgumentException("Timestamp at 0 is undefined, you should use non-zero periodCount");
 
             var correctedPeriodCount = periodCount + ((periodCount < 0 && !IsTimestamp(dateTime)) ? 1 : 0);
+
             var dateTimeCursor = dateTime;
             for (int i = 1; i <= Math.Abs(periodCount); i++)
             {
@@ -52,6 +53,7 @@ namespace Trady.Core.Period
                 while (!await IsBusinessDayAsync(dateTimeCursor).ConfigureAwait(false))
                     dateTimeCursor = FloorByDay(dateTimeCursor, Math.Sign(periodCount) > 0);
             }
+
             return dateTimeCursor;
         }
 
@@ -70,7 +72,8 @@ namespace Trady.Core.Period
             if (!Enum.TryParse(countryName, out EnricoApi.Country enricoCountry))
                 enricoCountry = EnricoApi.Country.UnitedStatesOfAmerica;
 
-            if (!_cache.TryGetValue(dateTime.Year, out IList<Holiday> holidays))
+            IList<Holiday> holidays;
+            if (!_cache.TryGetValue(dateTime.Year, out holidays))
             {
                 holidays = await Enrico.GetPublicHolidaysForYearAsync(dateTime.Year, enricoCountry).ConfigureAwait(false);
                 _cache.Set(dateTime.Year, holidays, _policy);

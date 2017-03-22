@@ -13,15 +13,18 @@ namespace Trady.Analysis.Indicator
 
         public AverageTrueRange(Equity equity, int periodCount) : base(equity, periodCount)
         {
-            _tr = i => i > 0 ? new List<decimal?> { Math.Abs(Equity[i].High - Equity[i].Low), Math.Abs(Equity[i].High - Equity[i - 1].Close), Math.Abs(Equity[i].Low - Equity[i - 1].Close) }.Max() : null;
+            _tr = i => i > 0 ? new List<decimal?> {
+                Math.Abs(Equity[i].High - Equity[i].Low),
+                Math.Abs(Equity[i].High - Equity[i - 1].Close),
+                Math.Abs(Equity[i].Low - Equity[i - 1].Close) }.Max() :
+                null;
 
             _trEma = new GenericExponentialMovingAverage(
                 equity,
                 periodCount,
                 i => Enumerable.Range(i - periodCount + 1, periodCount).Average(j => _tr(j)),
                 i => _tr(i),
-                periodCount,
-                true);
+                i => 1.0m / periodCount);
         }
 
         protected override IndicatorResult ComputeByIndexImpl(int index)

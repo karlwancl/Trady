@@ -21,15 +21,15 @@ namespace Trady.Analysis.Indicator
         protected override IndicatorResult ComputeByIndexImpl(int index)
         {
             if (index < PeriodCount - 1)
-                return new IndicatorResult(Equity[index].DateTime, null, null, null);
+                return new IndicatorResult(Equity[index].DateTime, null, null);
 
-            var highestCloseIndex = index - PeriodCount + Equity
+            var highestCloseIndex = index - PeriodCount + 1 + Equity
                 .Skip(index - PeriodCount + 1)
                 .Take(PeriodCount)
                 .ToList()
                 .FindLastIndexOrDefault(c => c.High == _highestHigh.ComputeByIndex(index).HighestHigh).Value;
 
-            var lowestCloseIndex = index - PeriodCount + Equity
+            var lowestCloseIndex = index - PeriodCount + 1 + Equity
                 .Skip(index - PeriodCount + 1)
                 .Take(PeriodCount)
                 .ToList()
@@ -37,9 +37,8 @@ namespace Trady.Analysis.Indicator
 
             var up = 100.0m * (PeriodCount - (index - highestCloseIndex)) / PeriodCount;
             var down = 100.0m * (PeriodCount - (index - lowestCloseIndex)) / PeriodCount;
-            var osc = up - down;
 
-            return new IndicatorResult(Equity[index].DateTime, up, down, osc);
+            return new IndicatorResult(Equity[index].DateTime, up, down);
         }
     }
 }

@@ -29,7 +29,7 @@ namespace Trady.Importer
             foreach (var yahooCandle in yahooCandles)
                 output.Add(new Core.Candle(yahooCandle.DateTime, yahooCandle.Open, yahooCandle.High, yahooCandle.Low, yahooCandle.Close, yahooCandle.Volume));
 
-            return output.ToEquity(symbol, period, null);
+            return output.ToEquity(symbol, period);
         }
     }
 }

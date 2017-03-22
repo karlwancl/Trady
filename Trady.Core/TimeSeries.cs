@@ -11,14 +11,13 @@ namespace Trady.Core
 {
     public class TimeSeries<TTick> : ITimeSeries<TTick> where TTick : ITick
     {
-        private int? _maxTickCount;
+        private int? _maxTickCount = default(int?);
 
-        public TimeSeries(string name, IEnumerable<TTick> ticks, PeriodOption period, int? maxTickCount)
+        public TimeSeries(string name, IEnumerable<TTick> ticks, PeriodOption period)
         {
             Name = name;
             Ticks = (ticks ?? new List<TTick>()).OrderBy(t => t.DateTime).ToList();
             Period = period;
-            MaxTickCount = maxTickCount;
 
             if (!IsTimeSeriesValid(out var errorTick))
                 throw new InvalidTimeFrameException(errorTick.DateTime);

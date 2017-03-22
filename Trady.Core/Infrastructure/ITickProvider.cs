@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Trady.Core.Infrastructure
@@ -11,6 +12,6 @@ namespace Trady.Core.Infrastructure
 
         Task InitWithAnalyzableAsync(IAnalyzable analyzable);
 
-        Task<IEnumerable<TTick>> GetAllAsync<TTick>() where TTick : ITick;
+        Task<IEnumerable<TTick>> GetAsync<TTick>(DateTime startTime) where TTick : ITick;
     }
 }

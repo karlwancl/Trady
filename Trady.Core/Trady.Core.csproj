@@ -7,13 +7,14 @@
     <Description>Core module of Trady, a handy library for computing technical indicators, based on .NET Standard 1.4</Description>
     <Copyright>Copyright (c) 2016 SalmonThinLion</Copyright>
     <AssemblyTitle>Trady.Core</AssemblyTitle>
-    <VersionPrefix>1.1.0</VersionPrefix>
+    <VersionPrefix>1.2.0</VersionPrefix>
     <Authors>SalmonThinLion</Authors>
     <TargetFramework>netstandard1.4</TargetFramework>
     <AssemblyName>Trady.Core</AssemblyName>
     <PackageId>Trady.Core</PackageId>
     <PackageTags>Trady;Technical;Analysis;Finance;Stock</PackageTags>
     <PackageReleaseNotes>
+[22/3/2017] Some breaking changes (refer to: https://github.com/salmonthinlion/Trady), fix indicators: BbWidth, Adxr, IchimokuCloud, Atr, indicators added: Er, Kama, Mema, Sd
 [26/2/2017] System structure refinement
 [21/2/2017] First release
     </PackageReleaseNotes>

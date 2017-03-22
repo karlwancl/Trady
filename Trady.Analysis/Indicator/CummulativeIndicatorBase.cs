@@ -1,5 +1,6 @@
-﻿using Microsoft.Extensions.Caching.Memory;
-using System;
+﻿using System;
+using System.Collections.Generic;
+using Trady.Analysis.Indicator.Helper;
 using Trady.Core;
 using Trady.Core.Infrastructure;
 
@@ -7,12 +8,12 @@ namespace Trady.Analysis.Indicator
 {
     public abstract class CummulativeIndicatorBase<TTick> : IndicatorBase<TTick> where TTick : ITick
     {
-        private IMemoryCache _cache;
+        private IDictionary<DateTime, TTick> _cache;
         private readonly Func<int, int?> _getNearestCachedIndex;
 
         public CummulativeIndicatorBase(Equity equity, params int[] parameters) : base(equity, parameters)
         {
-            _cache = new MemoryCache(new MemoryCacheOptions());
+            _cache = new Dictionary<DateTime, TTick>();
             _getNearestCachedIndex = i =>
             {
                 for (int j = i - 1; j >= 0; j--)
@@ -30,22 +31,23 @@ namespace Trady.Analysis.Indicator
             if (index < FirstValueIndex)
             {
                 tick = ComputeNullValue(index);
-                _cache.GetOrCreate(Equity[index].DateTime, entry => tick);
+                _cache.AddOrUpdate(Equity[index].DateTime, tick);
             }
             else if (index == FirstValueIndex)
             {
                 tick = ComputeFirstValue(index);
-                _cache.GetOrCreate(Equity[index].DateTime, entry => tick);
+                _cache.AddOrUpdate(Equity[index].DateTime, tick);
             }
             else
             {
                 int startIndex = _getNearestCachedIndex(index) ?? 0;
                 for (int i = startIndex; i < index; i++)
                 {
-                    if (!_cache.TryGetValue(Equity[i].DateTime, out TTick prevTick))
+                    TTick prevTick;
+                    if (!_cache.TryGetValue(Equity[i].DateTime, out prevTick))
                         prevTick = ComputeByIndexImpl(i);
                     tick = ComputeIndexValue(i + 1, prevTick);
-                    _cache.GetOrCreate(Equity[index].DateTime, entry => tick);
+                    _cache.AddOrUpdate(Equity[index].DateTime, tick);
                 }
             }
             return tick;

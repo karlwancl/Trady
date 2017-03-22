@@ -23,7 +23,7 @@ namespace Trady.Importer.Helper
                 Convert.ToDecimal(row[2]),
                 Convert.ToDecimal(row[3]),
                 Convert.ToDecimal(row[4]),
-                Convert.ToInt64(row[5]));
+                Convert.ToDecimal(row[5]));
         }
     }
 }

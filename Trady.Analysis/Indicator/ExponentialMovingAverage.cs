@@ -14,7 +14,7 @@ namespace Trady.Analysis.Indicator
                 0,
                 i => Equity[i].Close,
                 i => Equity[i].Close,
-                periodCount);
+                i => 2.0m / (periodCount + 1));
         }
 
         public int PeriodCount => Parameters[0];

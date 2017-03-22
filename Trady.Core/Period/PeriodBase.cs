@@ -15,6 +15,7 @@ namespace Trady.Core.Period
             if (periodCount == 0)
                 throw new ArgumentException("Timestamp at 0 is undefined, you should use non-zero periodCount");
 
+            // periodCount-1 if periodCount is negative & not a timestamp, since there is truncation in internal implementation.
             var correctedPeriodCount = periodCount + ((periodCount < 0 && !IsTimestamp(dateTime)) ? 1 : 0);
             return ComputeTimestampByCorrectedPeriodCount(dateTime, correctedPeriodCount);
         }

@@ -37,7 +37,7 @@ namespace Trady.Importer
 
             var response = await _client.Dataset.GetAsync(_databaseCode, symbol, startDate: startTime, endDate: endTime, token: token, collapse: _periodMap[period]).ConfigureAwait(false);
             var candles = response.DatasetData.Data.Where(r => !r.IsNullOrWhitespace()).Select(r => r.CreateCandle()).ToList();
-            return candles.ToEquity(symbol, period, null);
+            return candles.ToEquity(symbol, period);
         }
     }
 

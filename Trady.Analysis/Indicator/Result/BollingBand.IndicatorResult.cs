@@ -7,8 +7,8 @@ namespace Trady.Analysis.Indicator
     {
         public class IndicatorResult : IndicatorResultBase
         {
-            public IndicatorResult(DateTime dateTime, decimal? lowerBand, decimal? middleBand, decimal? upperBand, decimal? bandWidth)
-                : base(dateTime, lowerBand, middleBand, upperBand, bandWidth)
+            public IndicatorResult(DateTime dateTime, decimal? lowerBand, decimal? middleBand, decimal? upperBand)
+                : base(dateTime, lowerBand, middleBand, upperBand)
             {
             }
 
@@ -17,8 +17,6 @@ namespace Trady.Analysis.Indicator
             public decimal? MiddleBand => Values[1];
 
             public decimal? UpperBand => Values[2];
-
-            public decimal? BandWidth => Values[3];
         }
     }
 }

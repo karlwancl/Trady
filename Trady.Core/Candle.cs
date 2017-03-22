@@ -5,7 +5,7 @@ namespace Trady.Core
 {
     public class Candle : TickBase
     {
-        public Candle(DateTime dateTime, decimal open, decimal high, decimal low, decimal close, long volume) : base(dateTime)
+        public Candle(DateTime dateTime, decimal open, decimal high, decimal low, decimal close, decimal volume) : base(dateTime)
         {
             Open = open;
             High = high;
@@ -22,6 +22,6 @@ namespace Trady.Core
 
         public decimal Close { get; private set; }
 
-        public long Volume { get; private set; }
+        public decimal Volume { get; private set; }
     }
 }

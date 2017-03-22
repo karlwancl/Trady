@@ -8,8 +8,7 @@ namespace Trady.Analysis.Indicator
 {
     public partial class IchimokuCloud : IndicatorBase<IndicatorResult>
     {
-        private HighestHigh _shortHighestHigh, _middleHighestHigh, _longHighestHigh;
-        private LowestLow _shortLowestLow, _middleLowestLow, _longLowestLow;
+        private LowestLow _shortLowestLow, _middleLowestLow;
         private Func<int, decimal?> _conversionLine, _baseLine, _leadingSpanB;
         private IPeriod _periodInstance;
 
@@ -19,17 +18,17 @@ namespace Trady.Analysis.Indicator
             // Default country set to United States Of America
             _periodInstance = equity.Period.CreateInstance(Country.UnitedStatesOfAmerica);
 
-            _shortHighestHigh = new HighestHigh(equity, shortPeriodCount);
+            var shortHighestHigh = new HighestHigh(equity, shortPeriodCount);
             _shortLowestLow = new LowestLow(equity, shortPeriodCount);
-            _conversionLine = i => (_shortHighestHigh.ComputeByIndex(i).HighestHigh + _shortLowestLow.ComputeByIndex(i).LowestLow) / 2;
+            _conversionLine = i => (shortHighestHigh.ComputeByIndex(i).HighestHigh + _shortLowestLow.ComputeByIndex(i).LowestLow) / 2;
 
-            _middleHighestHigh = new HighestHigh(equity, middlePeriodCount);
+            var middleHighestHigh = new HighestHigh(equity, middlePeriodCount);
             _middleLowestLow = new LowestLow(equity, middlePeriodCount);
-            _baseLine = i => (_middleHighestHigh.ComputeByIndex(i).HighestHigh + _middleLowestLow.ComputeByIndex(i).LowestLow) / 2;
+            _baseLine = i => (middleHighestHigh.ComputeByIndex(i).HighestHigh + _middleLowestLow.ComputeByIndex(i).LowestLow) / 2;
 
-            _longHighestHigh = new HighestHigh(equity, longPeriodCount);
-            _longLowestLow = new LowestLow(equity, longPeriodCount);
-            _leadingSpanB = i => (_longHighestHigh.ComputeByIndex(i).HighestHigh + _longLowestLow.ComputeByIndex(i).LowestLow) / 2;
+            var longHighestHigh = new HighestHigh(equity, longPeriodCount);
+            var longLowestLow = new LowestLow(equity, longPeriodCount);
+            _leadingSpanB = i => (longHighestHigh.ComputeByIndex(i).HighestHigh + longLowestLow.ComputeByIndex(i).LowestLow) / 2;
         }
 
         public void InitWithCountry(Country country)
@@ -46,15 +45,18 @@ namespace Trady.Analysis.Indicator
         protected override IndicatorResult ComputeByIndexImpl(int index)
         {
             // Current
-            var conversionLine = (index >= 0 && index < Equity.Count) ? _conversionLine(index) : null;
-            var baseLine = (index >= 0 && index < Equity.Count) ? _baseLine(index) : null;
+            bool dataInRange = index >= 0 && index < Equity.Count;
+            var conversionLine = dataInRange ? _conversionLine(index) : null;
+            var baseLine = dataInRange ? _baseLine(index) : null;
 
             // Leading
-            var leadingSpanA = (index >= MiddlePeriodCount - 1) ? (_conversionLine(index - MiddlePeriodCount + 1) + _baseLine(index - MiddlePeriodCount + 1)) / 2 : null;
-            var leadingSpanB = (index >= MiddlePeriodCount - 1) ? _leadingSpanB(index - MiddlePeriodCount + 1) : null;
+            bool dataAfterMiddlePeriodCount = index >= MiddlePeriodCount;
+            var leadingSpanA = dataAfterMiddlePeriodCount ? (_conversionLine(index - MiddlePeriodCount) + _baseLine(index - MiddlePeriodCount)) / 2 : null;
+            var leadingSpanB = dataAfterMiddlePeriodCount ? _leadingSpanB(index - MiddlePeriodCount) : null;
 
             // Lagging
-            var laggingSpan = (index + MiddlePeriodCount <= Equity.Count) ? Equity[index + MiddlePeriodCount - 1].Close : (decimal?)null;
+            bool dataBeforeEquityCountMinusMiddlePeriodCount = index <= Equity.Count - MiddlePeriodCount;
+            var laggingSpan = dataBeforeEquityCountMinusMiddlePeriodCount ? Equity[index + MiddlePeriodCount - 1].Close : (decimal?)null;
 
             return new IndicatorResult(GetDateTimeByIndex(index), conversionLine, baseLine, leadingSpanA, leadingSpanB, laggingSpan);
         }
@@ -105,6 +107,6 @@ namespace Trady.Analysis.Indicator
             => base.ComputeStartIndex(startTime) - MiddlePeriodCount + 1;
 
         protected override int ComputeEndIndex(DateTime? endTime)
-            => base.ComputeEndIndex(endTime) + MiddlePeriodCount - 1;
+            => base.ComputeEndIndex(endTime) + MiddlePeriodCount;
     }
 }
