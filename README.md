@@ -25,8 +25,6 @@ This library is intended for personal use, use with care for production environm
 * Universal Windows Platform 10.0 or above
 
 ### Currently Supported Indicators
-||||||||||
-|---|---|---|---|---|---|---|---|---|---|
 | AccumDist | Aroon | AroonOsc | Adxr | Atr | Bb | BbWidth | Chandlr | ClosePriceChange | ClosePricePercentageChange |
 | Dmi | Er | Ema | EmaOsc | HighestHigh | Ichimoku | Kama | LowestLow | Mema | Macd |
 | Obv | Rsv | Rs | Rsi | Sma | SmaOsc | Sd | FastSto | FullSto | SlowSto |
