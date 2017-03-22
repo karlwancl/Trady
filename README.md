@@ -63,7 +63,7 @@ Nuget package is available in modules, please install the package according to t
 ### Tldr
     var importer = new QuandlWikiImporter(apiKey);
     var equity = await importer.ImportAsync("FB");
-    Console.WriteLine(equity.Sma(30)[equity.Count - 1].Sma;
+    Console.WriteLine(equity.Sma(30)[equity.Count - 1].Sma);
 [Back to content](#Content)
 
 <a name="ImportStockData"></a>
