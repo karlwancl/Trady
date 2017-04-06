@@ -1,23 +1,25 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using Trady.Analysis.Indicator;
-using Trady.Analysis.Pattern.Helper;
-using Trady.Core;
+using Trady.Analysis.Pattern.State;
 
 namespace Trady.Analysis.Pattern.Indicator
 {
-    public class IsLowestPrice : IndicatorBase<PatternResult<Match?>>
+    public class IsLowestPrice : IndicatorBase<decimal, Match?>
     {
-        public IsLowestPrice(Equity equity, int periodCount)
-            : base(equity, periodCount)
+        public IsLowestPrice(IList<Core.Candle> candles, int periodCount)
+            : this(candles.Select(c => c.Close).ToList(), periodCount)
+        {
+        }
+
+        public IsLowestPrice(IList<decimal> closes, int periodCount)
+            : base(closes, periodCount)
         {
         }
 
         public int PeriodCount => Parameters[0];
 
-        protected override PatternResult<Match?> ComputeByIndexImpl(int index)
-        {
-            bool isLowest = Equity.Skip(Equity.Count - PeriodCount).Min(c => c.Close) == Equity[index].Close;
-            return new PatternResult<Match?>(Equity[index].DateTime, Decision.IsMatch(isLowest));
-        }
+        protected override Match? ComputeByIndexImpl(int index)
+            => StateHelper.IsMatch(Inputs.Skip(Inputs.Count - PeriodCount).Min() == Inputs[index]);
     }
 }

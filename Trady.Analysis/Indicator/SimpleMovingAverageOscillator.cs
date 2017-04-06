@@ -1,27 +1,29 @@
-﻿using Trady.Core;
-using static Trady.Analysis.Indicator.SimpleMovingAverageOscillator;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Trady.Core;
 
 namespace Trady.Analysis.Indicator
 {
-    public partial class SimpleMovingAverageOscillator : IndicatorBase<IndicatorResult>
+    public partial class SimpleMovingAverageOscillator : IndicatorBase<decimal, decimal?>
     {
-        private SimpleMovingAverage _smaIndicator1, _smaIndicator2;
+        private SimpleMovingAverage _sma1, _sma2;
 
-        public SimpleMovingAverageOscillator(Equity equity, int periodCount1, int periodCount2)
-            : base(equity, periodCount1, periodCount2)
+        public SimpleMovingAverageOscillator(IList<Candle> candles, int periodCount1, int periodCount2)
+            : this(candles.Select(c => c.Close).ToList(), periodCount1, periodCount2)
         {
-            _smaIndicator1 = new SimpleMovingAverage(equity, periodCount1);
-            _smaIndicator2 = new SimpleMovingAverage(equity, periodCount2);
+        }
+
+        public SimpleMovingAverageOscillator(IList<decimal> closes, int periodCount1, int periodCount2)
+            : base(closes, periodCount1, periodCount2)
+        {
+            _sma1 = new SimpleMovingAverage(closes, periodCount1);
+            _sma2 = new SimpleMovingAverage(closes, periodCount2);
         }
 
         public int PeriodCount1 => Parameters[0];
 
         public int PeriodCount2 => Parameters[1];
 
-        protected override IndicatorResult ComputeByIndexImpl(int index)
-        {
-            var osc = _smaIndicator1.ComputeByIndex(index).Sma - _smaIndicator2.ComputeByIndex(index).Sma;
-            return new IndicatorResult(Equity[index].DateTime, osc);
-        }
+        protected override decimal? ComputeByIndexImpl(int index) => _sma1[index] - _sma2[index];
     }
 }

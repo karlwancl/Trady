@@ -2,10 +2,10 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Trady.Core;
-using Trady.Core.Helper;
 using Trady.Core.Period;
 using Trady.Importer.Helper;
 
@@ -20,7 +20,7 @@ namespace Trady.Importer
             _path = path;
         }
 
-        public async Task<Equity> ImportAsync(string symbol, DateTime? startTime = null, DateTime? endTime = null, PeriodOption period = PeriodOption.Daily, CancellationToken token = default(CancellationToken))
+        public async Task<IList<Candle>> ImportAsync(string symbol, DateTime? startTime = null, DateTime? endTime = null, PeriodOption period = PeriodOption.Daily, CancellationToken token = default(CancellationToken))
         {
             return await Task.Factory.StartNew(() =>
             {
@@ -37,7 +37,7 @@ namespace Trady.Importer
                             continue;
                         candles.Add(record.CreateCandle());
                     }
-                    return candles.ToEquity(symbol, period);
+                    return candles.OrderBy(c => c.DateTime).ToList();
                 }
             });
         }

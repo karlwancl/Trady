@@ -1,26 +1,23 @@
-﻿using Trady.Analysis.Indicator;
-using Trady.Analysis.Pattern.Helper;
-using Trady.Core;
+﻿using System.Collections.Generic;
+using Trady.Analysis.Indicator;
+using Trady.Analysis.Pattern.State;
 
 namespace Trady.Analysis.Pattern.Indicator
 {
     public partial class StochasticsOvertrade
     {
-        public abstract class IndicatorBase : IndicatorBase<PatternResult<Overtrade?>>
+        public abstract class IndicatorBase : IndicatorBase<(decimal High, decimal Low, decimal Close), Overtrade?>
         {
-            private IndicatorBase<Stochastics.IndicatorResult> _stoIndicator;
+            private IndicatorBase<(decimal High, decimal Low, decimal Close), (decimal? K, decimal? D, decimal? J)> _sto;
 
-            public IndicatorBase(Equity equity, IndicatorBase<Stochastics.IndicatorResult> stoIndicator)
-                : base(equity, stoIndicator.Parameters)
+            public IndicatorBase(IList<(decimal High, decimal Low, decimal Close)> inputs, IndicatorBase<(decimal High, decimal Low, decimal Close), (decimal? K, decimal? D, decimal? J)> sto)
+                : base(inputs, sto.Parameters)
             {
-                _stoIndicator = stoIndicator;
+                _sto = sto;
             }
 
-            protected override PatternResult<Overtrade?> ComputeByIndexImpl(int index)
-            {
-                var result = _stoIndicator.ComputeByIndex(index);
-                return new PatternResult<Overtrade?>(Equity[index].DateTime, Decision.IsOvertrade(result.K));
-            }
+            protected override Overtrade? ComputeByIndexImpl(int index)
+                => StateHelper.IsOvertrade(_sto[index].K);
         }
     }
 }

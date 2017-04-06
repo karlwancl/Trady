@@ -1,25 +1,30 @@
-﻿using Trady.Core;
-using static Trady.Analysis.Indicator.ExponentialMovingAverage;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Trady.Core;
 
 namespace Trady.Analysis.Indicator
 {
-    public partial class ExponentialMovingAverage : IndicatorBase<IndicatorResult>
+    public partial class ExponentialMovingAverage : IndicatorBase<decimal, decimal?>
     {
-        private GenericExponentialMovingAverage _ema;
+        private GenericExponentialMovingAverage<decimal> _ema;
 
-        public ExponentialMovingAverage(Equity equity, int periodCount) : base(equity, periodCount)
+        public ExponentialMovingAverage(IList<Candle> candles, int periodCount) :
+            this(candles.Select(c => c.Close).ToList(), periodCount)
         {
-            _ema = new GenericExponentialMovingAverage(
-                equity,
+        }
+
+        public ExponentialMovingAverage(IList<decimal> closes, int periodCount) : base(closes, periodCount)
+        {
+            _ema = new GenericExponentialMovingAverage<decimal>(
+                closes,
                 0,
-                i => Equity[i].Close,
-                i => Equity[i].Close,
+                i => Inputs[i],
+                i => Inputs[i],
                 i => 2.0m / (periodCount + 1));
         }
 
         public int PeriodCount => Parameters[0];
 
-        protected override IndicatorResult ComputeByIndexImpl(int index)
-            => new IndicatorResult(Equity[index].DateTime, _ema.ComputeByIndex(index).Ema);
+        protected override decimal? ComputeByIndexImpl(int index) => _ema[index];
     }
 }

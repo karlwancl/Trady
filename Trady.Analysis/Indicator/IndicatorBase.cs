@@ -1,12 +1,11 @@
-﻿using Trady.Analysis.Infrastructure;
-using Trady.Core;
-using Trady.Core.Infrastructure;
+﻿using System.Collections.Generic;
+using Trady.Analysis.Infrastructure;
 
 namespace Trady.Analysis.Indicator
 {
-    public abstract class IndicatorBase<TTick> : AnalyzableBase<TTick>, IIndicator where TTick : ITick
+    public abstract class IndicatorBase<TInput, TOutput> : AnalyzableBase<TInput, TOutput>, IIndicator
     {
-        public IndicatorBase(Equity equity, params int[] parameters) : base(equity)
+        public IndicatorBase(IList<TInput> inputs, params int[] parameters) : base(inputs)
         {
             Parameters = parameters;
         }

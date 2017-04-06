@@ -1,23 +1,26 @@
-﻿using Trady.Analysis.Indicator;
-using Trady.Analysis.Pattern.Helper;
-using Trady.Core;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Trady.Analysis.Indicator;
+using Trady.Analysis.Pattern.State;
 
 namespace Trady.Analysis.Pattern.Indicator
 {
-    public class IsAboveSimpleMovingAverage : IndicatorBase<PatternResult<Match?>>
+    public class IsAboveSimpleMovingAverage : IndicatorBase<decimal, Match?>
     {
-        private SimpleMovingAverage _smaIndicator;
+        private SimpleMovingAverage _sma;
 
-        public IsAboveSimpleMovingAverage(Equity equity, int periodCount)
-            : base(equity, periodCount)
+        public IsAboveSimpleMovingAverage(IList<Core.Candle> candles, int periodCount)
+            : this(candles.Select(c => c.Close).ToList(), periodCount)
         {
-            _smaIndicator = new SimpleMovingAverage(equity, periodCount);
         }
 
-        protected override PatternResult<Match?> ComputeByIndexImpl(int index)
+        public IsAboveSimpleMovingAverage(IList<decimal> closes, int periodCount)
+            : base(closes, periodCount)
         {
-            var result = _smaIndicator.ComputeByIndex(index);
-            return new PatternResult<Match?>(Equity[index].DateTime, Decision.IsMatch(Equity[index].Close.IsLargerThan(result.Sma)));
+            _sma = new SimpleMovingAverage(closes, periodCount);
         }
+
+        protected override Match? ComputeByIndexImpl(int index)
+            => StateHelper.IsMatch(Inputs[index].IsLargerThan(_sma[index]));
     }
 }

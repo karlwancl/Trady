@@ -1,21 +1,23 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using Trady.Core;
-using static Trady.Analysis.Indicator.HighestHigh;
 
 namespace Trady.Analysis.Indicator
 {
-    public partial class HighestHigh : IndicatorBase<IndicatorResult>
+    public partial class HighestHigh : IndicatorBase<decimal, decimal?>
     {
-        public HighestHigh(Equity equity, int periodCount) : base(equity, periodCount)
+        public HighestHigh(IList<Candle> candles, int periodCount) :
+            this(candles.Select(c => c.High).ToList(), periodCount)
+        {
+        }
+
+        public HighestHigh(IList<decimal> highs, int periodCount) : base(highs, periodCount)
         {
         }
 
         public int PeriodCount => Parameters[0];
 
-        protected override IndicatorResult ComputeByIndexImpl(int index)
-        {
-            decimal? highestHigh = index >= PeriodCount - 1 ? Equity.Skip(index - PeriodCount + 1).Take(PeriodCount).Max(c => c.High) : (decimal?)null;
-            return new IndicatorResult(Equity[index].DateTime, highestHigh);
-        }
+        protected override decimal? ComputeByIndexImpl(int index)
+            => index >= PeriodCount - 1 ? Inputs.Skip(index - PeriodCount + 1).Take(PeriodCount).Max() : (decimal?)null;
     }
 }

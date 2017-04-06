@@ -1,23 +1,25 @@
-﻿using Trady.Core;
-using static Trady.Analysis.Indicator.RelativeStrengthIndex;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Trady.Core;
 
 namespace Trady.Analysis.Indicator
 {
-    public partial class RelativeStrengthIndex : IndicatorBase<IndicatorResult>
+    public partial class RelativeStrengthIndex : IndicatorBase<decimal, decimal?>
     {
-        private RelativeStrength _rsIndicator;
+        private RelativeStrength _rs;
 
-        public RelativeStrengthIndex(Equity equity, int periodCount) : base(equity, periodCount)
+        public RelativeStrengthIndex(IList<Candle> candles, int periodCount)
+            : this(candles.Select(c => c.Close).ToList(), periodCount)
         {
-            _rsIndicator = new RelativeStrength(equity, periodCount);
+        }
+
+        public RelativeStrengthIndex(IList<decimal> closes, int periodCount) : base(closes, periodCount)
+        {
+            _rs = new RelativeStrength(closes, periodCount);
         }
 
         public int PeriodCount => Parameters[0];
 
-        protected override IndicatorResult ComputeByIndexImpl(int index)
-        {
-            var rsi = 100 - (100 / (1 + _rsIndicator.ComputeByIndex(index).Rs));
-            return new IndicatorResult(Equity[index].DateTime, rsi);
-        }
+        protected override decimal? ComputeByIndexImpl(int index) => 100 - (100 / (1 + _rs[index]));
     }
 }

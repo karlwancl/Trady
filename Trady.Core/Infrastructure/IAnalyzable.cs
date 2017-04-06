@@ -1,21 +1,22 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace Trady.Core.Infrastructure
 {
     public interface IAnalyzable
     {
-        Equity Equity { get; }
+        IList<object> Inputs { get; }
 
-        Task InitWithTickProviderAsync(ITickProvider provider);
+        object ComputeByIndex(int index);
     }
 
-    public interface IAnalyzable<TTick> : IAnalyzable where TTick : ITick
+    public interface IAnalyzable<TInput, TOutput> : IAnalyzable
     {
-        TimeSeries<TTick> Compute(DateTime? startTime, DateTime? endTime);
+        new IList<TInput> Inputs { get; }
 
-        TTick ComputeByDateTime(DateTime dateTime);
+        new TOutput ComputeByIndex(int index);
 
-        TTick ComputeByIndex(int index);
+        TOutput this[int index] { get; }
+
+        IList<TOutput> Compute(int? startIndex = null, int? endIndex = null);
     }
 }

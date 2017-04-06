@@ -1,28 +1,26 @@
-﻿using Trady.Analysis.Indicator;
-using Trady.Analysis.Pattern.Helper;
-using Trady.Core;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Trady.Analysis.Indicator;
+using Trady.Analysis.Pattern.State;
 
 namespace Trady.Analysis.Pattern.Indicator
 {
-    public class ExponentialMovingAverageOscillatorTrend : IndicatorBase<PatternResult<Trend?>>
+    public class ExponentialMovingAverageOscillatorTrend : IndicatorBase<decimal, Trend?>
     {
-        private ExponentialMovingAverageOscillator _emaOscillator;
+        private ExponentialMovingAverageOscillator _emaOsc;
 
-        public ExponentialMovingAverageOscillatorTrend(Equity equity, int periodCount1, int periodCount2)
-            : base(equity, periodCount1, periodCount2)
+        public ExponentialMovingAverageOscillatorTrend(IList<Core.Candle> candles, int periodCount1, int periodCount2)
+            : this(candles.Select(c => c.Close).ToList(), periodCount1, periodCount2)
         {
-            _emaOscillator = new ExponentialMovingAverageOscillator(equity, periodCount1, periodCount2);
         }
 
-        protected override PatternResult<Trend?> ComputeByIndexImpl(int index)
+        public ExponentialMovingAverageOscillatorTrend(IList<decimal> closes, int periodCount1, int periodCount2)
+            : base(closes, periodCount1, periodCount2)
         {
-            if (index < 1)
-                return new PatternResult<Trend?>(Equity[index].DateTime, null);
-
-            var latest = _emaOscillator.ComputeByIndex(index);
-            var secondLatest = _emaOscillator.ComputeByIndex(index - 1);
-
-            return new PatternResult<Trend?>(Equity[index].DateTime, Decision.IsTrending(latest.Osc - secondLatest.Osc));
+            _emaOsc = new ExponentialMovingAverageOscillator(closes, periodCount1, periodCount2);
         }
+
+        protected override Trend? ComputeByIndexImpl(int index)
+            => index >= 1 ? StateHelper.IsTrending(_emaOsc[index] - _emaOsc[index - 1]) : null;
     }
 }

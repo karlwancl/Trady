@@ -1,28 +1,26 @@
-﻿using Trady.Analysis.Indicator;
-using Trady.Analysis.Pattern.Helper;
-using Trady.Core;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Trady.Analysis.Indicator;
+using Trady.Analysis.Pattern.State;
 
 namespace Trady.Analysis.Pattern.Indicator
 {
-    public class SimpleMovingAverageCrossover : IndicatorBase<PatternResult<Crossover?>>
+    public class SimpleMovingAverageCrossover : IndicatorBase<decimal, Crossover?>
     {
-        private SimpleMovingAverageOscillator _smaOscillator;
+        private SimpleMovingAverageOscillator _smaOsc;
 
-        public SimpleMovingAverageCrossover(Equity equity, int periodCount1, int periodCount2)
-            : base(equity, periodCount1, periodCount2)
+        public SimpleMovingAverageCrossover(IList<Core.Candle> candles, int periodCount1, int periodCount2)
+            : this(candles.Select(c => c.Close).ToList(), periodCount1, periodCount2)
         {
-            _smaOscillator = new SimpleMovingAverageOscillator(equity, periodCount1, periodCount2);
         }
 
-        protected override PatternResult<Crossover?> ComputeByIndexImpl(int index)
+        public SimpleMovingAverageCrossover(IList<decimal> closes, int periodCount1, int periodCount2)
+            : base(closes, periodCount1, periodCount2)
         {
-            if (index < 1)
-                return new PatternResult<Crossover?>(Equity[index].DateTime, null);
-
-            var latest = _smaOscillator.ComputeByIndex(index);
-            var secondLatest = _smaOscillator.ComputeByIndex(index - 1);
-
-            return new PatternResult<Crossover?>(Equity[index].DateTime, Decision.IsCrossover(latest.Osc, secondLatest.Osc));
+            _smaOsc = new SimpleMovingAverageOscillator(closes, periodCount1, periodCount2);
         }
+
+        protected override Crossover? ComputeByIndexImpl(int index)
+            => index >= 1 ? StateHelper.IsCrossover(_smaOsc[index], _smaOsc[index - 1]) : null;
     }
 }

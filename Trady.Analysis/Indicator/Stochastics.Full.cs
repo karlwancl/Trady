@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Trady.Core;
 
@@ -6,14 +7,19 @@ namespace Trady.Analysis.Indicator
 {
     public partial class Stochastics
     {
-        public class Full : IndicatorBase<IndicatorResult>
+        public class Full : IndicatorBase<(decimal High, decimal Low, decimal Close), (decimal? K, decimal? D, decimal? J)>
         {
-            private Fast _fastStochasticsIndicator;
+            private Fast _fastSto;
 
-            public Full(Equity equity, int periodCount, int smaPeriodCountK, int smaPeriodCountD)
-                : base(equity, periodCount, smaPeriodCountK, smaPeriodCountD)
+            public Full(IList<Candle> candles, int periodCount, int smaPeriodCountK, int smaPeriodCountD)
+                : this(candles.Select(c => (c.High, c.Low, c.Close)).ToList(), periodCount, smaPeriodCountK, smaPeriodCountD)
             {
-                _fastStochasticsIndicator = new Fast(equity, periodCount, smaPeriodCountK);
+            }
+
+            public Full(IList<(decimal High, decimal Low, decimal Close)> inputs, int periodCount, int smaPeriodCountK, int smaPeriodCountD)
+                : base(inputs, periodCount, smaPeriodCountK, smaPeriodCountD)
+            {
+                _fastSto = new Fast(inputs, periodCount, smaPeriodCountK);
             }
 
             public int PeriodCount => Parameters[0];
@@ -22,12 +28,12 @@ namespace Trady.Analysis.Indicator
 
             public int SmaPeriodCountD => Parameters[2];
 
-            protected override IndicatorResult ComputeByIndexImpl(int index)
+            protected override (decimal? K, decimal? D, decimal? J) ComputeByIndexImpl(int index)
             {
-                var d = _fastStochasticsIndicator.ComputeByIndex(index).D;
-                Func<int, decimal?> dFunc = i => _fastStochasticsIndicator.ComputeByIndex(index - SmaPeriodCountD + i + 1).D;
+                var d = _fastSto[index].D;
+                Func<int, decimal?> dFunc = i => _fastSto[index - SmaPeriodCountD + i + 1].D;
                 decimal? dAvg = index >= SmaPeriodCountK - 1 ? Enumerable.Range(0, SmaPeriodCountD).Average(i => dFunc(i)) : null;
-                return new IndicatorResult(Equity[index].DateTime, d, dAvg, 3 * d - 2 * dAvg);
+                return (d, dAvg, 3 * d - 2 * dAvg);
             }
         }
     }

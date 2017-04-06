@@ -1,27 +1,25 @@
-﻿using Trady.Analysis.Indicator;
-using Trady.Analysis.Pattern.Helper;
-using Trady.Core;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Trady.Analysis.Indicator;
+using Trady.Analysis.Pattern.State;
 
 namespace Trady.Analysis.Pattern.Indicator
 {
-    public class OnBalanceVolumeTrend : IndicatorBase<PatternResult<Trend?>>
+    public class OnBalanceVolumeTrend : IndicatorBase<(decimal Close, decimal Volume), Trend?>
     {
-        private OnBalanceVolume _obvIndicator;
+        private OnBalanceVolume _obv;
 
-        public OnBalanceVolumeTrend(Equity equity) : base(equity)
+        public OnBalanceVolumeTrend(IList<Core.Candle> candles)
+            : this(candles.Select(c => (c.Close, c.Volume)).ToList())
         {
-            _obvIndicator = new OnBalanceVolume(equity);
         }
 
-        protected override PatternResult<Trend?> ComputeByIndexImpl(int index)
+        public OnBalanceVolumeTrend(IList<(decimal Close, decimal Volume)> inputs) : base(inputs)
         {
-            if (index < 1)
-                return new PatternResult<Trend?>(Equity[index].DateTime, null);
-
-            var latest = _obvIndicator.ComputeByIndex(index);
-            var secondLatest = _obvIndicator.ComputeByIndex(index - 1);
-
-            return new PatternResult<Trend?>(Equity[index].DateTime, Decision.IsTrending(latest.Obv - secondLatest.Obv));
+            _obv = new OnBalanceVolume(inputs);
         }
+
+        protected override Trend? ComputeByIndexImpl(int index)
+            => index >= 1 ? StateHelper.IsTrending(_obv[index] - _obv[index - 1]) : null;
     }
 }

@@ -2,32 +2,36 @@
 using System.Collections.Generic;
 using System.Linq;
 using Trady.Core;
-using static Trady.Analysis.Indicator.AverageTrueRange;
 
 namespace Trady.Analysis.Indicator
 {
-    public partial class AverageTrueRange : IndicatorBase<IndicatorResult>
+    public partial class AverageTrueRange : IndicatorBase<(decimal High, decimal Low, decimal Close), decimal?>
     {
-        private readonly Func<int, decimal?> _tr;
-        private GenericExponentialMovingAverage _trEma;
+        private GenericExponentialMovingAverage<(decimal High, decimal Low, decimal Close)> _trEma;
 
-        public AverageTrueRange(Equity equity, int periodCount) : base(equity, periodCount)
+        public AverageTrueRange(IList<Candle> candles, int periodCount) :
+            this(candles.Select(c => (c.High, c.Low, c.Close)).ToList(), periodCount)
         {
-            _tr = i => i > 0 ? new List<decimal?> {
-                Math.Abs(Equity[i].High - Equity[i].Low),
-                Math.Abs(Equity[i].High - Equity[i - 1].Close),
-                Math.Abs(Equity[i].Low - Equity[i - 1].Close) }.Max() :
+        }
+
+        public AverageTrueRange(IList<(decimal High, decimal Low, decimal Close)> inputs, int periodCount) : base(inputs, periodCount)
+        {
+            Func<int, decimal?> tr = i => i > 0 ? new List<decimal?> {
+                Math.Abs(Inputs[i].High - Inputs[i].Low),
+                Math.Abs(Inputs[i].High - Inputs[i - 1].Close),
+                Math.Abs(Inputs[i].Low - Inputs[i - 1].Close) }.Max() :
                 null;
 
-            _trEma = new GenericExponentialMovingAverage(
-                equity,
+            _trEma = new GenericExponentialMovingAverage<(decimal High, decimal Low, decimal Close)>(
+                inputs,
                 periodCount,
-                i => Enumerable.Range(i - periodCount + 1, periodCount).Average(j => _tr(j)),
-                i => _tr(i),
+                i => Enumerable.Range(i - periodCount + 1, periodCount).Average(j => tr(j)),
+                i => tr(i),
                 i => 1.0m / periodCount);
         }
 
-        protected override IndicatorResult ComputeByIndexImpl(int index)
-            => new IndicatorResult(Equity[index].DateTime, _trEma.ComputeByIndex(index).Ema);
+        public int PeriodCount => Parameters[0];
+
+        protected override decimal? ComputeByIndexImpl(int index) => _trEma[index];
     }
 }

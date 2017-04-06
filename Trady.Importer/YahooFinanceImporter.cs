@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Trady.Core;
-using Trady.Core.Helper;
 using Trady.Core.Period;
 using YahooFinanceApi;
 
@@ -18,7 +17,7 @@ namespace Trady.Importer
             {PeriodOption.Monthly, Period.Monthly }
         };
 
-        public async Task<Equity> ImportAsync(string symbol, DateTime? startTime = default(DateTime?), DateTime? endTime = default(DateTime?), PeriodOption period = PeriodOption.Daily, CancellationToken token = default(CancellationToken))
+        public async Task<IList<Core.Candle>> ImportAsync(string symbol, DateTime? startTime = default(DateTime?), DateTime? endTime = default(DateTime?), PeriodOption period = PeriodOption.Daily, CancellationToken token = default(CancellationToken))
         {
             if (period != PeriodOption.Daily && period != PeriodOption.Weekly && period != PeriodOption.Monthly)
                 throw new ArgumentException("This importer only supports daily, weekly & monthly data");
@@ -29,7 +28,7 @@ namespace Trady.Importer
             foreach (var yahooCandle in yahooCandles)
                 output.Add(new Core.Candle(yahooCandle.DateTime, yahooCandle.Open, yahooCandle.High, yahooCandle.Low, yahooCandle.Close, yahooCandle.Volume));
 
-            return output.ToEquity(symbol, period);
+            return output.OrderBy(c => c.DateTime).ToList();
         }
     }
 }

@@ -1,23 +1,26 @@
-﻿using Trady.Analysis.Indicator;
-using Trady.Analysis.Pattern.Helper;
-using Trady.Core;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Trady.Analysis.Indicator;
+using Trady.Analysis.Pattern.State;
 
 namespace Trady.Analysis.Pattern.Indicator
 {
-    public class IsAboveExponentialMovingAverage : IndicatorBase<PatternResult<Match?>>
+    public class IsAboveExponentialMovingAverage : IndicatorBase<decimal, Match?>
     {
-        private ExponentialMovingAverage _emaIndicator;
+        private ExponentialMovingAverage _ema;
 
-        public IsAboveExponentialMovingAverage(Equity equity, int periodCount)
-            : base(equity, periodCount)
+        public IsAboveExponentialMovingAverage(IList<Core.Candle> candles, int periodCount)
+            : this(candles.Select(c => c.Close).ToList(), periodCount)
         {
-            _emaIndicator = new ExponentialMovingAverage(equity, periodCount);
         }
 
-        protected override PatternResult<Match?> ComputeByIndexImpl(int index)
+        public IsAboveExponentialMovingAverage(IList<decimal> closes, int periodCount)
+            : base(closes, periodCount)
         {
-            var result = _emaIndicator.ComputeByIndex(index);
-            return new PatternResult<Match?>(Equity[index].DateTime, Decision.IsMatch(Equity[index].Close.IsLargerThan(result.Ema)));
+            _ema = new ExponentialMovingAverage(closes, periodCount);
         }
+
+        protected override Match? ComputeByIndexImpl(int index)
+            => StateHelper.IsMatch(Inputs[index].IsLargerThan(_ema[index]));
     }
 }

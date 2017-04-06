@@ -1,19 +1,20 @@
 ﻿using System;
+using System.Collections.Generic;
 using Trady.Analysis.Infrastructure;
-using Trady.Core;
+using Trady.Analysis.Pattern.State;
 
 namespace Trady.Analysis.Pattern.Candle
 {
     /// <summary>
     /// Reference: http://stockcharts.com/school/doku.php?id=chart_school:chart_analysis:candlestick_pattern_dictionary
     /// </summary>
-    public class ShootingStar : AnalyzableBase<PatternResult<Match?>>
+    public class ShootingStar : AnalyzableBase<(decimal Open, decimal High, decimal Low, decimal Close), Match?>
     {
-        public ShootingStar(Equity equity) : base(equity)
+        public ShootingStar(IList<(decimal Open, decimal High, decimal Low, decimal Close)> inputs) : base(inputs)
         {
         }
 
-        protected override PatternResult<Match?> ComputeByIndexImpl(int index)
+        protected override Match? ComputeByIndexImpl(int index)
         {
             throw new NotImplementedException();
         }

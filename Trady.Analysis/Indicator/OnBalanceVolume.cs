@@ -1,28 +1,32 @@
-﻿using Trady.Core;
-using static Trady.Analysis.Indicator.OnBalanceVolume;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Trady.Core;
 
 namespace Trady.Analysis.Indicator
 {
-    public partial class OnBalanceVolume : CummulativeIndicatorBase<IndicatorResult>
+    public partial class OnBalanceVolume : CummulativeIndicatorBase<(decimal Close, decimal Volume), decimal?>
     {
-        public OnBalanceVolume(Equity equity) : base(equity)
+        public OnBalanceVolume(IList<Candle> candles)
+            : this(candles.Select(c => (c.Close, c.Volume)).ToList())
         {
         }
 
-        protected override int FirstValueIndex => 0;
-
-        protected override IndicatorResult ComputeNullValue(int index)
-            => new IndicatorResult(Equity[index].DateTime, null);
-
-        protected override IndicatorResult ComputeFirstValue(int index)
-            => new IndicatorResult(Equity[index].DateTime, Equity[index].Volume);
-
-        protected override IndicatorResult ComputeIndexValue(int index, IndicatorResult prevTick)
+        public OnBalanceVolume(IList<(decimal Close, decimal Volume)> inputs) : base(inputs)
         {
-            var candle = Equity[index];
-            var prevCandle = Equity[index - 1];
-            decimal increment = candle.Volume * (candle.Close > prevCandle.Close ? 1 : (candle.Close == prevCandle.Close ? 0 : -1));
-            return new IndicatorResult(candle.DateTime, prevTick.Obv + increment);
+        }
+
+        protected override int InitialValueIndex => 0;
+
+        protected override decimal? ComputeNullValue(int index) => null;
+
+        protected override decimal? ComputeInitialValue(int index) => Inputs[index].Volume;
+
+        protected override decimal? ComputeCummulativeValue(int index, decimal? prevOutput)
+        {
+            var input = Inputs[index];
+            var prevInput = Inputs[index - 1];
+            decimal increment = input.Volume * (input.Close > prevInput.Close ? 1 : (input.Close == prevInput.Close ? 0 : -1));
+            return prevOutput + increment;
         }
     }
 }

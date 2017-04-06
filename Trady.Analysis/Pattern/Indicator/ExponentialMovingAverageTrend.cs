@@ -1,23 +1,26 @@
-﻿using Trady.Analysis.Indicator;
-using Trady.Analysis.Pattern.Helper;
-using Trady.Core;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Trady.Analysis.Indicator;
+using Trady.Analysis.Pattern.State;
 
 namespace Trady.Analysis.Pattern.Indicator
 {
-    public class ExponentialMovingAverageTrend : IndicatorBase<PatternResult<Trend?>>
+    public class ExponentialMovingAverageTrend : IndicatorBase<decimal, Trend?>
     {
-        private ExponentialMovingAverage _emaIndicator;
+        private ExponentialMovingAverage _ema;
 
-        public ExponentialMovingAverageTrend(Equity equity, int periodCount)
-            : base(equity, periodCount)
+        public ExponentialMovingAverageTrend(IList<Core.Candle> candles, int periodCount)
+            : this(candles.Select(c => c.Close).ToList(), periodCount)
         {
-            _emaIndicator = new ExponentialMovingAverage(equity, periodCount);
         }
 
-        protected override PatternResult<Trend?> ComputeByIndexImpl(int index)
+        public ExponentialMovingAverageTrend(IList<decimal> closes, int periodCount)
+            : base(closes, periodCount)
         {
-            var result = _emaIndicator.ComputeByIndex(index);
-            return new PatternResult<Trend?>(Equity[index].DateTime, Decision.IsTrending(result.Ema));
+            _ema = new ExponentialMovingAverage(closes, periodCount);
         }
+
+        protected override Trend? ComputeByIndexImpl(int index)
+            => StateHelper.IsTrending(_ema[index]);
     }
 }

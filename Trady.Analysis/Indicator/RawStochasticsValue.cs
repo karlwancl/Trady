@@ -1,27 +1,32 @@
-﻿using Trady.Core;
-using static Trady.Analysis.Indicator.RawStochasticsValue;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Trady.Core;
 
 namespace Trady.Analysis.Indicator
 {
-    public partial class RawStochasticsValue : IndicatorBase<IndicatorResult>
+    public partial class RawStochasticsValue : IndicatorBase<(decimal High, decimal Low, decimal Close), decimal?>
     {
-        private HighestHigh _highestHighIndicator;
-        private LowestLow _lowestLowIndicator;
+        private HighestHigh _hh;
+        private LowestLow _ll;
 
-        public RawStochasticsValue(Equity equity, int periodCount) : base(equity, periodCount)
+        public RawStochasticsValue(IList<Candle> candles, int periodCount)
+            : this(candles.Select(c => (c.High, c.Low, c.Close)).ToList(), periodCount)
         {
-            _highestHighIndicator = new HighestHigh(equity, periodCount);
-            _lowestLowIndicator = new LowestLow(equity, periodCount);
+        }
+
+        public RawStochasticsValue(IList<(decimal High, decimal Low, decimal Close)> inputs, int periodCount) : base(inputs, periodCount)
+        {
+            _hh = new HighestHigh(inputs.Select(i => i.High).ToList(), periodCount);
+            _ll = new LowestLow(inputs.Select(i => i.Low).ToList(), periodCount);
         }
 
         public int PeriodCount => Parameters[0];
 
-        protected override IndicatorResult ComputeByIndexImpl(int index)
+        protected override decimal? ComputeByIndexImpl(int index)
         {
-            var highestHigh = _highestHighIndicator.ComputeByIndex(index).HighestHigh;
-            var lowestLow = _lowestLowIndicator.ComputeByIndex(index).LowestLow;
-            var rsv = (highestHigh == lowestLow) ? 50 : 100 * (Equity[index].Close - lowestLow) / (highestHigh - lowestLow);
-            return new IndicatorResult(Equity[index].DateTime, rsv);
+            var hh = _hh[index];
+            var ll = _ll[index];
+            return (hh == ll) ? 50 : 100 * (Inputs[index].Close - ll) / (hh - ll);
         }
     }
 }

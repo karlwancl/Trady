@@ -1,26 +1,31 @@
-﻿using Trady.Core;
-using static Trady.Analysis.Indicator.BollingerBandWidth;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Trady.Core;
 
 namespace Trady.Analysis.Indicator
 {
-    public partial class BollingerBandWidth : IndicatorBase<IndicatorResult>
+    public partial class BollingerBandWidth : IndicatorBase<decimal, decimal?>
     {
-        private BollingerBands _bbIndicator;
+        private BollingerBands _bb;
 
-        public BollingerBandWidth(Equity equity, int periodCount, int sdCount) : base(equity, periodCount, sdCount)
+        public BollingerBandWidth(IList<Candle> candles, int periodCount, int sdCount) :
+            this(candles.Select(c => (c.Close)).ToList(), periodCount, sdCount)
         {
-            _bbIndicator = new BollingerBands(equity, periodCount, sdCount);
+        }
+
+        public BollingerBandWidth(IList<decimal> closes, int periodCount, int sdCount) : base(closes, periodCount, sdCount)
+        {
+            _bb = new BollingerBands(closes, periodCount, sdCount);
         }
 
         public int PeriodCount => Parameters[0];
 
         public int SdCount => Parameters[1];
 
-        protected override IndicatorResult ComputeByIndexImpl(int index)
+        protected override decimal? ComputeByIndexImpl(int index)
         {
-            var bb = _bbIndicator.ComputeByIndex(index);
-            var bandWidth = (bb.UpperBand - bb.LowerBand) / bb.MiddleBand * 100;
-            return new IndicatorResult(Equity[index].DateTime, bandWidth);
+            var bb = _bb[index];
+            return (bb.UpperBand - bb.LowerBand) / bb.MiddleBand * 100;
         }
     }
 }

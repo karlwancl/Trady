@@ -1,34 +1,39 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Trady.Core;
-using static Trady.Analysis.Indicator.KaufmanAdaptiveMovingAverage;
 
 namespace Trady.Analysis.Indicator
 {
-    public partial class KaufmanAdaptiveMovingAverage : IndicatorBase<IndicatorResult>
+    public partial class KaufmanAdaptiveMovingAverage : IndicatorBase<decimal, decimal?>
     {
-        private EfficiencyRatio _erIndicator;
-        private GenericExponentialMovingAverage _gemaIndicator;
+        private EfficiencyRatio _er;
+        private GenericExponentialMovingAverage<decimal> _gema;
 
-        public KaufmanAdaptiveMovingAverage(Equity equity, int periodCount, int emaFastPeriodCount, int emaSlowPeriodCount)
-            : base(equity, periodCount, emaFastPeriodCount, emaSlowPeriodCount)
+        public KaufmanAdaptiveMovingAverage(IList<Candle> candles, int periodCount, int emaFastPeriodCount, int emaSlowPeriodCount) :
+            this(candles.Select(c => c.Close).ToList(), periodCount, emaFastPeriodCount, emaSlowPeriodCount)
         {
-            _erIndicator = new EfficiencyRatio(equity, periodCount);
+        }
+
+        public KaufmanAdaptiveMovingAverage(IList<decimal> closes, int periodCount, int emaFastPeriodCount, int emaSlowPeriodCount)
+            : base(closes, periodCount, emaFastPeriodCount, emaSlowPeriodCount)
+        {
+            _er = new EfficiencyRatio(closes, periodCount);
 
             Func<int, decimal> sc = i =>
             {
-                double erValue = Convert.ToDouble(_erIndicator.ComputeByIndex(i).Er);
+                double erValue = Convert.ToDouble(_er[i]);
                 return Convert.ToDecimal(Math.Pow(erValue * (2.0 / (emaFastPeriodCount + 1) - 2.0 / (emaSlowPeriodCount + 1)) + 2.0 / (emaSlowPeriodCount + 1), 2));
             };
 
-            _gemaIndicator = new GenericExponentialMovingAverage(
-                equity,
+            _gema = new GenericExponentialMovingAverage<decimal>(
+                closes,
                 periodCount - 1,
-                i => Equity[i].Close,
-                i => Equity[i].Close,
+                i => Inputs[i],
+                i => Inputs[i],
                 i => sc(i));
         }
 
-        protected override IndicatorResult ComputeByIndexImpl(int index)
-            => new IndicatorResult(Equity[index].DateTime, _gemaIndicator.ComputeByIndex(index).Ema);
+        protected override decimal? ComputeByIndexImpl(int index) => _gema[index];
     }
 }

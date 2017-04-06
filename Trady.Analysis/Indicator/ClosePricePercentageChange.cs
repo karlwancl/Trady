@@ -1,15 +1,21 @@
-﻿using Trady.Core;
-using static Trady.Analysis.Indicator.ClosePricePercentageChange;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Trady.Core;
 
 namespace Trady.Analysis.Indicator
 {
-    public partial class ClosePricePercentageChange : IndicatorBase<IndicatorResult>
+    public partial class ClosePricePercentageChange : IndicatorBase<decimal, decimal?>
     {
-        public ClosePricePercentageChange(Equity equity) : base(equity)
+        public ClosePricePercentageChange(IList<Candle> candles)
+            : this(candles.Select(c => c.Close).ToList())
         {
         }
 
-        protected override IndicatorResult ComputeByIndexImpl(int index)
-           => new IndicatorResult(Equity[index].DateTime, index > 0 ? (Equity[index].Close - Equity[index - 1].Close) / Equity[index - 1].Close * 100 : (decimal?)null);
+        public ClosePricePercentageChange(IList<decimal> closes) : base(closes)
+        {
+        }
+
+        protected override decimal? ComputeByIndexImpl(int index)
+           => index > 0 ? (Inputs[index] - Inputs[index - 1]) / Inputs[index - 1] * 100 : (decimal?)null;
     }
 }

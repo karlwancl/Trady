@@ -34,13 +34,13 @@ namespace Trady.Analysis.Strategy.Rule
 
     public static class Rule
     {
-        public static IRule<IndexCandle> Create(this bool value)
-            => new Rule<IndexCandle>(value);
+        public static IRule<IndexedCandle> Create(this bool value)
+            => new Rule<IndexedCandle>(value);
 
-        public static IRule<IndexCandle> Create(this Predicate<IndexCandle> predicate)
-            => new Rule<IndexCandle>(predicate);
+        public static IRule<IndexedCandle> Create(this Predicate<IndexedCandle> predicate)
+            => new Rule<IndexedCandle>(predicate);
 
-        public static IRule<IndexCandle> Create(this IOperation<IndexCandle> @operator)
-            => new Rule<IndexCandle>(@operator);
+        public static IRule<IndexedCandle> Create(this IOperation<IndexedCandle> @operator)
+            => new Rule<IndexedCandle>(@operator);
     }
 }
