@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Trady.Analysis.Indicator.Helper;
+using Trady.Analysis.Helper;
 using Trady.Core.Infrastructure;
 
 namespace Trady.Analysis.Infrastructure

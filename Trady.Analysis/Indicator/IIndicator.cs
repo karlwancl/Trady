@@ -4,6 +4,6 @@ namespace Trady.Analysis.Indicator
 {
     public interface IIndicator : IAnalyzable
     {
-        int[] Parameters { get; }
+        decimal[] Parameters { get; }
     }
 }

@@ -1,26 +1,30 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Trady.Analysis.Infrastructure;
 using Trady.Core;
 
 namespace Trady.Analysis.Indicator
 {
-    public partial class BollingerBandWidth : IndicatorBase<decimal, decimal?>
+    public partial class BollingerBandWidth : AnalyzableBase<decimal, decimal?>
     {
         private BollingerBands _bb;
 
-        public BollingerBandWidth(IList<Candle> candles, int periodCount, int sdCount) :
+        public BollingerBandWidth(IList<Candle> candles, int periodCount, decimal sdCount) :
             this(candles.Select(c => (c.Close)).ToList(), periodCount, sdCount)
         {
         }
 
-        public BollingerBandWidth(IList<decimal> closes, int periodCount, int sdCount) : base(closes, periodCount, sdCount)
+        public BollingerBandWidth(IList<decimal> closes, int periodCount, decimal sdCount) : base(closes)
         {
             _bb = new BollingerBands(closes, periodCount, sdCount);
+
+            PeriodCount = periodCount;
+            SdCount = sdCount;
         }
 
-        public int PeriodCount => Parameters[0];
+        public int PeriodCount { get; private set; }
 
-        public int SdCount => Parameters[1];
+        public decimal SdCount { get; private set; }
 
         protected override decimal? ComputeByIndexImpl(int index)
         {

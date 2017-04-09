@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Trady.Analysis.Infrastructure;
 using Trady.Core;
 
 namespace Trady.Analysis.Indicator
 {
-    public partial class AverageTrueRange : IndicatorBase<(decimal High, decimal Low, decimal Close), decimal?>
+    public partial class AverageTrueRange : AnalyzableBase<(decimal High, decimal Low, decimal Close), decimal?>
     {
         private GenericExponentialMovingAverage<(decimal High, decimal Low, decimal Close)> _trEma;
 
@@ -14,7 +15,7 @@ namespace Trady.Analysis.Indicator
         {
         }
 
-        public AverageTrueRange(IList<(decimal High, decimal Low, decimal Close)> inputs, int periodCount) : base(inputs, periodCount)
+        public AverageTrueRange(IList<(decimal High, decimal Low, decimal Close)> inputs, int periodCount) : base(inputs)
         {
             Func<int, decimal?> tr = i => i > 0 ? new List<decimal?> {
                 Math.Abs(Inputs[i].High - Inputs[i].Low),
@@ -28,9 +29,11 @@ namespace Trady.Analysis.Indicator
                 i => Enumerable.Range(i - periodCount + 1, periodCount).Average(j => tr(j)),
                 i => tr(i),
                 i => 1.0m / periodCount);
+
+            PeriodCount = periodCount;
         }
 
-        public int PeriodCount => Parameters[0];
+        public int PeriodCount { get; private set; }
 
         protected override decimal? ComputeByIndexImpl(int index) => _trEma[index];
     }

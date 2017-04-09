@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Trady.Analysis.Infrastructure;
 using Trady.Core;
 
 namespace Trady.Analysis.Indicator
 {
-    public partial class RawStochasticsValue : IndicatorBase<(decimal High, decimal Low, decimal Close), decimal?>
+    public partial class RawStochasticsValue : AnalyzableBase<(decimal High, decimal Low, decimal Close), decimal?>
     {
         private HighestHigh _hh;
         private LowestLow _ll;
@@ -14,13 +15,15 @@ namespace Trady.Analysis.Indicator
         {
         }
 
-        public RawStochasticsValue(IList<(decimal High, decimal Low, decimal Close)> inputs, int periodCount) : base(inputs, periodCount)
+        public RawStochasticsValue(IList<(decimal High, decimal Low, decimal Close)> inputs, int periodCount) : base(inputs)
         {
             _hh = new HighestHigh(inputs.Select(i => i.High).ToList(), periodCount);
             _ll = new LowestLow(inputs.Select(i => i.Low).ToList(), periodCount);
+
+            PeriodCount = periodCount;
         }
 
-        public int PeriodCount => Parameters[0];
+        public int PeriodCount { get; private set; }
 
         protected override decimal? ComputeByIndexImpl(int index)
         {

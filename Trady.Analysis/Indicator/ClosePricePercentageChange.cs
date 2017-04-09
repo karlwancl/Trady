@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Trady.Analysis.Infrastructure;
 using Trady.Core;
 
 namespace Trady.Analysis.Indicator
 {
-    public partial class ClosePricePercentageChange : IndicatorBase<decimal, decimal?>
+    public partial class ClosePricePercentageChange : AnalyzableBase<decimal, decimal?>
     {
         public ClosePricePercentageChange(IList<Candle> candles)
             : this(candles.Select(c => c.Close).ToList())

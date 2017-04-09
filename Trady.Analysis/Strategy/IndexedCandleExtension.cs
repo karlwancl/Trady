@@ -34,10 +34,10 @@ namespace Trady.Analysis.Strategy
             => ic.Get<BollingerBandsInRange>(periodCount, sdCount)[ic.Index] == Overboundary.InRange;
 
         public static bool IsHighest(this IndexedCandle ic, int periodCount)
-            => ic.Get<IsHighestPrice>(periodCount)[ic.Index] == Match.IsMatched;
+            => ic.Get<IsHighestPrice>(periodCount)[ic.Index] ?? false;
 
         public static bool IsLowest(this IndexedCandle ic, int periodCount)
-            => ic.Get<IsLowestPrice>(periodCount)[ic.Index] == Match.IsMatched;
+            => ic.Get<IsLowestPrice>(periodCount)[ic.Index] ?? false;
 
         public static bool IsRsiOverbought(this IndexedCandle ic, int periodCount)
             => ic.Get<RelativeStrengthIndexOvertrade>(periodCount)[ic.Index] == Overtrade.Overbought;
@@ -64,10 +64,10 @@ namespace Trady.Analysis.Strategy
             => ic.Get<StochasticsOvertrade.Slow>(periodCount, smaPeriodCountD)[ic.Index] == Overtrade.SeverelyOversold;
 
         public static bool IsAboveSma(this IndexedCandle ic, int periodCount)
-            => ic.Get<IsAboveSimpleMovingAverage>(periodCount)[ic.Index] == Match.IsMatched;
+            => ic.Get<IsAboveSimpleMovingAverage>(periodCount)[ic.Index] ?? false;
 
         public static bool IsAboveEma(this IndexedCandle ic, int periodCount)
-            => ic.Get<IsAboveExponentialMovingAverage>(periodCount)[ic.Index] == Match.IsMatched;
+            => ic.Get<IsAboveExponentialMovingAverage>(periodCount)[ic.Index] ?? false;
 
         public static bool IsSmaBullish(this IndexedCandle ic, int periodCount)
             => ic.Get<SimpleMovingAverageTrend>(periodCount)[ic.Index] == Trend.Bullish;

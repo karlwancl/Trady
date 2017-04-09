@@ -16,7 +16,7 @@ namespace Trady.Analysis.Indicator
             => new AroonOscillator(candles, periodCount).Compute(startIndex, endIndex);
 
         public static IList<decimal?> Adx(IList<Candle> candles, int periodCount, int? startIndex = null, int? endIndex = null)
-            => new DirectionalMovementIndex(candles, periodCount).Compute(startIndex, endIndex);
+            => new AverageDirectionalIndex(candles, periodCount).Compute(startIndex, endIndex);
 
         public static IList<decimal?> Adxr(this IList<Candle> candles, int periodCount, int adxrPeriodCount, int? startIndex = null, int? endIndex = null)
             => new AverageDirectionalIndexRating(candles, periodCount, adxrPeriodCount).Compute(startIndex, endIndex);
@@ -24,13 +24,13 @@ namespace Trady.Analysis.Indicator
         public static IList<decimal?> Atr(this IList<Candle> candles, int periodCount, int? startIndex = null, int? endIndex = null)
             => new AverageTrueRange(candles, periodCount).Compute(startIndex, endIndex);
 
-        public static IList<(decimal? LowerBand, decimal? MiddleBand, decimal? UpperBand)> Bb(this IList<Candle> candles, int periodCount, int sdCount, int? startIndex = null, int? endIndex = null)
+        public static IList<(decimal? LowerBand, decimal? MiddleBand, decimal? UpperBand)> Bb(this IList<Candle> candles, int periodCount, decimal sdCount, int? startIndex = null, int? endIndex = null)
             => new BollingerBands(candles, periodCount, sdCount).Compute(startIndex, endIndex);
 
-        public static IList<decimal?> BbWidth(this IList<Candle> candles, int periodCount, int sdCount, int? startIndex = null, int? endIndex = null)
+        public static IList<decimal?> BbWidth(this IList<Candle> candles, int periodCount, decimal sdCount, int? startIndex = null, int? endIndex = null)
             => new BollingerBandWidth(candles, periodCount, sdCount).Compute(startIndex, endIndex);
 
-        public static IList<(decimal? Long, decimal? Short)> Chandlr(this IList<Candle> candles, int periodCount, int atrCount, int? startIndex = null, int? endIndex = null)
+        public static IList<(decimal? Long, decimal? Short)> Chandlr(this IList<Candle> candles, int periodCount, decimal atrCount, int? startIndex = null, int? endIndex = null)
             => new ChandelierExit(candles, periodCount, atrCount).Compute(startIndex, endIndex);
 
         public static IList<decimal?> ClosePriceChange(this IList<Candle> candles, int? startIndex = null, int? endIndex = null)

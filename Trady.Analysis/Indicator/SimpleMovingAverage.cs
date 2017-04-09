@@ -1,23 +1,25 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Trady.Analysis.Helper;
+using Trady.Analysis.Infrastructure;
 using Trady.Core;
 
 namespace Trady.Analysis.Indicator
 {
-    public partial class SimpleMovingAverage : IndicatorBase<decimal, decimal?>
+    public partial class SimpleMovingAverage : AnalyzableBase<decimal, decimal?>
     {
         public SimpleMovingAverage(IList<Candle> candles, int periodCount)
             : this(candles.Select(c => c.Close).ToList(), periodCount)
         {
         }
 
-        public SimpleMovingAverage(IList<decimal> closes, int periodCount) : base(closes, periodCount)
+        public SimpleMovingAverage(IList<decimal> closes, int periodCount) : base(closes)
         {
+            PeriodCount = periodCount;
         }
 
-        public int PeriodCount => Parameters[0];
+        public int PeriodCount { get; private set; }
 
-        protected override decimal? ComputeByIndexImpl(int index)
-            => index >= PeriodCount - 1 ? Inputs.Skip(index - PeriodCount + 1).Take(PeriodCount).Average() : (decimal?)null;
+        protected override decimal? ComputeByIndexImpl(int index) => Inputs.Avg(PeriodCount, index);
     }
 }

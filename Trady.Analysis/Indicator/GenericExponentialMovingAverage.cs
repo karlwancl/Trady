@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using Trady.Analysis.Infrastructure;
 
 namespace Trady.Analysis.Indicator
 {
-    public partial class GenericExponentialMovingAverage<TInput> : CummulativeIndicatorBase<TInput, decimal?>
+    public partial class GenericExponentialMovingAverage<TInput> : CummulativeAnalyzableBase<TInput, decimal?>
     {
         private int _initialValueIndex;
         private Func<int, decimal?> _initialValueFunction;

@@ -1,17 +1,18 @@
 ﻿using System.Collections.Generic;
 using Trady.Analysis.Indicator;
+using Trady.Analysis.Infrastructure;
 using Trady.Analysis.Pattern.State;
 
 namespace Trady.Analysis.Pattern.Indicator
 {
     public partial class StochasticsCrossover
     {
-        public abstract class IndicatorBase : IndicatorBase<(decimal High, decimal Low, decimal Close), Crossover?>
+        public abstract class IndicatorBase : AnalyzableBase<(decimal High, decimal Low, decimal Close), Crossover?>
         {
-            private IndicatorBase<(decimal High, decimal Low, decimal Close), (decimal? K, decimal? D, decimal? J)> _sto;
+            private AnalyzableBase<(decimal High, decimal Low, decimal Close), (decimal? K, decimal? D, decimal? J)> _sto;
 
-            protected IndicatorBase(IList<(decimal High, decimal Low, decimal Close)> inputs, IndicatorBase<(decimal High, decimal Low, decimal Close), (decimal? K, decimal? D, decimal? J)> sto)
-                : base(inputs, sto.Parameters)
+            protected IndicatorBase(IList<(decimal High, decimal Low, decimal Close)> inputs, AnalyzableBase<(decimal High, decimal Low, decimal Close), (decimal? K, decimal? D, decimal? J)> sto)
+                : base(inputs)
             {
                 _sto = sto;
             }

@@ -17,7 +17,7 @@ namespace Trady.Analysis.Strategy
             SlidingExpiration = TimeSpan.FromMinutes(1)
         };
 
-        public static TAnalyzable GetOrCreateAnalyzable<TAnalyzable>(this IList<Candle> candles, params int[] parameters)
+        public static TAnalyzable GetOrCreateAnalyzable<TAnalyzable>(this IList<Candle> candles, params object[] parameters)
             where TAnalyzable: IAnalyzable
         {
             string key = $"{candles.GetHashCode()}#{typeof(TAnalyzable).Name}#{string.Join("|", parameters)}";
@@ -25,7 +25,7 @@ namespace Trady.Analysis.Strategy
             {
                 var paramsList = new List<object>();
                 paramsList.Add(candles);
-                paramsList.AddRange(parameters.Select(p => (object)p));
+                paramsList.AddRange(parameters);
 
                 // Get the default constructor for instantiation
                 var ctor = typeof(TAnalyzable).GetConstructors(BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.Instance)

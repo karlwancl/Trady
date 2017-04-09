@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Trady.Analysis.Indicator;
+using Trady.Analysis.Infrastructure;
 using Trady.Analysis.Pattern.State;
 
 namespace Trady.Analysis.Pattern.Indicator
 {
-    public class ClosePriceChangeTrend : IndicatorBase<decimal, Trend?>
+    public class ClosePriceChangeTrend : AnalyzableBase<decimal, Trend?>
     {
         private ClosePriceChange _closePriceChange;
 

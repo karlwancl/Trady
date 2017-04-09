@@ -55,12 +55,5 @@
             }
             return Crossover.NoCrossover;
         }
-
-        public static Match? IsMatch(bool? value)
-        {
-            if (!value.HasValue) return null;
-            if (value.Value) return Match.IsMatched;
-            return Match.NotMatched;
-        }
     }
 }

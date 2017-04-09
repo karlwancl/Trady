@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Trady.Analysis.Infrastructure;
 using Trady.Core;
 
 namespace Trady.Analysis.Indicator
 {
-    public partial class AccumulationDistributionLine : CummulativeIndicatorBase<(decimal High, decimal Low, decimal Close, decimal Volume), decimal?>
+    public partial class AccumulationDistributionLine : CummulativeAnalyzableBase<(decimal High, decimal Low, decimal Close, decimal Volume), decimal?>
     {
         public AccumulationDistributionLine(IList<Candle> candles) :
             this(candles.Select(i => (i.High, i.Low, i.Close, i.Volume)).ToList())

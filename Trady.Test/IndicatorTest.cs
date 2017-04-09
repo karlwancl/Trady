@@ -1,13 +1,12 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Trady.Analysis.Indicator;
 using Trady.Core;
 
 namespace Trady.Test
-{ 
+{
     [TestClass]
     public class IndicatorTest
     {

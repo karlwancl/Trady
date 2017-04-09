@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Trady.Analysis.Infrastructure;
 using Trady.Core;
 
 namespace Trady.Analysis.Indicator
 {
-    public partial class IchimokuCloud : IndicatorBase<(decimal High, decimal Low, decimal Close), (decimal? ConversionLine, decimal? BaseLine, decimal? LeadingSpanA, decimal? LeadingSpanB, decimal? LaggingSpan)>
+    public partial class IchimokuCloud : AnalyzableBase<(decimal High, decimal Low, decimal Close), (decimal? ConversionLine, decimal? BaseLine, decimal? LeadingSpanA, decimal? LeadingSpanB, decimal? LaggingSpan)>
     {
         private LowestLow _shortLowestLow, _middleLowestLow;
         private Func<int, decimal?> _conversionLine, _baseLine, _leadingSpanB;
@@ -16,7 +17,7 @@ namespace Trady.Analysis.Indicator
         }
 
         public IchimokuCloud(IList<(decimal High, decimal Low, decimal Close)> inputs, int shortPeriodCount, int middlePeriodCount, int longPeriodCount)
-            : base(inputs, shortPeriodCount, middlePeriodCount, longPeriodCount)
+            : base(inputs)
         {
             var highs = inputs.Select(i => i.High).ToList();
             var lows = inputs.Select(i => i.Low).ToList();
@@ -32,13 +33,17 @@ namespace Trady.Analysis.Indicator
             var longHighestHigh = new HighestHigh(highs, longPeriodCount);
             var longLowestLow = new LowestLow(lows, longPeriodCount);
             _leadingSpanB = i => (longHighestHigh[i] + longLowestLow[i]) / 2;
+
+            ShortPeriodCount = shortPeriodCount;
+            MiddlePeriodCount = middlePeriodCount;
+            LongPeriodCount = longPeriodCount;
         }
 
-        public int ShortPeriodCount => Parameters[0];
+        public int ShortPeriodCount { get; private set; }
 
-        public int MiddlePeriodCount => Parameters[1];
+        public int MiddlePeriodCount { get; private set; }
 
-        public int LongPeriodCount => Parameters[2];
+        public int LongPeriodCount { get; private set; }
 
         protected override (decimal? ConversionLine, decimal? BaseLine, decimal? LeadingSpanA, decimal? LeadingSpanB, decimal? LaggingSpan) ComputeByIndexImpl(int index)
         {

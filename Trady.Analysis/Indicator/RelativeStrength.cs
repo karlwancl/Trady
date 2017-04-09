@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Trady.Analysis.Infrastructure;
 using Trady.Core;
 
 namespace Trady.Analysis.Indicator
 {
-    public partial class RelativeStrength : IndicatorBase<decimal, decimal?>
+    public partial class RelativeStrength : AnalyzableBase<decimal, decimal?>
     {
         private ClosePriceChange _closePriceChange;
         private GenericExponentialMovingAverage<decimal> _uEma, _dEma;
@@ -15,7 +16,7 @@ namespace Trady.Analysis.Indicator
         {
         }
 
-        public RelativeStrength(IList<decimal> closes, int periodCount) : base(closes, periodCount)
+        public RelativeStrength(IList<decimal> closes, int periodCount) : base(closes)
         {
             _closePriceChange = new ClosePriceChange(closes);
 
@@ -35,9 +36,11 @@ namespace Trady.Analysis.Indicator
                 i => i > 0 ? Enumerable.Range(i - PeriodCount + 1, PeriodCount).Average(j => l(j)) : null,
                 i => l(i),
                 i => 1.0m / periodCount);
+
+            PeriodCount = periodCount;
         }
 
-        public int PeriodCount => Parameters[0];
+        public int PeriodCount { get; private set; }
 
         protected override decimal? ComputeByIndexImpl(int index) => _uEma[index] / _dEma[index];
     }

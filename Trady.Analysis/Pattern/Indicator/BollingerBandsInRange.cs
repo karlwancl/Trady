@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Trady.Analysis.Indicator;
+using Trady.Analysis.Infrastructure;
 using Trady.Analysis.Pattern.State;
 
 namespace Trady.Analysis.Pattern.Indicator
 {
-    public class BollingerBandsInRange : IndicatorBase<decimal, Overboundary?>
+    public class BollingerBandsInRange : AnalyzableBase<decimal, Overboundary?>
     {
         private BollingerBands _bb;
 
@@ -15,7 +16,7 @@ namespace Trady.Analysis.Pattern.Indicator
         }
 
         public BollingerBandsInRange(IList<decimal> closes, int periodCount, int sdCount)
-            : base(closes, periodCount, sdCount)
+            : base(closes)
         {
             _bb = new BollingerBands(closes, periodCount, sdCount);
         }

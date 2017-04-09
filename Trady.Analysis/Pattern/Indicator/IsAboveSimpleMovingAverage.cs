@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Trady.Analysis.Indicator;
+using Trady.Analysis.Infrastructure;
 using Trady.Analysis.Pattern.State;
 
 namespace Trady.Analysis.Pattern.Indicator
 {
-    public class IsAboveSimpleMovingAverage : IndicatorBase<decimal, Match?>
+    public class IsAboveSimpleMovingAverage : AnalyzableBase<decimal, bool?>
     {
         private SimpleMovingAverage _sma;
 
@@ -15,12 +16,12 @@ namespace Trady.Analysis.Pattern.Indicator
         }
 
         public IsAboveSimpleMovingAverage(IList<decimal> closes, int periodCount)
-            : base(closes, periodCount)
+            : base(closes)
         {
             _sma = new SimpleMovingAverage(closes, periodCount);
         }
 
-        protected override Match? ComputeByIndexImpl(int index)
-            => StateHelper.IsMatch(Inputs[index].IsLargerThan(_sma[index]));
+        protected override bool? ComputeByIndexImpl(int index)
+            => Inputs[index].IsLargerThan(_sma[index]);
     }
 }

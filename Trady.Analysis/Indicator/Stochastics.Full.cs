@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Trady.Analysis.Infrastructure;
 using Trady.Core;
 
 namespace Trady.Analysis.Indicator
 {
     public partial class Stochastics
     {
-        public class Full : IndicatorBase<(decimal High, decimal Low, decimal Close), (decimal? K, decimal? D, decimal? J)>
+        public class Full : AnalyzableBase<(decimal High, decimal Low, decimal Close), (decimal? K, decimal? D, decimal? J)>
         {
             private Fast _fastSto;
 
@@ -17,16 +18,20 @@ namespace Trady.Analysis.Indicator
             }
 
             public Full(IList<(decimal High, decimal Low, decimal Close)> inputs, int periodCount, int smaPeriodCountK, int smaPeriodCountD)
-                : base(inputs, periodCount, smaPeriodCountK, smaPeriodCountD)
+                : base(inputs)
             {
                 _fastSto = new Fast(inputs, periodCount, smaPeriodCountK);
+
+                PeriodCount = periodCount;
+                SmaPeriodCountK = smaPeriodCountK;
+                SmaPeriodCountD = smaPeriodCountD;
             }
 
-            public int PeriodCount => Parameters[0];
+            public int PeriodCount { get; private set; }
 
-            public int SmaPeriodCountK => Parameters[1];
+            public int SmaPeriodCountK { get; private set; }
 
-            public int SmaPeriodCountD => Parameters[2];
+            public int SmaPeriodCountD { get; private set; }
 
             protected override (decimal? K, decimal? D, decimal? J) ComputeByIndexImpl(int index)
             {

@@ -1,22 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Trady.Analysis.Infrastructure;
 using Trady.Core;
 
 namespace Trady.Analysis.Indicator
 {
-    public partial class EfficiencyRatio : IndicatorBase<decimal, decimal?>
+    public partial class EfficiencyRatio : AnalyzableBase<decimal, decimal?>
     {
         public EfficiencyRatio(IList<Candle> candles, int periodCount) :
             this(candles.Select(c => c.Close).ToList(), periodCount)
         {
         }
 
-        public EfficiencyRatio(IList<decimal> closes, int periodCount) : base(closes, periodCount)
+        public EfficiencyRatio(IList<decimal> closes, int periodCount) : base(closes)
         {
+            PeriodCount = periodCount;
         }
 
-        public int PeriodCount => Parameters[0];
+        public int PeriodCount { get; private set; }
 
         protected override decimal? ComputeByIndexImpl(int index)
         {

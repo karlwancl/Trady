@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Trady.Analysis.Infrastructure;
 using Trady.Core;
 
 namespace Trady.Analysis.Indicator
 {
-    public class PlusDirectionalMovement : IndicatorBase<decimal, decimal?>
+    public class PlusDirectionalMovement : AnalyzableBase<decimal, decimal?>
     {
         public PlusDirectionalMovement(IList<Candle> candles)
             : this(candles.Select(c => c.High).ToList())

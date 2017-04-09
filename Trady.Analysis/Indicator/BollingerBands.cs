@@ -1,28 +1,33 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using Trady.Analysis.Infrastructure;
 using Trady.Core;
 
 namespace Trady.Analysis.Indicator
 {
-    public partial class BollingerBands : IndicatorBase<decimal, (decimal? LowerBand, decimal? MiddleBand, decimal? UpperBand)>
+    public partial class BollingerBands : AnalyzableBase<decimal, (decimal? LowerBand, decimal? MiddleBand, decimal? UpperBand)>
     {
         private SimpleMovingAverage _sma;
         private StandardDeviation _sd;
 
-        public BollingerBands(IList<Candle> candles, int periodCount, int sdCount) :
+        public BollingerBands(IList<Candle> candles, int periodCount, decimal sdCount) :
             this(candles.Select(c => (c.Close)).ToList(), periodCount, sdCount)
         {
         }
 
-        public BollingerBands(IList<decimal> closes, int periodCount, int sdCount) : base(closes, periodCount, sdCount)
+        public BollingerBands(IList<decimal> closes, int periodCount, decimal sdCount) : base(closes)
         {
             _sma = new SimpleMovingAverage(closes, periodCount);
             _sd = new StandardDeviation(closes, periodCount);
+
+            PeriodCount = periodCount;
+            SdCount = sdCount;
         }
 
-        public int PeriodCount => Parameters[0];
+        public int PeriodCount { get; private set; }
 
-        public int SdCount => Parameters[1];
+        public decimal SdCount { get; private set; }
 
         protected override (decimal? LowerBand, decimal? MiddleBand, decimal? UpperBand) ComputeByIndexImpl(int index)
         {

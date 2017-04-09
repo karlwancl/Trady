@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Trady.Analysis.Infrastructure;
 using Trady.Core;
 
 namespace Trady.Analysis.Indicator
 {
-    public partial class KaufmanAdaptiveMovingAverage : IndicatorBase<decimal, decimal?>
+    public partial class KaufmanAdaptiveMovingAverage : AnalyzableBase<decimal, decimal?>
     {
         private EfficiencyRatio _er;
         private GenericExponentialMovingAverage<decimal> _gema;
@@ -16,7 +17,7 @@ namespace Trady.Analysis.Indicator
         }
 
         public KaufmanAdaptiveMovingAverage(IList<decimal> closes, int periodCount, int emaFastPeriodCount, int emaSlowPeriodCount)
-            : base(closes, periodCount, emaFastPeriodCount, emaSlowPeriodCount)
+            : base(closes)
         {
             _er = new EfficiencyRatio(closes, periodCount);
 
@@ -32,7 +33,17 @@ namespace Trady.Analysis.Indicator
                 i => Inputs[i],
                 i => Inputs[i],
                 i => sc(i));
+
+            PeriodCount = periodCount;
+            EmaFastPeriodCount = emaFastPeriodCount;
+            EmaSlowPeriodCount = emaSlowPeriodCount;
         }
+
+        public int PeriodCount { get; private set; }
+
+        public int EmaFastPeriodCount { get; private set; }
+
+        public int EmaSlowPeriodCount { get; private set; }
 
         protected override decimal? ComputeByIndexImpl(int index) => _gema[index];
     }

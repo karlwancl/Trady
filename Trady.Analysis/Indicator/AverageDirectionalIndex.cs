@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Trady.Analysis.Infrastructure;
 using Trady.Core;
 
 namespace Trady.Analysis.Indicator
 {
-    public class AverageDirectionalIndex : IndicatorBase<(decimal High, decimal Low, decimal Close), decimal?>
+    public class AverageDirectionalIndex : AnalyzableBase<(decimal High, decimal Low, decimal Close), decimal?>
     {
         private DirectionalMovementIndex _dx;
         private GenericExponentialMovingAverage<(decimal High, decimal Low, decimal Close)> _adx;
@@ -14,7 +15,7 @@ namespace Trady.Analysis.Indicator
         {
         }
 
-        public AverageDirectionalIndex(IList<(decimal High, decimal Low, decimal Close)> inputs, int periodCount) : base(inputs, periodCount)
+        public AverageDirectionalIndex(IList<(decimal High, decimal Low, decimal Close)> inputs, int periodCount) : base(inputs)
         {
             _dx = new DirectionalMovementIndex(inputs, periodCount);
 
@@ -24,9 +25,11 @@ namespace Trady.Analysis.Indicator
                 i => Enumerable.Range(i - periodCount + 1, periodCount).Select(j => _dx[j]).Average(),
                 i => _dx[i],
                 i => 1.0m / periodCount);
+
+            PeriodCount = periodCount;
         }
 
-        public int PeriodCount => Parameters[0];
+        public int PeriodCount { get; private set; }
 
         protected override decimal? ComputeByIndexImpl(int index) => _adx[index];
     }

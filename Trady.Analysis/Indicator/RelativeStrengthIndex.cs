@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Trady.Analysis.Infrastructure;
 using Trady.Core;
 
 namespace Trady.Analysis.Indicator
 {
-    public partial class RelativeStrengthIndex : IndicatorBase<decimal, decimal?>
+    public partial class RelativeStrengthIndex : AnalyzableBase<decimal, decimal?>
     {
         private RelativeStrength _rs;
 
@@ -13,12 +14,14 @@ namespace Trady.Analysis.Indicator
         {
         }
 
-        public RelativeStrengthIndex(IList<decimal> closes, int periodCount) : base(closes, periodCount)
+        public RelativeStrengthIndex(IList<decimal> closes, int periodCount) : base(closes)
         {
             _rs = new RelativeStrength(closes, periodCount);
+
+            PeriodCount = periodCount;
         }
 
-        public int PeriodCount => Parameters[0];
+        public int PeriodCount { get; private set; }
 
         protected override decimal? ComputeByIndexImpl(int index) => 100 - (100 / (1 + _rs[index]));
     }

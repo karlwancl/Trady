@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Trady.Analysis.Strategy.Rule;
 using Trady.Core;
+using Trady.Analysis.Helper;
 
 namespace Trady.Analysis.Strategy
 {
@@ -68,11 +69,8 @@ namespace Trady.Analysis.Strategy
             {
                 var asset = assetCashMap.ElementAt(i).Key;
 
-                var startCandle = asset.FirstOrDefault(c => c.DateTime >= (startTime ?? DateTime.MinValue));
-                var startIndex = startCandle != null ? asset.IndexOf(startCandle) : 0;
-
-                var endCandle = asset.LastOrDefault(c => c.DateTime <= (endTime ?? DateTime.MaxValue));
-                var endIndex = endCandle != null ? asset.IndexOf(endCandle) : asset.Count - 1;
+                var startIndex = asset.FindIndexOrDefault(c => c.DateTime >= (startTime ?? DateTime.MinValue), 0).Value;
+                var endIndex = asset.FindLastIndexOrDefault(c => c.DateTime <= (endTime ?? DateTime.MaxValue), asset.Count - 1).Value;
 
                 for (int j = startIndex; j <= endIndex; j++)
                 {

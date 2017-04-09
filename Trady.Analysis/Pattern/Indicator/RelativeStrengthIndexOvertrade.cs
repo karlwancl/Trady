@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Trady.Analysis.Indicator;
+using Trady.Analysis.Infrastructure;
 using Trady.Analysis.Pattern.State;
 
 namespace Trady.Analysis.Pattern.Indicator
 {
-    public class RelativeStrengthIndexOvertrade : IndicatorBase<decimal, Overtrade?>
+    public class RelativeStrengthIndexOvertrade : AnalyzableBase<decimal, Overtrade?>
     {
         private RelativeStrengthIndex _rsi;
 
@@ -15,7 +16,7 @@ namespace Trady.Analysis.Pattern.Indicator
         }
 
         public RelativeStrengthIndexOvertrade(IList<decimal> closes, int periodCount)
-            : base(closes, periodCount)
+            : base(closes)
         {
             _rsi = new RelativeStrengthIndex(closes, periodCount);
         }

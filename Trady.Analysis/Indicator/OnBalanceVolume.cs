@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Trady.Analysis.Infrastructure;
 using Trady.Core;
 
 namespace Trady.Analysis.Indicator
 {
-    public partial class OnBalanceVolume : CummulativeIndicatorBase<(decimal Close, decimal Volume), decimal?>
+    public partial class OnBalanceVolume : CummulativeAnalyzableBase<(decimal Close, decimal Volume), decimal?>
     {
         public OnBalanceVolume(IList<Candle> candles)
             : this(candles.Select(c => (c.Close, c.Volume)).ToList())

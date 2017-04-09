@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Trady.Analysis.Indicator;
+using Trady.Analysis.Infrastructure;
 using Trady.Analysis.Pattern.State;
 
 namespace Trady.Analysis.Pattern.Indicator
 {
-    public class ExponentialMovingAverageOscillatorTrend : IndicatorBase<decimal, Trend?>
+    public class ExponentialMovingAverageOscillatorTrend : AnalyzableBase<decimal, Trend?>
     {
         private ExponentialMovingAverageOscillator _emaOsc;
 
@@ -15,7 +16,7 @@ namespace Trady.Analysis.Pattern.Indicator
         }
 
         public ExponentialMovingAverageOscillatorTrend(IList<decimal> closes, int periodCount1, int periodCount2)
-            : base(closes, periodCount1, periodCount2)
+            : base(closes)
         {
             _emaOsc = new ExponentialMovingAverageOscillator(closes, periodCount1, periodCount2);
         }

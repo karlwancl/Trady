@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Trady.Analysis.Indicator;
+using Trady.Analysis.Infrastructure;
 using Trady.Analysis.Pattern.State;
 
 namespace Trady.Analysis.Pattern.Indicator
 {
-    public class SimpleMovingAverageOscillatorTrend : IndicatorBase<decimal, Trend?>
+    public class SimpleMovingAverageOscillatorTrend : AnalyzableBase<decimal, Trend?>
     {
         private SimpleMovingAverageOscillator _smaOsc;
 
@@ -15,7 +16,7 @@ namespace Trady.Analysis.Pattern.Indicator
         }
 
         public SimpleMovingAverageOscillatorTrend(IList<decimal> closes, int periodCount1, int periodCount2)
-            : base(closes, periodCount1, periodCount2)
+            : base(closes)
         {
             _smaOsc = new SimpleMovingAverageOscillator(closes, periodCount1, periodCount2);
         }

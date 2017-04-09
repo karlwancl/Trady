@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Trady.Analysis.Infrastructure;
 using Trady.Core;
 
 namespace Trady.Analysis.Indicator
 {
-    public partial class AroonOscillator : IndicatorBase<(decimal High, decimal Low), decimal?>
+    public partial class AroonOscillator : AnalyzableBase<(decimal High, decimal Low), decimal?>
     {
         private Aroon _aroon;
 
@@ -13,10 +14,13 @@ namespace Trady.Analysis.Indicator
         {
         }
 
-        public AroonOscillator(IList<(decimal High, decimal Low)> inputs, int periodCount) : base(inputs, periodCount)
+        public AroonOscillator(IList<(decimal High, decimal Low)> inputs, int periodCount) : base(inputs)
         {
             _aroon = new Aroon(inputs, periodCount);
+            PeriodCount = periodCount;
         }
+
+        public int PeriodCount { get; private set; }
 
         protected override decimal? ComputeByIndexImpl(int index)
         {

@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Trady.Analysis.Indicator;
+using Trady.Analysis.Infrastructure;
 using Trady.Analysis.Pattern.State;
 
 namespace Trady.Analysis.Pattern.Indicator
 {
-    public class ExponentialMovingAverageTrend : IndicatorBase<decimal, Trend?>
+    public class ExponentialMovingAverageTrend : AnalyzableBase<decimal, Trend?>
     {
         private ExponentialMovingAverage _ema;
 
@@ -15,7 +16,7 @@ namespace Trady.Analysis.Pattern.Indicator
         }
 
         public ExponentialMovingAverageTrend(IList<decimal> closes, int periodCount)
-            : base(closes, periodCount)
+            : base(closes)
         {
             _ema = new ExponentialMovingAverage(closes, periodCount);
         }

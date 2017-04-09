@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Trady.Analysis.Indicator;
+using Trady.Analysis.Infrastructure;
 using Trady.Analysis.Pattern.State;
 
 namespace Trady.Analysis.Pattern.Indicator
 {
-    public class MovingAverageConvergenceDivergenceOscillatorTrend : IndicatorBase<decimal, Trend?>
+    public class MovingAverageConvergenceDivergenceOscillatorTrend : AnalyzableBase<decimal, Trend?>
     {
         private MovingAverageConvergenceDivergence _macd;
 
@@ -15,7 +16,7 @@ namespace Trady.Analysis.Pattern.Indicator
         }
 
         public MovingAverageConvergenceDivergenceOscillatorTrend(IList<decimal> closes, int emaPeriodCount1, int emaPeriodCount2, int demPeriodCount)
-            : base(closes, emaPeriodCount1, emaPeriodCount2, demPeriodCount)
+            : base(closes)
         {
             _macd = new MovingAverageConvergenceDivergence(closes, emaPeriodCount1, emaPeriodCount2, demPeriodCount);
         }

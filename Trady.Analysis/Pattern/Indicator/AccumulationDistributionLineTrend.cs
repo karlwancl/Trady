@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Trady.Analysis.Indicator;
+using Trady.Analysis.Infrastructure;
 using Trady.Analysis.Pattern.State;
 
 namespace Trady.Analysis.Pattern.Indicator
 {
-    public class AccumulationDistributionLineTrend : IndicatorBase<(decimal High, decimal Low, decimal Close, decimal Volume), Trend?>
+    public class AccumulationDistributionLineTrend : AnalyzableBase<(decimal High, decimal Low, decimal Close, decimal Volume), Trend?>
     {
         private AccumulationDistributionLine _accumDist;
 
