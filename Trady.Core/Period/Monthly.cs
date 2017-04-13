@@ -8,9 +8,6 @@ namespace Trady.Core.Period
         {
         }
 
-        public Monthly(Country country) : base(country)
-        {
-        }
 
         public override uint OrderOfTransformation => 30;
 

@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using Trady.Core;
 using System.Linq;
+using Trady.Core;
 
 namespace Trady.Analysis.Strategy
 {
@@ -37,7 +36,7 @@ namespace Trady.Analysis.Strategy
 
         public int TotalCorrectedBuyCount => PreAssetCashMap.Select(ac => ac.Key).Sum(a => CorrectedBuyCount(a));
 
-        public int CorrectedBuyCount(IList<Candle> candles) 
+        public int CorrectedBuyCount(IList<Candle> candles)
         {
             var trans = Transactions.Where(t => t.Candles.Equals(candles));
             if (trans.Any())
@@ -48,7 +47,7 @@ namespace Trady.Analysis.Strategy
             return 0;
         }
 
-        #endregion
+        #endregion Count
 
         #region Sum
 
@@ -84,6 +83,7 @@ namespace Trady.Analysis.Strategy
             return initial;
         }
 
-        #endregion  
+        #endregion Sum
+
     }
 }

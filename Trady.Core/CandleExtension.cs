@@ -107,6 +107,5 @@ namespace Trady.Core
         }
 
         #endregion candle list transformation
-
     }
 }

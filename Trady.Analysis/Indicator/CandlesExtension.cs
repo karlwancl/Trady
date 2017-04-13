@@ -54,7 +54,7 @@ namespace Trady.Analysis.Indicator
         public static IList<decimal?> HighestHigh(this IList<Candle> candles, int periodCount, int? startIndex = null, int? endIndex = null)
             => new HighestHigh(candles, periodCount).Compute(startIndex, endIndex);
 
-        public static IList<(decimal? ConversionLine, decimal? BaseLine, decimal? LeadingSpanA, decimal? LeadingSpanB, decimal? LaggingSpan)> Ichimoku(this IList<Candle> candles, int shortPeriodCount, int middlePeriodCount, int longPeriodCount, Country? country = null, int? startIndex = null, int? endIndex = null)
+        public static IList<(decimal? ConversionLine, decimal? BaseLine, decimal? LeadingSpanA, decimal? LeadingSpanB, decimal? LaggingSpan)> Ichimoku(this IList<Candle> candles, int shortPeriodCount, int middlePeriodCount, int longPeriodCount, int? startIndex = null, int? endIndex = null)
             => new IchimokuCloud(candles, shortPeriodCount, middlePeriodCount, longPeriodCount).Compute(startIndex, endIndex);
 
         public static IList<decimal?> Kama(this IList<Candle> candles, int periodCount, int emaFastPeriodCount, int emaSlowPeriodCount, int? startIndex = null, int? endIndex = null)

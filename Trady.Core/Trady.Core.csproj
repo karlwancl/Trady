@@ -34,16 +34,8 @@
     <!--<Compile Include="**\*.cs" />-->
     <EmbeddedResource Include="**\*.resx" />
   </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="EnricoApi" Version="1.0.1" />
-    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="1.1.0" />
-    <!--<PackageReference Include="NETStandard.Library">-->
-      <!--<Version>1.6.1</Version>
-    </PackageReference>
-    <PackageReference Include="Microsoft.NET.Sdk">
-      <Version>1.0.0-alpha-20161104-2</Version>
-      <PrivateAssets>All</PrivateAssets>
-    </PackageReference>-->
-  </ItemGroup>
   <!--<Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />-->
+  <ItemGroup>
+    <PackageReference Include="NETStandard.Library" Version="1.6.1" />
+  </ItemGroup>
 </Project>

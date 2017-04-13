@@ -13,7 +13,7 @@ namespace Trady.Test
     [TestClass]
     public class StrategyTest
     {
-        const string logPath = "backtest.txt";
+        private const string logPath = "backtest.txt";
 
         public async Task<IList<Candle>> ImportCandlesAsync()
         {

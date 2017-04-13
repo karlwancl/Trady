@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using Trady.Analysis.Infrastructure;
-using Trady.Analysis.Pattern.State;
 
 namespace Trady.Analysis.Pattern.Candlestick
 {

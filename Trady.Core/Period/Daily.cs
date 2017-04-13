@@ -8,10 +8,6 @@ namespace Trady.Core.Period
         {
         }
 
-        public Daily(Country country) : base(country)
-        {
-        }
-
         public override uint OrderOfTransformation => 1;
 
         public override bool IsTimestamp(DateTime dateTime)

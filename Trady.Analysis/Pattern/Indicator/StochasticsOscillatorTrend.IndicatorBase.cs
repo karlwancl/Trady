@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using Trady.Analysis.Indicator;
 using Trady.Analysis.Infrastructure;
 using Trady.Analysis.Pattern.State;
 
@@ -28,7 +27,7 @@ namespace Trady.Analysis.Pattern.Indicator
                 var latestKdOsc = latest.K - latest.D;
                 var secondLatestKsOsc = secondLatest.K - secondLatest.D;
 
-                return StateHelper.IsTrending(latestKdOsc - secondLatestKsOsc);
+                return StateHelper.IsTrending(latestKdOsc , secondLatestKsOsc);
             }
         }
     }

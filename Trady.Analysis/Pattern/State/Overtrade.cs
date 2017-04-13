@@ -2,7 +2,7 @@
 {
     public enum Overtrade
     {
-        Normal,
+        InRange,
         Overbought,
         Oversold,
         SeverelyOverbought,

@@ -2,7 +2,7 @@
 {
     public enum Trend
     {
-        NonTrended,
+        Neutral,
         Bullish,
         Bearish
     }

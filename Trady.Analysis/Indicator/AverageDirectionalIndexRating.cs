@@ -27,6 +27,6 @@ namespace Trady.Analysis.Indicator
         public int AdxrPeriodCount { get; private set; }
 
         protected override decimal? ComputeByIndexImpl(int index)
-            => (index >= PeriodCount || index >= AdxrPeriodCount) ? (_adx[index] + _adx[index - AdxrPeriodCount]) / 2 : null;
+            => index >= AdxrPeriodCount ? (_adx[index] + _adx[index - AdxrPeriodCount]) / 2 : null;
     }
 }

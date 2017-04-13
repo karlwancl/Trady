@@ -18,7 +18,7 @@ namespace Trady.Analysis.Strategy
         };
 
         public static TAnalyzable GetOrCreateAnalyzable<TAnalyzable>(this IList<Candle> candles, params object[] parameters)
-            where TAnalyzable: IAnalyzable
+            where TAnalyzable : IAnalyzable
         {
             string key = $"{candles.GetHashCode()}#{typeof(TAnalyzable).Name}#{string.Join("|", parameters)}";
             if (!_cache.TryGetValue(key, out TAnalyzable output))

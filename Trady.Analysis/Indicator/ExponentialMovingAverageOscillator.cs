@@ -28,7 +28,6 @@ namespace Trady.Analysis.Indicator
 
         public int PeriodCount2 { get; private set; }
 
-        protected override decimal? ComputeByIndexImpl(int index)
-            => _ema1[index] - _ema2[index];
+        protected override decimal? ComputeByIndexImpl(int index) => _ema1[index] - _ema2[index];
     }
 }

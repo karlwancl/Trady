@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Trady.Analysis.Helper;
 using Trady.Analysis.Strategy.Rule;
 using Trady.Core;
-using Trady.Analysis.Helper;
 
 namespace Trady.Analysis.Strategy
 {
@@ -16,9 +16,11 @@ namespace Trady.Analysis.Strategy
         private IRule<IndexedCandle> _sellRule;
 
         public event BuyHandler OnBought;
+
         public delegate void BuyHandler(IList<Candle> candles, int index, DateTime dateTime, decimal buyPrice, int quantity, decimal absCashFlow, decimal currentCashAmount);
 
         public event SellHandler OnSold;
+
         public delegate void SellHandler(IList<Candle> candles, int index, DateTime dateTime, decimal sellPrice, int quantity, decimal absCashFlow, decimal currentCashAmount, decimal plRatio);
 
         #region Builder
@@ -79,7 +81,7 @@ namespace Trady.Analysis.Strategy
                     if (lastTransaction?.Type != TransactionType.Buy && _buyRule.IsValid(indexedCandle))
                         BuyAsset(indexedCandle, premium, assetCashMap, transactions);
                     else if (lastTransaction?.Type != TransactionType.Sell && _sellRule.IsValid(indexedCandle))
-                        SellAsset(indexedCandle, premium, assetCashMap, transactions); 
+                        SellAsset(indexedCandle, premium, assetCashMap, transactions);
                 }
             }
 

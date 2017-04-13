@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Trady.Analysis.Infrastructure;
 using Trady.Core;
@@ -33,9 +32,6 @@ namespace Trady.Analysis.Indicator
 
         protected override (decimal? Long, decimal? Short) ComputeByIndexImpl(int index)
         {
-            if (index < PeriodCount)
-                return (null, null);
-
             var atr = _atr[index];
             var @long = _hh[index] - atr * AtrCount;
             var @short = _ll[index] + atr * AtrCount;

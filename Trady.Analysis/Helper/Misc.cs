@@ -27,7 +27,7 @@ namespace Trady.Analysis.Helper
         }
 
         public static decimal? Avg(this IList<decimal> values, int periodCount, int index)
-            => index < periodCount - 1 ? (decimal?)null : values.Skip(index - periodCount + 1).Take(periodCount).Average();
+            => index >= periodCount - 1 ? values.Skip(index - periodCount + 1).Take(periodCount).Average() : (decimal?)null;
 
         public static decimal? Sd(this IList<decimal> values, int periodCount, int index)
         {

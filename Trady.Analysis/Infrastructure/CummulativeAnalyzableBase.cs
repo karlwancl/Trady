@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Caching.Memory;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Trady.Analysis.Helper;
 

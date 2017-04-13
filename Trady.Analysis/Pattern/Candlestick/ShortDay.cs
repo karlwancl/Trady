@@ -1,24 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using Trady.Analysis.Helper;
 using Trady.Analysis.Infrastructure;
-using Trady.Analysis.Pattern.State;
 using Trady.Core;
 
 namespace Trady.Analysis.Pattern.Candlestick
 {
-    /// <summary>
-    /// Reference: http://stockcharts.com/school/doku.php?id=chart_school:chart_analysis:candlestick_pattern_dictionary
-    /// </summary>
-    public class ShortDay : AnalyzableBase<(decimal Open, decimal Close), bool?>
+    public class ShortDay : AnalyzableBase<(decimal Open, decimal Close), bool>
     {
-        public ShortDay(IList<Candle> candles, int periodCount, decimal threshold)
+        public ShortDay(IList<Candle> candles, int periodCount = 20, decimal threshold = 0.25m)
             : this(candles.Select(c => (c.Open, c.Close)).ToList(), periodCount, threshold)
         {
         }
 
-        public ShortDay(IList<(decimal Open, decimal Close)> inputs, int periodCount, decimal threshold) 
+        public ShortDay(IList<(decimal Open, decimal Close)> inputs, int periodCount = 20, decimal threshold = 0.25m)
             : base(inputs)
         {
             PeriodCount = periodCount;
@@ -29,7 +26,7 @@ namespace Trady.Analysis.Pattern.Candlestick
 
         public decimal Threshold { get; private set; }
 
-        protected override bool? ComputeByIndexImpl(int index)
+        protected override bool ComputeByIndexImpl(int index)
         {
             var bodyLengths = Inputs.Select(i => Math.Abs(i.Close - i.Open)).ToList();
             return bodyLengths[index] < bodyLengths.Percentile(PeriodCount, index, Threshold);

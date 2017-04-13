@@ -18,14 +18,14 @@ namespace Trady.Analysis.Indicator
         public AverageTrueRange(IList<(decimal High, decimal Low, decimal Close)> inputs, int periodCount) : base(inputs)
         {
             Func<int, decimal?> tr = i => i > 0 ? new List<decimal?> {
-                Math.Abs(Inputs[i].High - Inputs[i].Low),
+                Inputs[i].High - Inputs[i].Low,
                 Math.Abs(Inputs[i].High - Inputs[i - 1].Close),
                 Math.Abs(Inputs[i].Low - Inputs[i - 1].Close) }.Max() :
                 null;
 
             _trEma = new GenericExponentialMovingAverage<(decimal High, decimal Low, decimal Close)>(
                 inputs,
-                periodCount,
+                periodCount - 1,
                 i => Enumerable.Range(i - periodCount + 1, periodCount).Average(j => tr(j)),
                 i => tr(i),
                 i => 1.0m / periodCount);

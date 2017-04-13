@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using Trady.Analysis.Indicator;
 using Trady.Analysis.Infrastructure;
 using Trady.Analysis.Pattern.State;
 

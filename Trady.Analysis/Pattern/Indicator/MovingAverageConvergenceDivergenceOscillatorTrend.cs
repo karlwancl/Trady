@@ -22,6 +22,6 @@ namespace Trady.Analysis.Pattern.Indicator
         }
 
         protected override Trend? ComputeByIndexImpl(int index)
-            => index >= 1 ? StateHelper.IsTrending(_macd[index].MacdHistogram - _macd[index - 1].MacdHistogram) : null;
+            => index >= 1 ? StateHelper.IsTrending(_macd[index].MacdHistogram, _macd[index - 1].MacdHistogram) : null;
     }
 }

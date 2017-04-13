@@ -4,7 +4,6 @@
     {
         NoCrossover,
         BullishCrossover,
-        BearishCrossover,
-        NonTrendedCrossover
+        BearishCrossover
     }
 }

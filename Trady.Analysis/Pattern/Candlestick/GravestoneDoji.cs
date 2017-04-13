@@ -1,22 +1,40 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Trady.Analysis.Infrastructure;
-using Trady.Analysis.Pattern.State;
+using Trady.Core;
 
 namespace Trady.Analysis.Pattern.Candlestick
 {
     /// <summary>
-    /// Reference: http://stockcharts.com/school/doku.php?id=chart_school:chart_analysis:candlestick_pattern_dictionary
+    /// Reference: http://www.investopedia.com/terms/g/gravestone-doji.asp
     /// </summary>
-    public class GravestoneDoji : AnalyzableBase<(decimal Open, decimal High, decimal Low, decimal Close), bool?>
+    public class GravestoneDoji : AnalyzableBase<(decimal Open, decimal High, decimal Low, decimal Close), bool>
     {
-        public GravestoneDoji(IList<(decimal Open, decimal High, decimal Low, decimal Close)> inputs) : base(inputs)
+        private Doji _doji;
+
+        public GravestoneDoji(IList<Candle> candles, decimal dojiThreshold = 0.1m, decimal shadowThreshold = 0.1m)
+            : this(candles.Select(c => (c.Open, c.High, c.Low, c.Close)).ToList(), dojiThreshold, shadowThreshold)
         {
         }
 
-        protected override bool? ComputeByIndexImpl(int index)
+        public GravestoneDoji(IList<(decimal Open, decimal High, decimal Low, decimal Close)> inputs, decimal dojiThreshold = 0.1m, decimal shadowThreshold = 0.1m) : base(inputs)
         {
-            throw new NotImplementedException();
+            _doji = new Doji(inputs, dojiThreshold);
+
+            DojiThreshold = dojiThreshold;
+            ShadowThreshold = shadowThreshold;
+        }
+
+        public decimal DojiThreshold { get; private set; }
+
+        public decimal ShadowThreshold { get; private set; }
+
+        protected override bool ComputeByIndexImpl(int index)
+        {
+            var mean = (Inputs[index].Open + Inputs[index].Close) / 2;
+            bool isGravestone = (mean - Inputs[index].Low) < ShadowThreshold * (Inputs[index].High - Inputs[index].Low);
+            return _doji[index] && isGravestone;
         }
     }
 }

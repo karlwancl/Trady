@@ -21,6 +21,6 @@ namespace Trady.Analysis.Pattern.Indicator
         }
 
         protected override Trend? ComputeByIndexImpl(int index)
-            => index >= 1 ? StateHelper.IsTrending(_obv[index] - _obv[index - 1]) : null;
+            => index >= 1 ? StateHelper.IsTrending(_obv[index] , _obv[index - 1]) : null;
     }
 }

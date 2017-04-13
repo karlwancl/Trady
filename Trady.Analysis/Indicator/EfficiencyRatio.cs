@@ -22,7 +22,7 @@ namespace Trady.Analysis.Indicator
 
         protected override decimal? ComputeByIndexImpl(int index)
         {
-            if (index < PeriodCount || index < 1)
+            if (index <= 0 || index < PeriodCount)
                 return null;
 
             decimal? change = Math.Abs(Inputs[index] - Inputs[index - PeriodCount]);
