@@ -303,12 +303,11 @@ Nuget package is available in modules, please install the package according to t
         .Or(c => c.IsSmaBearishCross(10, 30));
 
     // Create portfolio instance by using PortfolioBuilder
-    var portfolio = new PortfolioBuilder()
+    var portfolio = new Portfolio()
         .Add(equity, 10)
         .Add(equity2, 30)
         .Buy(buyRule)
-        .Sell(sellRule)
-        .Build();
+        .Sell(sellRule);
     
     // Start backtesting with the portfolio
     var result = await portfolio.RunBacktestAsync(10000, 1);
@@ -344,7 +343,7 @@ Nuget package is available in modules, please install the package according to t
     // Use case
     var buyRule = Rule.Create(c => c.IsSma10LargerThanSma30());
     var sellRule = Rule.Create(c => c.IsSma30LargerThanSma10());
-    var portfolio = new PortfolioBuilder().Add(equity, 10).Buy(buyRule).Sell(sellRule).Build();
+    var portfolio = new Portfolio().Add(equity, 10).Buy(buyRule).Sell(sellRule);
     var result = await portfolio.RunBacktestAsync(10000, 1);
 [Back to content](#Content)
 
