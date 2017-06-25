@@ -10,12 +10,12 @@ namespace Trady.Analysis.Pattern.Candlestick
 {
     public class LongDay : AnalyzableBase<(decimal Open, decimal Close), bool>
     {
-        public LongDay(IList<Candle> candles, int periodCount = 20, decimal threshold = 0.25m)
+        public LongDay(IList<Candle> candles, int periodCount = 20, decimal threshold = 0.75m)
             : this(candles.Select(c => (c.Open, c.Close)).ToList(), periodCount, threshold)
         {
         }
 
-        public LongDay(IList<(decimal Open, decimal Close)> inputs, int periodCount = 20, decimal threshold = 0.25m)
+        public LongDay(IList<(decimal Open, decimal Close)> inputs, int periodCount = 20, decimal threshold = 0.75m)
             : base(inputs)
         {
             PeriodCount = periodCount;

@@ -7,7 +7,7 @@ using Trady.Core;
 namespace Trady.Analysis.Pattern.Candlestick
 {
     /// <summary>
-    /// Reference: http://www.investopedia.com/terms/e/eveningstar.asp
+    /// Reference: http://www.investopedia.com/terms/m/eveningstar.asp
     /// </summary>
     public class EveningStar : AnalyzableBase<(decimal Open, decimal High, decimal Low, decimal Close), bool?>
     {
@@ -46,13 +46,15 @@ namespace Trady.Analysis.Pattern.Candlestick
         {
             if (index < 2) return null;
 
+            Func<int, decimal> midPoint = i => (Inputs[i].Open + Inputs[i].Close) / 2;
+
             return (_upTrend[index - 1] ?? false) &&
                 _bullishLongDay[index - 2] &&
                 _shortDay[index - 1] &&
                 Inputs[index - 1].Close > Inputs[index - 2].Close &&
                 _bearishLongDay[index] &&
-                Inputs[index].Open < Math.Min(Inputs[index - 1].Open, Inputs[index = 1].Close) &&
-                (Inputs[index].Close - (Inputs[index - 2].Open + Inputs[index - 2].Close) / 2 - 1) < Threshold;
+                Inputs[index].Open < Math.Min(Inputs[index - 1].Open, Inputs[index - 1].Close) &&
+                Math.Abs((Inputs[index].Close - midPoint(index - 2)) / midPoint(index - 2)) < Threshold;
         }
     }
 }

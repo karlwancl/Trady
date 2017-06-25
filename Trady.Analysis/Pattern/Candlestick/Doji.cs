@@ -6,9 +6,6 @@ using Trady.Core;
 
 namespace Trady.Analysis.Pattern.Candlestick
 {
-    /// <summary>
-    /// Reference: http://stockcharts.com/school/doku.php?id=chart_school:chart_analysis:candlestick_pattern_dictionary
-    /// </summary>
     public class Doji : AnalyzableBase<(decimal Open, decimal High, decimal Low, decimal Close), bool>
     {
         public Doji(IList<Candle> candles, decimal threshold = 0.1m)

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Trady.Analysis.Helper;
 using Trady.Core.Infrastructure;
@@ -51,5 +52,7 @@ namespace Trady.Analysis.Infrastructure
         protected abstract TOutput ComputeByIndexImpl(int index);
 
         object IAnalyzable.ComputeByIndex(int index) => ComputeByIndex(index);
+
+        public IList<TOutput> Compute() => Compute(null, null);
     }
 }

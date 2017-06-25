@@ -10,25 +10,35 @@ namespace Trady.Importer
 {
     public class YahooFinanceImporter : IImporter
     {
-        private static IDictionary<PeriodOption, Period> _periodMap = new Dictionary<PeriodOption, Period>
+        static readonly DateTime UnixMinDateTime = new DateTime(1901, 12, 13);
+        static readonly DateTime UnixMaxDateTime = new DateTime(2038, 1, 19);
+
+        static readonly IDictionary<PeriodOption, Period> PeriodMap = new Dictionary<PeriodOption, Period>
         {
             {PeriodOption.Daily, Period.Daily },
             {PeriodOption.Weekly, Period.Weekly },
             {PeriodOption.Monthly, Period.Monthly }
         };
 
+        /// <summary>
+        /// Imports the async. Endtime stock history exclusive
+        /// </summary>
+        /// <returns>The async.</returns>
+        /// <param name="symbol">Symbol.</param>
+        /// <param name="startTime">Start time.</param>
+        /// <param name="endTime">End time.</param>
+        /// <param name="period">Period.</param>
+        /// <param name="token">Token.</param>
         public async Task<IList<Core.Candle>> ImportAsync(string symbol, DateTime? startTime = default(DateTime?), DateTime? endTime = default(DateTime?), PeriodOption period = PeriodOption.Daily, CancellationToken token = default(CancellationToken))
         {
             if (period != PeriodOption.Daily && period != PeriodOption.Weekly && period != PeriodOption.Monthly)
                 throw new ArgumentException("This importer only supports daily, weekly & monthly data");
 
-            var yahooCandles = await Yahoo.GetHistoricalAsync(symbol, startTime, endTime, _periodMap[period], false, token);
+            var corrStartTime = (startTime < UnixMinDateTime ? UnixMinDateTime : startTime) ?? UnixMinDateTime;
+            var corrEndTime = (endTime > UnixMaxDateTime ? UnixMaxDateTime : endTime) ?? UnixMaxDateTime;
+            var candles = await Yahoo.GetHistoricalAsync(symbol, corrStartTime, corrEndTime, PeriodMap[period], false, token);
 
-            var output = new List<Core.Candle>();
-            foreach (var yahooCandle in yahooCandles)
-                output.Add(new Core.Candle(yahooCandle.DateTime, yahooCandle.Open, yahooCandle.High, yahooCandle.Low, yahooCandle.Close, yahooCandle.Volume));
-
-            return output.OrderBy(c => c.DateTime).ToList();
+            return candles.Select(c => new Core.Candle(c.DateTime, c.Open, c.High, c.Low, c.Close, c.Volume)).OrderBy(c => c.DateTime).ToList();
         }
     }
 }

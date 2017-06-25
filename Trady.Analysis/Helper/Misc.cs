@@ -6,6 +6,8 @@ namespace Trady.Analysis.Helper
 {
     internal static class Misc
     {
+        private static object syncLock = new object();
+
         public static int? FindIndexOrDefault<T>(this IList<T> list, Predicate<T> predicate, int? defaultValue = null)
         {
             int index = list.ToList().FindIndex(predicate);
@@ -20,10 +22,13 @@ namespace Trady.Analysis.Helper
 
         public static void AddOrUpdate<T1, T2>(this IDictionary<T1, T2> dict, T1 item1, T2 item2)
         {
-            if (dict.ContainsKey(item1))
-                dict[item1] = item2;
-            else
-                dict.Add(item1, item2);
+            lock (syncLock)
+            {
+                if (dict.ContainsKey(item1))
+                    dict[item1] = item2;
+                else
+                    dict.Add(item1, item2); 
+            }
         }
 
         public static decimal? Avg(this IList<decimal> values, int periodCount, int index)

@@ -20,6 +20,8 @@ namespace Trady.Analysis.Strategy
 
         public int Index => _index;
 
+        public Candle Candle => _candles[_index];
+
         public IndexedCandle Prev => _index - 1 >= 0 ? new IndexedCandle(_candles, _index - 1) : null;
 
         public IndexedCandle Next => _index + 1 < _candles.Count ? new IndexedCandle(_candles, _index + 1) : null;

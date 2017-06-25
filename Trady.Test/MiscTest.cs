@@ -5,6 +5,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Trady.Core;
 using Trady.Core.Period;
+using System.IO;
+using Trady.Analysis.Strategy;
+using Trady.Analysis.Strategy.Rule;
 
 namespace Trady.Test
 {
@@ -30,37 +33,52 @@ namespace Trady.Test
             Assert.IsTrue((77.5m * 1000000).IsApproximatelyEquals(selectedCandle.Volume));
         }
 
-        //[TestMethod]
-        //public void TestPercentile()
-        //{
-        //    var list = new List<decimal> { 15, 20, 35, 40, 50 };
-        //    decimal? result;
+		const string logPath = "backtest.txt";
 
-        //    result = Percentile(list, list.Count(), list.Count() - 1, 0.5m);
-        //    Assert.IsTrue(result == 35);
+		[TestMethod]
+		public async Task TestPortfolioAsync()
+		{
+			var candles = await ImportCandlesAsync();
 
-        //    result = Percentile(list, list.Count(), list.Count() - 1, 0.4m);
-        //    Assert.IsTrue(result == 29);
+			var buyRule = Rule.Create(ic => ic.IsMacdBullishCross(12, 26, 9));
+			var sellRule = Rule.Create(ic => ic.IsMacdBearishCross(12, 26, 9));
 
-        //    result = Percentile(list, list.Count(), list.Count() - 1, 1m);
-        //    Assert.IsTrue(result == 50);
-        //}
+			var portfolio = new Portfolio()
+				.Add(candles)
+				.Buy(buyRule)
+				.Sell(sellRule);
 
-        //public decimal? Percentile(IList<decimal> values, int periodCount, int index, decimal percentile)
-        //{
-        //    if (percentile < 0 || percentile > 1)
-        //        throw new ArgumentException("Percentile should be between 0 and 1", nameof(percentile));
+			var file = File.Create(logPath);
+			file.Dispose();
 
-        //    if (index < periodCount - 1)
-        //        return null;
+			portfolio.OnBought += Portfolio_OnBought;
+			portfolio.OnSold += Portfolio_OnSold;
 
-        //    var subset = values.Skip(index - periodCount + 1).Take(periodCount).OrderBy(v => v).ToList();
-        //    var idx = percentile * (subset.Count - 1) + 1;
+			var result = await portfolio.RunBacktestAsync(10000);
+			var expecteds = new List<Transaction>
+			{
+				new Transaction(candles, 19, new DateTime(2012, 6, 15), TransactionType.Buy, 350, 9977.75m),
+				new Transaction(candles, 40, new DateTime(2012, 7, 17), TransactionType.Sell, 350, 9967m),
+				new Transaction(candles, 62, new DateTime(2012, 8, 16), TransactionType.Buy, 488, 9975.72m),
+				new Transaction(candles, 99, new DateTime(2012, 10, 9), TransactionType.Sell, 488, 9949.32m)
+			};
 
-        //    if (idx == 1) return subset[0];
-        //    if (idx == subset.Count) return subset.Last();
+			foreach (var expected in expecteds)
+				Assert.IsTrue(result.Transactions.Any(t => t.Equals(expected)));
 
-        //    return subset[(int)idx - 1] + (subset[(int)idx] - subset[(int)idx - 1]) * (idx - (int)idx);
-        //}
+			Assert.IsTrue(result.TotalPrincipal == 10000m);
+			Assert.IsTrue(result.TotalCorrectedBalance == 19304.775m);
+			Assert.IsTrue(result.TotalCorrectedProfitLossRatio == 0.9304775m);
+		}
+
+		void Portfolio_OnSold(IList<Candle> candles, int index, DateTime dateTime, decimal sellPrice, int quantity, decimal absCashFlow, decimal currentCashAmount, decimal plRatio)
+		{
+			File.AppendAllLines(logPath, new string[] { $"{index}({dateTime:yyyyMMdd}), Sell {candles.GetHashCode()}@{sellPrice} * {quantity}: {absCashFlow}, plRatio: {plRatio * 100:0.##}%, currentCashAmount: {currentCashAmount}" });
+		}
+
+		void Portfolio_OnBought(IList<Candle> candles, int index, DateTime dateTime, decimal buyPrice, int quantity, decimal absCashFlow, decimal currentCashAmount)
+		{
+			File.AppendAllLines(logPath, new string[] { $"{index}({dateTime:yyyyMMdd}), Buy {candles.GetHashCode()}@{buyPrice} * {quantity}: {absCashFlow}, currentCashAmount: {currentCashAmount}" });
+		}
     }
 }

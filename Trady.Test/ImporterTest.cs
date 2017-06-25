@@ -1,0 +1,50 @@
+﻿using System;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Trady.Importer;
+using System.Linq;
+
+namespace Trady.Test
+{
+    [TestClass]
+    public class ImporterTest
+    {
+        [TestMethod]
+        public void ImportByQuandlYahoo()
+        {
+			// Test account api key
+			const string ApiKey = "Sys3z7hfYmzjiXPxwfQJ";
+
+            var importer = new QuandlWikiImporter(ApiKey);
+            var candle = importer.ImportAsync("AAPL", new DateTime(2017, 1, 3), new DateTime(2017, 1, 3)).Result.First();
+			Assert.AreEqual(candle.Open, 115.8m);
+			Assert.AreEqual(candle.High, 116.33m);
+			Assert.AreEqual(candle.Low, 114.76m);
+			Assert.AreEqual(candle.Close, 116.15m);
+			Assert.AreEqual(candle.Volume, 28_781_865);
+        }
+
+        [TestMethod]
+        public void ImportByYahoo()
+        {
+            var importer = new YahooFinanceImporter();
+			var candle = importer.ImportAsync("^GSPC", new DateTime(2017, 1, 3), new DateTime(2017, 1, 4)).Result.First();  // Endtime stock history exclusive
+			Assert.AreEqual(candle.Open, 2251.570068m);
+			Assert.AreEqual(candle.High, 2263.879883m);
+			Assert.AreEqual(candle.Low, 2245.129883m);
+			Assert.AreEqual(candle.Close, 2257.830078m);
+			Assert.AreEqual(candle.Volume, 3_770_530_000);
+		}
+
+        [TestMethod]
+        public void ImportByStooq()
+        {
+            var importer = new StooqImporter();
+            var candle = importer.ImportAsync("^SPX", new DateTime(2017, 1, 3), new DateTime(2017, 1, 3)).Result.First();   // Endtime stock history inclusive
+			Assert.AreEqual(candle.Open, 2251.57m);
+			Assert.AreEqual(candle.High, 2263.88m);
+			Assert.AreEqual(candle.Low, 2245.13m);
+			Assert.AreEqual(candle.Close, 2257.83m);
+			Assert.AreEqual(candle.Volume, 644_640_832);
+		}
+    }
+}

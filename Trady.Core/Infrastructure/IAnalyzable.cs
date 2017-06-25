@@ -17,6 +17,9 @@ namespace Trady.Core.Infrastructure
 
         TOutput this[int index] { get; }
 
+        // For dynamic invocation
+        IList<TOutput> Compute();
+
         IList<TOutput> Compute(int? startIndex = null, int? endIndex = null);
     }
 }
