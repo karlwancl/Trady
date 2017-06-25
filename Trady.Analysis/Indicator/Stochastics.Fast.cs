@@ -1,31 +1,41 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using Trady.Analysis.Infrastructure;
 using Trady.Core;
 
 namespace Trady.Analysis.Indicator
 {
     public partial class Stochastics
     {
-        public class Fast : IndicatorBase<IndicatorResult>
+        public class Fast : AnalyzableBase<(decimal High, decimal Low, decimal Close), (decimal? K, decimal? D, decimal? J)>
         {
-            private RawStochasticsValue _rsvIndicator;
+            private RawStochasticsValue _rsv;
 
-            public Fast(Equity equity, int periodCount, int smaPeriodCount)
-                : base(equity, periodCount, smaPeriodCount)
+            public Fast(IList<Candle> candles, int periodCount, int smaPeriodCount)
+                : this(candles.Select(c => (c.High, c.Low, c.Close)).ToList(), periodCount, smaPeriodCount)
             {
-                _rsvIndicator = new RawStochasticsValue(equity, periodCount);
             }
 
-            public int PeriodCount => Parameters[0];
-
-            public int SmaPeriodCount => Parameters[1];
-
-            protected override IndicatorResult ComputeByIndexImpl(int index)
+            public Fast(IList<(decimal High, decimal Low, decimal Close)> inputs, int periodCount, int smaPeriodCount)
+                : base(inputs)
             {
-                decimal? rsv = _rsvIndicator.ComputeByIndex(index).Rsv;
-                Func<int, decimal?> rsvFunc = i => _rsvIndicator.ComputeByIndex(index - SmaPeriodCount + i + 1).Rsv;
+                _rsv = new RawStochasticsValue(inputs, periodCount);
+
+                PeriodCount = periodCount;
+                SmaPeriodCount = smaPeriodCount;
+            }
+
+            public int PeriodCount { get; private set; }
+
+            public int SmaPeriodCount { get; private set; }
+
+            protected override (decimal? K, decimal? D, decimal? J) ComputeByIndexImpl(int index)
+            {
+                decimal? rsv = _rsv[index];
+                Func<int, decimal?> rsvFunc = i => _rsv[index - SmaPeriodCount + i + 1];
                 decimal? rsvAvg = index >= SmaPeriodCount - 1 ? Enumerable.Range(0, SmaPeriodCount).Average(i => rsvFunc(i)) : null;
-                return new IndicatorResult(Equity[index].DateTime, rsv, rsvAvg, 3 * rsv - 2 * rsvAvg);
+                return (rsv, rsvAvg, 3 * rsv - 2 * rsvAvg);
             }
         }
     }

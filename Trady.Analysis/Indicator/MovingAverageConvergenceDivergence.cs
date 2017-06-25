@@ -1,41 +1,52 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using Trady.Analysis.Infrastructure;
 using Trady.Core;
-using static Trady.Analysis.Indicator.MovingAverageConvergenceDivergence;
 
 namespace Trady.Analysis.Indicator
 {
-    public partial class MovingAverageConvergenceDivergence : IndicatorBase<IndicatorResult>
+    public partial class MovingAverageConvergenceDivergence : AnalyzableBase<decimal, (decimal? MacdLine, decimal? SignalLine, decimal? MacdHistogram)>
     {
-        private ExponentialMovingAverage _emaIndicator1, _emaIndicator2;
-        private GenericExponentialMovingAverage _dem;
-        private Func<int, decimal?> _diff;
+        private ExponentialMovingAverage _ema1, _ema2;
+        private GenericExponentialMovingAverage<decimal> _signal;
+        private Func<int, decimal?> _macd;
 
-        public MovingAverageConvergenceDivergence(Equity equity, int emaPeriodCount1, int emaPeriodCount2, int demPeriodCount)
-            : base(equity, emaPeriodCount1, emaPeriodCount2, demPeriodCount)
+        public MovingAverageConvergenceDivergence(IList<Candle> candles, int emaPeriodCount1, int emaPeriodCount2, int demPeriodCount)
+            : this(candles.Select(c => c.Close).ToList(), emaPeriodCount1, emaPeriodCount2, demPeriodCount)
         {
-            _emaIndicator1 = new ExponentialMovingAverage(equity, emaPeriodCount1);
-            _emaIndicator2 = new ExponentialMovingAverage(equity, emaPeriodCount2);
-            _diff = i => _emaIndicator1.ComputeByIndex(i).Ema - _emaIndicator2.ComputeByIndex(i).Ema;
-
-            _dem = new GenericExponentialMovingAverage(
-                equity,
-                0,
-                i => _diff(i),
-                i => _diff(i),
-                i => 2.0m / (demPeriodCount + 1));
         }
 
-        public int EmaPeriodCount1 => Parameters[0];
-
-        public int EmaPeriodCount2 => Parameters[1];
-
-        public int DemPeriodCount => Parameters[2];
-
-        protected override IndicatorResult ComputeByIndexImpl(int index)
+        public MovingAverageConvergenceDivergence(IList<decimal> closes, int emaPeriodCount1, int emaPeriodCount2, int demPeriodCount)
+            : base(closes)
         {
-            decimal? diff = _diff(index);
-            decimal? dem = _dem.ComputeByIndex(index).Ema;
-            return new IndicatorResult(Equity[index].DateTime, diff, dem, diff - dem);
+            _ema1 = new ExponentialMovingAverage(closes, emaPeriodCount1);
+            _ema2 = new ExponentialMovingAverage(closes, emaPeriodCount2);
+            _macd = i => _ema1[i] - _ema2[i];
+
+            _signal = new GenericExponentialMovingAverage<decimal>(
+                closes,
+                0,
+                i => _macd(i),
+                i => _macd(i),
+                i => 2.0m / (demPeriodCount + 1));
+
+            EmaPeriodCount1 = emaPeriodCount1;
+            EmaPeriodCount2 = emaPeriodCount2;
+            DemPeriodCount = demPeriodCount;
+        }
+
+        public int EmaPeriodCount1 { get; private set; }
+
+        public int EmaPeriodCount2 { get; private set; }
+
+        public int DemPeriodCount { get; private set; }
+
+        protected override (decimal? MacdLine, decimal? SignalLine, decimal? MacdHistogram) ComputeByIndexImpl(int index)
+        {
+            decimal? macd = _macd(index);
+            decimal? signal = _signal[index];
+            return (macd, signal, macd - signal);
         }
     }
 }

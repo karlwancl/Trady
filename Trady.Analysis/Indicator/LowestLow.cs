@@ -1,21 +1,25 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Trady.Analysis.Infrastructure;
 using Trady.Core;
-using static Trady.Analysis.Indicator.LowestLow;
 
 namespace Trady.Analysis.Indicator
 {
-    public partial class LowestLow : IndicatorBase<IndicatorResult>
+    public partial class LowestLow : AnalyzableBase<decimal, decimal?>
     {
-        public LowestLow(Equity equity, int periodCount) : base(equity, periodCount)
+        public LowestLow(IList<Candle> candles, int periodCount) :
+            this(candles.Select(c => c.Low).ToList(), periodCount)
         {
         }
 
-        public int PeriodCount => Parameters[0];
-
-        protected override IndicatorResult ComputeByIndexImpl(int index)
+        public LowestLow(IList<decimal> lows, int periodCount) : base(lows)
         {
-            decimal? lowestLow = index >= PeriodCount - 1 ? Equity.Skip(index - PeriodCount + 1).Take(PeriodCount).Min(c => c.Low) : (decimal?)null;
-            return new IndicatorResult(Equity[index].DateTime, lowestLow);
+            PeriodCount = periodCount;
         }
+
+        public int PeriodCount { get; private set; }
+
+        protected override decimal? ComputeByIndexImpl(int index)
+            => index >= PeriodCount - 1 ? Inputs.Skip(index - PeriodCount + 1).Take(PeriodCount).Min() : (decimal?)null;
     }
 }

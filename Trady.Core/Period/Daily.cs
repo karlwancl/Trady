@@ -1,15 +1,10 @@
 ﻿using System;
-using Trady.Core.Helper;
 
 namespace Trady.Core.Period
 {
     public class Daily : InterdayPeriodBase
     {
         public Daily() : base()
-        {
-        }
-
-        public Daily(Country country) : base(country)
         {
         }
 

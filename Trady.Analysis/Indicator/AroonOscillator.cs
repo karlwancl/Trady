@@ -1,21 +1,31 @@
-﻿using Trady.Core;
-using static Trady.Analysis.Indicator.AroonOscillator;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Trady.Analysis.Infrastructure;
+using Trady.Core;
 
 namespace Trady.Analysis.Indicator
 {
-    public partial class AroonOscillator : IndicatorBase<IndicatorResult>
+    public partial class AroonOscillator : AnalyzableBase<(decimal High, decimal Low), decimal?>
     {
-        private Aroon _aroonIndicator;
+        private Aroon _aroon;
 
-        public AroonOscillator(Equity equity, int periodCount) : base(equity, periodCount)
+        public AroonOscillator(IList<Candle> candles, int periodCount) :
+            this(candles.Select(c => (c.High, c.Low)).ToList(), periodCount)
         {
-            _aroonIndicator = new Aroon(equity, periodCount);
         }
 
-        protected override IndicatorResult ComputeByIndexImpl(int index)
+        public AroonOscillator(IList<(decimal High, decimal Low)> inputs, int periodCount) : base(inputs)
         {
-            var aroon = _aroonIndicator.ComputeByIndex(index);
-            return new IndicatorResult(Equity[index].DateTime, aroon.Up - aroon.Down);
+            _aroon = new Aroon(inputs, periodCount);
+            PeriodCount = periodCount;
+        }
+
+        public int PeriodCount { get; private set; }
+
+        protected override decimal? ComputeByIndexImpl(int index)
+        {
+            var aroon = _aroon[index];
+            return (aroon.Up - aroon.Down);
         }
     }
 }

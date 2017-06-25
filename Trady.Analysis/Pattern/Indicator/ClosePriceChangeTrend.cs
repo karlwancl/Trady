@@ -1,22 +1,26 @@
-﻿using Trady.Analysis.Indicator;
-using Trady.Analysis.Pattern.Helper;
-using Trady.Core;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Trady.Analysis.Indicator;
+using Trady.Analysis.Infrastructure;
+using Trady.Analysis.Pattern.State;
 
 namespace Trady.Analysis.Pattern.Indicator
 {
-    public class ClosePriceChangeTrend : IndicatorBase<PatternResult<Trend?>>
+    public class ClosePriceChangeTrend : AnalyzableBase<decimal, Trend?>
     {
-        private ClosePriceChange _closePriceChangeIndicator;
+        private ClosePriceChange _closePriceChange;
 
-        public ClosePriceChangeTrend(Equity equity) : base(equity)
+        public ClosePriceChangeTrend(IList<Core.Candle> candles)
+            : this(candles.Select(c => c.Close).ToList())
         {
-            _closePriceChangeIndicator = new ClosePriceChange(equity);
         }
 
-        protected override PatternResult<Trend?> ComputeByIndexImpl(int index)
+        public ClosePriceChangeTrend(IList<decimal> closes) : base(closes)
         {
-            var latest = _closePriceChangeIndicator.ComputeByIndex(index);
-            return new PatternResult<Trend?>(Equity[index].DateTime, Decision.IsTrending(latest.Change));
+            _closePriceChange = new ClosePriceChange(closes);
         }
+
+        protected override Trend? ComputeByIndexImpl(int index)
+            => StateHelper.IsTrending(_closePriceChange[index]);
     }
 }

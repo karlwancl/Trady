@@ -1,44 +1,51 @@
-﻿using System.Linq;
-using Trady.Analysis.Indicator.Helper;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Trady.Analysis.Helper;
+using Trady.Analysis.Infrastructure;
 using Trady.Core;
-using static Trady.Analysis.Indicator.Aroon;
 
 namespace Trady.Analysis.Indicator
 {
-    public partial class Aroon : IndicatorBase<IndicatorResult>
+    public partial class Aroon : AnalyzableBase<(decimal High, decimal Low), (decimal? Up, decimal? Down)>
     {
-        private HighestHigh _highestHigh;
-        private LowestLow _lowestLow;
+        private HighestHigh _hh;
+        private LowestLow _ll;
 
-        public Aroon(Equity equity, int periodCount) : base(equity, periodCount)
+        public Aroon(IList<Candle> candles, int periodCount) :
+            this(candles.Select(i => (i.High, i.Low)).ToList(), periodCount)
         {
-            _highestHigh = new HighestHigh(equity, periodCount);
-            _lowestLow = new LowestLow(equity, periodCount);
         }
 
-        public int PeriodCount => Parameters[0];
+        public Aroon(IList<(decimal High, decimal Low)> inputs, int periodCount) : base(inputs)
+        {
+            _hh = new HighestHigh(inputs.Select(i => i.High).ToList(), periodCount);
+            _ll = new LowestLow(inputs.Select(i => i.Low).ToList(), periodCount);
+            PeriodCount = periodCount;
+        }
 
-        protected override IndicatorResult ComputeByIndexImpl(int index)
+        public int PeriodCount { get; private set; }
+
+        protected override (decimal? Up, decimal? Down) ComputeByIndexImpl(int index)
         {
             if (index < PeriodCount - 1)
-                return new IndicatorResult(Equity[index].DateTime, null, null);
+                return (null, null);
 
-            var highestCloseIndex = index - PeriodCount + 1 + Equity
+            var nearestIndexToHighestHigh = index - PeriodCount + 1 + Inputs
                 .Skip(index - PeriodCount + 1)
                 .Take(PeriodCount)
                 .ToList()
-                .FindLastIndexOrDefault(c => c.High == _highestHigh.ComputeByIndex(index).HighestHigh).Value;
+                .FindLastIndexOrDefault(i => i.High == _hh[index]);
 
-            var lowestCloseIndex = index - PeriodCount + 1 + Equity
+            var nearestIndexToLowestLow = index - PeriodCount + 1 + Inputs
                 .Skip(index - PeriodCount + 1)
                 .Take(PeriodCount)
                 .ToList()
-                .FindLastIndexOrDefault(c => c.Low == _lowestLow.ComputeByIndex(index).LowestLow).Value;
+                .FindLastIndexOrDefault(i => i.Low == _ll[index]);
 
-            var up = 100.0m * (PeriodCount - (index - highestCloseIndex)) / PeriodCount;
-            var down = 100.0m * (PeriodCount - (index - lowestCloseIndex)) / PeriodCount;
+            var up = 100.0m * (PeriodCount - (index - nearestIndexToHighestHigh)) / PeriodCount;
+            var down = 100.0m * (PeriodCount - (index - nearestIndexToLowestLow)) / PeriodCount;
 
-            return new IndicatorResult(Equity[index].DateTime, up, down);
+            return (up, down);
         }
     }
 }

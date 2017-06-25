@@ -1,33 +1,41 @@
-﻿using Trady.Core;
-using static Trady.Analysis.Indicator.ChandelierExit;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Trady.Analysis.Infrastructure;
+using Trady.Core;
 
 namespace Trady.Analysis.Indicator
 {
-    public partial class ChandelierExit : IndicatorBase<IndicatorResult>
+    public class ChandelierExit : AnalyzableBase<(decimal High, decimal Low, decimal Close), (decimal? Long, decimal? Short)>
     {
-        private HighestHigh _highestHigh;
-        private LowestLow _lowestLow;
-        private AverageTrueRange _atrIndicator;
+        private HighestHigh _hh;
+        private LowestLow _ll;
+        private AverageTrueRange _atr;
 
-        public ChandelierExit(Equity equity, int periodCount, int atrCount) : base(equity, periodCount, atrCount)
+        public ChandelierExit(IList<Candle> candles, int periodCount, decimal atrCount) :
+            this(candles.Select(c => (c.High, c.Low, c.Close)).ToList(), periodCount, atrCount)
         {
-            _highestHigh = new HighestHigh(equity, periodCount);
-            _lowestLow = new LowestLow(equity, periodCount);
-            _atrIndicator = new AverageTrueRange(equity, periodCount);
         }
 
-        public int PeriodCount => Parameters[0];
-
-        public int AtrCount => Parameters[1];
-
-        protected override IndicatorResult ComputeByIndexImpl(int index)
+        public ChandelierExit(IList<(decimal High, decimal Low, decimal Close)> inputs, int periodCount, decimal atrCount) : base(inputs)
         {
-            if (index < PeriodCount)
-                return new IndicatorResult(Equity[index].DateTime, null, null);
+            _hh = new HighestHigh(inputs.Select(i => i.High).ToList(), periodCount);
+            _ll = new LowestLow(inputs.Select(i => i.Low).ToList(), periodCount);
+            _atr = new AverageTrueRange(inputs, periodCount);
 
-            var @long = _highestHigh.ComputeByIndex(index).HighestHigh - _atrIndicator.ComputeByIndex(index).Atr * AtrCount;
-            var @short = _lowestLow.ComputeByIndex(index).LowestLow + _atrIndicator.ComputeByIndex(index).Atr * AtrCount;
-            return new IndicatorResult(Equity[index].DateTime, @long, @short);
+            PeriodCount = periodCount;
+            AtrCount = atrCount;
+        }
+
+        public int PeriodCount { get; private set; }
+
+        public decimal AtrCount { get; private set; }
+
+        protected override (decimal? Long, decimal? Short) ComputeByIndexImpl(int index)
+        {
+            var atr = _atr[index];
+            var @long = _hh[index] - atr * AtrCount;
+            var @short = _ll[index] + atr * AtrCount;
+            return (@long, @short);
         }
     }
 }

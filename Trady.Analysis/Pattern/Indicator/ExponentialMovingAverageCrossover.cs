@@ -1,28 +1,27 @@
-﻿using Trady.Analysis.Indicator;
-using Trady.Analysis.Pattern.Helper;
-using Trady.Core;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Trady.Analysis.Indicator;
+using Trady.Analysis.Infrastructure;
+using Trady.Analysis.Pattern.State;
 
 namespace Trady.Analysis.Pattern.Indicator
 {
-    public class ExponentialMovingAverageCrossover : IndicatorBase<PatternResult<Crossover?>>
+    public class ExponentialMovingAverageCrossover : AnalyzableBase<decimal, Crossover?>
     {
-        private ExponentialMovingAverageOscillator _emaOscillator;
+        private ExponentialMovingAverageOscillator _emaOsc;
 
-        public ExponentialMovingAverageCrossover(Equity equity, int periodCount1, int periodCount2)
-            : base(equity, periodCount1, periodCount2)
+        public ExponentialMovingAverageCrossover(IList<Core.Candle> candles, int periodCount1, int periodCount2)
+            : this(candles.Select(c => c.Close).ToList(), periodCount1, periodCount2)
         {
-            _emaOscillator = new ExponentialMovingAverageOscillator(equity, periodCount1, periodCount2);
         }
 
-        protected override PatternResult<Crossover?> ComputeByIndexImpl(int index)
+        public ExponentialMovingAverageCrossover(IList<decimal> closes, int periodCount1, int periodCount2)
+            : base(closes)
         {
-            if (index < 1)
-                return new PatternResult<Crossover?>(Equity[index].DateTime, null);
-
-            var latest = _emaOscillator.ComputeByIndex(index);
-            var secondLatest = _emaOscillator.ComputeByIndex(index - 1);
-
-            return new PatternResult<Crossover?>(Equity[index].DateTime, Decision.IsCrossover(latest.Osc, secondLatest.Osc));
+            _emaOsc = new ExponentialMovingAverageOscillator(closes, periodCount1, periodCount2);
         }
+
+        protected override Crossover? ComputeByIndexImpl(int index)
+            => index >= 1 ? StateHelper.IsCrossover(_emaOsc[index], _emaOsc[index - 1]) : null;
     }
 }

@@ -1,28 +1,27 @@
-﻿using Trady.Analysis.Indicator;
-using Trady.Analysis.Pattern.Helper;
-using Trady.Core;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Trady.Analysis.Indicator;
+using Trady.Analysis.Infrastructure;
+using Trady.Analysis.Pattern.State;
 
 namespace Trady.Analysis.Pattern.Indicator
 {
-    public class SimpleMovingAverageTrend : IndicatorBase<PatternResult<Trend?>>
+    public class SimpleMovingAverageTrend : AnalyzableBase<decimal, Trend?>
     {
-        private SimpleMovingAverage _smaIndicator;
+        private SimpleMovingAverage _sma;
 
-        public SimpleMovingAverageTrend(Equity equity, int periodCount)
-            : base(equity, periodCount)
+        public SimpleMovingAverageTrend(IList<Core.Candle> candles, int periodCount)
+            : this(candles.Select(c => c.Close).ToList(), periodCount)
         {
-            _smaIndicator = new SimpleMovingAverage(equity, periodCount);
         }
 
-        protected override PatternResult<Trend?> ComputeByIndexImpl(int index)
+        public SimpleMovingAverageTrend(IList<decimal> closes, int periodCount)
+            : base(closes)
         {
-            if (index < 1)
-                return new PatternResult<Trend?>(Equity[index].DateTime, null);
-
-            var currentValue = _smaIndicator.ComputeByIndex(index).Sma;
-            var previousValue = _smaIndicator.ComputeByIndex(index - 1).Sma;
-
-            return new PatternResult<Trend?>(Equity[index].DateTime, Decision.IsTrending(currentValue - previousValue));
+            _sma = new SimpleMovingAverage(closes, periodCount);
         }
+
+        protected override Trend? ComputeByIndexImpl(int index)
+            => index >= 1 ? StateHelper.IsTrending(_sma[index] ,_sma[index - 1]) : null;
     }
 }

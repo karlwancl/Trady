@@ -1,34 +1,32 @@
 ﻿using System;
-using Trady.Core;
-using static Trady.Analysis.Indicator.GenericExponentialMovingAverage;
+using System.Collections.Generic;
+using Trady.Analysis.Infrastructure;
 
 namespace Trady.Analysis.Indicator
 {
-    public partial class GenericExponentialMovingAverage : CummulativeIndicatorBase<IndicatorResult>
+    public partial class GenericExponentialMovingAverage<TInput> : CummulativeAnalyzableBase<TInput, decimal?>
     {
-        private int _firstValueIndex;
-        private Func<int, decimal?> _firstValueFunction;
+        private int _initialValueIndex;
+        private Func<int, decimal?> _initialValueFunction;
         private Func<int, decimal?> _indexValueFunction;
         private Func<int, decimal> _smoothingFactorFunction;
 
-        public GenericExponentialMovingAverage(Equity equity, int firstValueIndex, Func<int, decimal?> firstValueFunction, Func<int, decimal?> indexValueFunction, Func<int, decimal> smoothingFactorFunction)
-            : base(equity)
+        public GenericExponentialMovingAverage(IList<TInput> inputs, int initialValueIndex, Func<int, decimal?> initialValueFunction, Func<int, decimal?> indexValueFunction, Func<int, decimal> smoothingFactorFunction)
+            : base(inputs)
         {
-            _firstValueIndex = firstValueIndex;
-            _firstValueFunction = firstValueFunction;
+            _initialValueIndex = initialValueIndex;
+            _initialValueFunction = initialValueFunction;
             _indexValueFunction = indexValueFunction;
             _smoothingFactorFunction = smoothingFactorFunction;
         }
 
-        protected override int FirstValueIndex => _firstValueIndex;
+        protected override int InitialValueIndex => _initialValueIndex;
 
-        protected override IndicatorResult ComputeNullValue(int index)
-            => new IndicatorResult(Equity[index].DateTime, null);
+        protected override decimal? ComputeNullValue(int index) => null;
 
-        protected override IndicatorResult ComputeFirstValue(int index)
-            => new IndicatorResult(Equity[index].DateTime, _firstValueFunction(index));
+        protected override decimal? ComputeInitialValue(int index) => _initialValueFunction(index);
 
-        protected override IndicatorResult ComputeIndexValue(int index, IndicatorResult prevTick)
-            => new IndicatorResult(Equity[index].DateTime, prevTick.Ema + (_smoothingFactorFunction(index) * (_indexValueFunction(index) - prevTick.Ema)));
+        protected override decimal? ComputeCummulativeValue(int index, decimal? prevOutput)
+            => prevOutput + (_smoothingFactorFunction(index) * (_indexValueFunction(index) - prevOutput));
     }
 }

@@ -1,28 +1,27 @@
-﻿using Trady.Analysis.Indicator;
-using Trady.Analysis.Pattern.Helper;
-using Trady.Core;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Trady.Analysis.Indicator;
+using Trady.Analysis.Infrastructure;
+using Trady.Analysis.Pattern.State;
 
 namespace Trady.Analysis.Pattern.Indicator
 {
-    public class SimpleMovingAverageOscillatorTrend : IndicatorBase<PatternResult<Trend?>>
+    public class SimpleMovingAverageOscillatorTrend : AnalyzableBase<decimal, Trend?>
     {
-        private SimpleMovingAverageOscillator _smaOscillator;
+        private SimpleMovingAverageOscillator _smaOsc;
 
-        public SimpleMovingAverageOscillatorTrend(Equity equity, int periodCount1, int periodCount2)
-            : base(equity, periodCount1, periodCount2)
+        public SimpleMovingAverageOscillatorTrend(IList<Core.Candle> candles, int periodCount1, int periodCount2)
+            : this(candles.Select(c => c.Close).ToList(), periodCount1, periodCount2)
         {
-            _smaOscillator = new SimpleMovingAverageOscillator(equity, periodCount1, periodCount2);
         }
 
-        protected override PatternResult<Trend?> ComputeByIndexImpl(int index)
+        public SimpleMovingAverageOscillatorTrend(IList<decimal> closes, int periodCount1, int periodCount2)
+            : base(closes)
         {
-            if (index < 1)
-                return new PatternResult<Trend?>(Equity[index].DateTime, null);
-
-            var latest = _smaOscillator.ComputeByIndex(index);
-            var secondLatest = _smaOscillator.ComputeByIndex(index - 1);
-
-            return new PatternResult<Trend?>(Equity[index].DateTime, Decision.IsTrending(latest.Osc - secondLatest.Osc));
+            _smaOsc = new SimpleMovingAverageOscillator(closes, periodCount1, periodCount2);
         }
+
+        protected override Trend? ComputeByIndexImpl(int index)
+            => index >= 1 ? StateHelper.IsTrending(_smaOsc[index] , _smaOsc[index - 1]) : null;
     }
 }

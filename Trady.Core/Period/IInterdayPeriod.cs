@@ -12,13 +12,5 @@ namespace Trady.Core.Period
         /// Any number representing order of transformation, recommend using number of days
         /// </summary>
         uint OrderOfTransformation { get; }
-
-        Country Country { get; }
-
-        Task<DateTime> PrevBusinessTimestampAsync(DateTime dateTime);
-
-        Task<DateTime> NextBusinessTimestampAsync(DateTime dateTime);
-
-        Task<DateTime> BusinessTimestampAtAsync(DateTime dateTime, int periodCount);
     }
 }

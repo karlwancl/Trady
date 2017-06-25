@@ -3,10 +3,13 @@ using Trady.Core.Infrastructure;
 
 namespace Trady.Core
 {
-    public class Candle : TickBase
+    public class Candle
     {
-        public Candle(DateTime dateTime, decimal open, decimal high, decimal low, decimal close, decimal volume) : base(dateTime)
+        public DateTime DateTime { get; private set; }
+
+        public Candle(DateTime dateTime, decimal open, decimal high, decimal low, decimal close, decimal volume)
         {
+            DateTime = dateTime;
             Open = open;
             High = high;
             Low = low;

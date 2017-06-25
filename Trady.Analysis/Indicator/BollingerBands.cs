@@ -1,28 +1,38 @@
-﻿using Trady.Core;
-using static Trady.Analysis.Indicator.BollingerBands;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Trady.Analysis.Infrastructure;
+using Trady.Core;
 
 namespace Trady.Analysis.Indicator
 {
-    public partial class BollingerBands : IndicatorBase<IndicatorResult>
+    public partial class BollingerBands : AnalyzableBase<decimal, (decimal? LowerBand, decimal? MiddleBand, decimal? UpperBand)>
     {
-        private SimpleMovingAverage _smaIndicator;
-        private StandardDeviation _sdIndicator;
+        private SimpleMovingAverage _sma;
+        private StandardDeviation _sd;
 
-        public BollingerBands(Equity equity, int periodCount, int sdCount) : base(equity, periodCount, sdCount)
+        public BollingerBands(IList<Candle> candles, int periodCount, decimal sdCount) :
+            this(candles.Select(c => (c.Close)).ToList(), periodCount, sdCount)
         {
-            _smaIndicator = new SimpleMovingAverage(equity, periodCount);
-            _sdIndicator = new StandardDeviation(equity, periodCount);
         }
 
-        public int PeriodCount => Parameters[0];
-
-        public int SdCount => Parameters[1];
-
-        protected override IndicatorResult ComputeByIndexImpl(int index)
+        public BollingerBands(IList<decimal> closes, int periodCount, decimal sdCount) : base(closes)
         {
-            decimal? middleBand = _smaIndicator.ComputeByIndex(index).Sma;
-            decimal? sd = _sdIndicator.ComputeByIndex(index).Sd;
-            return new IndicatorResult(Equity[index].DateTime, middleBand - SdCount * sd, middleBand, middleBand + SdCount * sd);
+            _sma = new SimpleMovingAverage(closes, periodCount);
+            _sd = new StandardDeviation(closes, periodCount);
+
+            PeriodCount = periodCount;
+            SdCount = sdCount;
+        }
+
+        public int PeriodCount { get; private set; }
+
+        public decimal SdCount { get; private set; }
+
+        protected override (decimal? LowerBand, decimal? MiddleBand, decimal? UpperBand) ComputeByIndexImpl(int index)
+        {
+            decimal? middleBand = _sma[index];
+            decimal? sd = _sd[index];
+            return (middleBand - SdCount * sd, middleBand, middleBand + SdCount * sd);
         }
     }
 }

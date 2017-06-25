@@ -1,25 +1,33 @@
-﻿using Trady.Core;
-using static Trady.Analysis.Indicator.ModifiedExponentialMovingAverage;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Trady.Analysis.Infrastructure;
+using Trady.Core;
 
 namespace Trady.Analysis.Indicator
 {
-    public partial class ModifiedExponentialMovingAverage : IndicatorBase<IndicatorResult>
+    public partial class ModifiedExponentialMovingAverage : AnalyzableBase<decimal, decimal?>
     {
-        private GenericExponentialMovingAverage _gemaIndicator;
+        private GenericExponentialMovingAverage<decimal> _gema;
 
-        public ModifiedExponentialMovingAverage(Equity equity, int periodCount) : base(equity, periodCount)
+        public ModifiedExponentialMovingAverage(IList<Candle> candles, int periodCount)
+            : this(candles.Select(c => c.Close).ToList(), periodCount)
         {
-            _gemaIndicator = new GenericExponentialMovingAverage(
-                equity,
-                0,
-                i => Equity[i].Close,
-                i => Equity[i].Close,
-                i => 1.0m / periodCount);
         }
 
-        public int PeriodCount => Parameters[0];
+        public ModifiedExponentialMovingAverage(IList<decimal> closes, int periodCount) : base(closes)
+        {
+            _gema = new GenericExponentialMovingAverage<decimal>(
+                closes,
+                0,
+                i => Inputs[i],
+                i => Inputs[i],
+                i => 1.0m / periodCount);
 
-        protected override IndicatorResult ComputeByIndexImpl(int index)
-            => new IndicatorResult(Equity[index].DateTime, _gemaIndicator.ComputeByIndex(index).Ema);
+            PeriodCount = periodCount;
+        }
+
+        public int PeriodCount { get; private set; }
+
+        protected override decimal? ComputeByIndexImpl(int index) => _gema[index];
     }
 }

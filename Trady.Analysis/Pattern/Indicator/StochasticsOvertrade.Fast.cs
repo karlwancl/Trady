@@ -1,5 +1,6 @@
-﻿using Trady.Analysis.Indicator;
-using Trady.Core;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Trady.Analysis.Indicator;
 
 namespace Trady.Analysis.Pattern.Indicator
 {
@@ -7,8 +8,13 @@ namespace Trady.Analysis.Pattern.Indicator
     {
         public class Fast : IndicatorBase
         {
-            public Fast(Equity equity, int periodCount, int smaPeriodCount)
-                : base(equity, new Stochastics.Fast(equity, periodCount, smaPeriodCount))
+            public Fast(IList<Core.Candle> candles, int periodCount, int smaPeriodCount)
+                : this(candles.Select(c => (c.High, c.Low, c.Close)).ToList(), periodCount, smaPeriodCount)
+            {
+            }
+
+            public Fast(IList<(decimal High, decimal Low, decimal Close)> inputs, int periodCount, int smaPeriodCount)
+                : base(inputs, new Stochastics.Fast(inputs, periodCount, smaPeriodCount))
             {
             }
         }

@@ -1,25 +1,30 @@
-﻿using Trady.Analysis.Indicator;
-using Trady.Analysis.Pattern.Helper;
-using Trady.Core;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Trady.Analysis.Indicator;
+using Trady.Analysis.Infrastructure;
+using Trady.Analysis.Pattern.State;
 
 namespace Trady.Analysis.Pattern.Indicator
 {
-    public class BollingerBandsInRange : IndicatorBase<PatternResult<Overboundary?>>
+    public class BollingerBandsInRange : AnalyzableBase<decimal, Overboundary?>
     {
-        private BollingerBands _bbIndicator;
+        private BollingerBands _bb;
 
-        public BollingerBandsInRange(Equity equity, int periodCount, int sdCount)
-            : base(equity, periodCount, sdCount)
+        public BollingerBandsInRange(IList<Core.Candle> candles, int periodCount, int sdCount)
+            : this(candles.Select(c => c.Close).ToList(), periodCount, sdCount)
         {
-            _bbIndicator = new BollingerBands(equity, periodCount, sdCount);
         }
 
-        protected override PatternResult<Overboundary?> ComputeByIndexImpl(int index)
+        public BollingerBandsInRange(IList<decimal> closes, int periodCount, int sdCount)
+            : base(closes)
         {
-            var result = _bbIndicator.ComputeByIndex(index);
-            var current = Equity[index];
+            _bb = new BollingerBands(closes, periodCount, sdCount);
+        }
 
-            return new PatternResult<Overboundary?>(current.DateTime, Decision.IsOverbound(current.Close, result.LowerBand, result.UpperBand));
+        protected override Overboundary? ComputeByIndexImpl(int index)
+        {
+            var result = _bb[index];
+            return StateHelper.IsOverbound(Inputs[index], result.LowerBand, result.UpperBand);
         }
     }
 }

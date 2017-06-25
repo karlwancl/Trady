@@ -1,28 +1,27 @@
-﻿using Trady.Analysis.Indicator;
-using Trady.Analysis.Pattern.Helper;
-using Trady.Core;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Trady.Analysis.Indicator;
+using Trady.Analysis.Infrastructure;
+using Trady.Analysis.Pattern.State;
 
 namespace Trady.Analysis.Pattern.Indicator
 {
-    public class MovingAverageConvergenceDivergenceOscillatorTrend : IndicatorBase<PatternResult<Trend?>>
+    public class MovingAverageConvergenceDivergenceOscillatorTrend : AnalyzableBase<decimal, Trend?>
     {
-        private MovingAverageConvergenceDivergence _macdIndicator;
+        private MovingAverageConvergenceDivergence _macd;
 
-        public MovingAverageConvergenceDivergenceOscillatorTrend(Equity equity, int emaPeriodCount1, int emaPeriodCount2, int demPeriodCount)
-            : base(equity, emaPeriodCount1, emaPeriodCount2, demPeriodCount)
+        public MovingAverageConvergenceDivergenceOscillatorTrend(IList<Core.Candle> candles, int emaPeriodCount1, int emaPeriodCount2, int demPeriodCount)
+            : this(candles.Select(c => c.Close).ToList(), emaPeriodCount1, emaPeriodCount2, demPeriodCount)
         {
-            _macdIndicator = new MovingAverageConvergenceDivergence(equity, emaPeriodCount1, emaPeriodCount2, demPeriodCount);
         }
 
-        protected override PatternResult<Trend?> ComputeByIndexImpl(int index)
+        public MovingAverageConvergenceDivergenceOscillatorTrend(IList<decimal> closes, int emaPeriodCount1, int emaPeriodCount2, int demPeriodCount)
+            : base(closes)
         {
-            if (index < 1)
-                return new PatternResult<Trend?>(Equity[index].DateTime, null);
-
-            var latest = _macdIndicator.ComputeByIndex(index);
-            var secondLatest = _macdIndicator.ComputeByIndex(index - 1);
-
-            return new PatternResult<Trend?>(Equity[index].DateTime, Decision.IsTrending(latest.Osc - secondLatest.Osc));
+            _macd = new MovingAverageConvergenceDivergence(closes, emaPeriodCount1, emaPeriodCount2, demPeriodCount);
         }
+
+        protected override Trend? ComputeByIndexImpl(int index)
+            => index >= 1 ? StateHelper.IsTrending(_macd[index].MacdHistogram, _macd[index - 1].MacdHistogram) : null;
     }
 }
