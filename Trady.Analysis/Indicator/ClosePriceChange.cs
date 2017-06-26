@@ -7,16 +7,19 @@ namespace Trady.Analysis.Indicator
 {
     public partial class ClosePriceChange : AnalyzableBase<decimal, decimal?>
     {
-        public ClosePriceChange(IList<Candle> candles)
-            : this(candles.Select(c => c.Close).ToList())
+        public int NumberOfDays { get; }
+
+        public ClosePriceChange(IList<Candle> candles, int numberOfDays = 1)
+            : this(candles.Select(c => c.Close).ToList(), numberOfDays)
         {
         }
 
-        public ClosePriceChange(IList<decimal> closes) : base(closes)
+        public ClosePriceChange(IList<decimal> closes, int numberOfDays = 1) : base(closes)
         {
+            NumberOfDays = numberOfDays;
         }
 
         protected override decimal? ComputeByIndexImpl(int index)
-           => index > 0 ? Inputs[index] - Inputs[index - 1] : (decimal?)null;
+           => index >= NumberOfDays ? Inputs[index] - Inputs[index - NumberOfDays] : (decimal?)null;
     }
 }

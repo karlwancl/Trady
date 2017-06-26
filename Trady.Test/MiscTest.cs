@@ -1,6 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using Trady.Core;
@@ -16,7 +17,7 @@ namespace Trady.Test
     {
         public async Task<IList<Candle>> ImportCandlesAsync()
         {
-            var csvImporter = new Importer.CsvImporter("fb.csv");
+            var csvImporter = new Importer.CsvImporter("fb.csv", new CultureInfo("en-US"));
             return await csvImporter.ImportAsync("fb");
         }
 

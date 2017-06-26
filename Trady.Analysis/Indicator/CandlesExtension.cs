@@ -36,8 +36,14 @@ namespace Trady.Analysis.Indicator
         public static IList<decimal?> ClosePriceChange(this IList<Candle> candles, int? startIndex = null, int? endIndex = null)
             => new ClosePriceChange(candles).Compute(startIndex, endIndex);
 
+        public static IList<decimal?> ClosePriceChange(this IList<Candle> candles, int numberOfDays, int? startIndex = null, int? endIndex = null)
+            => new ClosePriceChange(candles, numberOfDays).Compute(startIndex, endIndex);
+
         public static IList<decimal?> ClosePricePercentageChange(this IList<Candle> candles, int? startIndex = null, int? endIndex = null)
             => new ClosePricePercentageChange(candles).Compute(startIndex, endIndex);
+
+        public static IList<decimal?> ClosePricePercentageChange(this IList<Candle> candles, int numberOfDays, int? startIndex = null, int? endIndex = null)
+            => new ClosePricePercentageChange(candles, numberOfDays).Compute(startIndex, endIndex);
 
         public static IList<decimal?> Dmi(this IList<Candle> candles, int periodCount, int? startIndex = null, int? endIndex = null)
             => new DirectionalMovementIndex(candles, periodCount).Compute(startIndex, endIndex);
