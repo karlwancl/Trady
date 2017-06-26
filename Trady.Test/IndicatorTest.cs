@@ -1,5 +1,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using Trady.Analysis.Indicator;
@@ -12,7 +13,7 @@ namespace Trady.Test
     {
         async Task<IList<Candle>> ImportCandlesAsync()
         {
-            var csvImporter = new Importer.CsvImporter("fb.csv");
+            var csvImporter = new Importer.CsvImporter("fb.csv", new CultureInfo("en-US"));
             return await csvImporter.ImportAsync("fb");
         }
 
@@ -110,6 +111,10 @@ namespace Trady.Test
             var indicator = new ClosePriceChange(candles);
             var result = indicator[candles.Count - 1];
             Assert.IsTrue(0.16m.IsApproximatelyEquals(result.Value));
+
+            indicator = new ClosePriceChange(candles, 20);
+            result = indicator[candles.Count - 1];
+            Assert.IsTrue(6.41m.IsApproximatelyEquals(result.Value));
         }
 
         [TestMethod]
@@ -119,6 +124,11 @@ namespace Trady.Test
             var indicator = new ClosePricePercentageChange(candles);
             var result = indicator[candles.Count - 1];
             Assert.IsTrue(0.1145m.IsApproximatelyEquals(result.Value));
+
+            indicator = new ClosePricePercentageChange(candles, 20);
+            result = indicator[candles.Count - 1];
+            Assert.IsTrue(4.800m.IsApproximatelyEquals(result.Value));
+
         }
 
         [TestMethod]

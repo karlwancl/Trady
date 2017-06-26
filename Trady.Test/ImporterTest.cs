@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Trady.Importer;
 using System.Linq;
@@ -46,5 +47,15 @@ namespace Trady.Test
 			Assert.AreEqual(candle.Close, 2257.83m);
 			Assert.AreEqual(candle.Volume, 644_640_832);
 		}
+
+        [TestMethod]
+        public void ImportFromCsv()
+        {
+            var importer = new CsvImporter("fb.csv", new CultureInfo("en-US"));
+            var candles = importer.ImportAsync("FB").Result;
+            Assert.AreEqual(candles.Count(), 1216);
+            var firstCandle = candles.First();
+            Assert.AreEqual(firstCandle.DateTime, new DateTime(2012,5,18));
+        }
     }
 }
