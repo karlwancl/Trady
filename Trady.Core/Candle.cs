@@ -3,10 +3,8 @@ using Trady.Core.Infrastructure;
 
 namespace Trady.Core
 {
-    public class Candle
+    public class Candle: ITick
     {
-        public DateTime DateTime { get; private set; }
-
         public Candle(DateTime dateTime, decimal open, decimal high, decimal low, decimal close, decimal volume)
         {
             DateTime = dateTime;
@@ -17,14 +15,16 @@ namespace Trady.Core
             Volume = volume;
         }
 
-        public decimal Open { get; private set; }
+		public DateTime DateTime { get; }
 
-        public decimal High { get; private set; }
+        public decimal Open { get; }
 
-        public decimal Low { get; private set; }
+        public decimal High { get; }
 
-        public decimal Close { get; private set; }
+        public decimal Low { get; }
 
-        public decimal Volume { get; private set; }
+        public decimal Close { get; }
+
+        public decimal Volume { get; }
     }
 }

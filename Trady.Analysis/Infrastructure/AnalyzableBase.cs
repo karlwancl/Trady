@@ -10,7 +10,7 @@ namespace Trady.Analysis.Infrastructure
     {
         protected IDictionary<int, TOutput> _cache;
 
-        public AnalyzableBase(IList<TInput> inputs)
+        protected AnalyzableBase(IList<TInput> inputs)
         {
             _cache = new Dictionary<int, TOutput>();
             Inputs = inputs;
