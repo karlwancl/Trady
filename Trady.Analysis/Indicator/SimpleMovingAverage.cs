@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Trady.Analysis.Helper;
 using Trady.Analysis.Infrastructure;
@@ -21,5 +22,14 @@ namespace Trady.Analysis.Indicator
         public int PeriodCount { get; private set; }
 
         protected override decimal? ComputeByIndexImpl(int index) => Inputs.Avg(PeriodCount, index);
+    }
+
+    public class SimpleMovingAverageWrapper : AnalyzableWrapperBase<SimpleMovingAverage, decimal, decimal?>
+    {
+        public SimpleMovingAverageWrapper(IList<Candle> candles, int periodCount) : base(candles, periodCount)
+        {
+        }
+
+        protected override Func<Candle, decimal> MappingFunction => c => c.Close;
     }
 }
