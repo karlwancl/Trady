@@ -41,7 +41,7 @@ namespace Trady.Test
 
         public class ClosePricePercentageChangeSinceMondayOpen : AnalyzableBase2<Candle, decimal?>
         {
-            public ClosePricePercentageChangeSinceMondayOpen(IEnumerable<Candle> inputs) : base(inputs, c => c.Close)
+            public ClosePricePercentageChangeSinceMondayOpen(IEnumerable<Candle> inputs) : base(inputs)
             {
             }
 
@@ -55,10 +55,10 @@ namespace Trady.Test
                 return aDate.AddDays(-daysToSubstract);
             }
 
-            protected override decimal? ComputeByIndexImpl(int index)
+            protected override decimal? ComputeByIndexImpl(IEnumerable<Candle> mis, int index)
             {
-                var currentCandle = Inputs.ElementAt(index);
-                var mondayOfThatWeek = this.GetMondayFor(currentCandle.DateTime);
+                var currentCandle = mis.ElementAt(index);
+                var mondayOfThatWeek = GetMondayFor(currentCandle.DateTime);
                 var candleForThatMonday = Inputs.FirstOrDefault(c => c.DateTime.Date.Equals(mondayOfThatWeek));
 
                 if (candleForThatMonday == null)
@@ -66,7 +66,7 @@ namespace Trady.Test
 
                 var openValue = candleForThatMonday.Open;
 
-                return (this.MappingFunction(currentCandle) - openValue) / openValue * 100;
+                return (currentCandle.Close - openValue) / openValue * 100;
             }
         }
 

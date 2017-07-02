@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Trady.Core;
 using Trady.Analysis.Indicator;
+using Trady.Analysis.Infrastructure;
 
 namespace Trady.Test
 {
@@ -25,23 +26,29 @@ namespace Trady.Test
         {
             var candles = await ImportCandlesAsync();
             var periodCount = 30;
-            var sma = candles.SimpleMovingAverage(periodCount);
+            var sma = candles.Sma2(periodCount);
             var result = sma[candles.Count - 1];
-            Assert.IsTrue(136.23m.IsApproximatelyEquals(result.Value));
+            Assert.IsTrue(136.23m.IsApproximatelyEquals(result.Tick.Value));
 
-            var smaOtherWay = new CandleSimpleMovingAverage(candles, periodCount);
+            var smaOtherWay = new SimpleMovingAverage2(candles, periodCount);
             result = smaOtherWay[candles.Count - 1];
-            Assert.IsTrue(136.23m.IsApproximatelyEquals(result.Value));
+            Assert.IsTrue(136.23m.IsApproximatelyEquals(result.Tick.Value));
 
             var listOfDecimals = candles.Select(c => c.Close).ToList();
-            var smaAnotherWay = new DecimalSimpleMovingAverage(listOfDecimals, periodCount);
-            result = smaAnotherWay[candles.Count - 1];
-            Assert.IsTrue(136.23m.IsApproximatelyEquals(result.Value));
+            var smaAnotherWay = new SimpleMovingAverageByTuple(listOfDecimals, periodCount);
+            var tupleResult = smaAnotherWay[candles.Count - 1];
+            Assert.IsTrue(136.23m.IsApproximatelyEquals(tupleResult.Value));
+
+            // I would just keep it there now, as it provides greater flexibiilty for developers to customize their input/output
+            // But it seems not all indicators are meaningful to provide the mapping parameter
+            // For sma, it's generic to its input, the computed result are meaningful. but for some others like rsi, it might not be the case
+            // But who knows, meaning is defined by the users, we can't predict the usage by users
+            // So I will just keep it here but it's open to discussion
 
             // I don't know how much it should return and actually it doesn't matter.
             // I just want to make a point that if someone wants to do strange calculations 
             // they can be done
-            var smaWay3 = new SimpleMovingAverage2<Candle>(candles, c => c.High - c.Low, periodCount);
+            var smaWay3 = new SimpleMovingAverage2<Candle, AnalyzableTick<decimal?>>(candles, c => c.High - c.Low, (c, otm) => new AnalyzableTick<decimal?>(c.DateTime, otm) ,periodCount);
             result = smaWay3[candles.Count - 1];
             Assert.IsNotNull(result);
 
