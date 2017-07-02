@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <!--<Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" />-->
   <PropertyGroup>
     <TargetFramework>netstandard1.4</TargetFramework>
@@ -48,8 +48,9 @@
       <PrivateAssets>All</PrivateAssets>
     </PackageReference>-->
     <PackageReference Include="Quandl.NET" Version="1.1.1" />
-    <PackageReference Include="StooqApi" Version="1.0.5" />
-    <PackageReference Include="YahooFinanceApi" Version="1.0.10" />
+    <PackageReference Include="StooqApi" Version="1.0.4" />
+    <PackageReference Include="YahooFinanceApi" Version="1.0.9" />
+    <PackageReference Include="Nuba.Finance.Google" Version="1.0.4" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Trady.Core\Trady.Core.csproj" />
