@@ -10,6 +10,18 @@ namespace Trady.Test
     public class ImporterTest
     {
         [TestMethod]
+        public void ImportByGoogleFinance()
+        {
+            var importer = new GoogleFinanceImporter();
+            var candle = importer.ImportAsync("NASDAQ/AAPL", new DateTime(2017, 1, 3), new DateTime(2017, 1, 3)).Result.First();
+			Assert.AreEqual(candle.Open, 115.8m);
+			Assert.AreEqual(candle.High, 116.33m);
+			Assert.AreEqual(candle.Low, 114.76m);
+			Assert.AreEqual(candle.Close, 116.15m);
+			Assert.AreEqual(candle.Volume, 28_781_865);
+        }
+
+        [TestMethod]
         public void ImportByQuandlYahoo()
         {
 			// Test account api key

@@ -49,6 +49,7 @@
     <PackageReference Include="Quandl.NET" Version="1.1.1" />
     <PackageReference Include="StooqApi" Version="1.0.4" />
     <PackageReference Include="YahooFinanceApi" Version="1.0.9" />
+    <PackageReference Include="Nuba.Finance.Google" Version="1.0.4" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Trady.Core\Trady.Core.csproj" />
