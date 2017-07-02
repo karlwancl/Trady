@@ -23,13 +23,4 @@ namespace Trady.Analysis.Indicator
 
         protected override decimal? ComputeByIndexImpl(int index) => Inputs.Avg(PeriodCount, index);
     }
-
-    public class SimpleMovingAverageWrapper : AnalyzableWrapperBase<SimpleMovingAverage, decimal, decimal?>
-    {
-        public SimpleMovingAverageWrapper(IList<Candle> candles, int periodCount) : base(candles, periodCount)
-        {
-        }
-
-        protected override Func<Candle, decimal> MappingFunction => c => c.Close;
-    }
 }
