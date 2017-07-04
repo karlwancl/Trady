@@ -4,7 +4,7 @@ using Trady.Analysis.Infrastructure;
 
 namespace Trady.Analysis.Indicator
 {
-    public partial class GenericExponentialMovingAverage<TInput> : CummulativeAnalyzableBase<TInput, decimal?>
+    public partial class GenericExponentialMovingAverage<TInput> : CumulativeAnalyzableBase<TInput, decimal?>
     {
         private int _initialValueIndex;
         private Func<int, decimal?> _initialValueFunction;
@@ -26,7 +26,7 @@ namespace Trady.Analysis.Indicator
 
         protected override decimal? ComputeInitialValue(int index) => _initialValueFunction(index);
 
-        protected override decimal? ComputeCummulativeValue(int index, decimal? prevOutput)
+        protected override decimal? ComputeCumulativeValue(int index, decimal? prevOutput)
             => prevOutput + (_smoothingFactorFunction(index) * (_indexValueFunction(index) - prevOutput));
     }
 }
