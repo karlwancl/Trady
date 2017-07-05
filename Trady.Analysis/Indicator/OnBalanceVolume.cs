@@ -5,7 +5,7 @@ using Trady.Core;
 
 namespace Trady.Analysis.Indicator
 {
-    public partial class OnBalanceVolume : CummulativeAnalyzableBase<(decimal Close, decimal Volume), decimal?>
+    public partial class OnBalanceVolume : CumulativeAnalyzableBase<(decimal Close, decimal Volume), decimal?>
     {
         public OnBalanceVolume(IList<Candle> candles)
             : this(candles.Select(c => (c.Close, c.Volume)).ToList())
@@ -22,7 +22,7 @@ namespace Trady.Analysis.Indicator
 
         protected override decimal? ComputeInitialValue(int index) => Inputs[index].Volume;
 
-        protected override decimal? ComputeCummulativeValue(int index, decimal? prevOutput)
+        protected override decimal? ComputeCumulativeValue(int index, decimal? prevOutput)
         {
             var input = Inputs[index];
             var prevInput = Inputs[index - 1];
