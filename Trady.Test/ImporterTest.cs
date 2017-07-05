@@ -27,6 +27,7 @@ namespace Trady.Test
         [TestMethod]
         public void ImportByYahoo()
         {
+            CultureInfo.CurrentCulture = new CultureInfo("en-us");
             var importer = new YahooFinanceImporter();
 			var candle = importer.ImportAsync("^GSPC", new DateTime(2017, 1, 3), new DateTime(2017, 1, 4)).Result.First();  // Endtime stock history exclusive
 			Assert.AreEqual(candle.Open, 2251.570068m);
@@ -37,8 +38,28 @@ namespace Trady.Test
 		}
 
         [TestMethod]
+        public void CultureNotBeingSetCauseYahooImporterToFail()
+        {
+            CultureInfo.CurrentCulture = new CultureInfo("en-us");
+            var importer = new YahooFinanceImporter();
+            var candle = importer.ImportAsync("^GSPC", new DateTime(2017, 1, 3), new DateTime(2017, 1, 4)).Result.First();  // Endtime stock history exclusive
+            Assert.AreEqual(candle.Open, 2251.570068m);
+
+            /// Argentina's culture. Just to give a culture that use , and . in the opposite way from  United States 
+            /// and 3.000 means three thousands.
+            CultureInfo.CurrentCulture = new CultureInfo("es-ar");
+            importer = new YahooFinanceImporter();
+            candle = importer.ImportAsync("^GSPC", new DateTime(2017, 1, 3), new DateTime(2017, 1, 4)).Result.First();  // Endtime stock history exclusive
+            /// Actual value is 2251.570068m but if you don't set the culture to the right one the call to yahoo brings
+            /// wrong numbers.
+            Assert.AreEqual(candle.Open, 2251570068m);
+        }
+
+
+        [TestMethod]
         public void ImportByStooq()
         {
+            CultureInfo.CurrentCulture = new CultureInfo("en-us");
             var importer = new StooqImporter();
             var candle = importer.ImportAsync("^SPX", new DateTime(2017, 1, 3), new DateTime(2017, 1, 3)).Result.First();   // Endtime stock history inclusive
 			Assert.AreEqual(candle.Open, 2251.57m);
