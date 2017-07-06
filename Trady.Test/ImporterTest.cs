@@ -12,6 +12,8 @@ namespace Trady.Test
         [TestMethod]
         public void ImportByQuandlYahoo()
         {
+            CultureInfo.CurrentCulture = new CultureInfo("nl-nl");
+
 			// Test account api key
 			const string ApiKey = "Sys3z7hfYmzjiXPxwfQJ";
 
