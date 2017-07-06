@@ -4,7 +4,7 @@ using Trady.Core;
 
 namespace Trady.Importer.Helper
 {
-    internal static class ImporterExtension
+    static class Helper
     {
         public static bool IsNullOrWhitespace(this object[] row)
         {

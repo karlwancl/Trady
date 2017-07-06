@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 using CsvHelper.Configuration;
 using Trady.Core;
 using Trady.Core.Period;
-using Trady.Importer.Helper;
 
 namespace Trady.Importer
 {
