@@ -17,8 +17,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Trady.Analysis\Trady.Analysis.csproj" />
-    <ProjectReference Include="..\Trady.Importer\Trady.Importer.csproj" />
     <ProjectReference Include="..\Trady.Core\Trady.Core.csproj" />
+    <ProjectReference Include="..\Trady.Importer\Trady.Importer.csproj" />
   </ItemGroup>
 
   <ItemGroup>

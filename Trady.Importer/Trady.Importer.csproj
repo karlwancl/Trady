@@ -37,22 +37,11 @@
     <EmbeddedResource Include="**\*.resx" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="CsvHelper" Version="2.16.3">
-    </PackageReference>
-    <!--<PackageReference Include="NETStandard.Library">
-      <Version>1.6.1</Version>
-    </PackageReference>
-    <PackageReference Include="Microsoft.NET.Sdk">
-      <Version>1.0.0-alpha-20161104-2</Version>
-      <PrivateAssets>All</PrivateAssets>
-    </PackageReference>-->
-    <PackageReference Include="Quandl.NET" Version="1.1.1" />
-    <PackageReference Include="StooqApi" Version="1.0.4" />
-    <PackageReference Include="YahooFinanceApi" Version="1.0.9" />
-    <PackageReference Include="Nuba.Finance.Google" Version="1.0.4" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Trady.Core\Trady.Core.csproj" />
+    <ProjectReference Include="..\Trady.Importer.Csv\Trady.Importer.Csv.csproj" />
+    <ProjectReference Include="..\Trady.Importer.Google\Trady.Importer.Google.csproj" />
+    <ProjectReference Include="..\Trady.Importer.Quandl\Trady.Importer.Quandl.csproj" />
+    <ProjectReference Include="..\Trady.Importer.Stooq\Trady.Importer.Stooq.csproj" />
+    <ProjectReference Include="..\Trady.Importer.Yahoo\Trady.Importer.Yahoo.csproj" />
   </ItemGroup>
   <!--<Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />-->
 </Project>

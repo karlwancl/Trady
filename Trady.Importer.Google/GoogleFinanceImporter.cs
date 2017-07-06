@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Trady.Core.Period;
 using Nuba.Finance.Google;
 using System.Linq;
+using Trady.Core;
 
 namespace Trady.Importer
 {

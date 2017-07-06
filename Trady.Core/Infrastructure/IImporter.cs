@@ -2,10 +2,9 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Trady.Core;
 using Trady.Core.Period;
 
-namespace Trady.Importer
+namespace Trady.Core
 {
     public interface IImporter
     {
