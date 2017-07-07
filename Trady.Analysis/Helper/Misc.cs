@@ -4,18 +4,20 @@ using System.Linq;
 
 namespace Trady.Analysis.Helper
 {
-    internal static class Misc
+    static class Misc
     {
-        private static object syncLock = new object();
+        static object syncLock = new object();
 
-        public static int? FindIndexOrDefault<T>(this IList<T> list, Predicate<T> predicate, int? defaultValue = null)
+        public static int? FindIndexOrDefault<T>(this IEnumerable<T> list, Predicate<T> predicate, int? defaultValue = null)
         {
+            // TODO: May have performance issue here
             int index = list.ToList().FindIndex(predicate);
             return index == -1 ? defaultValue : index;
         }
 
-        public static int? FindLastIndexOrDefault<T>(this IList<T> list, Predicate<T> predicate, int? defaultValue = null)
+        public static int? FindLastIndexOrDefault<T>(this IEnumerable<T> list, Predicate<T> predicate, int? defaultValue = null)
         {
+            // TODO: May have performance issue here
             int index = list.ToList().FindLastIndex(predicate);
             return index == -1 ? defaultValue : index;
         }
@@ -27,7 +29,7 @@ namespace Trady.Analysis.Helper
                 if (dict.ContainsKey(item1))
                     dict[item1] = item2;
                 else
-                    dict.Add(item1, item2); 
+                    dict.Add(item1, item2);
             }
         }
 

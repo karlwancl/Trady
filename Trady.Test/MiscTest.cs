@@ -9,15 +9,16 @@ using Trady.Core.Period;
 using System.IO;
 using Trady.Analysis.Strategy;
 using Trady.Analysis.Strategy.Rule;
+using Trady.Importer;
 
 namespace Trady.Test
 {
     [TestClass]
     public class MiscTest
     {
-        public async Task<IList<Candle>> ImportCandlesAsync()
+        public async Task<IEnumerable<Candle>> ImportCandlesAsync()
         {
-            var csvImporter = new Importer.CsvImporter("fb.csv", new CultureInfo("en-US"));
+            var csvImporter = new CsvImporter("fb.csv", new CultureInfo("en-US"));
             return await csvImporter.ImportAsync("fb");
         }
 
@@ -72,12 +73,12 @@ namespace Trady.Test
 			Assert.IsTrue(result.TotalCorrectedProfitLossRatio == 0.9304775m);
 		}
 
-		void Portfolio_OnSold(IList<Candle> candles, int index, DateTime dateTime, decimal sellPrice, int quantity, decimal absCashFlow, decimal currentCashAmount, decimal plRatio)
+		void Portfolio_OnSold(IEnumerable<Candle> candles, int index, DateTime dateTime, decimal sellPrice, int quantity, decimal absCashFlow, decimal currentCashAmount, decimal plRatio)
 		{
 			File.AppendAllLines(logPath, new string[] { $"{index}({dateTime:yyyyMMdd}), Sell {candles.GetHashCode()}@{sellPrice} * {quantity}: {absCashFlow}, plRatio: {plRatio * 100:0.##}%, currentCashAmount: {currentCashAmount}" });
 		}
 
-		void Portfolio_OnBought(IList<Candle> candles, int index, DateTime dateTime, decimal buyPrice, int quantity, decimal absCashFlow, decimal currentCashAmount)
+		void Portfolio_OnBought(IEnumerable<Candle> candles, int index, DateTime dateTime, decimal buyPrice, int quantity, decimal absCashFlow, decimal currentCashAmount)
 		{
 			File.AppendAllLines(logPath, new string[] { $"{index}({dateTime:yyyyMMdd}), Buy {candles.GetHashCode()}@{buyPrice} * {quantity}: {absCashFlow}, currentCashAmount: {currentCashAmount}" });
 		}

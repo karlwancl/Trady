@@ -28,7 +28,7 @@ namespace Trady.Importer
             {PeriodOption.Daily, Frequency.EveryDay}
         };
 
-        public async Task<IList<Core.Candle>> ImportAsync(string symbol, DateTime? startTime = default(DateTime?), DateTime? endTime = default(DateTime?), PeriodOption period = PeriodOption.Daily, CancellationToken token = default(CancellationToken))
+        public async Task<IEnumerable<Core.Candle>> ImportAsync(string symbol, DateTime? startTime = default(DateTime?), DateTime? endTime = default(DateTime?), PeriodOption period = PeriodOption.Daily, CancellationToken token = default(CancellationToken))
         {
             if (!PeriodMap.TryGetValue(period, out int frequency))
                 throw new ArgumentException("This importer only supports second, minute, hourly & daily data");
@@ -38,7 +38,7 @@ namespace Trady.Importer
 
             string[] syms = symbol.Split(SymbolSeparator);
             var candles = await Task.Run(() => _lqs.GetValues(syms[0].ToUpper(), syms[1], PeriodMap[period], startTime, endTime));
-            return candles.Select(c => new Core.Candle(c.Date, c.Open, c.High, c.Low, c.Close, c.Volume)).OrderBy(c => c.DateTime).ToList();
+            return candles.Select(c => new Core.Candle(c.Date, c.Open, c.High, c.Low, c.Close, c.Volume)).OrderBy(c => c.DateTime);
         }
     }
 }

@@ -7,18 +7,18 @@ namespace Trady.Analysis.Strategy
 {
     public class Result
     {
-        public Result(IReadOnlyDictionary<IList<Candle>, decimal> preAssetCashMap, IDictionary<IList<Candle>, decimal> postAssetCashMap, IList<Transaction> transactions)
+        public Result(IReadOnlyDictionary<IEnumerable<Candle>, decimal> preAssetCashMap, IDictionary<IEnumerable<Candle>, decimal> postAssetCashMap, IEnumerable<Transaction> transactions)
         {
             PreAssetCashMap = preAssetCashMap;
             PostAssetCashMap = postAssetCashMap;
             Transactions = transactions;
         }
 
-        public IReadOnlyDictionary<IList<Candle>, decimal> PreAssetCashMap { get; private set; }
+        public IReadOnlyDictionary<IEnumerable<Candle>, decimal> PreAssetCashMap { get; private set; }
 
-        public IDictionary<IList<Candle>, decimal> PostAssetCashMap { get; private set; }
+        public IDictionary<IEnumerable<Candle>, decimal> PostAssetCashMap { get; private set; }
 
-        public IList<Transaction> Transactions { get; private set; }
+        public IEnumerable<Transaction> Transactions { get; private set; }
 
         #region Count
 
@@ -28,15 +28,15 @@ namespace Trady.Analysis.Strategy
 
         public int TotalSellCount => Transactions.Count(t => t.Type == TransactionType.Sell);
 
-        public int BuyCount(IList<Candle> candles) => Transactions.Count(t => t.Candles.Equals(candles) && t.Type == TransactionType.Buy);
+        public int BuyCount(IEnumerable<Candle> candles) => Transactions.Count(t => t.Candles.Equals(candles) && t.Type == TransactionType.Buy);
 
-        public int SellCount(IList<Candle> candles) => Transactions.Count(t => t.Candles.Equals(candles) && t.Type == TransactionType.Sell);
+        public int SellCount(IEnumerable<Candle> candles) => Transactions.Count(t => t.Candles.Equals(candles) && t.Type == TransactionType.Sell);
 
         public int TotalCorrectedTransactionCount => TotalCorrectedBuyCount + TotalSellCount;
 
         public int TotalCorrectedBuyCount => PreAssetCashMap.Select(ac => ac.Key).Sum(a => CorrectedBuyCount(a));
 
-        public int CorrectedBuyCount(IList<Candle> candles)
+        public int CorrectedBuyCount(IEnumerable<Candle> candles)
         {
             var trans = Transactions.Where(t => t.Candles.Equals(candles));
             if (trans.Any())
@@ -59,11 +59,11 @@ namespace Trady.Analysis.Strategy
 
         public decimal TotalPrincipal => PreAssetCashMap.Select(ac => ac.Key).Sum(a => Principal(a));
 
-        public decimal CorrectedProfitLossRatio(IList<Candle> candles) => CorrectedProfitLoss(candles) / Principal(candles);
+        public decimal CorrectedProfitLossRatio(IEnumerable<Candle> candles) => CorrectedProfitLoss(candles) / Principal(candles);
 
-        public decimal CorrectedProfitLoss(IList<Candle> candles) => CorrectedBalance(candles) - Principal(candles);
+        public decimal CorrectedProfitLoss(IEnumerable<Candle> candles) => CorrectedBalance(candles) - Principal(candles);
 
-        public decimal CorrectedBalance(IList<Candle> candles)
+        public decimal CorrectedBalance(IEnumerable<Candle> candles)
         {
             if (!PostAssetCashMap.TryGetValue(candles, out decimal postCash))
                 throw new ArgumentException("Can't get the final cash amount for the corresponding asset!");
@@ -75,7 +75,7 @@ namespace Trady.Analysis.Strategy
             return postCash;
         }
 
-        public decimal Principal(IList<Candle> candles)
+        public decimal Principal(IEnumerable<Candle> candles)
         {
             if (!PreAssetCashMap.TryGetValue(candles, out decimal initial))
                 throw new ArgumentException("Can't get the final cash amount for the corresponding asset!");

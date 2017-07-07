@@ -6,7 +6,7 @@ namespace Trady.Analysis.Strategy
 {
     public class Transaction : IEquatable<Transaction>
     {
-        public Transaction(IList<Candle> candles, int index, DateTime dateTime, TransactionType type, int quantity, decimal absCashFlow)
+        public Transaction(IEnumerable<Candle> candles, int index, DateTime dateTime, TransactionType type, int quantity, decimal absCashFlow)
         {
             Candles = candles;
             Index = index;
@@ -16,7 +16,7 @@ namespace Trady.Analysis.Strategy
             AbsoluteCashFlow = absCashFlow;
         }
 
-        public IList<Candle> Candles { get; private set; }
+        public IEnumerable<Candle> Candles { get; private set; }
 
         public DateTime DateTime { get; private set; }
 
