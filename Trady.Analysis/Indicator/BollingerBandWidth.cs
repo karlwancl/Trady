@@ -1,35 +1,47 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Trady.Analysis.Infrastructure;
 using Trady.Core;
 
 namespace Trady.Analysis.Indicator
 {
-    public partial class BollingerBandWidth : AnalyzableBase<decimal, decimal?>
+    public class BollingerBandWidth<TInput, TOutput> : AnalyzableBase<TInput, decimal, decimal?, TOutput>
     {
-        private BollingerBands _bb;
+        BollingerBandsByTuple _bb;
 
-        public BollingerBandWidth(IList<Candle> candles, int periodCount, decimal sdCount) :
-            this(candles.Select(c => (c.Close)).ToList(), periodCount, sdCount)
+        public BollingerBandWidth(IEnumerable<TInput> inputs, Func<TInput, decimal> inputMapper, Func<TInput, decimal?, TOutput> outputMapper, int periodCount, decimal sdCount) : base(inputs, inputMapper, outputMapper)
         {
+			_bb = new BollingerBandsByTuple(inputs.Select(inputMapper), periodCount, sdCount);
+
+			PeriodCount = periodCount;
+			SdCount = sdCount;
         }
 
-        public BollingerBandWidth(IList<decimal> closes, int periodCount, decimal sdCount) : base(closes)
-        {
-            _bb = new BollingerBands(closes, periodCount, sdCount);
+        public int PeriodCount { get; }
 
-            PeriodCount = periodCount;
-            SdCount = sdCount;
+        public decimal SdCount { get; }
+
+        protected override decimal? ComputeByIndexImpl(IEnumerable<decimal> mappedInputs, int index)
+        {
+			var bb = _bb[index];
+			return (bb.UpperBand - bb.LowerBand) / bb.MiddleBand * 100;
         }
+    }
 
-        public int PeriodCount { get; private set; }
-
-        public decimal SdCount { get; private set; }
-
-        protected override decimal? ComputeByIndexImpl(int index)
+    public class BollingerBandWidthByTuple : BollingerBandWidth<decimal, decimal?>
+    {
+        public BollingerBandWidthByTuple(IEnumerable<decimal> inputs, int periodCount, decimal sdCount) 
+            : base(inputs, i => i, (i, otm) => otm, periodCount, sdCount)
         {
-            var bb = _bb[index];
-            return (bb.UpperBand - bb.LowerBand) / bb.MiddleBand * 100;
+        }
+    }
+
+    public class BollingerBandWidth : BollingerBandWidth<Candle, AnalyzableTick<decimal?>>
+    {
+        public BollingerBandWidth(IEnumerable<Candle> inputs, int periodCount, decimal sdCount) 
+            : base(inputs, i => i.Close, (i, otm) => new AnalyzableTick<decimal?>(i.DateTime, otm), periodCount, sdCount)
+        {
         }
     }
 }
