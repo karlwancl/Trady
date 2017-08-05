@@ -17,7 +17,7 @@ namespace Trady.Analysis.Strategy
             SlidingExpiration = TimeSpan.FromMinutes(1)
         };
 
-        public static TAnalyzable GetOrCreateAnalyzable<TAnalyzable>(this IList<Candle> candles, params object[] parameters)
+        public static TAnalyzable GetOrCreateAnalyzable<TAnalyzable>(this IEnumerable<Candle> candles, params object[] parameters)
             where TAnalyzable : IAnalyzable
         {
             string key = $"{candles.GetHashCode()}#{typeof(TAnalyzable).Name}#{string.Join("|", parameters)}";
@@ -29,8 +29,7 @@ namespace Trady.Analysis.Strategy
 
                 // Get the default constructor for instantiation
                 var ctor = typeof(TAnalyzable).GetConstructors(BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.Instance)
-                    .Where(c => c.GetParameters().Any() && typeof(IList<Candle>).Equals(c.GetParameters().First().ParameterType))
-                    .FirstOrDefault();
+                    .FirstOrDefault(c => c.GetParameters().Any() && typeof(IList<Candle>).Equals(c.GetParameters().First().ParameterType));
 
                 if (ctor == null)
                     throw new TargetInvocationException("Can't find default constructor for instantiation, please make sure that the analyzable has a constructor with IList<Candle> as the first parameter",

@@ -1,28 +1,40 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Trady.Analysis.Infrastructure;
 using Trady.Core;
 
 namespace Trady.Analysis.Indicator
 {
-    public partial class RelativeStrengthIndex : AnalyzableBase<decimal, decimal?>
+    public class RelativeStrengthIndex<TInput, TOutput> : AnalyzableBase<TInput, decimal, decimal?, TOutput>
     {
-        private RelativeStrength _rs;
+        readonly RelativeStrengthByTuple _rs;
 
-        public RelativeStrengthIndex(IList<Candle> candles, int periodCount)
-            : this(candles.Select(c => c.Close).ToList(), periodCount)
+        public RelativeStrengthIndex(IEnumerable<TInput> inputs, Func<TInput, decimal> inputMapper, Func<TInput, decimal?, TOutput> outputMapper, int periodCount) : base(inputs, inputMapper, outputMapper)
         {
+			_rs = new RelativeStrengthByTuple(inputs.Select(inputMapper), periodCount);
+
+			PeriodCount = periodCount;
         }
 
-        public RelativeStrengthIndex(IList<decimal> closes, int periodCount) : base(closes)
+        public int PeriodCount { get; }
+
+        protected override decimal? ComputeByIndexImpl(IEnumerable<decimal> mappedInputs, int index) => 100 - (100 / (1 + _rs[index]));
+    }
+
+    public class RelativeStrengthIndexByTuple : RelativeStrengthIndex<decimal, decimal?>
+    {
+        public RelativeStrengthIndexByTuple(IEnumerable<decimal> inputs, int periodCount) 
+            : base(inputs, i => i, (i, otm) => otm, periodCount)
         {
-            _rs = new RelativeStrength(closes, periodCount);
-
-            PeriodCount = periodCount;
         }
+    }
 
-        public int PeriodCount { get; private set; }
-
-        protected override decimal? ComputeByIndexImpl(int index) => 100 - (100 / (1 + _rs[index]));
+    public class RelativeStrengthIndex : RelativeStrengthIndex<Candle, AnalyzableTick<decimal?>>
+    {
+        public RelativeStrengthIndex(IEnumerable<Candle> inputs, int periodCount)
+            : base(inputs, i => i.Close, (i, otm) => new AnalyzableTick<decimal?>(i.DateTime, otm), periodCount)
+        {
+        }
     }
 }

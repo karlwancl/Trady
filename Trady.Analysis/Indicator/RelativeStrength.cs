@@ -6,42 +6,53 @@ using Trady.Core;
 
 namespace Trady.Analysis.Indicator
 {
-    public partial class RelativeStrength : AnalyzableBase<decimal, decimal?>
+    public class RelativeStrength<TInput, TOutput> : AnalyzableBase<TInput, decimal, decimal?, TOutput>
     {
-        private ClosePriceChange _closePriceChange;
-        private GenericExponentialMovingAverage<decimal> _uEma, _dEma;
+        ClosePriceChangeByTuple _closePriceChange;
+        GenericExponentialMovingAverage _uEma, _dEma;
 
-        public RelativeStrength(IList<Candle> candles, int periodCount)
-            : this(candles.Select(c => c.Close).ToList(), periodCount)
+        public RelativeStrength(IEnumerable<TInput> inputs, Func<TInput, decimal> inputMapper, Func<TInput, decimal?, TOutput> outputMapper, int periodCount) : base(inputs, inputMapper, outputMapper)
         {
-        }
+			_closePriceChange = new ClosePriceChangeByTuple(inputs.Select(inputMapper), periodCount);
 
-        public RelativeStrength(IList<decimal> closes, int periodCount) : base(closes)
-        {
-            _closePriceChange = new ClosePriceChange(closes);
+			Func<int, decimal?> u = i => i > 0 ? Math.Max(_closePriceChange[i].Value, 0) : (decimal?)null;
+			Func<int, decimal?> l = i => i > 0 ? Math.Abs(Math.Min(_closePriceChange[i].Value, 0)) : (decimal?)null;
 
-            Func<int, decimal?> u = i => i > 0 ? Math.Max(_closePriceChange[i].Value, 0) : (decimal?)null;
-            Func<int, decimal?> l = i => i > 0 ? Math.Abs(Math.Min(_closePriceChange[i].Value, 0)) : (decimal?)null;
+			_uEma = new GenericExponentialMovingAverage(
+				periodCount,
+				i => i > 0 ? Enumerable.Range(i - PeriodCount + 1, PeriodCount).Average(j => u(j)) : null,
+				i => u(i),
+				i => 1.0m / periodCount,
+                inputs.Count());
 
-            _uEma = new GenericExponentialMovingAverage<decimal>(
-                closes,
-                periodCount,
-                i => i > 0 ? Enumerable.Range(i - PeriodCount + 1, PeriodCount).Average(j => u(j)) : null,
-                i => u(i),
-                i => 1.0m / periodCount);
-
-            _dEma = new GenericExponentialMovingAverage<decimal>(
-                closes,
+            _dEma = new GenericExponentialMovingAverage(
                 periodCount,
                 i => i > 0 ? Enumerable.Range(i - PeriodCount + 1, PeriodCount).Average(j => l(j)) : null,
                 i => l(i),
-                i => 1.0m / periodCount);
+                i => 1.0m / periodCount,
+                inputs.Count());
 
-            PeriodCount = periodCount;
+			PeriodCount = periodCount;
         }
 
         public int PeriodCount { get; private set; }
 
-        protected override decimal? ComputeByIndexImpl(int index) => _uEma[index] / _dEma[index];
+        protected override decimal? ComputeByIndexImpl(IEnumerable<decimal> mappedInputs, int index) => _uEma[index] / _dEma[index];
+    }
+
+    public class RelativeStrengthByTuple : RelativeStrength<decimal, decimal?>
+    {
+        public RelativeStrengthByTuple(IEnumerable<decimal> inputs, int periodCount) 
+            : base(inputs, i => i, (i, otm) => otm, periodCount)
+        {
+        }
+    }
+
+    public class RelativeStrength : RelativeStrength<Candle, AnalyzableTick<decimal?>>
+    {
+        public RelativeStrength(IEnumerable<Candle> inputs, int periodCount) 
+            : base(inputs, i => i.Close, (i, otm) => new AnalyzableTick<decimal?>(i.DateTime, otm), periodCount)
+        {
+        }
     }
 }

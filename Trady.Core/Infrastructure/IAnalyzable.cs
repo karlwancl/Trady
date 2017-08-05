@@ -4,7 +4,12 @@ using System.Text;
 
 namespace Trady.Core.Infrastructure
 {
-    public interface IAnalyzable<TInput, TOutput>
+    public interface IAnalyzable
+    {
+        // Intentionally blank, marker interface for indicator construction
+    }
+
+    public interface IAnalyzable<TInput, TOutput> : IAnalyzable
     {
         /// <summary>
         /// Gets the inputs.
@@ -25,5 +30,5 @@ namespace Trady.Core.Infrastructure
         /// </summary>
         /// <param name="i">Index.</param>
 		TOutput this[int i] { get; }
-	}
+    }
 }

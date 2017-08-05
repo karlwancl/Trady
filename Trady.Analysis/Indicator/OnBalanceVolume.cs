@@ -1,33 +1,41 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Trady.Analysis.Infrastructure;
 using Trady.Core;
 
 namespace Trady.Analysis.Indicator
 {
-    public partial class OnBalanceVolume : CumulativeAnalyzableBase<(decimal Close, decimal Volume), decimal?>
+    public class OnBalanceVolume<TInput, TOutput> : CumulativeAnalyzableBase<TInput, (decimal Close, decimal Volume), decimal?, TOutput>
     {
-        public OnBalanceVolume(IList<Candle> candles)
-            : this(candles.Select(c => (c.Close, c.Volume)).ToList())
+        public OnBalanceVolume(IEnumerable<TInput> inputs, Func<TInput, (decimal Close, decimal Volume)> inputMapper, Func<TInput, decimal?, TOutput> outputMapper) : base(inputs, inputMapper, outputMapper)
         {
         }
 
-        public OnBalanceVolume(IList<(decimal Close, decimal Volume)> inputs) : base(inputs)
+        protected override decimal? ComputeInitialValue(IEnumerable<(decimal Close, decimal Volume)> mappedInputs, int index) => mappedInputs.ElementAt(index).Volume;
+
+        protected override decimal? ComputeCumulativeValue(IEnumerable<(decimal Close, decimal Volume)> mappedInputs, int index, decimal? prevOutputToMap)
+        {
+            var input = mappedInputs.ElementAt(index);
+            var prevInput = mappedInputs.ElementAt(index - 1);
+			decimal increment = input.Volume * (input.Close > prevInput.Close ? 1 : (input.Close == prevInput.Close ? 0 : -1));
+			return prevOutputToMap + increment;
+        }
+    }
+
+    public class OnBalanceVolumeByTuple : OnBalanceVolume<(decimal Close, decimal Volume), decimal?>
+    {
+        public OnBalanceVolumeByTuple(IEnumerable<(decimal Close, decimal Volume)> inputs) 
+            : base(inputs, i => i, (i, otm) => otm)
         {
         }
+    }
 
-        protected override int InitialValueIndex => 0;
-
-        protected override decimal? ComputeNullValue(int index) => null;
-
-        protected override decimal? ComputeInitialValue(int index) => Inputs[index].Volume;
-
-        protected override decimal? ComputeCumulativeValue(int index, decimal? prevOutput)
+    public class OnBalanceVolume : OnBalanceVolume<Candle, AnalyzableTick<decimal?>>
+    {
+        public OnBalanceVolume(IEnumerable<Candle> inputs) 
+            : base(inputs, i => (i.Close, i.Volume), (i, otm) => new AnalyzableTick<decimal?>(i.DateTime, otm))
         {
-            var input = Inputs[index];
-            var prevInput = Inputs[index - 1];
-            decimal increment = input.Volume * (input.Close > prevInput.Close ? 1 : (input.Close == prevInput.Close ? 0 : -1));
-            return prevOutput + increment;
         }
     }
 }

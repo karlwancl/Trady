@@ -1,35 +1,47 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Trady.Analysis.Infrastructure;
 using Trady.Core;
 
 namespace Trady.Analysis.Indicator
 {
-    public partial class RawStochasticsValue : AnalyzableBase<(decimal High, decimal Low, decimal Close), decimal?>
+    public class RawStochasticsValue<TInput, TOutput> : AnalyzableBase<TInput, (decimal High, decimal Low, decimal Close), decimal?, TOutput>
     {
-        private HighestHigh _hh;
-        private LowestLow _ll;
+        readonly HighestHighByTuple _hh;
+        readonly LowestLowByTuple _ll;
 
-        public RawStochasticsValue(IList<Candle> candles, int periodCount)
-            : this(candles.Select(c => (c.High, c.Low, c.Close)).ToList(), periodCount)
+        public RawStochasticsValue(IEnumerable<TInput> inputs, Func<TInput, (decimal High, decimal Low, decimal Close)> inputMapper, Func<TInput, decimal?, TOutput> outputMapper, int periodCount) : base(inputs, inputMapper, outputMapper)
         {
-        }
+			_hh = new HighestHighByTuple(inputs.Select(i => inputMapper(i).High), periodCount);
+			_ll = new LowestLowByTuple(inputs.Select(i => inputMapper(i).Low), periodCount);
 
-        public RawStochasticsValue(IList<(decimal High, decimal Low, decimal Close)> inputs, int periodCount) : base(inputs)
-        {
-            _hh = new HighestHigh(inputs.Select(i => i.High).ToList(), periodCount);
-            _ll = new LowestLow(inputs.Select(i => i.Low).ToList(), periodCount);
-
-            PeriodCount = periodCount;
+			PeriodCount = periodCount;
         }
 
         public int PeriodCount { get; private set; }
 
-        protected override decimal? ComputeByIndexImpl(int index)
+        protected override decimal? ComputeByIndexImpl(IEnumerable<(decimal High, decimal Low, decimal Close)> mappedInputs, int index)
         {
-            var hh = _hh[index];
-            var ll = _ll[index];
-            return (hh == ll) ? 50 : 100 * (Inputs[index].Close - ll) / (hh - ll);
+			var hh = _hh[index];
+			var ll = _ll[index];
+			return (hh == ll) ? 50 : 100 * (mappedInputs.ElementAt(index).Close - ll) / (hh - ll);        
+        }
+    }
+
+    public class RawStochasticsValueByTuple : RawStochasticsValue<(decimal High, decimal Low, decimal Close), decimal?>
+    {
+        public RawStochasticsValueByTuple(IEnumerable<(decimal High, decimal Low, decimal Close)> inputs, int periodCount) 
+            : base(inputs, i => i, (i, otm) => otm, periodCount)
+        {
+        }
+    }
+
+    public class RawStochasticsValue : RawStochasticsValue<Candle, AnalyzableTick<decimal?>>
+    {
+        public RawStochasticsValue(IEnumerable<Candle> inputs, int periodCount) 
+            : base(inputs, i => (i.High, i.Low, i.Close), (i, otm) => new AnalyzableTick<decimal?>(i.DateTime, otm), periodCount)
+        {
         }
     }
 }

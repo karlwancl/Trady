@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Trady.Analysis.Infrastructure;
 using Trady.Core;
@@ -7,30 +8,40 @@ namespace Trady.Analysis.Indicator
 {
     public partial class Stochastics
     {
-        public class Slow : AnalyzableBase<(decimal High, decimal Low, decimal Close), (decimal? K, decimal? D, decimal? J)>
+        public class Slow<TInput, TOutput> : AnalyzableBase<TInput, (decimal High, decimal Low, decimal Close), (decimal? K, decimal? D, decimal? J), TOutput>
         {
-            private const int SmaPeriodCountK = 3;
-            private Full _fullSto;
+            const int SmaPeriodCountK = 3;
+            readonly FullByTuple _fullSto;
 
-            public Slow(IList<Candle> candles, int periodCount, int smaPeriodCountD)
-                : this(candles.Select(c => (c.High, c.Low, c.Close)).ToList(), periodCount, smaPeriodCountD)
+            public Slow(IEnumerable<TInput> inputs, Func<TInput, (decimal High, decimal Low, decimal Close)> inputMapper, Func<TInput, (decimal? K, decimal? D, decimal? J), TOutput> outputMapper, int periodCount, int smaPeriodCountD) : base(inputs, inputMapper, outputMapper)
             {
-            }
+				_fullSto = new FullByTuple(inputs.Select(inputMapper), periodCount, SmaPeriodCountK, smaPeriodCountD);
 
-            public Slow(IList<(decimal High, decimal Low, decimal Close)> inputs, int periodCount, int smaPeriodCountD)
-                : base(inputs)
-            {
-                _fullSto = new Full(inputs, periodCount, SmaPeriodCountK, smaPeriodCountD);
-
-                PeriodCount = periodCount;
-                SmaPeriodCountD = smaPeriodCountD;
+				PeriodCount = periodCount;
+				SmaPeriodCountD = smaPeriodCountD;
             }
 
             public int PeriodCount { get; private set; }
 
             public int SmaPeriodCountD { get; private set; }
 
-            protected override (decimal? K, decimal? D, decimal? J) ComputeByIndexImpl(int index) => _fullSto[index];
+            protected override (decimal? K, decimal? D, decimal? J) ComputeByIndexImpl(IEnumerable<(decimal High, decimal Low, decimal Close)> mappedInputs, int index) => _fullSto[index];
+        }
+
+        public class SlowByTuple : Slow<(decimal High, decimal Low, decimal Close), (decimal? K, decimal? D, decimal? J)>
+        {
+            public SlowByTuple(IEnumerable<(decimal High, decimal Low, decimal Close)> inputs, int periodCount, int smaPeriodCountD) 
+                : base(inputs, i => i, (i, otm) => otm, periodCount, smaPeriodCountD)
+            {
+            }
+        }
+
+        public class Slow : Slow<Candle, AnalyzableTick<(decimal? K, decimal? D, decimal? J)>>
+        {
+            public Slow(IEnumerable<Candle> inputs, int periodCount, int smaPeriodCountD) 
+                : base(inputs, i => (i.High, i.Low, i.Close), (i, otm) => new AnalyzableTick<(decimal? K, decimal? D, decimal? J)>(i.DateTime, otm), periodCount, smaPeriodCountD)
+            {
+            }
         }
     }
 }
