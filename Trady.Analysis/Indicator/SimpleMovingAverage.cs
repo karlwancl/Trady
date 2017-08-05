@@ -1,26 +1,34 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Trady.Analysis.Helper;
 using Trady.Analysis.Infrastructure;
 using Trady.Core;
 
 namespace Trady.Analysis.Indicator
 {
-    public partial class SimpleMovingAverage : AnalyzableBase<decimal, decimal?>
+    public class SimpleMovingAverage<TInput, TOutput> : AnalyzableBase<TInput, decimal, decimal?, TOutput>
     {
-        public SimpleMovingAverage(IList<Candle> candles, int periodCount)
-            : this(candles.Select(c => c.Close).ToList(), periodCount)
-        {
-        }
+        public int PeriodCount { get; }
 
-        public SimpleMovingAverage(IList<decimal> closes, int periodCount) : base(closes)
+        public SimpleMovingAverage(IEnumerable<TInput> inputs, Func<TInput, decimal> inputMapper, Func<TInput, decimal?, TOutput> outputMapper, int periodCount)
+            : base(inputs, inputMapper, outputMapper)
         {
             PeriodCount = periodCount;
         }
 
-        public int PeriodCount { get; private set; }
+        protected override decimal? ComputeByIndexImpl(IEnumerable<decimal> mappedInputs, int index)
+            => mappedInputs.Avg(PeriodCount, index);
+    }
 
-        protected override decimal? ComputeByIndexImpl(int index) => Inputs.Avg(PeriodCount, index);
+    public class SimpleMovingAverageByTuple : SimpleMovingAverage<decimal, decimal?>
+    {
+        public SimpleMovingAverageByTuple(IEnumerable<decimal> values, int periodCount)
+            : base(values, c => c, (c, otm) => otm, periodCount) { }
+    }
+
+    public class SimpleMovingAverage : SimpleMovingAverage<Candle, AnalyzableTick<decimal?>>
+    {
+        public SimpleMovingAverage(IEnumerable<Candle> candles, int periodCount)
+            : base(candles, c => c.Close, (c, otm) => new AnalyzableTick<decimal?>(c.DateTime, otm), periodCount) { }
     }
 }

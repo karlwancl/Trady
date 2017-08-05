@@ -4,29 +4,26 @@ using Trady.Analysis.Infrastructure;
 
 namespace Trady.Analysis.Indicator
 {
-    public partial class GenericExponentialMovingAverage<TInput> : CumulativeAnalyzableBase<TInput, decimal?>
+    class GenericExponentialMovingAverage: CumulativeAnalyzableBase<decimal?, decimal?>
     {
-        private int _initialValueIndex;
-        private Func<int, decimal?> _initialValueFunction;
-        private Func<int, decimal?> _indexValueFunction;
-        private Func<int, decimal> _smoothingFactorFunction;
+        readonly int _initialValueIndex;
+        readonly Func<int, decimal?> _inputFunction;
+        readonly Func<int, decimal> _smoothingFactorFunction;
 
-        public GenericExponentialMovingAverage(IList<TInput> inputs, int initialValueIndex, Func<int, decimal?> initialValueFunction, Func<int, decimal?> indexValueFunction, Func<int, decimal> smoothingFactorFunction)
-            : base(inputs)
+        // TODO: Hacking with empty array, may improve the implementation later
+        public GenericExponentialMovingAverage(int initialValueIndex, Func<int, decimal?> initialValueFunction, Func<int, decimal?> indexValueFunction, Func<int, decimal> smoothingFactorFunction, int inputCount)
+            : base(new decimal?[inputCount])
         {
             _initialValueIndex = initialValueIndex;
-            _initialValueFunction = initialValueFunction;
-            _indexValueFunction = indexValueFunction;
+            _inputFunction = i => initialValueIndex < i ? null : initialValueIndex == i ? initialValueFunction(i) : indexValueFunction(i);
             _smoothingFactorFunction = smoothingFactorFunction;
         }
 
         protected override int InitialValueIndex => _initialValueIndex;
 
-        protected override decimal? ComputeNullValue(int index) => null;
+        protected override decimal? ComputeInitialValue(IEnumerable<decimal?> mappedInputs, int index) => _inputFunction(index);
 
-        protected override decimal? ComputeInitialValue(int index) => _initialValueFunction(index);
-
-        protected override decimal? ComputeCumulativeValue(int index, decimal? prevOutput)
-            => prevOutput + (_smoothingFactorFunction(index) * (_indexValueFunction(index) - prevOutput));
-    }
+        protected override decimal? ComputeCumulativeValue(IEnumerable<decimal?> mappedInputs, int index, decimal? prevOutputToMap)
+            => prevOutputToMap + (_smoothingFactorFunction(index) * (_inputFunction(index) - prevOutputToMap));
+	}
 }

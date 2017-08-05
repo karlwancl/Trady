@@ -6,35 +6,43 @@ using Trady.Core;
 
 namespace Trady.Analysis.Indicator
 {
-    public partial class AverageTrueRange : AnalyzableBase<(decimal High, decimal Low, decimal Close), decimal?>
+    public class AverageTrueRange<TInput, TOutput> : AnalyzableBase<TInput, (decimal High, decimal Low, decimal Close), decimal?, TOutput>
     {
-        private GenericExponentialMovingAverage<(decimal High, decimal Low, decimal Close)> _trEma;
+        readonly TrueRangeByTuple _tr;
+        readonly GenericExponentialMovingAverage _trEma;
 
-        public AverageTrueRange(IList<Candle> candles, int periodCount) :
-            this(candles.Select(c => (c.High, c.Low, c.Close)).ToList(), periodCount)
+        public AverageTrueRange(IEnumerable<TInput> inputs, Func<TInput, (decimal High, decimal Low, decimal Close)> inputMapper, Func<TInput, decimal?, TOutput> outputMapper, int periodCount) : base(inputs, inputMapper, outputMapper)
         {
-        }
+            _tr = new TrueRangeByTuple(inputs.Select(inputMapper));
 
-        public AverageTrueRange(IList<(decimal High, decimal Low, decimal Close)> inputs, int periodCount) : base(inputs)
-        {
-            Func<int, decimal?> tr = i => i > 0 ? new List<decimal?> {
-                Inputs[i].High - Inputs[i].Low,
-                Math.Abs(Inputs[i].High - Inputs[i - 1].Close),
-                Math.Abs(Inputs[i].Low - Inputs[i - 1].Close) }.Max() :
-                null;
-
-            _trEma = new GenericExponentialMovingAverage<(decimal High, decimal Low, decimal Close)>(
-                inputs,
+            _trEma = new GenericExponentialMovingAverage(
                 periodCount - 1,
-                i => Enumerable.Range(i - periodCount + 1, periodCount).Average(j => tr(j)),
-                i => tr(i),
-                i => 1.0m / periodCount);
+                i => Enumerable.Range(i - periodCount + 1, periodCount).Average(j => _tr[j]),
+                i => _tr[i],
+                i => 1.0m / periodCount,
+                inputs.Count());
 
-            PeriodCount = periodCount;
+			PeriodCount = periodCount;
         }
 
-        public int PeriodCount { get; private set; }
+        public int PeriodCount { get; }
 
-        protected override decimal? ComputeByIndexImpl(int index) => _trEma[index];
+        protected override decimal? ComputeByIndexImpl(IEnumerable<(decimal High, decimal Low, decimal Close)> mappedInputs, int index) => _trEma[index];
+    }
+
+    public class AverageTrueRangeByTuple : AverageTrueRange<(decimal High, decimal Low, decimal Close), decimal?>
+    {
+        public AverageTrueRangeByTuple(IEnumerable<(decimal High, decimal Low, decimal Close)> inputs, int periodCount) 
+            : base(inputs, i => i, (i, otm) => otm, periodCount)
+        {
+        }
+    }
+
+    public class AverageTrueRange : AverageTrueRange<Candle, AnalyzableTick<decimal?>>
+    {
+        public AverageTrueRange(IEnumerable<Candle> inputs, int periodCount) 
+            : base(inputs, i => (i.High, i.Low, i.Close), (i, otm) => new AnalyzableTick<decimal?>(i.DateTime, otm), periodCount)
+        {
+        }
     }
 }

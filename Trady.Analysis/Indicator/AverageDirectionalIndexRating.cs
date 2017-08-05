@@ -1,32 +1,44 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Trady.Analysis.Infrastructure;
 using Trady.Core;
 
 namespace Trady.Analysis.Indicator
 {
-    public partial class AverageDirectionalIndexRating : AnalyzableBase<(decimal High, decimal Low, decimal Close), decimal?>
+    public class AverageDirectionalIndexRating<TInput, TOutput> : AnalyzableBase<TInput, (decimal High, decimal Low, decimal Close), decimal?, TOutput>
     {
-        private AverageDirectionalIndex _adx;
+        readonly AverageDirectionalIndexByTuple _adx;
 
-        public AverageDirectionalIndexRating(IList<Candle> candles, int periodCount, int adxrPeriodCount) :
-            this(candles.Select(c => (c.High, c.Low, c.Close)).ToList(), periodCount, adxrPeriodCount)
+        public AverageDirectionalIndexRating(IEnumerable<TInput> inputs, Func<TInput, (decimal High, decimal Low, decimal Close)> inputMapper, Func<TInput, decimal?, TOutput> outputMapper, int periodCount, int adxrPeriodCount) : base(inputs, inputMapper, outputMapper)
         {
-        }
+			_adx = new AverageDirectionalIndexByTuple(inputs.Select(inputMapper), periodCount);
 
-        public AverageDirectionalIndexRating(IList<(decimal High, decimal Low, decimal Close)> inputs, int periodCount, int adxrPeriodCount) : base(inputs)
-        {
-            _adx = new AverageDirectionalIndex(inputs, periodCount);
-
-            PeriodCount = periodCount;
-            AdxrPeriodCount = adxrPeriodCount;
+			PeriodCount = periodCount;
+			AdxrPeriodCount = adxrPeriodCount;
         }
 
         public int PeriodCount { get; private set; }
 
         public int AdxrPeriodCount { get; private set; }
 
-        protected override decimal? ComputeByIndexImpl(int index)
-            => index >= AdxrPeriodCount ? (_adx[index] + _adx[index - AdxrPeriodCount]) / 2 : null;
+        protected override decimal? ComputeByIndexImpl(IEnumerable<(decimal High, decimal Low, decimal Close)> mappedInputs, int index)
+			=> index >= AdxrPeriodCount ? (_adx[index] + _adx[index - AdxrPeriodCount]) / 2 : null;
+	}
+
+    public class AverageDirectionalIndexRatingByTuple : AverageDirectionalIndexRating<(decimal High, decimal Low, decimal Close), decimal?>
+    {
+        public AverageDirectionalIndexRatingByTuple(IEnumerable<(decimal High, decimal Low, decimal Close)> inputs, int periodCount, int adxrPeriodCount)
+            : base(inputs, i => i, (i, otm) => otm, periodCount, adxrPeriodCount)
+        {
+        }
+    }
+
+    public class AverageDirectionalIndexRating : AverageDirectionalIndexRating<Candle, AnalyzableTick<decimal?>>
+    {
+        public AverageDirectionalIndexRating(IEnumerable<Candle> inputs, int periodCount, int adxrPeriodCount)
+            : base(inputs, i => (i.High, i.Low, i.Close), (i, otm) => new AnalyzableTick<decimal?>(i.DateTime, otm), periodCount, adxrPeriodCount)
+        {
+        }
     }
 }

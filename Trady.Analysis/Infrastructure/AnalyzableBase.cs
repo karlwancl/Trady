@@ -1,26 +1,37 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Trady.Analysis.Helper;
+using Trady.Core;
 using Trady.Core.Infrastructure;
 
 namespace Trady.Analysis.Infrastructure
 {
-    public abstract class AnalyzableBase<TInput, TOutput> : IAnalyzable<TInput, TOutput>
+    /// <summary>
+    /// Generic base class for indicators & pattern matchers with in/out map
+    /// <typeparam name="TInput">Source input type</typeparam>
+    /// <typeparam name="TMappedInput">Mapped input type</typeparam>
+    /// <typeparam name="TOutputToMap">Output type computed by mapped input type</typeparam>
+    /// <typeparam name="TOutput">Target (Mapped) output type</typeparam>
+    /// </summary>
+    public abstract class AnalyzableBase<TInput, TMappedInput, TOutputToMap, TOutput> : IAnalyzable<TInput, TOutput>
     {
-        protected IDictionary<int, TOutput> _cache;
+		readonly IEnumerable<TInput> _inputs;
+		readonly Func<TInput, TMappedInput> _inputMapper;
+        readonly Func<TInput, TOutputToMap, TOutput> _outputMapper;
 
-        protected AnalyzableBase(IList<TInput> inputs)
+        protected AnalyzableBase(IEnumerable<TInput> inputs, Func<TInput, TMappedInput> inputMapper, Func<TInput, TOutputToMap, TOutput> outputMapper)
         {
-            _cache = new Dictionary<int, TOutput>();
-            Inputs = inputs;
+			_inputs = inputs;
+			_inputMapper = inputMapper;
+			_outputMapper = outputMapper;
+			Cache = new Dictionary<int, TOutputToMap>();
         }
 
-        public IList<TInput> Inputs { get; }
+        public IEnumerable<TInput> Inputs => _inputs;
 
-        IList<object> IAnalyzable.Inputs => Inputs.Select(i => (object)i).ToList();
-
-        public TOutput this[int index] => ComputeByIndex(index);
+        Lazy<IEnumerable<TMappedInput>> MappedInputs => new Lazy<IEnumerable<TMappedInput>>(() => _inputs.Select(_inputMapper));
 
         public IList<TOutput> Compute(int? startIndex = null, int? endIndex = null)
         {
@@ -30,29 +41,43 @@ namespace Trady.Analysis.Infrastructure
             int computedEndIndex = GetComputeEndIndex(endIndex);
 
             for (int i = computedStartIndex; i <= computedEndIndex; i++)
-                ticks.Add(ComputeByIndex(i));
+                ticks.Add(this[i]);
 
             return ticks;
         }
 
+        // TODO: using static to provide functional style for calculation
+        public TOutput this[int index]
+        {
+            get
+            {
+                var outputToMap = ComputeByIndex(MappedInputs.Value, index);
+                var input = index >= 0 && index < _inputs.Count() ? _inputs.ElementAt(index) : default(TInput); // Special case for inputs count < outputs count (e.g. Ichimoku Cloud)
+                return _outputMapper(input, outputToMap);
+            }
+        }
+
         protected virtual int GetComputeStartIndex(int? startIndex) => startIndex ?? 0;
 
-        protected virtual int GetComputeEndIndex(int? endIndex) => endIndex ?? Inputs.Count - 1;
+        protected virtual int GetComputeEndIndex(int? endIndex) => endIndex ?? _inputs.Count() - 1;
 
-        public TOutput ComputeByIndex(int index)
+        protected TOutputToMap ComputeByIndex(IEnumerable<TMappedInput> mappedInputs, int index)
         {
-            if (_cache.TryGetValue(index, out TOutput value))
+            if (Cache.TryGetValue(index, out TOutputToMap value))
                 return value;
 
-            value = ComputeByIndexImpl(index);
-            _cache.AddOrUpdate(index, value);
+            value = ComputeByIndexImpl(mappedInputs, index);
+            Cache.AddOrUpdate(index, value);
             return value;
         }
 
-        protected abstract TOutput ComputeByIndexImpl(int index);
+        protected abstract TOutputToMap ComputeByIndexImpl(IEnumerable<TMappedInput> mappedInputs, int index);
 
-        object IAnalyzable.ComputeByIndex(int index) => ComputeByIndex(index);
+        protected IDictionary<int, TOutputToMap> Cache { get; }
+    }
 
-        public IList<TOutput> Compute() => Compute(null, null);
+    public abstract class AnalyzableBase<TInput, TOutput> : AnalyzableBase<TInput, TInput, TOutput, TOutput>
+    {
+        protected AnalyzableBase(IEnumerable<TInput> inputs) : base(inputs, c => c, (c, otm) => otm) { }
     }
 }

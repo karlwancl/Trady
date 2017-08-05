@@ -1,41 +1,51 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Trady.Analysis.Helper;
 
 namespace Trady.Analysis.Infrastructure
 {
-    public abstract class CumulativeAnalyzableBase<TInput, TOutput> : AnalyzableBase<TInput, TOutput>
+    public abstract class CumulativeAnalyzableBase<TInput, TMappedInput, TOutputToMap, TOutput> : AnalyzableBase<TInput, TMappedInput, TOutputToMap, TOutput>
     {
-        public CumulativeAnalyzableBase(IList<TInput> equity) : base(equity)
+        protected CumulativeAnalyzableBase(IEnumerable<TInput> inputs, Func<TInput, TMappedInput> inputMapper, Func<TInput, TOutputToMap, TOutput> outputMapper)
+            : base(inputs, inputMapper, outputMapper)
         {
         }
 
-        protected sealed override TOutput ComputeByIndexImpl(int index)
+        protected sealed override TOutputToMap ComputeByIndexImpl(IEnumerable<TMappedInput> mappedInputs, int index)
         {
-            TOutput tick = default(TOutput);
+            var tick = default(TOutputToMap);
             if (index < InitialValueIndex)
-                tick = ComputeNullValue(index);
+                tick = ComputeNullValue(mappedInputs, index);
             else if (index == InitialValueIndex)
-                tick = ComputeInitialValue(index);
+                tick = ComputeInitialValue(mappedInputs, index);
             else
             {
-                int idx = _cache.Select(kvp => kvp.Key).Where(k => k >= InitialValueIndex).DefaultIfEmpty(InitialValueIndex).Max();
+                int idx = Cache.Select(kvp => kvp.Key).Where(k => k >= InitialValueIndex).DefaultIfEmpty(InitialValueIndex).Max();
                 for (int i = idx; i < index; i++)
                 {
-                    var prevTick = ComputeByIndex(i);
-                    tick = ComputeCumulativeValue(i + 1, prevTick);
-                    _cache.AddOrUpdate(i + 1, tick);
+                    var prevTick = ComputeByIndex(mappedInputs, i);
+                    tick = ComputeCumulativeValue(mappedInputs, i + 1, prevTick);
+                    Cache.AddOrUpdate(i + 1, tick);
                 }
             }
             return tick;
         }
 
-        protected abstract int InitialValueIndex { get; }
+        protected virtual int InitialValueIndex { get; } = 0;
 
-        protected abstract TOutput ComputeNullValue(int index);
+        protected virtual TOutputToMap ComputeNullValue(IEnumerable<TMappedInput> mappedInputs, int index) => default(TOutputToMap);
 
-        protected abstract TOutput ComputeInitialValue(int index);
+        protected abstract TOutputToMap ComputeInitialValue(IEnumerable<TMappedInput> mappedInputs, int index);
 
-        protected abstract TOutput ComputeCumulativeValue(int index, TOutput prevOutput);
+        protected abstract TOutputToMap ComputeCumulativeValue(IEnumerable<TMappedInput> mappedInputs, int index, TOutputToMap prevOutputToMap);
+    }
+
+    public abstract class CumulativeAnalyzableBase<TInput, TOutput> : CumulativeAnalyzableBase<TInput, TInput, TOutput, TOutput>
+    {
+        protected CumulativeAnalyzableBase(IEnumerable<TInput> inputs) 
+            : base(inputs, i => i, (i, otm) => otm)
+        {
+        }
     }
 }

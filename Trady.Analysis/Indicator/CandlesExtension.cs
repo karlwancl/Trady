@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Trady.Analysis.Infrastructure;
 using Trady.Core;
 using Trady.Core.Period;
 
@@ -99,8 +100,11 @@ namespace Trady.Analysis.Indicator
         public static IList<decimal?> Rsi(this IList<Candle> candles, int periodCount, int? startIndex = null, int? endIndex = null)
             => new RelativeStrengthIndex(candles, periodCount).Compute(startIndex, endIndex);
 
-        public static IList<decimal?> Sma(this IList<Candle> candles, int periodCount, int? startIndex = null, int? endIndex = null)
-            => new SimpleMovingAverage(candles, periodCount).Compute(startIndex, endIndex);
+		public static SimpleMovingAverage<Candle, AnalyzableTick<decimal?>> Sma(this IEnumerable<Candle> candles, int periodCount)
+			=> new SimpleMovingAverage(candles, periodCount);
+
+		public static SimpleMovingAverage<decimal, decimal?> Sma(this IEnumerable<decimal> values, int periodCount)
+			=> new SimpleMovingAverageByTuple(values, periodCount);
 
         public static IList<decimal?> SmaOsc(this IList<Candle> candles, int periodCount1, int periodCount2, int? startIndex = null, int? endIndex = null)
             => new SimpleMovingAverageOscillator(candles, periodCount1, periodCount2).Compute(startIndex, endIndex);

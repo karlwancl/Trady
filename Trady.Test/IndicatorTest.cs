@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Trady.Analysis.Indicator;
 using Trady.Core;
+using System;
 
 namespace Trady.Test
 {
@@ -339,6 +340,12 @@ namespace Trady.Test
             Assert.IsTrue(92.31m.IsApproximatelyEquals(result.K.Value));
             Assert.IsTrue(93.25m.IsApproximatelyEquals(result.D.Value));
             Assert.IsTrue(90.43m.IsApproximatelyEquals(result.J.Value));
+        }
+
+        [TestMethod]
+        public async Task TestTrueRangeAsync()
+        {
+            throw new NotImplementedException();
         }
     }
 }

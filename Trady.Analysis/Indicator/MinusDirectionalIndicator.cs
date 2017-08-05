@@ -6,40 +6,51 @@ using Trady.Core;
 
 namespace Trady.Analysis.Indicator
 {
-    public class MinusDirectionalIndicator : AnalyzableBase<(decimal High, decimal Low, decimal Close), decimal?>
+    public class MinusDirectionalIndicator<TInput, TOutput> : AnalyzableBase<TInput, (decimal High, decimal Low, decimal Close), decimal?, TOutput>
     {
-        private PlusDirectionalMovement _pdm;
-        private MinusDirectionalMovement _mdm;
-        private GenericExponentialMovingAverage<(decimal High, decimal Low, decimal Close)> _tmdmEma;
-        private AverageTrueRange _atr;
+        PlusDirectionalMovementByTuple _pdm;
+        MinusDirectionalMovementByTuple _mdm;
+        readonly GenericExponentialMovingAverage _tmdmEma;
+        readonly AverageTrueRangeByTuple _atr;
 
-        public MinusDirectionalIndicator(IList<Candle> candles, int periodCount)
-            : this(candles.Select(c => (c.High, c.Low, c.Close)).ToList(), periodCount)
+        public MinusDirectionalIndicator(IEnumerable<TInput> inputs, Func<TInput, (decimal High, decimal Low, decimal Close)> inputMapper, Func<TInput, decimal?, TOutput> outputMapper, int periodCount) : base(inputs, inputMapper, outputMapper)
         {
-        }
+			_pdm = new PlusDirectionalMovementByTuple(inputs.Select(i => inputMapper(i).High));
+			_mdm = new MinusDirectionalMovementByTuple(inputs.Select(i => inputMapper(i).Low));
 
-        public MinusDirectionalIndicator(IList<(decimal High, decimal Low, decimal Close)> inputs, int periodCount) : base(inputs)
-        {
-            _pdm = new PlusDirectionalMovement(inputs.Select(i => i.High).ToList());
-            _mdm = new MinusDirectionalMovement(inputs.Select(i => i.Low).ToList());
+			Func<int, decimal?> tmdm = i => _mdm[i] > 0 && _pdm[i] < _mdm[i] ? _mdm[i] : 0;
 
-            Func<int, decimal?> tmdm = i => _mdm[i] > 0 && _pdm[i] < _mdm[i] ? _mdm[i] : 0;
+			_tmdmEma = new GenericExponentialMovingAverage(
+				periodCount,
+				i => Enumerable.Range(i - periodCount + 1, periodCount).Select(j => tmdm(j)).Average(),
+				i => tmdm(i),
+				i => 1.0m / periodCount,
+				inputs.Count());
 
-            _tmdmEma = new GenericExponentialMovingAverage<(decimal High, decimal Low, decimal Close)>(
-                inputs,
-                periodCount,
-                i => Enumerable.Range(i - periodCount + 1, periodCount).Select(j => tmdm(j)).Average(),
-                i => tmdm(i),
-                i => 1.0m / periodCount);
+			_atr = new AverageTrueRangeByTuple(inputs.Select(inputMapper), periodCount);
 
-            _atr = new AverageTrueRange(inputs, periodCount);
-
-            PeriodCount = periodCount;
+			PeriodCount = periodCount;
         }
 
         public int PeriodCount { get; private set; }
 
-        protected override decimal? ComputeByIndexImpl(int index)
-            => _tmdmEma[index] / _atr[index] * 100;
+        protected override decimal? ComputeByIndexImpl(IEnumerable<(decimal High, decimal Low, decimal Close)> mappedInputs, int index)
+			=> _tmdmEma[index] / _atr[index] * 100;
+	}
+
+    public class MinusDirectionalIndicatorByTuple : MinusDirectionalIndicator<(decimal High, decimal Low, decimal Close), decimal?>
+    {
+        public MinusDirectionalIndicatorByTuple(IEnumerable<(decimal High, decimal Low, decimal Close)> inputs, int periodCount) 
+            : base(inputs, i => i, (i, otm) => otm, periodCount)
+        {
+        }
+    }
+
+    public class MinusDirectionalIndicator : MinusDirectionalIndicator<Candle, AnalyzableTick<decimal?>>
+    {
+        public MinusDirectionalIndicator(IEnumerable<Candle> inputs, int periodCount) 
+            : base(inputs, i => (i.High, i.Low, i.Close), (i, otm) => new AnalyzableTick<decimal?>(i.DateTime, otm), periodCount)
+        {
+        }
     }
 }
