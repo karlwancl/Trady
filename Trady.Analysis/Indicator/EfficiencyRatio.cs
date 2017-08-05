@@ -6,28 +6,39 @@ using Trady.Core;
 
 namespace Trady.Analysis.Indicator
 {
-    public partial class EfficiencyRatio : AnalyzableBase<decimal, decimal?>
+    public class EfficiencyRatio<TInput, TOutput> : AnalyzableBase<TInput, decimal, decimal?, TOutput>
     {
-        public EfficiencyRatio(IList<Candle> candles, int periodCount) :
-            this(candles.Select(c => c.Close).ToList(), periodCount)
-        {
-        }
-
-        public EfficiencyRatio(IList<decimal> closes, int periodCount) : base(closes)
+        public EfficiencyRatio(IEnumerable<TInput> inputs, Func<TInput, decimal> inputMapper, Func<TInput, decimal?, TOutput> outputMapper, int periodCount) : base(inputs, inputMapper, outputMapper)
         {
             PeriodCount = periodCount;
         }
 
         public int PeriodCount { get; private set; }
 
-        protected override decimal? ComputeByIndexImpl(int index)
+        protected override decimal? ComputeByIndexImpl(IEnumerable<decimal> mappedInputs, int index)
         {
-            if (index <= 0 || index < PeriodCount)
-                return null;
+			if (index <= 0 || index < PeriodCount)
+				return null;
 
-            decimal? change = Math.Abs(Inputs[index] - Inputs[index - PeriodCount]);
-            decimal? volatility = Enumerable.Range(index - PeriodCount + 1, PeriodCount).Select(i => Math.Abs(Inputs[i] - Inputs[i - 1])).Sum();
-            return change / volatility;
+            decimal? change = Math.Abs(mappedInputs.ElementAt(index) - mappedInputs.ElementAt(index - PeriodCount));
+            decimal? volatility = Enumerable.Range(index - PeriodCount + 1, PeriodCount).Select(i => Math.Abs(mappedInputs.ElementAt(i) - mappedInputs.ElementAt(i - 1))).Sum();
+			return change / volatility;
+        }
+    }
+
+    public class EfficiencyRatioByTuple : EfficiencyRatio<decimal, decimal?>
+    {
+        public EfficiencyRatioByTuple(IEnumerable<decimal> inputs, int periodCount) 
+            : base(inputs, i => i, (i, otm) => otm, periodCount)
+        {
+        }
+    }
+
+    public class EfficiencyRatio : EfficiencyRatio<Candle, AnalyzableTick<decimal?>>
+    {
+        public EfficiencyRatio(IEnumerable<Candle> inputs, int periodCount) 
+            : base(inputs, i => i.Close, (i, otm) => new AnalyzableTick<decimal?>(i.DateTime, otm), periodCount)
+        {
         }
     }
 }

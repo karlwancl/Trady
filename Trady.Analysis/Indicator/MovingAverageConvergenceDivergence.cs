@@ -6,34 +6,28 @@ using Trady.Core;
 
 namespace Trady.Analysis.Indicator
 {
-    public partial class MovingAverageConvergenceDivergence : AnalyzableBase<decimal, (decimal? MacdLine, decimal? SignalLine, decimal? MacdHistogram)>
+    public class MovingAverageConvergenceDivergence<TInput, TOutput> : AnalyzableBase<TInput, decimal, (decimal? MacdLine, decimal? SignalLine, decimal? MacdHistogram), TOutput>
     {
-        private ExponentialMovingAverage _ema1, _ema2;
-        private GenericExponentialMovingAverage<decimal> _signal;
-        private Func<int, decimal?> _macd;
+        ExponentialMovingAverageByTuple _ema1, _ema2;
+        readonly GenericExponentialMovingAverage _signal;
+        readonly Func<int, decimal?> _macd;
 
-        public MovingAverageConvergenceDivergence(IList<Candle> candles, int emaPeriodCount1, int emaPeriodCount2, int demPeriodCount)
-            : this(candles.Select(c => c.Close).ToList(), emaPeriodCount1, emaPeriodCount2, demPeriodCount)
+        public MovingAverageConvergenceDivergence(IEnumerable<TInput> inputs, Func<TInput, decimal> inputMapper, Func<TInput, (decimal? MacdLine, decimal? SignalLine, decimal? MacdHistogram), TOutput> outputMapper, int emaPeriodCount1, int emaPeriodCount2, int demPeriodCount) : base(inputs, inputMapper, outputMapper)
         {
-        }
+			_ema1 = new ExponentialMovingAverageByTuple(inputs.Select(inputMapper), emaPeriodCount1);
+			_ema2 = new ExponentialMovingAverageByTuple(inputs.Select(inputMapper), emaPeriodCount2);
+			_macd = i => _ema1[i] - _ema2[i];
 
-        public MovingAverageConvergenceDivergence(IList<decimal> closes, int emaPeriodCount1, int emaPeriodCount2, int demPeriodCount)
-            : base(closes)
-        {
-            _ema1 = new ExponentialMovingAverage(closes, emaPeriodCount1);
-            _ema2 = new ExponentialMovingAverage(closes, emaPeriodCount2);
-            _macd = i => _ema1[i] - _ema2[i];
+			_signal = new GenericExponentialMovingAverage(
+				0,
+				i => _macd(i),
+				i => _macd(i),
+				i => 2.0m / (demPeriodCount + 1),
+                inputs.Count());
 
-            _signal = new GenericExponentialMovingAverage<decimal>(
-                closes,
-                0,
-                i => _macd(i),
-                i => _macd(i),
-                i => 2.0m / (demPeriodCount + 1));
-
-            EmaPeriodCount1 = emaPeriodCount1;
-            EmaPeriodCount2 = emaPeriodCount2;
-            DemPeriodCount = demPeriodCount;
+			EmaPeriodCount1 = emaPeriodCount1;
+			EmaPeriodCount2 = emaPeriodCount2;
+			DemPeriodCount = demPeriodCount;
         }
 
         public int EmaPeriodCount1 { get; private set; }
@@ -42,11 +36,27 @@ namespace Trady.Analysis.Indicator
 
         public int DemPeriodCount { get; private set; }
 
-        protected override (decimal? MacdLine, decimal? SignalLine, decimal? MacdHistogram) ComputeByIndexImpl(int index)
+        protected override (decimal? MacdLine, decimal? SignalLine, decimal? MacdHistogram) ComputeByIndexImpl(IEnumerable<decimal> mappedInputs, int index)
         {
-            decimal? macd = _macd(index);
-            decimal? signal = _signal[index];
-            return (macd, signal, macd - signal);
+			decimal? macd = _macd(index);
+			decimal? signal = _signal[index];
+			return (macd, signal, macd - signal);
+        }
+    }
+
+    public class MovingAverageConvergenceDivergenceByTuple : MovingAverageConvergenceDivergence<decimal, (decimal? MacdLine, decimal? SignalLine, decimal? MacdHistogram)>
+    {
+        public MovingAverageConvergenceDivergenceByTuple(IEnumerable<decimal> inputs, int emaPeriodCount1, int emaPeriodCount2, int demPeriodCount) 
+            : base(inputs, i => i, (i, otm) => otm, emaPeriodCount1, emaPeriodCount2, demPeriodCount)
+        {
+        }
+    }
+
+    public class MovingAverageConvergenceDivergence : MovingAverageConvergenceDivergence<Candle, AnalyzableTick<(decimal? MacdLine, decimal? SignalLine, decimal? MacdHistogram)>>
+    {
+        public MovingAverageConvergenceDivergence(IEnumerable<Candle> inputs, int emaPeriodCount1, int emaPeriodCount2, int demPeriodCount) 
+            : base(inputs, i => i.Close, (i, otm) => new AnalyzableTick<(decimal? MacdLine, decimal? SignalLine, decimal? MacdHistogram)>(i.DateTime, otm), emaPeriodCount1, emaPeriodCount2, demPeriodCount)
+        {
         }
     }
 }

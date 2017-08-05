@@ -6,37 +6,31 @@ using Trady.Core;
 
 namespace Trady.Analysis.Indicator
 {
-    public partial class KaufmanAdaptiveMovingAverage : AnalyzableBase<decimal, decimal?>
+    public class KaufmanAdaptiveMovingAverage<TInput, TOutput> : AnalyzableBase<TInput, decimal, decimal?, TOutput>
     {
-        private EfficiencyRatio _er;
-        private GenericExponentialMovingAverage<decimal> _gema;
+        EfficiencyRatioByTuple _er;
+        GenericExponentialMovingAverage _gema;
 
-        public KaufmanAdaptiveMovingAverage(IList<Candle> candles, int periodCount, int emaFastPeriodCount, int emaSlowPeriodCount) :
-            this(candles.Select(c => c.Close).ToList(), periodCount, emaFastPeriodCount, emaSlowPeriodCount)
+        public KaufmanAdaptiveMovingAverage(IEnumerable<TInput> inputs, Func<TInput, decimal> inputMapper, Func<TInput, decimal?, TOutput> outputMapper, int periodCount, int emaFastPeriodCount, int emaSlowPeriodCount) : base(inputs, inputMapper, outputMapper)
         {
-        }
+			_er = new EfficiencyRatioByTuple(inputs.Select(inputMapper), periodCount);
 
-        public KaufmanAdaptiveMovingAverage(IList<decimal> closes, int periodCount, int emaFastPeriodCount, int emaSlowPeriodCount)
-            : base(closes)
-        {
-            _er = new EfficiencyRatio(closes, periodCount);
+			Func<int, decimal> sc = i =>
+			{
+				double erValue = Convert.ToDouble(_er[i]);
+				return Convert.ToDecimal(Math.Pow(erValue * (2.0 / (emaFastPeriodCount + 1) - 2.0 / (emaSlowPeriodCount + 1)) + 2.0 / (emaSlowPeriodCount + 1), 2));
+			};
 
-            Func<int, decimal> sc = i =>
-            {
-                double erValue = Convert.ToDouble(_er[i]);
-                return Convert.ToDecimal(Math.Pow(erValue * (2.0 / (emaFastPeriodCount + 1) - 2.0 / (emaSlowPeriodCount + 1)) + 2.0 / (emaSlowPeriodCount + 1), 2));
-            };
-
-            _gema = new GenericExponentialMovingAverage<decimal>(
-                closes,
+            _gema = new GenericExponentialMovingAverage(
                 periodCount - 1,
-                i => Inputs[i],
-                i => Inputs[i],
-                i => sc(i));
+                i => inputs.Select(inputMapper).ElementAt(i),
+                i => inputs.Select(inputMapper).ElementAt(i),
+                i => sc(i),
+                inputs.Count());
 
-            PeriodCount = periodCount;
-            EmaFastPeriodCount = emaFastPeriodCount;
-            EmaSlowPeriodCount = emaSlowPeriodCount;
+			PeriodCount = periodCount;
+			EmaFastPeriodCount = emaFastPeriodCount;
+			EmaSlowPeriodCount = emaSlowPeriodCount;
         }
 
         public int PeriodCount { get; private set; }
@@ -45,6 +39,22 @@ namespace Trady.Analysis.Indicator
 
         public int EmaSlowPeriodCount { get; private set; }
 
-        protected override decimal? ComputeByIndexImpl(int index) => _gema[index];
+        protected override decimal? ComputeByIndexImpl(IEnumerable<decimal> mappedInputs, int index) => _gema[index];
+    }
+
+    public class KaufmanAdaptiveMovingAverageByTuple : KaufmanAdaptiveMovingAverage<decimal, decimal?>
+    {
+        public KaufmanAdaptiveMovingAverageByTuple(IEnumerable<decimal> inputs, int periodCount, int emaFastPeriodCount, int emaSlowPeriodCount) 
+            : base(inputs, i => i, (i, otm) => otm, periodCount, emaFastPeriodCount, emaSlowPeriodCount)
+        {
+        }
+    }
+
+    public class KaufmanAdaptiveMovingAverage : KaufmanAdaptiveMovingAverage<Candle, AnalyzableTick<decimal?>>
+    {
+        public KaufmanAdaptiveMovingAverage(IEnumerable<Candle> inputs, int periodCount, int emaFastPeriodCount, int emaSlowPeriodCount)
+            : base(inputs, i => i.Close, (i, otm) => new AnalyzableTick<decimal?>(i.DateTime, otm), periodCount, emaFastPeriodCount, emaSlowPeriodCount)
+        {
+        }
     }
 }

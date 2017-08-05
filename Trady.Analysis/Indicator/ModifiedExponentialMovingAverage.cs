@@ -1,33 +1,45 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Trady.Analysis.Infrastructure;
 using Trady.Core;
 
 namespace Trady.Analysis.Indicator
 {
-    public partial class ModifiedExponentialMovingAverage : AnalyzableBase<decimal, decimal?>
+    public class ModifiedExponentialMovingAverage<TInput, TOutput> : AnalyzableBase<TInput, decimal, decimal?, TOutput>
     {
-        private GenericExponentialMovingAverage<decimal> _gema;
+        readonly GenericExponentialMovingAverage _gema;
 
-        public ModifiedExponentialMovingAverage(IList<Candle> candles, int periodCount)
-            : this(candles.Select(c => c.Close).ToList(), periodCount)
+        public ModifiedExponentialMovingAverage(IEnumerable<TInput> inputs, Func<TInput, decimal> inputMapper, Func<TInput, decimal?, TOutput> outputMapper, int periodCount) : base(inputs, inputMapper, outputMapper)
         {
-        }
+            _gema = new GenericExponentialMovingAverage(
+			    0,
+			    i => inputs.Select(inputMapper).ElementAt(i),
+			    i => inputs.Select(inputMapper).ElementAt(i),
+			    i => 1.0m / periodCount,
+                inputs.Count());
 
-        public ModifiedExponentialMovingAverage(IList<decimal> closes, int periodCount) : base(closes)
-        {
-            _gema = new GenericExponentialMovingAverage<decimal>(
-                closes,
-                0,
-                i => Inputs[i],
-                i => Inputs[i],
-                i => 1.0m / periodCount);
-
-            PeriodCount = periodCount;
+			PeriodCount = periodCount;
         }
 
         public int PeriodCount { get; private set; }
 
-        protected override decimal? ComputeByIndexImpl(int index) => _gema[index];
+        protected override decimal? ComputeByIndexImpl(IEnumerable<decimal> mappedInputs, int index) => _gema[index];
+    }
+
+    public class ModifiedExponentialMovingAverageByTuple : ModifiedExponentialMovingAverage<decimal, decimal?>
+    {
+        public ModifiedExponentialMovingAverageByTuple(IEnumerable<decimal> inputs, int periodCount) 
+            : base(inputs, i => i, (i, otm) => otm, periodCount)
+        {
+        }
+    }
+
+    public class ModifiedExponentialMovingAverage : ModifiedExponentialMovingAverage<Candle, AnalyzableTick<decimal?>>
+    {
+        public ModifiedExponentialMovingAverage(IEnumerable<Candle> inputs, int periodCount) 
+            : base(inputs, i => i.Close, (i, otm) => new AnalyzableTick<decimal?>(i.DateTime, otm), periodCount)
+        {
+        }
     }
 }
