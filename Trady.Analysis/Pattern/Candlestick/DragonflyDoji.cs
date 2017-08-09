@@ -9,32 +9,43 @@ namespace Trady.Analysis.Pattern.Candlestick
     /// <summary>
     /// Reference: http://www.investopedia.com/terms/d/dragonfly-doji.asp
     /// </summary>
-    public class DragonflyDoji : AnalyzableBase<(decimal Open, decimal High, decimal Low, decimal Close), bool>
+    public class DragonflyDoji<TInput, TOutput> : AnalyzableBase<TInput, (decimal Open, decimal High, decimal Low, decimal Close), bool, TOutput>
     {
-        private Doji _doji;
+        DojiByTuple _doji;
 
-        public DragonflyDoji(IList<Candle> candles, decimal dojiThreshold = 0.1m, decimal shadowThreshold = 0.1m)
-            : this(candles.Select(c => (c.Open, c.High, c.Low, c.Close)).ToList(), dojiThreshold, shadowThreshold)
+        public DragonflyDoji(IEnumerable<TInput> inputs, Func<TInput, (decimal Open, decimal High, decimal Low, decimal Close)> inputMapper, Func<TInput, bool, TOutput> outputMapper, decimal dojiThreshold = 0.1m, decimal shadowThreshold = 0.1m) : base(inputs, inputMapper, outputMapper)
         {
-        }
-
-        public DragonflyDoji(IList<(decimal Open, decimal High, decimal Low, decimal Close)> inputs, decimal dojiThreshold = 0.1m, decimal shadowThreshold = 0.1m) : base(inputs)
-        {
-            _doji = new Doji(inputs, dojiThreshold);
+            _doji = new DojiByTuple(inputs.Select(inputMapper), dojiThreshold);
 
             DojiThreshold = dojiThreshold;
             ShadowThreshold = shadowThreshold;
         }
 
-        public decimal DojiThreshold { get; private set; }
+        public decimal DojiThreshold { get; }
 
-        public decimal ShadowThreshold { get; private set; }
+        public decimal ShadowThreshold { get; }
 
-        protected override bool ComputeByIndexImpl(int index)
+        protected override bool ComputeByIndexImpl(IEnumerable<(decimal Open, decimal High, decimal Low, decimal Close)> mappedInputs, int index)
         {
-            var mean = (Inputs[index].Open + Inputs[index].Close) / 2;
-            bool isDragonify = (Inputs[index].High - mean) < ShadowThreshold * (Inputs[index].High - Inputs[index].Low);
-            return _doji[index] && isDragonify;
+			var mean = (Inputs[index].Open + Inputs[index].Close) / 2;
+			bool isDragonify = (Inputs[index].High - mean) < ShadowThreshold * (Inputs[index].High - Inputs[index].Low);
+			return _doji[index] && isDragonify;        
+        }
+    }
+
+    public class DragonifyDojiByTuple : DragonflyDoji<(decimal Open, decimal High, decimal Low, decimal Close), bool>
+    {
+        public DragonifyDojiByTuple(IEnumerable<(decimal Open, decimal High, decimal Low, decimal Close)> inputs, decimal dojiThreshold = 0.1M, decimal shadowThreshold = 0.1M) 
+            : base(inputs, i => i, (i, otm) => otm, dojiThreshold, shadowThreshold)
+        {
+        }
+    }
+
+    public class DragonifyDoji : DragonflyDoji<Candle, AnalyzableTick<bool>>
+    {
+        public DragonifyDoji(IEnumerable<Candle> inputs, , decimal dojiThreshold = 0.1M, decimal shadowThreshold = 0.1M) 
+            : base(inputs, i => (i.Open, i.High, i.Low, i.Close), (i, otm) => new AnalyzableTick<bool>(i.DateTime, otm), dojiThreshold, shadowThreshold)
+        {
         }
     }
 }

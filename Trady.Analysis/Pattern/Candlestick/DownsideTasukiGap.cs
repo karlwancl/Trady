@@ -10,42 +10,55 @@ namespace Trady.Analysis.Pattern.Candlestick
     /// <summary>
     /// Reference: http://www.investopedia.com/terms/d/downside-tasuki-gap.asp
     /// </summary>
-    public class DownsideTasukiGap : AnalyzableBase<(decimal Open, decimal High, decimal Low, decimal Close), bool?>
+    public class DownsideTasukiGap<TInput, TOutput> : AnalyzableBase<TInput, (decimal Open, decimal High, decimal Low, decimal Close), bool?, TOutput>
     {
-        private DownTrend _downTrend;
-        private Bearish _bearish;
-        private Bullish _bullish;
+        DownTrendByTuple _downTrend;
+        BearishByTuple _bearish;
+        BullishByTuple _bullish;
 
-        public DownsideTasukiGap(IList<Candle> candles, int downTrendPeriodCount = 3, decimal sizeThreshold = 0.1m)
-            : this(candles.Select(c => (c.Open, c.High, c.Low, c.Close)).ToList(), downTrendPeriodCount, sizeThreshold)
+        public DownsideTasukiGap(IEnumerable<TInput> inputs, Func<TInput, (decimal Open, decimal High, decimal Low, decimal Close)> inputMapper, Func<TInput, bool?, TOutput> outputMapper, int downTrendPeriodCount = 3, decimal sizeThreshold = 0.1m) : base(inputs, inputMapper, outputMapper)
         {
-        }
+            var mappedInputs = inputs.Select(inputMapper);
 
-        public DownsideTasukiGap(IList<(decimal Open, decimal High, decimal Low, decimal Close)> inputs, int downTrendPeriodCount = 3, decimal sizeThreshold = 0.1m) : base(inputs)
-        {
-            var ocs = inputs.Select(i => (i.Open, i.Close)).ToList();
-            _downTrend = new DownTrend(inputs.Select(i => (i.High, i.Low)).ToList(), downTrendPeriodCount);
-            _bearish = new Bearish(ocs);
-            _bullish = new Bullish(ocs);
+            var ocs = mappedInputs.Select(i => (i.Open, i.Close));
+            _downTrend = new DownTrendByTuple(mappedInputs.Select(i => (i.High, i.Low)), downTrendPeriodCount);
+            _bearish = new BearishByTuple(ocs);
+            _bullish = new BullishByTuple(ocs);
 
             DownTrendPeriodCount = downTrendPeriodCount;
             SizeThreshold = sizeThreshold;
         }
 
-        public int DownTrendPeriodCount { get; private set; }
+        public int DownTrendPeriodCount { get; }
 
-        public decimal SizeThreshold { get; private set; }
+        public decimal SizeThreshold { get; }
 
-        protected override bool? ComputeByIndexImpl(int index)
+        protected override bool? ComputeByIndexImpl(IEnumerable<(decimal Open, decimal High, decimal Low, decimal Close)> mappedInputs, int index)
         {
-            if (index < 2) return null;
-            bool isWhiteCandleWithinGap = Inputs[index].Close < Inputs[index - 2].Low && Inputs[index].Close > Inputs[index - 1].High;
-            return (_downTrend[index - 1] ?? false) &&
-                _bearish[index - 2] &&
-                Inputs[index - 2].Low > Inputs[index - 1].High &&
-                _bearish[index - 1] &&
-                _bullish[index] &&
-                isWhiteCandleWithinGap;
+			if (index < 2) return null;
+            bool isWhiteCandleWithinGap = mappedInputs.ElementAt(index).Close < mappedInputs.ElementAt(index - 2).Low && mappedInputs.ElementAt(index).Close > mappedInputs.ElementAt(index - 1).High;
+			return (_downTrend[index - 1] ?? false) &&
+				_bearish[index - 2] &&
+                mappedInputs.ElementAt(index - 2).Low > mappedInputs.ElementAt(index - 1).High &&
+				_bearish[index - 1] &&
+				_bullish[index] &&
+				isWhiteCandleWithinGap;        
+        }
+    }
+
+    public class DownsideTasukiGapByTuple : DownsideTasukiGap<(decimal Open, decimal High, decimal Low, decimal Close), bool?>
+    {
+        public DownsideTasukiGapByTuple(IEnumerable<(decimal Open, decimal High, decimal Low, decimal Close)> inputs, int downTrendPeriodCount = 3, decimal sizeThreshold = 0.1M) 
+            : base(inputs, i => i, (i, otm) => otm, downTrendPeriodCount, sizeThreshold)
+        {
+        }
+    }
+
+    public class DownsideTasukiGap : DownsideTasukiGap<Candle, AnalyzableTick<bool?>>
+    {
+        public DownsideTasukiGap(IEnumerable<Candle> inputs, int downTrendPeriodCount = 3, decimal sizeThreshold = 0.1M) 
+            : base(inputs, i => (i.Open, i.High, i.Low, i.Close), (i, otm) => new AnalyzableTick<bool?>(i.DateTime, otm), downTrendPeriodCount, sizeThreshold)
+        {
         }
     }
 }

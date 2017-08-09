@@ -9,25 +9,22 @@ namespace Trady.Analysis.Pattern.Candlestick
     /// <summary>
     /// Reference: http://www.investopedia.com/terms/m/morningstar.asp
     /// </summary>
-    public class MorningStar : AnalyzableBase<(decimal Open, decimal High, decimal Low, decimal Close), bool?>
+    public class MorningStar<TInput, TOutput> : AnalyzableBase<TInput, (decimal Open, decimal High, decimal Low, decimal Close), bool?, TOutput>
     {
-        private DownTrend _downTrend;
-        private BullishLongDay _bullishLongDay;
-        private ShortDay _shortDay;
-        private BearishLongDay _bearishLongDay;
+        DownTrendByTuple _downTrend;
+        BullishLongDayByTuple _bullishLongDay;
+        ShortDayByTuple _shortDay;
+        BearishLongDayByTuple _bearishLongDay;
 
-        public MorningStar(IList<Candle> inputs, int downTrendPeriodCount = 3, int periodCount = 20, decimal shortThreshold = 0.25m, decimal longThreshold = 0.75m, decimal threshold = 0.1m)
-            : this(inputs.Select(i => (i.Open, i.High, i.Low, i.Close)).ToList(), downTrendPeriodCount, periodCount, shortThreshold, longThreshold, threshold)
+        public MorningStar(IEnumerable<TInput> inputs, Func<TInput, (decimal Open, decimal High, decimal Low, decimal Close)> inputMapper, Func<TInput, bool?, TOutput> outputMapper, int downTrendPeriodCount = 3, int periodCount = 20, decimal shortThreshold = 0.25m, decimal longThreshold = 0.75m, decimal threshold = 0.1m) : base(inputs, inputMapper, outputMapper)
         {
-        }
+            var mappedInputs = inputs.Select(inputMapper);
 
-        public MorningStar(IList<(decimal Open, decimal High, decimal Low, decimal Close)> inputs, int downTrendPeriodCount = 3, int periodCount = 20, decimal shortThreshold = 0.25m, decimal longThreshold = 0.75m, decimal threshold = 0.1m) : base(inputs)
-        {
-            var ocs = inputs.Select(c => (c.Open, c.Close)).ToList();
-            _downTrend = new DownTrend(inputs.Select(c => (c.High, c.Low)).ToList(), downTrendPeriodCount);
-            _bullishLongDay = new BullishLongDay(ocs, periodCount, longThreshold);
-            _shortDay = new ShortDay(ocs, periodCount, shortThreshold);
-            _bearishLongDay = new BearishLongDay(ocs, periodCount, longThreshold);
+            var ocs = mappedInputs.Select(c => (c.Open, c.Close));
+            _downTrend = new DownTrendByTuple(mappedInputs.Select(c => (c.High, c.Low)), downTrendPeriodCount);
+            _bullishLongDay = new BullishLongDayByTuple(ocs, periodCount, longThreshold);
+            _shortDay = new ShortDayByTuple(ocs, periodCount, shortThreshold);
+            _bearishLongDay = new BearishLongDayByTuple(ocs, periodCount, longThreshold);
 
             DownTrendPeriodCount = downTrendPeriodCount;
             PeriodCount = periodCount;
@@ -36,25 +33,41 @@ namespace Trady.Analysis.Pattern.Candlestick
             Threshold = threshold;
         }
 
-        public int DownTrendPeriodCount { get; private set; }
-        public int PeriodCount { get; private set; }
-        public decimal LongThreshold { get; private set; }
-        public decimal ShortThreshold { get; private set; }
-        public decimal Threshold { get; private set; }
+        public int DownTrendPeriodCount { get; }
+        public int PeriodCount { get; }
+        public decimal LongThreshold { get; }
+        public decimal ShortThreshold { get; }
+        public decimal Threshold { get; }
 
-        protected override bool? ComputeByIndexImpl(int index)
+        protected override bool? ComputeByIndexImpl(IEnumerable<(decimal Open, decimal High, decimal Low, decimal Close)> mappedInputs, int index)
         {
             if (index < 2) return null;
 
-            Func<int, decimal> midPoint = i => (Inputs[i].Open + Inputs[i].Close) / 2;
+            Func<int, decimal> midPoint = i => (mappedInputs.ElementAt(i).Open + mappedInputs.ElementAt(i).Close) / 2;
 
             return (_downTrend[index - 1] ?? false) &&
                 _bearishLongDay[index - 2] &&
                 _shortDay[index - 1] &&
-                Inputs[index - 1].Close < Inputs[index - 2].Close &&
+                (mappedInputs.ElementAt(index - 1).Close < mappedInputs.ElementAt(index - 2).Close) &&
                 _bullishLongDay[index] &&
-                Inputs[index].Open > Math.Max(Inputs[index - 1].Open, Inputs[index - 1].Close) &&
-                Math.Abs((Inputs[index].Close - midPoint(index - 2)) / midPoint(index - 2)) < Threshold;
+                (mappedInputs.ElementAt(index).Open > Math.Max(mappedInputs.ElementAt(index - 1).Open, mappedInputs.ElementAt(index - 1).Close)) &&
+                Math.Abs((mappedInputs.ElementAt(index).Close - midPoint(index - 2)) / midPoint(index - 2)) < Threshold;
+        }
+    }
+
+    public class MorningStarByTuple : MorningStar<(decimal Open, decimal High, decimal Low, decimal Close), bool?>
+    {
+        public MorningStarByTuple(IEnumerable<(decimal Open, decimal High, decimal Low, decimal Close)> inputs, int downTrendPeriodCount = 3, int periodCount = 20, decimal shortThreshold = 0.25M, decimal longThreshold = 0.75M, decimal threshold = 0.1M) 
+            : base(inputs, i => i, (i, otm) => otm, downTrendPeriodCount, periodCount, shortThreshold, longThreshold, threshold)
+        {
+        }
+    }
+
+    public class MorningStar : MorningStar<Candle, AnalyzableTick<bool?>>
+    {
+        public MorningStar(IEnumerable<Candle> inputs, int downTrendPeriodCount = 3, int periodCount = 20, decimal shortThreshold = 0.25M, decimal longThreshold = 0.75M, decimal threshold = 0.1M) 
+            : base(inputs, i => (i.Open, i.High, i.Low, i.Close), (i, otm) => new AnalyzableTick<bool?>(i.DateTime, otm), downTrendPeriodCount, periodCount, shortThreshold, longThreshold, threshold)
+        {
         }
     }
 }

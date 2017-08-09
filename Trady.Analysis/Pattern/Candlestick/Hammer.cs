@@ -9,23 +9,35 @@ namespace Trady.Analysis.Pattern.Candlestick
     /// <summary>
     /// Reference: http://www.investopedia.com/terms/h/hammer.asp
     /// </summary>
-    public class Hammer : AnalyzableBase<(decimal Open, decimal High, decimal Low, decimal Close), bool?>
+    public class Hammer<TInput, TOutput> : AnalyzableBase<TInput, (decimal Open, decimal High, decimal Low, decimal Close), bool?, TOutput>
     {
-        private ShortDay _shortDay;
+        ShortDayByTuple _shortDay;
 
-        public Hammer(IList<Candle> candles, int shortPeriodCount = 20, decimal shortThreshold = 0.25m)
-            : this (candles.Select(c => (c.Open, c.High, c.Low, c.Close)).ToList(), shortPeriodCount, shortThreshold)
+        public Hammer(IEnumerable<TInput> inputs, Func<TInput, (decimal Open, decimal High, decimal Low, decimal Close)> inputMapper, Func<TInput, bool?, TOutput> outputMapper, int shortPeriodCount = 20, decimal shortThreshold = 0.25m) : base(inputs, inputMapper, outputMapper)
         {
+            var mappedInputs = inputs.Select(inputMapper);
+            _shortDay = new ShortDayByTuple(mappedInputs.Select(i => (i.Open, i.Close)), shortPeriodCount, shortThreshold);
         }
 
-        public Hammer(IList<(decimal Open, decimal High, decimal Low, decimal Close)> inputs, int shortPeriodCount = 20, decimal shortThreshold = 0.25m) : base(inputs)
-        {
-            _shortDay = new ShortDay(inputs.Select(i => (i.Open, i.Close)).ToList(), shortPeriodCount, shortThreshold);
-        }
-
-        protected override bool? ComputeByIndexImpl(int index)
+        protected override bool? ComputeByIndexImpl(IEnumerable<(decimal Open, decimal High, decimal Low, decimal Close)> mappedInputs, int index)
         {
             throw new NotImplementedException();
+        }
+    }
+
+    public class HammerByTuple : Hammer<(decimal Open, decimal High, decimal Low, decimal Close), bool?>
+    {
+        public HammerByTuple(IEnumerable<(decimal Open, decimal High, decimal Low, decimal Close)> inputs, int shortPeriodCount = 20, decimal shortThreshold = 0.25M) 
+            : base(inputs, i => i, (i, otm) => otm, shortPeriodCount, shortThreshold)
+        {
+        }
+    }
+
+    public class Hammer : Hammer<Candle, AnalyzableTick<bool?>>
+    {
+        public Hammer(IEnumerable<Candle> inputs, int shortPeriodCount = 20, decimal shortThreshold = 0.25M) 
+            : base(inputs, i => (i.Open, i.High, i.Low, i.Close), (i, otm) => new AnalyzableTick<bool?>(i.DateTime, otm), shortPeriodCount, shortThreshold)
+        {
         }
     }
 }
