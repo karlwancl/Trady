@@ -6,21 +6,32 @@ using Trady.Core;
 
 namespace Trady.Analysis.Pattern.Candlestick
 {
-    public class Doji : AnalyzableBase<(decimal Open, decimal High, decimal Low, decimal Close), bool>
+    public class Doji<TInput, TOutput> : AnalyzableBase<TInput, (decimal Open, decimal High, decimal Low, decimal Close), bool, TOutput>
     {
-        public Doji(IList<Candle> candles, decimal threshold = 0.1m)
-            : this(candles.Select(c => (c.Open, c.High, c.Low, c.Close)).ToList(), threshold)
-        {
-        }
-
-        public Doji(IList<(decimal Open, decimal High, decimal Low, decimal Close)> inputs, decimal threshold = 0.1m) : base(inputs)
+        protected Doji(IEnumerable<TInput> inputs, Func<TInput, (decimal Open, decimal High, decimal Low, decimal Close)> inputMapper, Func<TInput, bool, TOutput> outputMapper, decimal threshold = 0.1m) : base(inputs, inputMapper, outputMapper)
         {
             Threshold = threshold;
         }
 
         public decimal Threshold { get; private set; }
 
-        protected override bool ComputeByIndexImpl(int index)
-            => Math.Abs(Inputs[index].Close - Inputs[index].Open) < Threshold * (Inputs[index].High - Inputs[index].Low);
+        protected override bool ComputeByIndexImpl(IEnumerable<(decimal Open, decimal High, decimal Low, decimal Close)> mappedInputs, int index)
+            => Math.Abs(mappedInputs.ElementAt(index).Close - mappedInputs.ElementAt(index).Open) < Threshold * (mappedInputs.ElementAt(index).High - mappedInputs.ElementAt(index).Low);
+	}
+
+    public class DojiByTuple : Doji<(decimal Open, decimal High, decimal Low, decimal Close), bool>
+    {
+        public DojiByTuple(IEnumerable<(decimal Open, decimal High, decimal Low, decimal Close)> inputs, decimal threshold = 0.1M) 
+            : base(inputs, i => i, (i, otm) => otm, threshold)
+        {
+        }
+    }
+
+    public class Doji : Doji<Candle, AnalyzableTick<bool>>
+    {
+        public Doji(IEnumerable<Candle> inputs, decimal threshold = 0.1M) 
+            : base(inputs, i => (i.Open, i.High, i.Low, i.Close), (i, otm) => new AnalyzableTick<bool>(i.DateTime, otm), threshold)
+        {
+        }
     }
 }

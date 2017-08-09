@@ -8,15 +8,9 @@ using Trady.Core;
 
 namespace Trady.Analysis.Pattern.Candlestick
 {
-    public class LongDay : AnalyzableBase<(decimal Open, decimal Close), bool>
+    public class LongDay<TInput, TOutput> : AnalyzableBase<TInput, (decimal Open, decimal Close), bool, TOutput>
     {
-        public LongDay(IList<Candle> candles, int periodCount = 20, decimal threshold = 0.75m)
-            : this(candles.Select(c => (c.Open, c.Close)).ToList(), periodCount, threshold)
-        {
-        }
-
-        public LongDay(IList<(decimal Open, decimal Close)> inputs, int periodCount = 20, decimal threshold = 0.75m)
-            : base(inputs)
+        public LongDay(IEnumerable<TInput> inputs, Func<TInput, (decimal Open, decimal Close)> inputMapper, Func<TInput, bool, TOutput> outputMapper, int periodCount = 20, decimal threshold = 0.75m) : base(inputs, inputMapper, outputMapper)
         {
             PeriodCount = periodCount;
             Threshold = threshold;
@@ -26,10 +20,26 @@ namespace Trady.Analysis.Pattern.Candlestick
 
         public decimal Threshold { get; private set; }
 
-        protected override bool ComputeByIndexImpl(int index)
+        protected override bool ComputeByIndexImpl(IEnumerable<(decimal Open, decimal Close)> mappedInputs, int index)
         {
-            var bodyLengths = Inputs.Select(i => Math.Abs(i.Close - i.Open)).ToList();
-            return bodyLengths[index] >= bodyLengths.Percentile(PeriodCount, index, Threshold);
+            var bodyLengths = mappedInputs.Select(i => Math.Abs(i.Close - i.Open));
+			return bodyLengths.ElementAt(index) >= bodyLengths.Percentile(PeriodCount, index, Threshold);
+        }
+    }
+
+    public class LongDayByTuple : LongDay<(decimal Open, decimal Close), bool>
+    {
+        public LongDayByTuple(IEnumerable<(decimal Open, decimal Close)> inputs, int periodCount = 20, decimal threshold = 0.75M) 
+            : base(inputs, i => i, (i, otm) => otm, periodCount, threshold)
+        {
+        }
+    }
+
+    public class LongDay : LongDay<Candle, AnalyzableTick<bool>>
+    {
+        public LongDay(IEnumerable<Candle> inputs, int periodCount = 20, decimal threshold = 0.75M) 
+            : base(inputs, i => (i.Open, i.Close), (i, otm) => new AnalyzableTick<bool>(i.DateTime, otm), periodCount, threshold)
+        {
         }
     }
 }

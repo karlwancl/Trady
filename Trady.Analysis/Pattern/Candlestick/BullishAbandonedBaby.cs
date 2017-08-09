@@ -10,25 +10,22 @@ namespace Trady.Analysis.Pattern.Candlestick
     /// <summary>
     /// Reference: http://stockcharts.com/school/doku.php?id=chart_school:chart_analysis:candlestick_bearish_reversal_patterns#bearish_abandoned_baby
     /// </summary>
-    public class BullishAbandonedBaby : AnalyzableBase<(decimal Open, decimal High, decimal Low, decimal Close), bool?>
+    public class BullishAbandonedBaby<TInput, TOutput> : AnalyzableBase<TInput, (decimal Open, decimal High, decimal Low, decimal Close), bool?, TOutput>
     {
-        private DownTrend _downTrend;
-        private BearishLongDay _bearishLongDay;
-        private BullishLongDay _bullishLongDay;
-        private Doji _doji;
+        DownTrendByTuple _downTrend;
+        BearishLongDayByTuple _bearishLongDay;
+        BullishLongDayByTuple _bullishLongDay;
+        DojiByTuple _doji;
 
-        public BullishAbandonedBaby(IList<Candle> inputs, int downTrendPeriodCount = 3, int longPeriodCount = 20, decimal longThreshold = 0.75m, decimal dojiThreshold = 0.1m) 
-            : this(inputs.Select(i => (i.Open, i.High, i.Low, i.Close)).ToList(), downTrendPeriodCount, longPeriodCount, longThreshold, dojiThreshold)
+        public BullishAbandonedBaby(IEnumerable<TInput> inputs, Func<TInput, (decimal Open, decimal High, decimal Low, decimal Close)> inputMapper, Func<TInput, bool?, TOutput> outputMapper, int downTrendPeriodCount = 3, int longPeriodCount = 20, decimal longThreshold = 0.75m, decimal dojiThreshold = 0.1m) : base(inputs, inputMapper, outputMapper)
         {
-        }
+            var mappedInputs = inputs.Select(inputMapper);
+            var ocs = mappedInputs.Select(i => (i.Open, i.Close));
 
-        public BullishAbandonedBaby(IList<(decimal Open, decimal High, decimal Low, decimal Close)> inputs, int downTrendPeriodCount = 3, int longPeriodCount = 20, decimal longThreshold = 0.75m, decimal dojiThreshold = 0.1m) : base(inputs)
-        {
-            var ocs = inputs.Select(i => (i.Open, i.Close)).ToList();
-            _downTrend = new DownTrend(inputs.Select(i => (i.High, i.Low)).ToList(), downTrendPeriodCount);
-            _bearishLongDay = new BearishLongDay(ocs, longPeriodCount, longThreshold);
-            _bullishLongDay = new BullishLongDay(ocs, longPeriodCount, longThreshold);
-            _doji = new Doji(inputs, dojiThreshold);
+            _downTrend = new DownTrendByTuple(mappedInputs.Select(i => (i.High, i.Low)), downTrendPeriodCount);
+            _bearishLongDay = new BearishLongDayByTuple(ocs, longPeriodCount, longThreshold);
+            _bullishLongDay = new BullishLongDayByTuple(ocs, longPeriodCount, longThreshold);
+            _doji = new DojiByTuple(mappedInputs, dojiThreshold);
 
             DownTrendPeriodCount = downTrendPeriodCount;
             LongPeriodCount = longPeriodCount;
@@ -36,20 +33,36 @@ namespace Trady.Analysis.Pattern.Candlestick
             DojiThreshold = dojiThreshold;
         }
 
-        public int DownTrendPeriodCount { get; private set; }
+        public int DownTrendPeriodCount { get; }
 
-        public int LongPeriodCount { get; private set; }
+        public int LongPeriodCount { get; }
 
-        public decimal LongThreshold { get; private set; }
+        public decimal LongThreshold { get; }
 
-        public decimal DojiThreshold { get; private set; }
+        public decimal DojiThreshold { get; }
 
-        protected override bool? ComputeByIndexImpl(int index)
+        protected override bool? ComputeByIndexImpl(IEnumerable<(decimal Open, decimal High, decimal Low, decimal Close)> mappedInputs, int index)
         {
-            if (index < 2) return null;
-            if (!_doji[index - 1]) return false;
-            bool isGapped = Inputs[index - 1].High < Inputs[index - 2].Low && Inputs[index - 1].High < Inputs[index].Low;
-            return (_downTrend[index - 1] ?? false) && _bearishLongDay[index - 2] && isGapped && _bullishLongDay[index];
+			if (index < 2) return null;
+			if (!_doji[index - 1]) return false;
+            bool isGapped = mappedInputs.ElementAt(index - 1).High < mappedInputs.ElementAt(index - 2).Low && mappedInputs.ElementAt(index - 1).High < mappedInputs.ElementAt(index).Low;
+			return (_downTrend[index - 1] ?? false) && _bearishLongDay[index - 2] && isGapped && _bullishLongDay[index];
+        }
+    }
+
+    public class BullishAbandonedBabyByTuple : BullishAbandonedBaby<(decimal Open, decimal High, decimal Low, decimal Close), bool?>
+    {
+        public BullishAbandonedBabyByTuple(IEnumerable<(decimal Open, decimal High, decimal Low, decimal Close)> inputs, int downTrendPeriodCount = 3, int longPeriodCount = 20, decimal longThreshold = 0.75M, decimal dojiThreshold = 0.1M) 
+            : base(inputs, i => i, (i, otm) => otm, downTrendPeriodCount, longPeriodCount, longThreshold, dojiThreshold)
+        {
+        }
+    }
+
+    public class BullishAbandonedBaby : BullishAbandonedBaby<Candle, AnalyzableTick<bool?>>
+    {
+        public BullishAbandonedBaby(IEnumerable<Candle> inputs, int downTrendPeriodCount = 3, int longPeriodCount = 20, decimal longThreshold = 0.75M, decimal dojiThreshold = 0.1M) 
+            : base(inputs, i => (i.Open, i.High, i.Low, i.Close), (i, otm) => new AnalyzableTick<bool?>(i.DateTime, otm), downTrendPeriodCount, longPeriodCount, longThreshold, dojiThreshold)
+        {
         }
     }
 }

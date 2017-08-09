@@ -7,18 +7,29 @@ using Trady.Core;
 
 namespace Trady.Analysis.Pattern.Candlestick
 {
-    public class Bullish : AnalyzableBase<(decimal Open, decimal Close), bool>
+    public class Bullish<TInput, TOutput> : AnalyzableBase<TInput, (decimal Open, decimal Close), bool, TOutput>
     {
-        public Bullish(IList<Candle> candles)
-            : this (candles.Select(c => (c.Open, c.Close)).ToList())
+        public Bullish(IEnumerable<TInput> inputs, Func<TInput, (decimal Open, decimal Close)> inputMapper, Func<TInput, bool, TOutput> outputMapper) : base(inputs, inputMapper, outputMapper)
         {
         }
 
-        public Bullish(IList<(decimal Open, decimal Close)> inputs) : base(inputs)
+        protected override bool ComputeByIndexImpl(IEnumerable<(decimal Open, decimal Close)> mappedInputs, int index)
+            => mappedInputs.ElementAt(index).Open < mappedInputs.ElementAt(index).Close;
+	}
+
+    public class BullishByTuple : Bullish<(decimal Open, decimal Close), bool>
+    {
+        public BullishByTuple(IEnumerable<(decimal Open, decimal Close)> inputs) 
+            : base(inputs, i => i, (i, otm) => otm)
         {
         }
+    }
 
-        protected override bool ComputeByIndexImpl(int index)
-            => Inputs[index].Open < Inputs[index].Close;
+    public class Bullish : Bullish<Candle, AnalyzableTick<bool>>
+    {
+        public Bullish(IEnumerable<Candle> inputs) 
+            : base(inputs, i => (i.Open, i.Close), (i, otm) => new AnalyzableTick<bool>(i.DateTime, otm))
+        {
+        }
     }
 }

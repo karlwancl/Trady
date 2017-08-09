@@ -11,30 +11,41 @@ namespace Trady.Analysis.Pattern.Candlestick
 	/// <summary>
 	/// Reference: http://stockcharts.com/school/doku.php?id=chart_school:chart_analysis:candlestick_pattern_dictionary
 	/// </summary>
-	public class BullishLongDay : AnalyzableBase<(decimal Open, decimal Close), bool>
+	public class BullishLongDay<TInput, TOutput> : AnalyzableBase<TInput, (decimal Open, decimal Close), bool, TOutput>
 	{
-        private Bullish _bullish;
-        private LongDay _longDay;
+        readonly BullishByTuple _bullish;
+        readonly LongDayByTuple _longDay;
 
-		public BullishLongDay(IList<Candle> candles, int periodCount = 20, decimal threshold = 0.75m)
-		    : this(candles.Select(c => (c.Open, c.Close)).ToList(), periodCount, threshold)
-		{
-		}
-
-		public BullishLongDay(IList<(decimal Open, decimal Close)> inputs, int periodCount = 20, decimal threshold = 0.75m)
-		    : base(inputs)
-		{
-            _bullish = new Bullish(inputs);
+        public BullishLongDay(IEnumerable<TInput> inputs, Func<TInput, (decimal Open, decimal Close)> inputMapper, Func<TInput, bool, TOutput> outputMapper, int periodCount = 20, decimal threshold = 0.75m) : base(inputs, inputMapper, outputMapper)
+        {
+			_bullish = new BullishByTuple(inputs.Select(inputMapper));
+            _longDay = new LongDayByTuple(inputs.Select(inputMapper), periodCount, threshold);
 
 			PeriodCount = periodCount;
 			Threshold = threshold;
-		}
+        }
 
-		public int PeriodCount { get; private set; }
+        public int PeriodCount { get; private set; }
 
 		public decimal Threshold { get; private set; }
 
-        protected override bool ComputeByIndexImpl(int index)
+        protected override bool ComputeByIndexImpl(IEnumerable<(decimal Open, decimal Close)> mappedInputs, int index)
             => _bullish[index] && _longDay[index];
-	}
+    }
+
+    public class BullishLongDayByTuple : BullishLongDay<(decimal Open, decimal Close), bool>
+    {
+        public BullishLongDayByTuple(IEnumerable<(decimal Open, decimal Close)> inputs, int periodCount = 20, decimal threshold = 0.75M) 
+            : base(inputs, i => i, (i, otm) => otm, periodCount, threshold)
+        {
+        }
+    }
+
+    public class BullishLongDay : BullishLongDay<Candle, AnalyzableTick<bool>>
+    {
+        public BullishLongDay(IEnumerable<Candle> inputs, int periodCount = 20, decimal threshold = 0.75M) 
+            : base(inputs, i => (i.Open, i.Close), (i, otm) => new AnalyzableTick<bool>(i.DateTime, otm), periodCount, threshold)
+        {
+        }
+    }
 }

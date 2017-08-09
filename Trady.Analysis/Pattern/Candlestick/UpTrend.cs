@@ -6,34 +6,45 @@ using Trady.Core;
 
 namespace Trady.Analysis.Pattern.Candlestick
 {
-    public class UpTrend : AnalyzableBase<(decimal High, decimal Low), bool?>
+    public class UpTrend<TInput, TOutput> : AnalyzableBase<TInput, (decimal High, decimal Low), bool?, TOutput>
     {
-        public UpTrend(IList<Candle> inputs, int periodCount = 3) 
-            : this(inputs.Select(i => (i.High, i.Low)).ToList(), periodCount)
+        public UpTrend(IEnumerable<TInput> inputs, Func<TInput, (decimal High, decimal Low)> inputMapper, Func<TInput, bool?, TOutput> outputMapper, int periodCount = 3) : base(inputs, inputMapper, outputMapper)
+        {
+			PeriodCount = periodCount;
+		}
+
+        public int PeriodCount { get; }
+
+        protected override bool? ComputeByIndexImpl(IEnumerable<(decimal High, decimal Low)> mappedInputs, int index)
+        {
+			if (index < PeriodCount - 1)
+				return null;
+
+			for (int i = 0; i < PeriodCount; i++)
+			{
+                bool isHighIncreasing = mappedInputs.ElementAt(index - i).High > mappedInputs.ElementAt(index - i - 1).High;
+                bool isLowIncreasing = mappedInputs.ElementAt(index - i).Low > mappedInputs.ElementAt(index - i - 1).Low;
+				if (!isHighIncreasing || !isLowIncreasing)
+					return false;
+			}
+
+			return true;        
+        }
+    }
+
+    public class UpTrendByTuple : UpTrend<(decimal High, decimal Low), bool?>
+    {
+        public UpTrendByTuple(IEnumerable<(decimal High, decimal Low)> inputs, int periodCount = 3) 
+            : base(inputs, i => i, (i, otm) => otm, periodCount)
         {
         }
+    }
 
-        public UpTrend(IList<(decimal High, decimal Low)> inputs, int periodCount = 3) : base(inputs)
+    public class UpTrend : UpTrend<Candle, AnalyzableTick<bool?>>
+    {
+        public UpTrend(IEnumerable<Candle> inputs, int periodCount = 3) 
+            : base(inputs, i => (i.High, i.Low), (i, otm) => new AnalyzableTick<bool?>(i.DateTime, otm), periodCount)
         {
-            PeriodCount = periodCount;
-        }
-
-        public int PeriodCount { get; private set; }
-
-        protected override bool? ComputeByIndexImpl(int index)
-        {
-            if (index < PeriodCount - 1)
-                return null;
-
-            for (int i = 0; i < PeriodCount; i++)
-            {
-                bool isHighIncreasing = Inputs[index - i].High > Inputs[index - i - 1].High;
-                bool isLowIncreasing = Inputs[index - i].Low > Inputs[index - i - 1].Low;
-                if (!isHighIncreasing || !isLowIncreasing)
-                    return false;
-            }
-
-            return true;
         }
     }
 }

@@ -48,7 +48,7 @@ namespace Trady.Analysis.Helper
         public static decimal? Median(this IList<decimal> values, int periodCount, int index)
             => Percentile(values, periodCount, index, 0.5m);
 
-        public static decimal? Percentile(this IList<decimal> values, int periodCount, int index, decimal percentile)
+        public static decimal? Percentile(this IEnumerable<decimal> values, int periodCount, int index, decimal percentile)
         {
             if (percentile < 0 || percentile > 1)
                 throw new ArgumentException("Percentile should be between 0 and 1", nameof(percentile));
