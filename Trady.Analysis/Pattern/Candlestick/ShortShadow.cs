@@ -2,21 +2,38 @@
 using System.Collections.Generic;
 using System.Text;
 using Trady.Analysis.Infrastructure;
+using Trady.Core;
 
 namespace Trady.Analysis.Pattern.Candlestick
 {
     /// <summary>
     /// Reference: http://stockcharts.com/school/doku.php?id=chart_school:chart_analysis:candlestick_pattern_dictionary
     /// </summary>
-    public class ShortShadow : AnalyzableBase<(decimal Open, decimal High, decimal Low, decimal Close), bool?>
+    public class ShortShadow<TInput, TOutput> : AnalyzableBase<TInput, (decimal Open, decimal High, decimal Low, decimal Close), bool?, TOutput>
     {
-        public ShortShadow(IList<(decimal Open, decimal High, decimal Low, decimal Close)> inputs) : base(inputs)
+        public ShortShadow(IEnumerable<TInput> inputs, Func<TInput, (decimal Open, decimal High, decimal Low, decimal Close)> inputMapper, Func<TInput, bool?, TOutput> outputMapper) : base(inputs, inputMapper, outputMapper)
         {
         }
 
-        protected override bool? ComputeByIndexImpl(int index)
+        protected override bool? ComputeByIndexImpl(IEnumerable<(decimal Open, decimal High, decimal Low, decimal Close)> mappedInputs, int index)
         {
             throw new NotImplementedException();
+        }
+    }
+
+    public class ShortShadowByTuple : ShortShadow<(decimal Open, decimal High, decimal Low, decimal Close), bool?>
+    {
+        public ShortShadowByTuple(IEnumerable<(decimal Open, decimal High, decimal Low, decimal Close)> inputs) 
+            : base(inputs, i => i, (i, otm) => otm)
+        {
+        }
+    }
+
+    public class ShortShadow : ShortShadow<Candle, AnalyzableTick<bool?>>
+    {
+        public ShortShadow(IEnumerable<Candle> inputs) 
+            : base(inputs, i => (i.Open, i.High, i.Low, i.Close), (i, otm) => new AnalyzableTick<bool?>(i.DateTime, otm))
+        {
         }
     }
 }

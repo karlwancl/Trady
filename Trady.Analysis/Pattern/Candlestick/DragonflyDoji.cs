@@ -27,8 +27,8 @@ namespace Trady.Analysis.Pattern.Candlestick
 
         protected override bool ComputeByIndexImpl(IEnumerable<(decimal Open, decimal High, decimal Low, decimal Close)> mappedInputs, int index)
         {
-			var mean = (Inputs[index].Open + Inputs[index].Close) / 2;
-			bool isDragonify = (Inputs[index].High - mean) < ShadowThreshold * (Inputs[index].High - Inputs[index].Low);
+            var mean = (mappedInputs.ElementAt(index).Open + mappedInputs.ElementAt(index).Close) / 2;
+            bool isDragonify = (mappedInputs.ElementAt(index).High - mean) < ShadowThreshold * (mappedInputs.ElementAt(index).High - mappedInputs.ElementAt(index).Low);
 			return _doji[index] && isDragonify;        
         }
     }
@@ -43,7 +43,7 @@ namespace Trady.Analysis.Pattern.Candlestick
 
     public class DragonifyDoji : DragonflyDoji<Candle, AnalyzableTick<bool>>
     {
-        public DragonifyDoji(IEnumerable<Candle> inputs, , decimal dojiThreshold = 0.1M, decimal shadowThreshold = 0.1M) 
+        public DragonifyDoji(IEnumerable<Candle> inputs, decimal dojiThreshold = 0.1M, decimal shadowThreshold = 0.1M) 
             : base(inputs, i => (i.Open, i.High, i.Low, i.Close), (i, otm) => new AnalyzableTick<bool>(i.DateTime, otm), dojiThreshold, shadowThreshold)
         {
         }

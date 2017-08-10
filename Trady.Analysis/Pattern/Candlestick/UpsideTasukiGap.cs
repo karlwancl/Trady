@@ -9,42 +9,57 @@ namespace Trady.Analysis.Pattern.Candlestick
     /// <summary>
     /// Reference: http://www.investopedia.com/terms/u/upside-tasuki-gap.asp
     /// </summary>
-    public class UpsideTasukiGap : AnalyzableBase<(decimal Open, decimal High, decimal Low, decimal Close), bool?>
+    public class UpsideTasukiGap<TInput, TOutput> : AnalyzableBase<TInput, (decimal Open, decimal High, decimal Low, decimal Close), bool?, TOutput>
     {
-        private UpTrend _upTrend;
-        private Bearish _bearish;
-        private Bullish _bullish;
+        readonly UpTrendByTuple _upTrend;
+        readonly BearishByTuple _bearish;
+        readonly BullishByTuple _bullish;
 
-        public UpsideTasukiGap(IList<Candle> candles, int upTrendPeriodCount = 3, decimal sizeThreshold = 0.1m)
-            : this(candles.Select(c => (c.Open, c.High, c.Low, c.Close)).ToList(), upTrendPeriodCount, sizeThreshold)
+        public UpsideTasukiGap(IEnumerable<TInput> inputs, Func<TInput, (decimal Open, decimal High, decimal Low, decimal Close)> inputMapper, Func<TInput, bool?, TOutput> outputMapper, int upTrendPeriodCount = 3, decimal sizeThreshold = 0.1m) : base(inputs, inputMapper, outputMapper)
         {
-        }
+            var mappedInputs = inputs.Select(inputMapper);
 
-        public UpsideTasukiGap(IList<(decimal Open, decimal High, decimal Low, decimal Close)> inputs, int upTrendPeriodCount = 3, decimal sizeThreshold = 0.1m) : base(inputs)
-        {
-            var ocs = inputs.Select(i => (i.Open, i.Close)).ToList();
-            _upTrend = new UpTrend(inputs.Select(i => (i.High, i.Low)).ToList(), upTrendPeriodCount);
-            _bearish = new Bearish(ocs);
-            _bullish = new Bullish(ocs);
+            var ocs = mappedInputs.Select(i => (i.Open, i.Close));
+            _upTrend = new UpTrendByTuple(mappedInputs.Select(i => (i.High, i.Low)), upTrendPeriodCount);
+            _bearish = new BearishByTuple(ocs);
+            _bullish = new BullishByTuple(ocs);
 
             UpTrendPeriodCount = upTrendPeriodCount;
             SizeThreshold = sizeThreshold;
         }
 
-        public int UpTrendPeriodCount { get; private set; }
+        public int UpTrendPeriodCount { get; }
 
-        public decimal SizeThreshold { get; private set; }
+        public decimal SizeThreshold { get; }
 
-        protected override bool? ComputeByIndexImpl(int index)
+        protected override bool? ComputeByIndexImpl(IEnumerable<(decimal Open, decimal High, decimal Low, decimal Close)> mappedInputs, int index)
         {
             if (index < 2) return null;
-            bool isBlackCandleWithinGap = Inputs[index].Open > Inputs[index - 1].Open && Inputs[index].Open < Inputs[index - 1].Close && Inputs[index].Close < Inputs[index - 1].Open;
+            bool isBlackCandleWithinGap = (mappedInputs.ElementAt(index).Open > mappedInputs.ElementAt(index - 1).Open) &&
+                (mappedInputs.ElementAt(index).Open < mappedInputs.ElementAt(index - 1).Close) &&
+                (mappedInputs.ElementAt(index).Close < mappedInputs.ElementAt(index - 1).Open);
             return (_upTrend[index - 1] ?? false) &&
                 _bullish[index - 2] &&
-                Inputs[index - 2].High < Inputs[index - 1].Low &&
+                mappedInputs.ElementAt(index - 2).High < mappedInputs.ElementAt(index - 1).Low &&
                 _bullish[index - 1] &&
                 _bearish[index] &&
                 isBlackCandleWithinGap;
+        }
+    }
+
+    public class UpsideTasukiGapByTuple : UpsideTasukiGap<(decimal Open, decimal High, decimal Low, decimal Close), bool?>
+    {
+        public UpsideTasukiGapByTuple(IEnumerable<(decimal Open, decimal High, decimal Low, decimal Close)> inputs, int upTrendPeriodCount = 3, decimal sizeThreshold = 0.1M) 
+            : base(inputs, i => i, (i, otm) => otm, upTrendPeriodCount, sizeThreshold)
+        {
+        }
+    }
+
+    public class UpsideTasukiGap : UpsideTasukiGap<Candle, AnalyzableTick<bool?>>
+    {
+        public UpsideTasukiGap(IEnumerable<Candle> inputs, int upTrendPeriodCount = 3, decimal sizeThreshold = 0.1M) 
+            : base(inputs, i => (i.Open, i.High, i.Low, i.Close), (i, otm) => new AnalyzableTick<bool?>(i.DateTime, otm), upTrendPeriodCount, sizeThreshold)
+        {
         }
     }
 }
