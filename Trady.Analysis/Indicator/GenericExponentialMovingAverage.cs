@@ -15,7 +15,7 @@ namespace Trady.Analysis.Indicator
             : base(new decimal?[inputCount])
         {
             _initialValueIndex = initialValueIndex;
-            _inputFunction = i => initialValueIndex < i ? null : initialValueIndex == i ? initialValueFunction(i) : indexValueFunction(i);
+            _inputFunction = i => i < initialValueIndex ? null : initialValueIndex == i ? initialValueFunction(i) : indexValueFunction(i);
             _smoothingFactorFunction = smoothingFactorFunction;
         }
 
@@ -24,6 +24,12 @@ namespace Trady.Analysis.Indicator
         protected override decimal? ComputeInitialValue(IEnumerable<decimal?> mappedInputs, int index) => _inputFunction(index);
 
         protected override decimal? ComputeCumulativeValue(IEnumerable<decimal?> mappedInputs, int index, decimal? prevOutputToMap)
-            => prevOutputToMap + (_smoothingFactorFunction(index) * (_inputFunction(index) - prevOutputToMap));
+        {
+            var smooth = _smoothingFactorFunction(index);
+            var input = _inputFunction(index);
+            var result = prevOutputToMap + (smooth * (input - prevOutputToMap));
+            return result;
+        }
+            //=> prevOutputToMap + (_smoothingFactorFunction(index) * (_inputFunction(index) - prevOutputToMap));
 	}
 }

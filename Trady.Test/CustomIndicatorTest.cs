@@ -39,7 +39,7 @@ namespace Trady.Test
             Assert.IsTrue(customIndicator[14].Value.IsApproximatelyEquals(-0.36764m));
         }
 
-        public class ClosePricePercentageChangeSinceMondayOpen : AnalyzableBase2<Candle, decimal?>
+        public class ClosePricePercentageChangeSinceMondayOpen : AnalyzableBase<Candle, decimal?>
         {
             public ClosePricePercentageChangeSinceMondayOpen(IEnumerable<Candle> inputs) : base(inputs)
             {
@@ -55,9 +55,9 @@ namespace Trady.Test
                 return aDate.AddDays(-daysToSubstract);
             }
 
-            protected override decimal? ComputeByIndexImpl(IEnumerable<Candle> mis, int index)
+            protected override decimal? ComputeByIndexImpl(IEnumerable<Candle> mappedInputs, int index)
             {
-                var currentCandle = mis.ElementAt(index);
+                var currentCandle = mappedInputs.ElementAt(index);
                 var mondayOfThatWeek = GetMondayFor(currentCandle.DateTime);
                 var candleForThatMonday = Inputs.FirstOrDefault(c => c.DateTime.Date.Equals(mondayOfThatWeek));
 

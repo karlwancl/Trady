@@ -26,11 +26,11 @@ namespace Trady.Test
         {
             var candles = await ImportCandlesAsync();
             var periodCount = 30;
-            var sma = candles.Sma2(periodCount);
+            var sma = candles.Sma(periodCount);
             var result = sma[candles.Count - 1];
             Assert.IsTrue(136.23m.IsApproximatelyEquals(result.Tick.Value));
 
-            var smaOtherWay = new SimpleMovingAverage2(candles, periodCount);
+            var smaOtherWay = new SimpleMovingAverage(candles, periodCount);
             result = smaOtherWay[candles.Count - 1];
             Assert.IsTrue(136.23m.IsApproximatelyEquals(result.Tick.Value));
 
@@ -48,7 +48,7 @@ namespace Trady.Test
             // I don't know how much it should return and actually it doesn't matter.
             // I just want to make a point that if someone wants to do strange calculations 
             // they can be done
-            var smaWay3 = new SimpleMovingAverage2<Candle, AnalyzableTick<decimal?>>(candles, c => c.High - c.Low, (c, otm) => new AnalyzableTick<decimal?>(c.DateTime, otm) ,periodCount);
+            var smaWay3 = new SimpleMovingAverage<Candle, AnalyzableTick<decimal?>>(candles, c => c.High - c.Low, (c, otm) => new AnalyzableTick<decimal?>(c.DateTime, otm) ,periodCount);
             result = smaWay3[candles.Count - 1];
             Assert.IsNotNull(result);
 

@@ -34,7 +34,7 @@ namespace Trady.Analysis.Helper
         public static decimal? Avg(this IEnumerable<decimal> values, int periodCount, int index)
             => index >= periodCount - 1 ? values.Skip(index - periodCount + 1).Take(periodCount).Average() : (decimal?)null;
 
-        public static decimal? Sd(this IEnumerable<decimal> values, int periodCount, int index)
+        public static decimal? SdInt(this IEnumerable<decimal> values, int periodCount, int index)
         {
             if (index < periodCount - 1)
                 return null;

@@ -13,16 +13,16 @@ namespace Trady.Analysis.Indicator
 
         public RelativeStrength(IEnumerable<TInput> inputs, Func<TInput, decimal> inputMapper, Func<TInput, decimal?, TOutput> outputMapper, int periodCount) : base(inputs, inputMapper, outputMapper)
         {
-			_closePriceChange = new ClosePriceChangeByTuple(inputs.Select(inputMapper), periodCount);
+            _closePriceChange = new ClosePriceChangeByTuple(inputs.Select(inputMapper));
 
-			Func<int, decimal?> u = i => i > 0 ? Math.Max(_closePriceChange[i].Value, 0) : (decimal?)null;
-			Func<int, decimal?> l = i => i > 0 ? Math.Abs(Math.Min(_closePriceChange[i].Value, 0)) : (decimal?)null;
+            Func<int, decimal?> u = i => i > 0 ? Math.Max(_closePriceChange[i].Value, 0) : (decimal?)null;
+            Func<int, decimal?> l = i => i > 0 ? Math.Abs(Math.Min(_closePriceChange[i].Value, 0)) : (decimal?)null;
 
-			_uEma = new GenericExponentialMovingAverage(
-				periodCount,
-				i => i > 0 ? Enumerable.Range(i - PeriodCount + 1, PeriodCount).Average(j => u(j)) : null,
-				i => u(i),
-				i => 1.0m / periodCount,
+            _uEma = new GenericExponentialMovingAverage(
+                periodCount,
+                i => i > 0 ? Enumerable.Range(i - PeriodCount + 1, PeriodCount).Average(j => u(j)) : null,
+                i => u(i),
+                i => 1.0m / periodCount,
                 inputs.Count());
 
             _dEma = new GenericExponentialMovingAverage(
@@ -32,12 +32,18 @@ namespace Trady.Analysis.Indicator
                 i => 1.0m / periodCount,
                 inputs.Count());
 
-			PeriodCount = periodCount;
+            PeriodCount = periodCount;
         }
 
         public int PeriodCount { get; private set; }
 
-        protected override decimal? ComputeByIndexImpl(IEnumerable<decimal> mappedInputs, int index) => _uEma[index] / _dEma[index];
+        protected override decimal? ComputeByIndexImpl(IEnumerable<decimal> mappedInputs, int index)
+        {
+            var uEma = _uEma[index];
+            var dEma = _dEma[index];
+            var result = uEma / dEma;
+            return result;
+        }
     }
 
     public class RelativeStrengthByTuple : RelativeStrength<decimal, decimal?>

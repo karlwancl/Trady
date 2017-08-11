@@ -16,7 +16,7 @@ namespace Trady.Analysis.Indicator
 
         public int PeriodCount { get; private set; }
 
-        protected override decimal? ComputeByIndexImpl(IEnumerable<decimal> mappedInputs, int index) => mappedInputs.Sd(PeriodCount, index);
+        protected override decimal? ComputeByIndexImpl(IEnumerable<decimal> mappedInputs, int index) => mappedInputs.SdInt(PeriodCount, index);
     }
 
     public class StandardDeviationByTuple : StandardDeviation<decimal, decimal?>

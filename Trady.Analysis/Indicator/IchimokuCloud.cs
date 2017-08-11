@@ -33,11 +33,11 @@ namespace Trady.Analysis.Indicator
 			LongPeriodCount = longPeriodCount;
         }
 
-        public int ShortPeriodCount { get; private set; }
+        public int ShortPeriodCount { get; }
 
-        public int MiddlePeriodCount { get; private set; }
+        public int MiddlePeriodCount { get; }
 
-        public int LongPeriodCount { get; private set; }
+        public int LongPeriodCount { get; }
 
         protected override int GetComputeStartIndex(int? startIndex)
             => base.GetComputeStartIndex(startIndex) - MiddlePeriodCount + 1;
@@ -76,7 +76,7 @@ namespace Trady.Analysis.Indicator
     public class IchimokuCloud : IchimokuCloud<Candle, AnalyzableTick<(decimal? ConversionLine, decimal? BaseLine, decimal? LeadingSpanA, decimal? LeadingSpanB, decimal? LaggingSpan)>>
     {
         public IchimokuCloud(IEnumerable<Candle> inputs, int shortPeriodCount, int middlePeriodCount, int longPeriodCount) 
-            : base(inputs, i => (i.High, i.Low, i.Close), (i, otm) => new AnalyzableTick<(decimal? ConversionLine, decimal? BaseLine, decimal? LeadingSpanA, decimal? LeadingSpanB, decimal? LaggingSpan)>(i.DateTime, otm), shortPeriodCount, middlePeriodCount, longPeriodCount)
+            : base(inputs, i => (i.High, i.Low, i.Close), (i, otm) => new AnalyzableTick<(decimal? ConversionLine, decimal? BaseLine, decimal? LeadingSpanA, decimal? LeadingSpanB, decimal? LaggingSpan)>(i?.DateTime, otm), shortPeriodCount, middlePeriodCount, longPeriodCount)
         {
         }
     }
