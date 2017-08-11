@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Trady.Analysis.Infrastructure;
 using Trady.Analysis.Pattern.State;
 
@@ -6,18 +7,22 @@ namespace Trady.Analysis.Pattern.Indicator
 {
     public partial class StochasticsOvertrade
     {
-        public abstract class IndicatorBase : AnalyzableBase<(decimal High, decimal Low, decimal Close), Overtrade?>
+        public abstract class IndicatorBase<TInput, TOutput> : AnalyzableBase<TInput, (decimal High, decimal Low, decimal Close), Overtrade?, TOutput>
         {
-            private AnalyzableBase<(decimal High, decimal Low, decimal Close), (decimal? K, decimal? D, decimal? J)> _sto;
+            readonly AnalyzableBase<(decimal High, decimal Low, decimal Close), (decimal High, decimal Low, decimal Close), (decimal? K, decimal? D, decimal? J), (decimal? K, decimal? D, decimal? J)> _sto;
 
-            public IndicatorBase(IList<(decimal High, decimal Low, decimal Close)> inputs, AnalyzableBase<(decimal High, decimal Low, decimal Close), (decimal? K, decimal? D, decimal? J)> sto)
-                : base(inputs)
+            protected IndicatorBase(
+                IEnumerable<TInput> inputs, 
+                Func<TInput, (decimal High, decimal Low, decimal Close)> inputMapper, 
+                Func<TInput, Overtrade?, TOutput> outputMapper,
+                AnalyzableBase<(decimal High, decimal Low, decimal Close), (decimal High, decimal Low, decimal Close), (decimal? K, decimal? D, decimal? J), (decimal? K, decimal? D, decimal? J)> sto) 
+                : base(inputs, inputMapper, outputMapper)
             {
                 _sto = sto;
             }
 
-            protected override Overtrade? ComputeByIndexImpl(int index)
-                => StateHelper.IsOvertrade(_sto[index].K);
-        }
+            protected override Overtrade? ComputeByIndexImpl(IEnumerable<(decimal High, decimal Low, decimal Close)> mappedInputs, int index)
+			    => StateHelper.IsOvertrade(_sto[index].K);
+		}
     }
 }

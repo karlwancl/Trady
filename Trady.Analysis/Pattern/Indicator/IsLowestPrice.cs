@@ -1,25 +1,37 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Trady.Analysis.Infrastructure;
+using Trady.Core;
 
 namespace Trady.Analysis.Pattern.Indicator
 {
-    public class IsLowestPrice : AnalyzableBase<decimal, bool?>
+    public class IsLowestPrice<TInput, TOutput> : AnalyzableBase<TInput, decimal, bool?, TOutput>
     {
-        private int _periodCount;
+        readonly int _periodCount;
 
-        public IsLowestPrice(IList<Core.Candle> candles, int periodCount)
-            : this(candles.Select(c => c.Close).ToList(), periodCount)
+        public IsLowestPrice(IEnumerable<TInput> inputs, Func<TInput, decimal> inputMapper, Func<TInput, bool?, TOutput> outputMapper, int periodCount) : base(inputs, inputMapper, outputMapper)
+        {
+			_periodCount = periodCount;
+		}
+
+        protected override bool? ComputeByIndexImpl(IEnumerable<decimal> mappedInputs, int index)
+            => mappedInputs.Skip(mappedInputs.Count() - _periodCount).Min() == mappedInputs.ElementAt(index);
+	}
+
+    public class IsLowestPriceByTuple : IsLowestPrice<decimal, bool?>
+    {
+        public IsLowestPriceByTuple(IEnumerable<decimal> inputs, int periodCount) 
+            : base(inputs, i => i, (i, otm) => otm, periodCount)
         {
         }
+    }
 
-        public IsLowestPrice(IList<decimal> closes, int periodCount)
-            : base(closes)
+    public class IsLowestPrice : IsLowestPrice<Candle, AnalyzableTick<bool?>>
+    {
+        public IsLowestPrice(IEnumerable<Candle> inputs, int periodCount) 
+            : base(inputs, i => i.Close, (i, otm) => new AnalyzableTick<bool?>(i.DateTime, otm), periodCount)
         {
-            _periodCount = periodCount;
         }
-
-        protected override bool? ComputeByIndexImpl(int index)
-            => Inputs.Skip(Inputs.Count - _periodCount).Min() == Inputs[index];
     }
 }

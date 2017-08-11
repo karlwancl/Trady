@@ -14,25 +14,25 @@ namespace Trady.Analysis.Indicator
 
             public Full(IEnumerable<TInput> inputs, Func<TInput, (decimal High, decimal Low, decimal Close)> inputMapper, Func<TInput, (decimal? K, decimal? D, decimal? J), TOutput> outputMapper, int periodCount, int smaPeriodCountK, int smaPeriodCountD) : base(inputs, inputMapper, outputMapper)
             {
-				_fastSto = new FastByTuple(inputs.Select(inputMapper), periodCount, smaPeriodCountK);
+                _fastSto = new FastByTuple(inputs.Select(inputMapper), periodCount, smaPeriodCountK);
 
-				PeriodCount = periodCount;
-				SmaPeriodCountK = smaPeriodCountK;
-				SmaPeriodCountD = smaPeriodCountD;
+                PeriodCount = periodCount;
+                SmaPeriodCountK = smaPeriodCountK;
+                SmaPeriodCountD = smaPeriodCountD;
             }
 
-            public int PeriodCount { get; private set; }
+            public int PeriodCount { get; }
 
-            public int SmaPeriodCountK { get; private set; }
+            public int SmaPeriodCountK { get; }
 
-            public int SmaPeriodCountD { get; private set; }
+            public int SmaPeriodCountD { get; }
 
             protected override (decimal? K, decimal? D, decimal? J) ComputeByIndexImpl(IEnumerable<(decimal High, decimal Low, decimal Close)> mappedInputs, int index)
             {
-				var d = _fastSto[index].D;
-				Func<int, decimal?> dFunc = i => _fastSto[index - SmaPeriodCountD + i + 1].D;
-				decimal? dAvg = index >= SmaPeriodCountK - 1 ? Enumerable.Range(0, SmaPeriodCountD).Average(i => dFunc(i)) : null;
-				return (d, dAvg, 3 * d - 2 * dAvg);
+                var d = _fastSto[index].D;
+                Func<int, decimal?> dFunc = i => _fastSto[index - SmaPeriodCountD + i + 1].D;
+                decimal? dAvg = index >= SmaPeriodCountK - 1 ? Enumerable.Range(0, SmaPeriodCountD).Average(i => dFunc(i)) : null;
+                return (d, dAvg, 3 * d - 2 * dAvg);
             }
         }
 

@@ -14,22 +14,22 @@ namespace Trady.Analysis.Indicator
 
             public Fast(IEnumerable<TInput> inputs, Func<TInput, (decimal High, decimal Low, decimal Close)> inputMapper, Func<TInput, (decimal? K, decimal? D, decimal? J), TOutput> outputMapper, int periodCount, int smaPeriodCount) : base(inputs, inputMapper, outputMapper)
             {
-				_rsv = new RawStochasticsValueByTuple(inputs.Select(inputMapper), periodCount);
+                _rsv = new RawStochasticsValueByTuple(inputs.Select(inputMapper), periodCount);
 
-				PeriodCount = periodCount;
-				SmaPeriodCount = smaPeriodCount;
+                PeriodCount = periodCount;
+                SmaPeriodCount = smaPeriodCount;
             }
 
-            public int PeriodCount { get; private set; }
+            public int PeriodCount { get; }
 
-            public int SmaPeriodCount { get; private set; }
+            public int SmaPeriodCount { get; }
 
             protected override (decimal? K, decimal? D, decimal? J) ComputeByIndexImpl(IEnumerable<(decimal High, decimal Low, decimal Close)> mappedInputs, int index)
             {
-				decimal? rsv = _rsv[index];
-				Func<int, decimal?> rsvFunc = i => _rsv[index - SmaPeriodCount + i + 1];
-				decimal? rsvAvg = index >= SmaPeriodCount - 1 ? Enumerable.Range(0, SmaPeriodCount).Average(i => rsvFunc(i)) : null;
-				return (rsv, rsvAvg, 3 * rsv - 2 * rsvAvg);
+                decimal? rsv = _rsv[index];
+                Func<int, decimal?> rsvFunc = i => _rsv[index - SmaPeriodCount + i + 1];
+                decimal? rsvAvg = index >= SmaPeriodCount - 1 ? Enumerable.Range(0, SmaPeriodCount).Average(i => rsvFunc(i)) : null;
+                return (rsv, rsvAvg, 3 * rsv - 2 * rsvAvg);
             }
         }
 

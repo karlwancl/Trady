@@ -23,7 +23,7 @@ namespace Trady.Analysis.Pattern.Candlestick
     public class UpsideGapTwoCrowsByTuple : UpsideGapTwoCrows<(decimal Open, decimal High, decimal Low, decimal Close), bool?>
     {
         public UpsideGapTwoCrowsByTuple(IEnumerable<(decimal Open, decimal High, decimal Low, decimal Close)> inputs) 
-            : base(inputs, i = i, (i, otm) => otm)
+            : base(inputs, i => i, (i, otm) => otm)
         {
         }
     }

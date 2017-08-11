@@ -1,26 +1,39 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Trady.Analysis.Indicator;
 using Trady.Analysis.Infrastructure;
 using Trady.Analysis.Pattern.State;
+using Trady.Core;
 
 namespace Trady.Analysis.Pattern.Indicator
 {
-    public class OnBalanceVolumeTrend : AnalyzableBase<(decimal Close, decimal Volume), Trend?>
+    public class OnBalanceVolumeTrend<TInput, TOutput> : AnalyzableBase<TInput, (decimal Close, decimal Volume), Trend?, TOutput>
     {
-        private OnBalanceVolume _obv;
+        readonly OnBalanceVolumeByTuple _obv;
 
-        public OnBalanceVolumeTrend(IList<Core.Candle> candles)
-            : this(candles.Select(c => (c.Close, c.Volume)).ToList())
+        public OnBalanceVolumeTrend(IEnumerable<TInput> inputs, Func<TInput, (decimal Close, decimal Volume)> inputMapper, Func<TInput, Trend?, TOutput> outputMapper) : base(inputs, inputMapper, outputMapper)
+        {
+			_obv = new OnBalanceVolumeByTuple(inputs.Select(inputMapper));
+		}
+
+        protected override Trend? ComputeByIndexImpl(IEnumerable<(decimal Close, decimal Volume)> mappedInputs, int index)
+			=> index >= 1 ? StateHelper.IsTrending(_obv[index], _obv[index - 1]) : null;
+	}
+
+    public class OnBalanceVolumeTrendByTuple : OnBalanceVolumeTrend<(decimal Close, decimal Volume), Trend?>
+    {
+        public OnBalanceVolumeTrendByTuple(IEnumerable<(decimal Close, decimal Volume)> inputs) 
+            : base(inputs, i => i, (i, otm) => otm)
         {
         }
+    }
 
-        public OnBalanceVolumeTrend(IList<(decimal Close, decimal Volume)> inputs) : base(inputs)
+    public class OnBalanceVolumeTrend : OnBalanceVolumeTrend<Candle, AnalyzableTick<Trend?>>
+    {
+        public OnBalanceVolumeTrend(IEnumerable<Candle> inputs) 
+            : base(inputs, i => (i.Close, i.Volume), (i, otm) => new AnalyzableTick<Trend?>(i.DateTime, otm))
         {
-            _obv = new OnBalanceVolume(inputs);
         }
-
-        protected override Trend? ComputeByIndexImpl(int index)
-            => index >= 1 ? StateHelper.IsTrending(_obv[index] , _obv[index - 1]) : null;
     }
 }

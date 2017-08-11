@@ -17,7 +17,7 @@ namespace Trady.Analysis.Indicator
 
         protected override decimal? ComputeNullValue(IEnumerable<(decimal High, decimal Low, decimal Close, decimal Volume)> mappedInputs, int index) => null;
 
-        protected override decimal? ComputeInitialValue(IEnumerable<(decimal High, decimal Low, decimal Close, decimal Volume)> mappedInputs, int index) => mappedInputs(index).Volume;
+        protected override decimal? ComputeInitialValue(IEnumerable<(decimal High, decimal Low, decimal Close, decimal Volume)> mappedInputs, int index) => mappedInputs.ElementAt(index).Volume;
 
         protected override decimal? ComputeCumulativeValue(IEnumerable<(decimal High, decimal Low, decimal Close, decimal Volume)> mappedInputs, int index, decimal? prevOutputToMap)
         {

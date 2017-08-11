@@ -1,30 +1,42 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Trady.Analysis.Indicator;
 using Trady.Analysis.Infrastructure;
 using Trady.Analysis.Pattern.State;
+using Trady.Core;
 
 namespace Trady.Analysis.Pattern.Indicator
 {
-    public class BollingerBandsInRange : AnalyzableBase<decimal, Overboundary?>
+    public class BollingerBandsInRange<TInput, TOutput> : AnalyzableBase<TInput, decimal, Overboundary?, TOutput>
     {
-        private BollingerBands _bb;
+        readonly BollingerBandsByTuple _bb;
 
-        public BollingerBandsInRange(IList<Core.Candle> candles, int periodCount, int sdCount)
-            : this(candles.Select(c => c.Close).ToList(), periodCount, sdCount)
+        public BollingerBandsInRange(IEnumerable<TInput> inputs, Func<TInput, decimal> inputMapper, Func<TInput, Overboundary?, TOutput> outputMapper, int periodCount, decimal sdCount) : base(inputs, inputMapper, outputMapper)
+        {
+			_bb = new BollingerBandsByTuple(inputs.Select(inputMapper), periodCount, sdCount);
+		}
+
+        protected override Overboundary? ComputeByIndexImpl(IEnumerable<decimal> mappedInputs, int index)
+        {
+			var result = _bb[index];
+            return StateHelper.IsOverbound(mappedInputs.ElementAt(index), result.LowerBand, result.UpperBand);
+        }
+    }
+
+    public class BollingerBandsInRangeByTuple : BollingerBandsInRange<decimal, Overboundary?>
+    {
+        public BollingerBandsInRangeByTuple(IEnumerable<decimal> inputs, int periodCount, decimal sdCount) 
+            : base(inputs, i => i, (i, otm) => otm, periodCount, sdCount)
         {
         }
+    }
 
-        public BollingerBandsInRange(IList<decimal> closes, int periodCount, int sdCount)
-            : base(closes)
+    public class BollingerBandsInRange : BollingerBandsInRange<Candle, AnalyzableTick<Overboundary?>>
+    {
+        public BollingerBandsInRange(IEnumerable<Candle> inputs, int periodCount, decimal sdCount) 
+            : base(inputs, i => i.Close, (i, otm) => new AnalyzableTick<Overboundary?>(i.DateTime, otm), periodCount, sdCount)
         {
-            _bb = new BollingerBands(closes, periodCount, sdCount);
-        }
-
-        protected override Overboundary? ComputeByIndexImpl(int index)
-        {
-            var result = _bb[index];
-            return StateHelper.IsOverbound(Inputs[index], result.LowerBand, result.UpperBand);
         }
     }
 }
