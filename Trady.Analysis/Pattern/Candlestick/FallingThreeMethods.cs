@@ -31,18 +31,18 @@ namespace Trady.Analysis.Pattern.Candlestick
             LongThreshold = longThreshold;
         }
 
-        public int DownTrendPeriodCount { get;  }
-        public int PeriodCount { get;  }
-        public decimal ShortThreshold { get;  }
-        public decimal LongThreshold { get;  }
+        public int DownTrendPeriodCount { get; }
+        public int PeriodCount { get; }
+        public decimal ShortThreshold { get; }
+        public decimal LongThreshold { get; }
 
         protected override bool? ComputeByIndexImpl(IEnumerable<(decimal Open, decimal High, decimal Low, decimal Close)> mappedInputs, int index)
         {
-			if (index == 0)
-				return null;
+            if (index == 0)
+                return null;
 
-			if (!_bearishLongDay[index] || !_shortDay[index - 1])
-				return false;
+            if (!_bearishLongDay[index] || !_shortDay[index - 1])
+                return false;
 
             Func<int, bool> isAsc = i => mappedInputs.ElementAt(i).Close > mappedInputs.ElementAt(i - 1).Close && mappedInputs.ElementAt(i).Open > mappedInputs.ElementAt(i - 1).Open;
             for (int i = index - 1; i >= DownTrendPeriodCount; i--)
@@ -55,7 +55,7 @@ namespace Trady.Analysis.Pattern.Candlestick
                         (mappedInputs.ElementAt(i).High > mappedInputs.ElementAt(index - 1).High) &&
                         (_downTrend[i] ?? false);
             }
-			return false;
+            return false;
         }
     }
 

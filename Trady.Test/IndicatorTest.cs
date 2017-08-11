@@ -345,7 +345,10 @@ namespace Trady.Test
         [TestMethod]
         public async Task TestTrueRangeAsync()
         {
-            //throw new NotImplementedException();
+            var candles = await ImportCandlesAsync();
+            var indicator = new TrueRange(candles);
+            var result = indicator[candles.Count() - 1];
+            Assert.IsTrue(0.94m.IsApproximatelyEquals(result.Tick.Value));
         }
     }
 }

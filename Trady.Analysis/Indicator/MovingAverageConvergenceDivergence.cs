@@ -30,11 +30,11 @@ namespace Trady.Analysis.Indicator
 			DemPeriodCount = demPeriodCount;
         }
 
-        public int EmaPeriodCount1 { get; private set; }
+        public int EmaPeriodCount1 { get; }
 
-        public int EmaPeriodCount2 { get; private set; }
+        public int EmaPeriodCount2 { get; }
 
-        public int DemPeriodCount { get; private set; }
+        public int DemPeriodCount { get; }
 
         protected override (decimal? MacdLine, decimal? SignalLine, decimal? MacdHistogram) ComputeByIndexImpl(IEnumerable<decimal> mappedInputs, int index)
         {

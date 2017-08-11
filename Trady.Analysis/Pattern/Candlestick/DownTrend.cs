@@ -14,7 +14,7 @@ namespace Trady.Analysis.Pattern.Candlestick
             PeriodCount = periodCount;
         }
 
-        public int PeriodCount { get; private set; }
+        public int PeriodCount { get; }
 
         protected override bool? ComputeByIndexImpl(IEnumerable<(decimal High, decimal Low)> mappedInputs, int index)
         {

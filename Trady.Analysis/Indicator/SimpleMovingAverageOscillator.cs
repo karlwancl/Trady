@@ -20,9 +20,9 @@ namespace Trady.Analysis.Indicator
 			PeriodCount2 = periodCount2;
         }
 
-        public int PeriodCount1 { get; private set; }
+        public int PeriodCount1 { get; }
 
-        public int PeriodCount2 { get; private set; }
+        public int PeriodCount2 { get; }
 
         protected override decimal? ComputeByIndexImpl(IEnumerable<decimal> mappedInputs, int index) => _sma1[index] - _sma2[index];
     }

@@ -21,9 +21,9 @@ namespace Trady.Analysis.Indicator
 				SmaPeriodCountD = smaPeriodCountD;
             }
 
-            public int PeriodCount { get; private set; }
+            public int PeriodCount { get; }
 
-            public int SmaPeriodCountD { get; private set; }
+            public int SmaPeriodCountD { get; }
 
             protected override (decimal? K, decimal? D, decimal? J) ComputeByIndexImpl(IEnumerable<(decimal High, decimal Low, decimal Close)> mappedInputs, int index) => _fullSto[index];
         }

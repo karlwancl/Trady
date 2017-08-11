@@ -27,7 +27,7 @@ namespace Trady.Analysis.Pattern.Candlestick
             DownTrendPeriodCount = downTrendPeriodCount;
         }
 
-        public int DownTrendPeriodCount { get; private set; }
+        public int DownTrendPeriodCount { get; }
 
         protected override bool? ComputeByIndexImpl(IEnumerable<(decimal Open, decimal High, decimal Low, decimal Close)> mappedInputs, int index)
         {

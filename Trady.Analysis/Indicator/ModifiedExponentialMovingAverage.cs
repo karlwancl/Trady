@@ -22,7 +22,7 @@ namespace Trady.Analysis.Indicator
 			PeriodCount = periodCount;
         }
 
-        public int PeriodCount { get; private set; }
+        public int PeriodCount { get; }
 
         protected override decimal? ComputeByIndexImpl(IEnumerable<decimal> mappedInputs, int index) => _gema[index];
     }

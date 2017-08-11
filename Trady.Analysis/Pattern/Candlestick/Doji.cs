@@ -13,7 +13,7 @@ namespace Trady.Analysis.Pattern.Candlestick
             Threshold = threshold;
         }
 
-        public decimal Threshold { get; private set; }
+        public decimal Threshold { get; }
 
         protected override bool ComputeByIndexImpl(IEnumerable<(decimal Open, decimal High, decimal Low, decimal Close)> mappedInputs, int index)
             => Math.Abs(mappedInputs.ElementAt(index).Close - mappedInputs.ElementAt(index).Open) < Threshold * (mappedInputs.ElementAt(index).High - mappedInputs.ElementAt(index).Low);

@@ -24,12 +24,6 @@ namespace Trady.Analysis.Indicator
         protected override decimal? ComputeInitialValue(IEnumerable<decimal?> mappedInputs, int index) => _inputFunction(index);
 
         protected override decimal? ComputeCumulativeValue(IEnumerable<decimal?> mappedInputs, int index, decimal? prevOutputToMap)
-        {
-            var smooth = _smoothingFactorFunction(index);
-            var input = _inputFunction(index);
-            var result = prevOutputToMap + (smooth * (input - prevOutputToMap));
-            return result;
-        }
-            //=> prevOutputToMap + (_smoothingFactorFunction(index) * (_inputFunction(index) - prevOutputToMap));
+            => prevOutputToMap + (_smoothingFactorFunction(index) * (_inputFunction(index) - prevOutputToMap));
 	}
 }

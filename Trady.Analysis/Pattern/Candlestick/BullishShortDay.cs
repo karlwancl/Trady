@@ -26,9 +26,9 @@ namespace Trady.Analysis.Pattern.Candlestick
 			Threshold = threshold;
         }
 
-        public int PeriodCount { get; private set; }
+        public int PeriodCount { get; }
 
-        public decimal Threshold { get; private set; }
+        public decimal Threshold { get; }
 
         protected override bool ComputeByIndexImpl(IEnumerable<(decimal Open, decimal Close)> mappedInputs, int index)
 			=> _bullish[index] && _shortDay[index];

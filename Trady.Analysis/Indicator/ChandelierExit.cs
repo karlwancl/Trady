@@ -22,9 +22,9 @@ namespace Trady.Analysis.Indicator
 			AtrCount = atrCount;
         }
 
-        public int PeriodCount { get; private set; }
+        public int PeriodCount { get; }
 
-        public decimal AtrCount { get; private set; }
+        public decimal AtrCount { get; }
 
         protected override (decimal? Long, decimal? Short) ComputeByIndexImpl(IEnumerable<(decimal High, decimal Low, decimal Close)> mappedInputs, int index)
         {

@@ -10,33 +10,33 @@ namespace Trady.Analysis.Strategy
 {
     public class Portfolio
     {
-        private IDictionary<IList<Candle>, int> _weightings;
+        IDictionary<IEnumerable<Candle>, int> _weightings;
 
-        private IRule<IndexedCandle> _buyRule;
-        private IRule<IndexedCandle> _sellRule;
+        IRule<IndexedCandle> _buyRule;
+        IRule<IndexedCandle> _sellRule;
 
         public event BuyHandler OnBought;
 
-        public delegate void BuyHandler(IList<Candle> candles, int index, DateTime dateTime, decimal buyPrice, int quantity, decimal absCashFlow, decimal currentCashAmount);
+        public delegate void BuyHandler(IEnumerable<Candle> candles, int index, DateTime dateTime, decimal buyPrice, int quantity, decimal absCashFlow, decimal currentCashAmount);
 
         public event SellHandler OnSold;
 
-        public delegate void SellHandler(IList<Candle> candles, int index, DateTime dateTime, decimal sellPrice, int quantity, decimal absCashFlow, decimal currentCashAmount, decimal plRatio);
+        public delegate void SellHandler(IEnumerable<Candle> candles, int index, DateTime dateTime, decimal sellPrice, int quantity, decimal absCashFlow, decimal currentCashAmount, decimal plRatio);
 
-        #region Builder
+        #region Builder 
 
         public Portfolio() : this(null, null, null)
         {
         }
 
-        private Portfolio(IDictionary<IList<Candle>, int> weightings, IRule<IndexedCandle> buyRule, IRule<IndexedCandle> sellRule)
+        Portfolio(IDictionary<IEnumerable<Candle>, int> weightings, IRule<IndexedCandle> buyRule, IRule<IndexedCandle> sellRule)
         {
-            _weightings = weightings ?? new Dictionary<IList<Candle>, int>();
+            _weightings = weightings ?? new Dictionary<IEnumerable<Candle>, int>();
             _buyRule = buyRule;
             _sellRule = sellRule;
         }
 
-        public Portfolio Add(IList<Candle> candles, int weighting = 1)
+        public Portfolio Add(IEnumerable<Candle> candles, int weighting = 1)
         {
             _weightings.Add(candles, weighting);
             return new Portfolio(_weightings, _buyRule, _sellRule);
@@ -60,7 +60,7 @@ namespace Trady.Analysis.Strategy
 
             // Distribute principal to each candle set
             decimal totalWeight = _weightings.Sum(w => w.Value);
-            IReadOnlyDictionary<IList<Candle>, decimal> preAssetCashMap = _weightings.ToDictionary(w => w.Key, w => principal * w.Value / totalWeight);
+            IReadOnlyDictionary<IEnumerable<Candle>, decimal> preAssetCashMap = _weightings.ToDictionary(w => w.Key, w => principal * w.Value / totalWeight);
             var assetCashMap = preAssetCashMap.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
 
             // Init transaction history
@@ -72,7 +72,7 @@ namespace Trady.Analysis.Strategy
                 var asset = assetCashMap.ElementAt(i).Key;
 
                 var startIndex = asset.FindIndexOrDefault(c => c.DateTime >= (startTime ?? DateTime.MinValue), 0).Value;
-                var endIndex = asset.FindLastIndexOrDefault(c => c.DateTime <= (endTime ?? DateTime.MaxValue), asset.Count - 1).Value;
+                var endIndex = asset.FindLastIndexOrDefault(c => c.DateTime <= (endTime ?? DateTime.MaxValue), asset.Count() - 1).Value;
 
                 for (int j = startIndex; j <= endIndex; j++)
                 {
@@ -88,7 +88,7 @@ namespace Trady.Analysis.Strategy
             return new Result(preAssetCashMap, assetCashMap, transactions);
         }
 
-        private void BuyAsset(IndexedCandle indexedCandle, decimal premium, IDictionary<IList<Candle>, decimal> assetCashMap, IList<Transaction> transactions)
+        private void BuyAsset(IndexedCandle indexedCandle, decimal premium, IDictionary<IEnumerable<Candle>, decimal> assetCashMap, IList<Transaction> transactions)
         {
             if (assetCashMap.TryGetValue(indexedCandle.Candles, out decimal cash))
             {
@@ -103,7 +103,7 @@ namespace Trady.Analysis.Strategy
             }
         }
 
-        private void SellAsset(IndexedCandle indexedCandle, decimal premium, IDictionary<IList<Candle>, decimal> assetCashMap, IList<Transaction> transactions)
+        private void SellAsset(IndexedCandle indexedCandle, decimal premium, IDictionary<IEnumerable<Candle>, decimal> assetCashMap, IList<Transaction> transactions)
         {
             if (assetCashMap.TryGetValue(indexedCandle.Candles, out _))
             {

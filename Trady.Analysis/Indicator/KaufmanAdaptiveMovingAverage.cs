@@ -33,11 +33,11 @@ namespace Trady.Analysis.Indicator
 			EmaSlowPeriodCount = emaSlowPeriodCount;
         }
 
-        public int PeriodCount { get; private set; }
+        public int PeriodCount { get; }
 
-        public int EmaFastPeriodCount { get; private set; }
+        public int EmaFastPeriodCount { get; }
 
-        public int EmaSlowPeriodCount { get; private set; }
+        public int EmaSlowPeriodCount { get; }
 
         protected override decimal? ComputeByIndexImpl(IEnumerable<decimal> mappedInputs, int index) => _gema[index];
     }
