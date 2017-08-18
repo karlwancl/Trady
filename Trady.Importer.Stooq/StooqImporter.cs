@@ -27,13 +27,13 @@ namespace Trady.Importer
         /// <param name="endTime">End time.</param>
         /// <param name="period">Period.</param>
         /// <param name="token">Token.</param>
-        public async Task<IList<Core.Candle>> ImportAsync(string symbol, DateTime? startTime = default(DateTime?), DateTime? endTime = default(DateTime?), PeriodOption period = PeriodOption.Daily, CancellationToken token = default(CancellationToken))
+        public async Task<IEnumerable<Core.Candle>> ImportAsync(string symbol, DateTime? startTime = default(DateTime?), DateTime? endTime = default(DateTime?), PeriodOption period = PeriodOption.Daily, CancellationToken token = default(CancellationToken))
         {
             if (period != PeriodOption.Daily && period != PeriodOption.Monthly && period != PeriodOption.Weekly)
                 throw new ArgumentException("This importer only supports daily, weekly & monthly data");
 
             var candles = await Stooq.GetHistoricalAsync(symbol, PeriodMap[period], startTime, endTime, SkipOption.None, false, token);
-            return candles.Select(c => new Core.Candle(c.DateTime, c.Open, c.High, c.Low, c.Close, c.Volume)).OrderBy(c => c.DateTime).ToList();
+            return candles.Select(c => new Core.Candle(c.DateTime, c.Open, c.High, c.Low, c.Close, c.Volume)).OrderBy(c => c.DateTime);
         }
     }
 }

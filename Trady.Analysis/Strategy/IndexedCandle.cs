@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using Trady.Core;
 using Trady.Core.Infrastructure;
@@ -11,13 +11,12 @@ namespace Trady.Analysis.Strategy
         int _index;
 
         public IndexedCandle(IEnumerable<Candle> candles, int index)
-            : base(
-                candles.ElementAt(index).DateTime, 
-                candles.ElementAt(index).Open, 
-                candles.ElementAt(index).High, 
-                candles.ElementAt(index).Low, 
-                candles.ElementAt(index).Close, 
-                candles.ElementAt(index).Volume)
+            : base(candles.ElementAt(index).DateTime, 
+                   candles.ElementAt(index).Open, 
+                   candles.ElementAt(index).High, 
+                   candles.ElementAt(index).Low, 
+                   candles.ElementAt(index).Close, 
+                   candles.ElementAt(index).Volume)
         {
             _candles = candles;
             _index = index;

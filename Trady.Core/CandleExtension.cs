@@ -20,7 +20,7 @@ namespace Trady.Core
 
         #region candle list transformation
 
-        public static IList<Candle> Transform<TSourcePeriod, TTargetPeriod>(this IList<Candle> candles)
+        public static IEnumerable<Candle> Transform<TSourcePeriod, TTargetPeriod>(this IEnumerable<Candle> candles)
             where TSourcePeriod : IPeriod
             where TTargetPeriod : IPeriod
         {
@@ -52,7 +52,7 @@ namespace Trady.Core
             return outCandles;
         }
 
-        private static bool IsTimeframesValid<TPeriod>(IList<Candle> candles, out Candle err)
+        static bool IsTimeframesValid<TPeriod>(IEnumerable<Candle> candles, out Candle err)
             where TPeriod : IPeriod
         {
             var periodInstance = Activator.CreateInstance<TPeriod>();
@@ -69,7 +69,7 @@ namespace Trady.Core
             return true;
         }
 
-        private static bool IsTransformationValid<TSourcePeriod, TTargetPeriod>()
+        static bool IsTransformationValid<TSourcePeriod, TTargetPeriod>()
             where TSourcePeriod : IPeriod
             where TTargetPeriod : IPeriod
         {
@@ -90,7 +90,7 @@ namespace Trady.Core
             return true;
         }
 
-        private static Candle ComputeCandle(IList<Candle> candles, DateTime startTime, DateTime endTime)
+        static Candle ComputeCandle(IEnumerable<Candle> candles, DateTime startTime, DateTime endTime)
         {
             var candle = candles.Where(c => c.DateTime >= startTime && c.DateTime < endTime);
             if (candle.Any())

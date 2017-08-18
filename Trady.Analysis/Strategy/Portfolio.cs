@@ -23,7 +23,7 @@ namespace Trady.Analysis.Strategy
 
         public delegate void SellHandler(IEnumerable<Candle> candles, int index, DateTime dateTime, decimal sellPrice, int quantity, decimal absCashFlow, decimal currentCashAmount, decimal plRatio);
 
-        #region Builder 
+        #region Builder
 
         public Portfolio() : this(null, null, null)
         {
@@ -88,7 +88,7 @@ namespace Trady.Analysis.Strategy
             return new Result(preAssetCashMap, assetCashMap, transactions);
         }
 
-        private void BuyAsset(IndexedCandle indexedCandle, decimal premium, IDictionary<IEnumerable<Candle>, decimal> assetCashMap, IList<Transaction> transactions)
+        void BuyAsset(IndexedCandle indexedCandle, decimal premium, IDictionary<IEnumerable<Candle>, decimal> assetCashMap, IList<Transaction> transactions)
         {
             if (assetCashMap.TryGetValue(indexedCandle.Candles, out decimal cash))
             {
@@ -103,7 +103,7 @@ namespace Trady.Analysis.Strategy
             }
         }
 
-        private void SellAsset(IndexedCandle indexedCandle, decimal premium, IDictionary<IEnumerable<Candle>, decimal> assetCashMap, IList<Transaction> transactions)
+        void SellAsset(IndexedCandle indexedCandle, decimal premium, IDictionary<IEnumerable<Candle>, decimal> assetCashMap, IList<Transaction> transactions)
         {
             if (assetCashMap.TryGetValue(indexedCandle.Candles, out _))
             {

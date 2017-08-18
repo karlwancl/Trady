@@ -9,14 +9,13 @@ using System.Threading.Tasks;
 using CsvHelper.Configuration;
 using Trady.Core;
 using Trady.Core.Period;
-using Trady.Importer.Helper;
 
 namespace Trady.Importer
 {
     public class CsvImporter : IImporter
     {
-        private string _path;
-        private readonly CultureInfo _culture;
+        string _path;
+        readonly CultureInfo _culture;
 
         public CsvImporter(string path) : this(path, CultureInfo.CurrentCulture)
         {
@@ -29,7 +28,7 @@ namespace Trady.Importer
             _culture = culture;
         }
 
-        public async Task<IList<Candle>> ImportAsync(string symbol, DateTime? startTime = null, DateTime? endTime = null, PeriodOption period = PeriodOption.Daily, CancellationToken token = default(CancellationToken))
+        public async Task<IEnumerable<Candle>> ImportAsync(string symbol, DateTime? startTime = null, DateTime? endTime = null, PeriodOption period = PeriodOption.Daily, CancellationToken token = default(CancellationToken))
         {
             return await Task.Factory.StartNew(() =>
             {
@@ -42,9 +41,9 @@ namespace Trady.Importer
                     {
                         var date = csvReader.GetField<DateTime>(0);
                         if ((!startTime.HasValue || date >= startTime) && (!endTime.HasValue || date <= endTime))
-                            candles.Add(this.GetRecord(csvReader));
+                            candles.Add(GetRecord(csvReader));
                     }
-                    return candles.OrderBy(c => c.DateTime).ToList();
+                    return candles.OrderBy(c => c.DateTime);
                 }
             });
         }

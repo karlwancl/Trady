@@ -9,15 +9,16 @@ using Trady.Core.Period;
 using System.IO;
 using Trady.Analysis.Strategy;
 using Trady.Analysis.Strategy.Rule;
+using Trady.Importer;
 
 namespace Trady.Test
 {
     [TestClass]
     public class MiscTest
     {
-        public async Task<IList<Candle>> ImportCandlesAsync()
+        public async Task<IEnumerable<Candle>> ImportCandlesAsync()
         {
-            var csvImporter = new Importer.CsvImporter("fb.csv", new CultureInfo("en-US"));
+            var csvImporter = new CsvImporter("fb.csv", new CultureInfo("en-US"));
             return await csvImporter.ImportAsync("fb");
         }
 

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Trady.Core;
@@ -14,11 +14,11 @@ namespace Trady.Analysis.Strategy
             Transactions = transactions;
         }
 
-        public IReadOnlyDictionary<IEnumerable<Candle>, decimal> PreAssetCashMap { get; }
+        public IReadOnlyDictionary<IEnumerable<Candle>, decimal> PreAssetCashMap { get; private set; }
 
-        public IDictionary<IEnumerable<Candle>, decimal> PostAssetCashMap { get; }
+        public IDictionary<IEnumerable<Candle>, decimal> PostAssetCashMap { get; private set; }
 
-        public IList<Transaction> Transactions { get; }
+        public IEnumerable<Transaction> Transactions { get; private set; }
 
         #region Count
 

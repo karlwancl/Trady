@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Trady.Core;
 using Trady.Core.Period;
 using YahooFinanceApi;
 
@@ -29,7 +30,7 @@ namespace Trady.Importer
         /// <param name="endTime">End time.</param>
         /// <param name="period">Period.</param>
         /// <param name="token">Token.</param>
-        public async Task<IList<Core.Candle>> ImportAsync(string symbol, DateTime? startTime = default(DateTime?), DateTime? endTime = default(DateTime?), PeriodOption period = PeriodOption.Daily, CancellationToken token = default(CancellationToken))
+        public async Task<IEnumerable<Core.Candle>> ImportAsync(string symbol, DateTime? startTime = default(DateTime?), DateTime? endTime = default(DateTime?), PeriodOption period = PeriodOption.Daily, CancellationToken token = default(CancellationToken))
         {
             if (period != PeriodOption.Daily && period != PeriodOption.Weekly && period != PeriodOption.Monthly)
                 throw new ArgumentException("This importer only supports daily, weekly & monthly data");
@@ -38,7 +39,7 @@ namespace Trady.Importer
             var corrEndTime = (endTime > UnixMaxDateTime ? UnixMaxDateTime : endTime) ?? UnixMaxDateTime;
             var candles = await Yahoo.GetHistoricalAsync(symbol, corrStartTime, corrEndTime, PeriodMap[period], false, token);
 
-            return candles.Select(c => new Core.Candle(c.DateTime, c.Open, c.High, c.Low, c.Close, c.Volume)).OrderBy(c => c.DateTime).ToList();
+            return candles.Select(c => new Core.Candle(c.DateTime, c.Open, c.High, c.Low, c.Close, c.Volume)).OrderBy(c => c.DateTime);
         }
     }
 }

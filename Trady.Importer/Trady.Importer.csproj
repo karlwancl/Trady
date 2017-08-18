@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <!--<Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" />-->
   <PropertyGroup>
     <TargetFramework>netstandard1.4</TargetFramework>
@@ -8,14 +8,14 @@
     <Copyright>Copyright (c) 2016-2017 Karl Wan</Copyright>
     <AssemblyTitle>Trady.Importer</AssemblyTitle>
     <VersionPrefix>2.1.0-beta0</VersionPrefix>
+    <VersionPrefix>2.1.0</VersionPrefix>
     <Authors>Karl Wan</Authors>
     <TargetFramework>netstandard1.4</TargetFramework>
     <AssemblyName>Trady.Importer</AssemblyName>
     <PackageId>Trady.Importer</PackageId>
     <PackageTags>Trady;Technical;Analysis;Finance;Stock</PackageTags>
     <PackageReleaseNotes>
-[17/8/2017] (Breaking change) Makes clear between computation with tuples and computation with candles. Tuple input -> Tuple output, Candle input -> Tuple with datetime output
-[6/7/2017] Fix parsing for different culture
+[6/7/2017] Added GoogleFinanceImporter
 [26/6/2017] Multiple Culture Support, Extended ClosePricePercentageChange and ClosePriceChange (Thanks to @fernaramburu for the contribution)
 [25/6/2017] Various breaking changes, please refer to https://github.com/lppkarl/Trady
 [22/3/2017] Some breaking changes, fix indicators: BbWidth, Adxr, IchimokuCloud, Atr, indicators added: Er, Kama, Mema, Sd
@@ -39,21 +39,11 @@
     <EmbeddedResource Include="**\*.resx" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="CsvHelper" Version="2.16.3">
-    </PackageReference>
-    <!--<PackageReference Include="NETStandard.Library">
-      <Version>1.6.1</Version>
-    </PackageReference>
-    <PackageReference Include="Microsoft.NET.Sdk">
-      <Version>1.0.0-alpha-20161104-2</Version>
-      <PrivateAssets>All</PrivateAssets>
-    </PackageReference>-->
-    <PackageReference Include="Quandl.NET" Version="1.1.1" />
-    <PackageReference Include="StooqApi" Version="1.0.6" />
-    <PackageReference Include="YahooFinanceApi" Version="1.0.12" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Trady.Core\Trady.Core.csproj" />
+    <ProjectReference Include="..\Trady.Importer.Csv\Trady.Importer.Csv.csproj" />
+    <ProjectReference Include="..\Trady.Importer.Google\Trady.Importer.Google.csproj" />
+    <ProjectReference Include="..\Trady.Importer.Quandl\Trady.Importer.Quandl.csproj" />
+    <ProjectReference Include="..\Trady.Importer.Stooq\Trady.Importer.Stooq.csproj" />
+    <ProjectReference Include="..\Trady.Importer.Yahoo\Trady.Importer.Yahoo.csproj" />
   </ItemGroup>
   <!--<Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />-->
 </Project>
