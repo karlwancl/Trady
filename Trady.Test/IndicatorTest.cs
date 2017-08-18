@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Trady.Analysis.Indicator;
 using Trady.Core;
 using System;
+using Trady.Importer;
 
 namespace Trady.Test
 {

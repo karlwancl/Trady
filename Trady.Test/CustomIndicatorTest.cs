@@ -13,7 +13,7 @@ namespace Trady.Test
     [TestClass]
     public class CustomIndicatorTest
     {
-        async Task<IList<Candle>> ImportCandlesAsync()
+        async Task<IEnumerable<Candle>> ImportCandlesAsync()
         {
             var csvImporter = new Importer.CsvImporter("fb.csv", new CultureInfo("en-US"));
             return await csvImporter.ImportAsync("fb");
@@ -27,9 +27,9 @@ namespace Trady.Test
 
             var customIndicator = new ClosePricePercentageChangeSinceMondayOpen(candles);
 
-            Assert.AreEqual(candles[10].DateTime.Date, new DateTime(2012,6,4));
+            Assert.AreEqual(candles.ElementAt(10).DateTime.Date, new DateTime(2012,6,4));
             // 4th June 2012 is Monday. Week opens at 27.2
-            Assert.AreEqual(candles[10].DateTime.DayOfWeek, DayOfWeek.Monday);
+            Assert.AreEqual(candles.ElementAt(10).DateTime.DayOfWeek, DayOfWeek.Monday);
 
             // That Monday FB closed at: 26.9. 
             Assert.IsTrue(customIndicator[10].Value.IsApproximatelyEquals(-1.10294m));

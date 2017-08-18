@@ -12,6 +12,11 @@ artifacts:
 - path: Trady.Analysis/bin/Debug/Trady.Analysis.*.nupkg
 - path: Trady.Core/bin/Debug/Trady.Core.*.nupkg
 - path: Trady.Importer/bin/Debug/Trady.Importer.*.nupkg
+- path: Trady.Importer.Csv/bin/Debug/Trady.Importer.Csv.*.nupkg
+- path: Trady.Importer.Google/bin/Debug/Trady.Importer.Google.*.nupkg
+- path: Trady.Importer.Quandl/bin/Debug/Trady.Importer.Quandl.*.nupkg
+- path: Trady.Importer.Stooq/bin/Debug/Trady.Importer.Stooq.*.nupkg
+- path: Trady.Importer.Yahoo/bin/Debug/Trady.Importer.Yahoo.*.nupkg
 deploy:
 - provider: NuGet
   api_key:
