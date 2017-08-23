@@ -3,7 +3,7 @@ using Trady.Core.Infrastructure;
 
 namespace Trady.Analysis.Infrastructure
 {
-	public class AnalyzableTick<T>
+    public class AnalyzableTick<T>: IAnalyzableTick<T>
 	{
 		public DateTime? DateTime { get; }
 		public T Tick { get; }

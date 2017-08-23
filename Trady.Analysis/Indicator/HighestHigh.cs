@@ -8,7 +8,7 @@ namespace Trady.Analysis.Indicator
 {
     public class HighestHigh<TInput, TOutput> : AnalyzableBase<TInput, decimal, decimal?, TOutput>
     {
-        public HighestHigh(IEnumerable<TInput> inputs, Func<TInput, decimal> inputMapper, Func<TInput, decimal?, TOutput> outputMapper, int periodCount) : base(inputs, inputMapper, outputMapper)
+        public HighestHigh(IEnumerable<TInput> inputs, Func<TInput, decimal> inputMapper, int periodCount) : base(inputs, inputMapper)
         {
             PeriodCount = periodCount;
         }
@@ -22,7 +22,7 @@ namespace Trady.Analysis.Indicator
     public class HighestHighByTuple : HighestHigh<decimal, decimal?>
     {
         public HighestHighByTuple(IEnumerable<decimal> inputs,int periodCount) 
-            : base(inputs, i => i, (i, otm) => otm, periodCount)
+            : base(inputs, i => i, periodCount)
         {
         }
     }
@@ -30,7 +30,7 @@ namespace Trady.Analysis.Indicator
     public class HighestHigh : HighestHigh<Candle, AnalyzableTick<decimal?>>
     {
         public HighestHigh(IEnumerable<Candle> inputs, int periodCount) 
-            : base(inputs, i => i.High, (i, otm) => new AnalyzableTick<decimal?>(i.DateTime, otm), periodCount)
+            : base(inputs, i => i.High, periodCount)
         {
         }
     }

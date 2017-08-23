@@ -12,7 +12,7 @@ namespace Trady.Analysis.Pattern.Indicator
     {
         readonly BollingerBandsByTuple _bb;
 
-        public BollingerBandsInRange(IEnumerable<TInput> inputs, Func<TInput, decimal> inputMapper, Func<TInput, Overboundary?, TOutput> outputMapper, int periodCount, decimal sdCount) : base(inputs, inputMapper, outputMapper)
+        public BollingerBandsInRange(IEnumerable<TInput> inputs, Func<TInput, decimal> inputMapper, int periodCount, decimal sdCount) : base(inputs, inputMapper)
         {
 			_bb = new BollingerBandsByTuple(inputs.Select(inputMapper), periodCount, sdCount);
 		}
@@ -27,7 +27,7 @@ namespace Trady.Analysis.Pattern.Indicator
     public class BollingerBandsInRangeByTuple : BollingerBandsInRange<decimal, Overboundary?>
     {
         public BollingerBandsInRangeByTuple(IEnumerable<decimal> inputs, int periodCount, decimal sdCount) 
-            : base(inputs, i => i, (i, otm) => otm, periodCount, sdCount)
+            : base(inputs, i => i, periodCount, sdCount)
         {
         }
     }
@@ -35,7 +35,7 @@ namespace Trady.Analysis.Pattern.Indicator
     public class BollingerBandsInRange : BollingerBandsInRange<Candle, AnalyzableTick<Overboundary?>>
     {
         public BollingerBandsInRange(IEnumerable<Candle> inputs, int periodCount, decimal sdCount) 
-            : base(inputs, i => i.Close, (i, otm) => new AnalyzableTick<Overboundary?>(i.DateTime, otm), periodCount, sdCount)
+            : base(inputs, i => i.Close, periodCount, sdCount)
         {
         }
     }

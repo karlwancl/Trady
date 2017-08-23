@@ -16,8 +16,8 @@ namespace Trady.Analysis.Pattern.Candlestick
         BullishByTuple _bullish;
         BearishByTuple _bearish;
 
-        public DarkCloudCover(IEnumerable<TInput> inputs, Func<TInput, (decimal Open, decimal High, decimal Low, decimal Close)> inputMapper, Func<TInput, bool?, TOutput> outputMapper, int upTrendPeriodCount = 3, int downTrendPeriodCount = 3, int longPeriodCount = 20, decimal longThreshold = 0.75m)
-            : base(inputs, inputMapper, outputMapper)
+        public DarkCloudCover(IEnumerable<TInput> inputs, Func<TInput, (decimal Open, decimal High, decimal Low, decimal Close)> inputMapper, int upTrendPeriodCount = 3, int downTrendPeriodCount = 3, int longPeriodCount = 20, decimal longThreshold = 0.75m)
+            : base(inputs, inputMapper)
         {
             var mappedInputs = inputs.Select(inputMapper);
 
@@ -55,7 +55,7 @@ namespace Trady.Analysis.Pattern.Candlestick
     public class DarkCloudCoverByTuple : DarkCloudCover<(decimal Open, decimal High, decimal Low, decimal Close), bool?>
     {
         public DarkCloudCoverByTuple(IEnumerable<(decimal Open, decimal High, decimal Low, decimal Close)> inputs, int upTrendPeriodCount = 3, int downTrendPeriodCount = 3, int longPeriodCount = 20, decimal longThreshold = 0.75M)
-            : base(inputs, i => i, (i, otm) => otm, upTrendPeriodCount, downTrendPeriodCount, longPeriodCount, longThreshold)
+            : base(inputs, i => i, upTrendPeriodCount, downTrendPeriodCount, longPeriodCount, longThreshold)
         {
         }
     }
@@ -63,7 +63,7 @@ namespace Trady.Analysis.Pattern.Candlestick
     public class DarkCloudCover : DarkCloudCover<Candle, AnalyzableTick<bool?>>
     {
         public DarkCloudCover(IEnumerable<Candle> inputs, int upTrendPeriodCount = 3, int downTrendPeriodCount = 3, int longPeriodCount = 20, decimal longThreshold = 0.75M) 
-            : base(inputs, i => (i.Open, i.High, i.Low, i.Close), (i, otm) => new AnalyzableTick<bool?>(i.DateTime, otm), upTrendPeriodCount, downTrendPeriodCount, longPeriodCount, longThreshold)
+            : base(inputs, i => (i.Open, i.High, i.Low, i.Close), upTrendPeriodCount, downTrendPeriodCount, longPeriodCount, longThreshold)
         {
         }
     }

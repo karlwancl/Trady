@@ -12,7 +12,7 @@ namespace Trady.Analysis.Pattern.Indicator
     {
         readonly RelativeStrengthIndexByTuple _rsi;
 
-        public RelativeStrengthIndexOvertrade(IEnumerable<TInput> inputs, Func<TInput, decimal> inputMapper, Func<TInput, Overtrade?, TOutput> outputMapper, int periodCount) : base(inputs, inputMapper, outputMapper)
+        public RelativeStrengthIndexOvertrade(IEnumerable<TInput> inputs, Func<TInput, decimal> inputMapper, int periodCount) : base(inputs, inputMapper)
         {
 			_rsi = new RelativeStrengthIndexByTuple(inputs.Select(inputMapper), periodCount);
 		}
@@ -24,7 +24,7 @@ namespace Trady.Analysis.Pattern.Indicator
     public class RelativeStrengthIndexOvertradeByTuple : RelativeStrengthIndexOvertrade<decimal, Overtrade?>
     {
         public RelativeStrengthIndexOvertradeByTuple(IEnumerable<decimal> inputs, int periodCount) 
-            : base(inputs, i => i, (i, otm) => otm, periodCount)
+            : base(inputs, i => i, periodCount)
         {
         }
     }
@@ -32,7 +32,7 @@ namespace Trady.Analysis.Pattern.Indicator
     public class RelativeStrengthIndexOvertrade : RelativeStrengthIndexOvertrade<Candle, AnalyzableTick<Overtrade?>>
     {
         public RelativeStrengthIndexOvertrade(IEnumerable<Candle> inputs, int periodCount) 
-            : base(inputs, i => i.Close, (i, otm) => new AnalyzableTick<Overtrade?>(i.DateTime, otm), periodCount)
+            : base(inputs, i => i.Close, periodCount)
         {
         }
     }

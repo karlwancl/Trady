@@ -11,9 +11,9 @@ namespace Trady.Analysis.Indicator
         DirectionalMovementIndexByTuple _dx;
         readonly GenericExponentialMovingAverage _adx;
 
-        public AverageDirectionalIndex(IEnumerable<TInput> inputs, Func<TInput, (decimal High, decimal Low, decimal Close)> inputMapper, Func<TInput, decimal?, TOutput> outputMapper, int periodCount) : base(inputs, inputMapper, outputMapper)
+        public AverageDirectionalIndex(IEnumerable<TInput> inputs, Func<TInput, (decimal High, decimal Low, decimal Close)> inputMapper, int periodCount) : base(inputs, inputMapper)
         {
-			_dx = new DirectionalMovementIndexByTuple(inputs.Select(inputMapper), periodCount);
+            _dx = new DirectionalMovementIndexByTuple(inputs.Select(inputMapper), periodCount);
 
             _adx = new GenericExponentialMovingAverage(
                 periodCount,
@@ -22,7 +22,7 @@ namespace Trady.Analysis.Indicator
                 i => 1.0m / periodCount,
                 inputs.Count());
 
-			PeriodCount = periodCount;
+            PeriodCount = periodCount;
         }
 
         public int PeriodCount { get; }
@@ -33,7 +33,7 @@ namespace Trady.Analysis.Indicator
     public class AverageDirectionalIndexByTuple : AverageDirectionalIndex<(decimal High, decimal Low, decimal Close), decimal?>
     {
         public AverageDirectionalIndexByTuple(IEnumerable<(decimal High, decimal Low, decimal Close)> inputs, int periodCount) 
-            : base(inputs, i => i, (i, otm) => otm, periodCount)
+            : base(inputs, i => i, periodCount)
         {
         }
     }
@@ -41,7 +41,7 @@ namespace Trady.Analysis.Indicator
     public class AverageDirectionalIndex : AverageDirectionalIndex<Candle, AnalyzableTick<decimal?>>
     {
         public AverageDirectionalIndex(IEnumerable<Candle> inputs, int periodCount) 
-            : base(inputs, i => (i.High, i.Low, i.Close), (i, otm) => new AnalyzableTick<decimal?>(i.DateTime, otm), periodCount)
+            : base(inputs, i => (i.High, i.Low, i.Close), periodCount)
         {
         }
     }

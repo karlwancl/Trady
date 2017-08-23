@@ -9,7 +9,7 @@ namespace Trady.Analysis.Pattern.Candlestick
 {
     public class LongLowerShadow<TInput, TOutput> : AnalyzableBase<TInput, (decimal Open, decimal Low, decimal Close), bool?, TOutput>
     {
-        public LongLowerShadow(IEnumerable<TInput> inputs, Func<TInput, (decimal Open, decimal Low, decimal Close)> inputMapper, Func<TInput, bool?, TOutput> outputMapper, int periodCount = 20, decimal threshold = 0.25m) : base(inputs, inputMapper, outputMapper)
+        public LongLowerShadow(IEnumerable<TInput> inputs, Func<TInput, (decimal Open, decimal Low, decimal Close)> inputMapper, int periodCount = 20, decimal threshold = 0.25m) : base(inputs, inputMapper)
         {
             PeriodCount = periodCount;
             Threshold = threshold;
@@ -28,7 +28,7 @@ namespace Trady.Analysis.Pattern.Candlestick
     public class LongLowerShadowByTuple : LongLowerShadow<(decimal Open, decimal Low, decimal Close), bool?>
     {
         public LongLowerShadowByTuple(IEnumerable<(decimal Open, decimal Low, decimal Close)> inputs, int periodCount = 20, decimal threshold = 0.25M) 
-            : base(inputs, i => i, (i, otm) => otm, periodCount, threshold)
+            : base(inputs, i => i, periodCount, threshold)
         {
         }
     }
@@ -36,7 +36,7 @@ namespace Trady.Analysis.Pattern.Candlestick
     public class LongLowerShadow : LongLowerShadow<Candle, AnalyzableTick<bool?>>
     {
         public LongLowerShadow(IEnumerable<Candle> inputs, int periodCount = 20, decimal threshold = 0.25M) 
-            : base(inputs, i => (i.Open, i.Low, i.Close), (i, otm) => new AnalyzableTick<bool?>(i.DateTime, otm), periodCount, threshold)
+            : base(inputs, i => (i.Open, i.Low, i.Close), periodCount, threshold)
         {
         }
     }

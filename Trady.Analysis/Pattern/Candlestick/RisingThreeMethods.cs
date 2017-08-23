@@ -15,7 +15,7 @@ namespace Trady.Analysis.Pattern.Candlestick
         readonly ShortDayByTuple _shortDay;
         readonly BullishLongDayByTuple _bullishLongDay;
 
-        public RisingThreeMethods(IEnumerable<TInput> inputs, Func<TInput, (decimal Open, decimal High, decimal Low, decimal Close)> inputMapper, Func<TInput, bool?, TOutput> outputMapper, int upTrendPeriodCount = 3, int periodCount = 20, decimal shortThreshold = 0.25m, decimal longThreshold = 0.75m) : base(inputs, inputMapper, outputMapper)
+        public RisingThreeMethods(IEnumerable<TInput> inputs, Func<TInput, (decimal Open, decimal High, decimal Low, decimal Close)> inputMapper, int upTrendPeriodCount = 3, int periodCount = 20, decimal shortThreshold = 0.25m, decimal longThreshold = 0.75m) : base(inputs, inputMapper)
         {
             var mappedInputs = inputs.Select(inputMapper);
             var ocs = mappedInputs.Select(i => (i.Open, i.Close));
@@ -61,7 +61,7 @@ namespace Trady.Analysis.Pattern.Candlestick
     public class RisingThreeMethodsByTuple : RisingThreeMethods<(decimal Open, decimal High, decimal Low, decimal Close), bool?>
     {
         public RisingThreeMethodsByTuple(IEnumerable<(decimal Open, decimal High, decimal Low, decimal Close)> inputs, int upTrendPeriodCount = 3, int periodCount = 20, decimal shortThreshold = 0.25M, decimal longThreshold = 0.75M) 
-            : base(inputs, i => i, (i, otm) => otm, upTrendPeriodCount, periodCount, shortThreshold, longThreshold)
+            : base(inputs, i => i, upTrendPeriodCount, periodCount, shortThreshold, longThreshold)
         {
         }
     }
@@ -69,7 +69,7 @@ namespace Trady.Analysis.Pattern.Candlestick
     public class RisingThreeMethods : RisingThreeMethods<Candle, AnalyzableTick<bool?>>
     {
         public RisingThreeMethods(IEnumerable<Candle> inputs, int upTrendPeriodCount = 3, int periodCount = 20, decimal shortThreshold = 0.25M, decimal longThreshold = 0.75M) 
-            : base(inputs, i => (i.Open, i.High, i.Low, i.Close), (i, otm) => new AnalyzableTick<bool?>(i.DateTime, otm), upTrendPeriodCount, periodCount, shortThreshold, longThreshold)
+            : base(inputs, i => (i.Open, i.High, i.Low, i.Close), upTrendPeriodCount, periodCount, shortThreshold, longThreshold)
         {
         }
     }

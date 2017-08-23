@@ -11,7 +11,7 @@ namespace Trady.Analysis.Pattern.Candlestick
     /// </summary>
     public class ShortShadow<TInput, TOutput> : AnalyzableBase<TInput, (decimal Open, decimal High, decimal Low, decimal Close), bool?, TOutput>
     {
-        public ShortShadow(IEnumerable<TInput> inputs, Func<TInput, (decimal Open, decimal High, decimal Low, decimal Close)> inputMapper, Func<TInput, bool?, TOutput> outputMapper) : base(inputs, inputMapper, outputMapper)
+        public ShortShadow(IEnumerable<TInput> inputs, Func<TInput, (decimal Open, decimal High, decimal Low, decimal Close)> inputMapper) : base(inputs, inputMapper)
         {
         }
 
@@ -24,7 +24,7 @@ namespace Trady.Analysis.Pattern.Candlestick
     public class ShortShadowByTuple : ShortShadow<(decimal Open, decimal High, decimal Low, decimal Close), bool?>
     {
         public ShortShadowByTuple(IEnumerable<(decimal Open, decimal High, decimal Low, decimal Close)> inputs) 
-            : base(inputs, i => i, (i, otm) => otm)
+            : base(inputs, i => i)
         {
         }
     }
@@ -32,7 +32,7 @@ namespace Trady.Analysis.Pattern.Candlestick
     public class ShortShadow : ShortShadow<Candle, AnalyzableTick<bool?>>
     {
         public ShortShadow(IEnumerable<Candle> inputs) 
-            : base(inputs, i => (i.Open, i.High, i.Low, i.Close), (i, otm) => new AnalyzableTick<bool?>(i.DateTime, otm))
+            : base(inputs, i => (i.Open, i.High, i.Low, i.Close))
         {
         }
     }

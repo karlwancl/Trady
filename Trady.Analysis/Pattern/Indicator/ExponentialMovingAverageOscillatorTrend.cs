@@ -12,7 +12,7 @@ namespace Trady.Analysis.Pattern.Indicator
     {
         readonly ExponentialMovingAverageOscillatorByTuple _emaOsc;
 
-        public ExponentialMovingAverageOscillatorTrend(IEnumerable<TInput> inputs, Func<TInput, decimal> inputMapper, Func<TInput, Trend?, TOutput> outputMapper, int periodCount1, int periodCount2) : base(inputs, inputMapper, outputMapper)
+        public ExponentialMovingAverageOscillatorTrend(IEnumerable<TInput> inputs, Func<TInput, decimal> inputMapper, int periodCount1, int periodCount2) : base(inputs, inputMapper)
         {
 			_emaOsc = new ExponentialMovingAverageOscillatorByTuple(inputs.Select(inputMapper), periodCount1, periodCount2);
 		}
@@ -24,7 +24,7 @@ namespace Trady.Analysis.Pattern.Indicator
     public class ExponentialMovingAverageOscillatorTrendByTuple : ExponentialMovingAverageOscillatorTrend<decimal, Trend?>
     {
         public ExponentialMovingAverageOscillatorTrendByTuple(IEnumerable<decimal> inputs, int periodCount1, int periodCount2) 
-            : base(inputs, i => i, (i, otm) => otm, periodCount1, periodCount2)
+            : base(inputs, i => i, periodCount1, periodCount2)
         {
         }
     }
@@ -32,7 +32,7 @@ namespace Trady.Analysis.Pattern.Indicator
     public class ExponentialMovingAverageOscillatorTrend : ExponentialMovingAverageOscillatorTrend<Candle, AnalyzableTick<Trend?>>
     {
         public ExponentialMovingAverageOscillatorTrend(IEnumerable<Candle> inputs, int periodCount1, int periodCount2) 
-            : base(inputs, i => i.Close, (i, otm) => new AnalyzableTick<Trend?>(i.DateTime, otm), periodCount1, periodCount2)
+            : base(inputs, i => i.Close, periodCount1, periodCount2)
         {
         }
     }

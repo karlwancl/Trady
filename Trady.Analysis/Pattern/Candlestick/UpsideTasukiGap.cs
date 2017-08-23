@@ -15,7 +15,7 @@ namespace Trady.Analysis.Pattern.Candlestick
         readonly BearishByTuple _bearish;
         readonly BullishByTuple _bullish;
 
-        public UpsideTasukiGap(IEnumerable<TInput> inputs, Func<TInput, (decimal Open, decimal High, decimal Low, decimal Close)> inputMapper, Func<TInput, bool?, TOutput> outputMapper, int upTrendPeriodCount = 3, decimal sizeThreshold = 0.1m) : base(inputs, inputMapper, outputMapper)
+        public UpsideTasukiGap(IEnumerable<TInput> inputs, Func<TInput, (decimal Open, decimal High, decimal Low, decimal Close)> inputMapper, int upTrendPeriodCount = 3, decimal sizeThreshold = 0.1m) : base(inputs, inputMapper)
         {
             var mappedInputs = inputs.Select(inputMapper);
 
@@ -50,7 +50,7 @@ namespace Trady.Analysis.Pattern.Candlestick
     public class UpsideTasukiGapByTuple : UpsideTasukiGap<(decimal Open, decimal High, decimal Low, decimal Close), bool?>
     {
         public UpsideTasukiGapByTuple(IEnumerable<(decimal Open, decimal High, decimal Low, decimal Close)> inputs, int upTrendPeriodCount = 3, decimal sizeThreshold = 0.1M) 
-            : base(inputs, i => i, (i, otm) => otm, upTrendPeriodCount, sizeThreshold)
+            : base(inputs, i => i, upTrendPeriodCount, sizeThreshold)
         {
         }
     }
@@ -58,7 +58,7 @@ namespace Trady.Analysis.Pattern.Candlestick
     public class UpsideTasukiGap : UpsideTasukiGap<Candle, AnalyzableTick<bool?>>
     {
         public UpsideTasukiGap(IEnumerable<Candle> inputs, int upTrendPeriodCount = 3, decimal sizeThreshold = 0.1M) 
-            : base(inputs, i => (i.Open, i.High, i.Low, i.Close), (i, otm) => new AnalyzableTick<bool?>(i.DateTime, otm), upTrendPeriodCount, sizeThreshold)
+            : base(inputs, i => (i.Open, i.High, i.Low, i.Close), upTrendPeriodCount, sizeThreshold)
         {
         }
     }

@@ -8,7 +8,7 @@ namespace Trady.Analysis.Indicator
 {
     public class LowestLow<TInput, TOutput> : AnalyzableBase<TInput, decimal, decimal?, TOutput>
     {
-        public LowestLow(IEnumerable<TInput> inputs, Func<TInput, decimal> inputMapper, Func<TInput, decimal?, TOutput> outputMapper, int periodCount) : base(inputs, inputMapper, outputMapper)
+        public LowestLow(IEnumerable<TInput> inputs, Func<TInput, decimal> inputMapper, int periodCount) : base(inputs, inputMapper)
         {
             PeriodCount = periodCount;
         }
@@ -22,7 +22,7 @@ namespace Trady.Analysis.Indicator
     public class LowestLowByTuple : LowestLow<decimal, decimal?>
     {
         public LowestLowByTuple(IEnumerable<decimal> inputs, int periodCount) 
-            : base(inputs, i => i, (i, otm) => otm, periodCount)
+            : base(inputs, i => i, periodCount)
         {
         }
     }
@@ -30,7 +30,7 @@ namespace Trady.Analysis.Indicator
     public class LowestLow : LowestLow<Candle, AnalyzableTick<decimal?>>
     {
         public LowestLow(IEnumerable<Candle> inputs, int periodCount) 
-            : base(inputs, i => (i.Low), (i, otm) => new AnalyzableTick<decimal?>(i.DateTime, otm), periodCount)
+            : base(inputs, i => (i.Low), periodCount)
         {
         }
     }

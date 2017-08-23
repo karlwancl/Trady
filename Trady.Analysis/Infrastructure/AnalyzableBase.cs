@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using Trady.Analysis.Helper;
 using Trady.Core;
 using Trady.Core.Infrastructure;
@@ -15,23 +17,29 @@ namespace Trady.Analysis.Infrastructure
     /// <typeparam name="TOutputToMap">Output type computed by mapped input type</typeparam>
     /// <typeparam name="TOutput">Target (Mapped) output type</typeparam>
     /// </summary>
-    public abstract class AnalyzableBase<TInput, TMappedInput, TOutputToMap, TOutput> : IAnalyzable<TInput, TOutput>
+    public abstract class AnalyzableBase<TInput, TMappedInput, TOutputToMap, TOutput> : IAnalyzable<TOutput>
     {
-		readonly IEnumerable<TInput> _inputs;
-		readonly Func<TInput, TMappedInput> _inputMapper;
-        readonly Func<TInput, TOutputToMap, TOutput> _outputMapper;
+        readonly IEnumerable<TMappedInput> _mappedInputs;
+        readonly IEnumerable<DateTime> _mappedDatetime;
 
-        protected AnalyzableBase(IEnumerable<TInput> inputs, Func<TInput, TMappedInput> inputMapper, Func<TInput, TOutputToMap, TOutput> outputMapper)
+        protected AnalyzableBase(IEnumerable<TInput> inputs, Func<TInput, TMappedInput> inputMapper)
         {
-			_inputs = inputs;
-			_inputMapper = inputMapper;
-			_outputMapper = outputMapper;
-			Cache = new Dictionary<int, TOutputToMap>();
+            _mappedInputs = inputs.Select(inputMapper).ToList();    // ToList here to create new list instance for faster computation
+
+            IsTInputCandle = typeof(TInput).Equals(typeof(Candle));
+            IsTOutputAnalyzableTick = typeof(TOutput).Equals(typeof(AnalyzableTick<TOutputToMap>));
+            if (IsTInputCandle != IsTOutputAnalyzableTick)
+                throw new ArgumentException("TInput, TOutput not matched!");
+
+            if (IsTInputCandle)
+                _mappedDatetime = inputs.Select(i => (i as Candle).DateTime).ToList();  // ToList here to create new list instance for faster computation
+
+            Cache = new Dictionary<int, TOutputToMap>();
         }
 
-        public IEnumerable<TInput> Inputs => _inputs;
+        bool IsTInputCandle { get; }
 
-        Lazy<IEnumerable<TMappedInput>> MappedInputs => new Lazy<IEnumerable<TMappedInput>>(() => _inputs.Select(_inputMapper));
+        bool IsTOutputAnalyzableTick { get; }
 
         public IList<TOutput> Compute(int? startIndex = null, int? endIndex = null)
         {
@@ -46,26 +54,25 @@ namespace Trady.Analysis.Infrastructure
             return ticks;
         }
 
-        // TODO: using static to provide functional style for calculation
         public TOutput this[int index]
         {
             get
             {
-                var outputToMap = ComputeByIndex(MappedInputs.Value, index);
-                var input = index >= 0 && index < _inputs.Count() ? _inputs.ElementAt(index) : default(TInput); // Special case for inputs count < outputs count (e.g. Ichimoku Cloud)
-                return _outputMapper(input, outputToMap);
+                dynamic outputToMap = ComputeByIndex(_mappedInputs, index);
+                var datetime = index >= 0 && index < _mappedInputs.Count() ? (_mappedDatetime?.ElementAt(index) ?? default(DateTime?)) : default(DateTime?);
+                return IsTOutputAnalyzableTick ? AnalyzableTickMapper(datetime, outputToMap) : outputToMap;
             }
         }
 
         protected virtual int GetComputeStartIndex(int? startIndex) => startIndex ?? 0;
 
-        protected virtual int GetComputeEndIndex(int? endIndex) => endIndex ?? _inputs.Count() - 1;
+        protected virtual int GetComputeEndIndex(int? endIndex) => endIndex ?? _mappedInputs.Count() - 1;
 
         protected TOutputToMap ComputeByIndex(IEnumerable<TMappedInput> mappedInputs, int index)
         {
             if (Cache.TryGetValue(index, out TOutputToMap value))
                 return value;
-
+            
             value = ComputeByIndexImpl(mappedInputs, index);
             Cache.AddOrUpdate(index, value);
             return value;
@@ -73,11 +80,19 @@ namespace Trady.Analysis.Infrastructure
 
         protected abstract TOutputToMap ComputeByIndexImpl(IEnumerable<TMappedInput> mappedInputs, int index);
 
+        IList IAnalyzable.Compute(int? startIndex, int? endIndex) => (IList)Compute(startIndex, endIndex);
+
         protected IDictionary<int, TOutputToMap> Cache { get; }
+
+        static ConstructorInfo AnalyzableTickConstructor => typeof(TOutput).GetConstructors().First();
+
+        static Func<DateTime?, TOutputToMap, TOutput> AnalyzableTickMapper => (d, otm) => (TOutput)AnalyzableTickConstructor.Invoke(new object[] { d, otm });
     }
 
-    public abstract class AnalyzableBase<TInput, TOutput> : AnalyzableBase<TInput, TInput, TOutput, TOutput>
-    {
-        protected AnalyzableBase(IEnumerable<TInput> inputs) : base(inputs, c => c, (c, otm) => otm) { }
-    }
+    //public abstract class AnalyzableBase<TInput, TOutput> : AnalyzableBase<TInput, TInput, TOutput, TOutput>
+    //{
+    //    protected AnalyzableBase(IEnumerable<TInput> inputs) : base(inputs, i => i)
+    //    {
+    //    }
+    //}
 }

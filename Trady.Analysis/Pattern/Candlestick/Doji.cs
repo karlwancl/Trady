@@ -8,7 +8,7 @@ namespace Trady.Analysis.Pattern.Candlestick
 {
     public class Doji<TInput, TOutput> : AnalyzableBase<TInput, (decimal Open, decimal High, decimal Low, decimal Close), bool, TOutput>
     {
-        protected Doji(IEnumerable<TInput> inputs, Func<TInput, (decimal Open, decimal High, decimal Low, decimal Close)> inputMapper, Func<TInput, bool, TOutput> outputMapper, decimal threshold = 0.1m) : base(inputs, inputMapper, outputMapper)
+        protected Doji(IEnumerable<TInput> inputs, Func<TInput, (decimal Open, decimal High, decimal Low, decimal Close)> inputMapper, decimal threshold = 0.1m) : base(inputs, inputMapper)
         {
             Threshold = threshold;
         }
@@ -22,7 +22,7 @@ namespace Trady.Analysis.Pattern.Candlestick
     public class DojiByTuple : Doji<(decimal Open, decimal High, decimal Low, decimal Close), bool>
     {
         public DojiByTuple(IEnumerable<(decimal Open, decimal High, decimal Low, decimal Close)> inputs, decimal threshold = 0.1M) 
-            : base(inputs, i => i, (i, otm) => otm, threshold)
+            : base(inputs, i => i, threshold)
         {
         }
     }
@@ -30,7 +30,7 @@ namespace Trady.Analysis.Pattern.Candlestick
     public class Doji : Doji<Candle, AnalyzableTick<bool>>
     {
         public Doji(IEnumerable<Candle> inputs, decimal threshold = 0.1M) 
-            : base(inputs, i => (i.Open, i.High, i.Low, i.Close), (i, otm) => new AnalyzableTick<bool>(i.DateTime, otm), threshold)
+            : base(inputs, i => (i.Open, i.High, i.Low, i.Close), threshold)
         {
         }
     }

@@ -12,7 +12,7 @@ namespace Trady.Analysis.Pattern.Indicator
     {
         readonly SimpleMovingAverageOscillatorByTuple _smaOsc;
 
-        public SimpleMovingAverageCrossover(IEnumerable<TInput> inputs, Func<TInput, decimal> inputMapper, Func<TInput, Crossover?, TOutput> outputMapper, int periodCount1, int periodCount2) : base(inputs, inputMapper, outputMapper)
+        public SimpleMovingAverageCrossover(IEnumerable<TInput> inputs, Func<TInput, decimal> inputMapper, int periodCount1, int periodCount2) : base(inputs, inputMapper)
         {
 			_smaOsc = new SimpleMovingAverageOscillatorByTuple(inputs.Select(inputMapper), periodCount1, periodCount2);
 		}
@@ -24,7 +24,7 @@ namespace Trady.Analysis.Pattern.Indicator
     public class SimpleMovingAverageCrossoverByTuple : SimpleMovingAverageCrossover<decimal, Crossover?>
     {
         public SimpleMovingAverageCrossoverByTuple(IEnumerable<decimal> inputs, int periodCount1, int periodCount2) 
-            : base(inputs, i => i, (i, otm) => otm, periodCount1, periodCount2)
+            : base(inputs, i => i, periodCount1, periodCount2)
         {
         }
     }
@@ -32,7 +32,7 @@ namespace Trady.Analysis.Pattern.Indicator
     public class SimpleMovingAverageCrossover : SimpleMovingAverageCrossover<Candle, AnalyzableTick<Crossover?>>
     {
         public SimpleMovingAverageCrossover(IEnumerable<Candle> inputs, int periodCount1, int periodCount2) 
-            : base(inputs, i => i.Close, (i, otm) => new AnalyzableTick<Crossover?>(i.DateTime, otm), periodCount1, periodCount2)
+            : base(inputs, i => i.Close, periodCount1, periodCount2)
         {
         }
     }

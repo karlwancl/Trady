@@ -10,8 +10,8 @@ namespace Trady.Analysis.Indicator
     {
         public int PeriodCount { get; }
 
-        public SimpleMovingAverage(IEnumerable<TInput> inputs, Func<TInput, decimal> inputMapper, Func<TInput, decimal?, TOutput> outputMapper, int periodCount)
-            : base(inputs, inputMapper, outputMapper)
+        public SimpleMovingAverage(IEnumerable<TInput> inputs, Func<TInput, decimal> inputMapper, int periodCount)
+            : base(inputs, inputMapper)
         {
             PeriodCount = periodCount;
         }
@@ -23,12 +23,12 @@ namespace Trady.Analysis.Indicator
     public class SimpleMovingAverageByTuple : SimpleMovingAverage<decimal, decimal?>
     {
         public SimpleMovingAverageByTuple(IEnumerable<decimal> values, int periodCount)
-            : base(values, c => c, (c, otm) => otm, periodCount) { }
+            : base(values, c => c, periodCount) { }
     }
 
     public class SimpleMovingAverage : SimpleMovingAverage<Candle, AnalyzableTick<decimal?>>
     {
         public SimpleMovingAverage(IEnumerable<Candle> candles, int periodCount)
-            : base(candles, c => c.Close, (c, otm) => new AnalyzableTick<decimal?>(c.DateTime, otm), periodCount) { }
+            : base(candles, c => c.Close, periodCount) { }
     }
 }

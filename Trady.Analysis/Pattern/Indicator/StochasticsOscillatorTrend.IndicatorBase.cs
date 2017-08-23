@@ -14,9 +14,8 @@ namespace Trady.Analysis.Pattern.Indicator
             protected IndicatorBase(
                 IEnumerable<TInput> inputs, 
                 Func<TInput, (decimal High, decimal Low, decimal Close)> inputMapper, 
-                Func<TInput, Trend?, TOutput> outputMapper,
                 AnalyzableBase<(decimal High, decimal Low, decimal Close), (decimal High, decimal Low, decimal Close), (decimal? K, decimal? D, decimal? J), (decimal? K, decimal? D, decimal? J)> sto) 
-                : base(inputs, inputMapper, outputMapper)
+                : base(inputs, inputMapper)
             {
 				_sto = sto;
             }

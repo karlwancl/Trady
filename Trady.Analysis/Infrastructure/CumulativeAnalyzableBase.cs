@@ -7,8 +7,7 @@ namespace Trady.Analysis.Infrastructure
 {
     public abstract class CumulativeAnalyzableBase<TInput, TMappedInput, TOutputToMap, TOutput> : AnalyzableBase<TInput, TMappedInput, TOutputToMap, TOutput>
     {
-        protected CumulativeAnalyzableBase(IEnumerable<TInput> inputs, Func<TInput, TMappedInput> inputMapper, Func<TInput, TOutputToMap, TOutput> outputMapper)
-            : base(inputs, inputMapper, outputMapper)
+        protected CumulativeAnalyzableBase(IEnumerable<TInput> inputs, Func<TInput, TMappedInput> inputMapper) : base(inputs, inputMapper)
         {
         }
 
@@ -43,8 +42,8 @@ namespace Trady.Analysis.Infrastructure
 
     public abstract class CumulativeAnalyzableBase<TInput, TOutput> : CumulativeAnalyzableBase<TInput, TInput, TOutput, TOutput>
     {
-        protected CumulativeAnalyzableBase(IEnumerable<TInput> inputs) 
-            : base(inputs, i => i, (i, otm) => otm)
+        public CumulativeAnalyzableBase(IEnumerable<TInput> inputs) 
+            : base(inputs, i => i)
         {
         }
     }

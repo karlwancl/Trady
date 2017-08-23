@@ -10,7 +10,7 @@ namespace Trady.Analysis.Pattern.Candlestick
     /// </summary>
     public class PiercingLine<TInput, TOutput> : AnalyzableBase<TInput, (decimal Open, decimal High, decimal Low, decimal Close), bool?, TOutput>
     {
-        public PiercingLine(IEnumerable<TInput> inputs, Func<TInput, (decimal Open, decimal High, decimal Low, decimal Close)> inputMapper, Func<TInput, bool?, TOutput> outputMapper) : base(inputs, inputMapper, outputMapper)
+        public PiercingLine(IEnumerable<TInput> inputs, Func<TInput, (decimal Open, decimal High, decimal Low, decimal Close)> inputMapper) : base(inputs, inputMapper)
         {
         }
 
@@ -23,7 +23,7 @@ namespace Trady.Analysis.Pattern.Candlestick
     public class PiercingLineByTuple : PiercingLine<(decimal Open, decimal High, decimal Low, decimal Close), bool?>
     {
         public PiercingLineByTuple(IEnumerable<(decimal Open, decimal High, decimal Low, decimal Close)> inputs) 
-            : base(inputs, i => i, (i, otm) => otm)
+            : base(inputs, i => i)
         {
         }
     }
@@ -31,7 +31,7 @@ namespace Trady.Analysis.Pattern.Candlestick
     public class PiercingLine : PiercingLine<Candle, AnalyzableTick<bool?>>
     {
         public PiercingLine(IEnumerable<Candle> inputs) 
-            : base(inputs, i => (i.Open, i.High, i.Low, i.Close), (i, otm) => new AnalyzableTick<bool?>(i.DateTime, otm))
+            : base(inputs, i => (i.Open, i.High, i.Low, i.Close))
         {
         }
     }

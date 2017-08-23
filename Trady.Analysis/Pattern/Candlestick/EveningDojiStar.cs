@@ -13,7 +13,7 @@ namespace Trady.Analysis.Pattern.Candlestick
         DojiByTuple _doji;
         BearishLongDayByTuple _bearishLongDay;
 
-        public EveningDojiStar(IEnumerable<TInput> inputs, Func<TInput, (decimal Open, decimal High, decimal Low, decimal Close)> inputMapper, Func<TInput, bool?, TOutput> outputMapper, int upTrendPeriodCount = 3, int periodCount = 20, decimal longThreshold = 0.75m, decimal dojiThreshold = 0.25m, decimal threshold = 0.1m) : base(inputs, inputMapper, outputMapper)
+        public EveningDojiStar(IEnumerable<TInput> inputs, Func<TInput, (decimal Open, decimal High, decimal Low, decimal Close)> inputMapper, int upTrendPeriodCount = 3, int periodCount = 20, decimal longThreshold = 0.75m, decimal dojiThreshold = 0.25m, decimal threshold = 0.1m) : base(inputs, inputMapper)
         {
             var mappedInputs = inputs.Select(inputMapper);
 
@@ -55,7 +55,7 @@ namespace Trady.Analysis.Pattern.Candlestick
     public class EveningDojiStarByTuple : EveningDojiStar<(decimal Open, decimal High, decimal Low, decimal Close), bool?>
     {
         public EveningDojiStarByTuple(IEnumerable<(decimal Open, decimal High, decimal Low, decimal Close)> inputs, int upTrendPeriodCount = 3, int periodCount = 20, decimal longThreshold = 0.75M, decimal dojiThreshold = 0.25M, decimal threshold = 0.1M) 
-            : base(inputs, i => i, (i, otm) => otm, upTrendPeriodCount, periodCount, longThreshold, dojiThreshold, threshold)
+            : base(inputs, i => i, upTrendPeriodCount, periodCount, longThreshold, dojiThreshold, threshold)
         {
         }
     }
@@ -63,7 +63,7 @@ namespace Trady.Analysis.Pattern.Candlestick
     public class EveningDojiStar : EveningDojiStar<Candle, AnalyzableTick<bool?>>
     {
         public EveningDojiStar(IEnumerable<Candle> inputs, int upTrendPeriodCount = 3, int periodCount = 20, decimal longThreshold = 0.75M, decimal dojiThreshold = 0.25M, decimal threshold = 0.1M) 
-            : base(inputs, i => (i.Open, i.High, i.Low, i.Close), (i, otm) => new AnalyzableTick<bool?>(i.DateTime, otm), upTrendPeriodCount, periodCount, longThreshold, dojiThreshold, threshold)
+            : base(inputs, i => (i.Open, i.High, i.Low, i.Close), upTrendPeriodCount, periodCount, longThreshold, dojiThreshold, threshold)
         {
         }
     }

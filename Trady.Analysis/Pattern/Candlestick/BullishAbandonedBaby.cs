@@ -17,7 +17,8 @@ namespace Trady.Analysis.Pattern.Candlestick
         BullishLongDayByTuple _bullishLongDay;
         DojiByTuple _doji;
 
-        public BullishAbandonedBaby(IEnumerable<TInput> inputs, Func<TInput, (decimal Open, decimal High, decimal Low, decimal Close)> inputMapper, Func<TInput, bool?, TOutput> outputMapper, int downTrendPeriodCount = 3, int longPeriodCount = 20, decimal longThreshold = 0.75m, decimal dojiThreshold = 0.1m) : base(inputs, inputMapper, outputMapper)
+        public BullishAbandonedBaby(IEnumerable<TInput> inputs, Func<TInput, (decimal Open, decimal High, decimal Low, decimal Close)> inputMapper, int downTrendPeriodCount = 3, int longPeriodCount = 20, decimal longThreshold = 0.75m, decimal dojiThreshold = 0.1m) 
+            : base(inputs, inputMapper)
         {
             var mappedInputs = inputs.Select(inputMapper);
             var ocs = mappedInputs.Select(i => (i.Open, i.Close));
@@ -53,7 +54,7 @@ namespace Trady.Analysis.Pattern.Candlestick
     public class BullishAbandonedBabyByTuple : BullishAbandonedBaby<(decimal Open, decimal High, decimal Low, decimal Close), bool?>
     {
         public BullishAbandonedBabyByTuple(IEnumerable<(decimal Open, decimal High, decimal Low, decimal Close)> inputs, int downTrendPeriodCount = 3, int longPeriodCount = 20, decimal longThreshold = 0.75M, decimal dojiThreshold = 0.1M) 
-            : base(inputs, i => i, (i, otm) => otm, downTrendPeriodCount, longPeriodCount, longThreshold, dojiThreshold)
+            : base(inputs, i => i, downTrendPeriodCount, longPeriodCount, longThreshold, dojiThreshold)
         {
         }
     }
@@ -61,7 +62,7 @@ namespace Trady.Analysis.Pattern.Candlestick
     public class BullishAbandonedBaby : BullishAbandonedBaby<Candle, AnalyzableTick<bool?>>
     {
         public BullishAbandonedBaby(IEnumerable<Candle> inputs, int downTrendPeriodCount = 3, int longPeriodCount = 20, decimal longThreshold = 0.75M, decimal dojiThreshold = 0.1M) 
-            : base(inputs, i => (i.Open, i.High, i.Low, i.Close), (i, otm) => new AnalyzableTick<bool?>(i.DateTime, otm), downTrendPeriodCount, longPeriodCount, longThreshold, dojiThreshold)
+            : base(inputs, i => (i.Open, i.High, i.Low, i.Close), downTrendPeriodCount, longPeriodCount, longThreshold, dojiThreshold)
         {
         }
     }

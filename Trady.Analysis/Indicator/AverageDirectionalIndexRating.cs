@@ -10,7 +10,8 @@ namespace Trady.Analysis.Indicator
     {
         readonly AverageDirectionalIndexByTuple _adx;
 
-        public AverageDirectionalIndexRating(IEnumerable<TInput> inputs, Func<TInput, (decimal High, decimal Low, decimal Close)> inputMapper, Func<TInput, decimal?, TOutput> outputMapper, int periodCount, int adxrPeriodCount) : base(inputs, inputMapper, outputMapper)
+        public AverageDirectionalIndexRating(IEnumerable<TInput> inputs, Func<TInput, (decimal High, decimal Low, decimal Close)> inputMapper, int periodCount, int adxrPeriodCount) 
+            : base(inputs, inputMapper)
         {
             _adx = new AverageDirectionalIndexByTuple(inputs.Select(inputMapper), periodCount);
 
@@ -29,7 +30,7 @@ namespace Trady.Analysis.Indicator
     public class AverageDirectionalIndexRatingByTuple : AverageDirectionalIndexRating<(decimal High, decimal Low, decimal Close), decimal?>
     {
         public AverageDirectionalIndexRatingByTuple(IEnumerable<(decimal High, decimal Low, decimal Close)> inputs, int periodCount, int adxrPeriodCount)
-            : base(inputs, i => i, (i, otm) => otm, periodCount, adxrPeriodCount)
+            : base(inputs, i => i, periodCount, adxrPeriodCount)
         {
         }
     }
@@ -37,7 +38,7 @@ namespace Trady.Analysis.Indicator
     public class AverageDirectionalIndexRating : AverageDirectionalIndexRating<Candle, AnalyzableTick<decimal?>>
     {
         public AverageDirectionalIndexRating(IEnumerable<Candle> inputs, int periodCount, int adxrPeriodCount)
-            : base(inputs, i => (i.High, i.Low, i.Close), (i, otm) => new AnalyzableTick<decimal?>(i.DateTime, otm), periodCount, adxrPeriodCount)
+            : base(inputs, i => (i.High, i.Low, i.Close), periodCount, adxrPeriodCount)
         {
         }
     }

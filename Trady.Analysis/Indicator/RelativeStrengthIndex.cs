@@ -10,7 +10,7 @@ namespace Trady.Analysis.Indicator
     {
         readonly RelativeStrengthByTuple _rs;
 
-        public RelativeStrengthIndex(IEnumerable<TInput> inputs, Func<TInput, decimal> inputMapper, Func<TInput, decimal?, TOutput> outputMapper, int periodCount) : base(inputs, inputMapper, outputMapper)
+        public RelativeStrengthIndex(IEnumerable<TInput> inputs, Func<TInput, decimal> inputMapper, int periodCount) : base(inputs, inputMapper)
         {
 			_rs = new RelativeStrengthByTuple(inputs.Select(inputMapper), periodCount);
 
@@ -25,7 +25,7 @@ namespace Trady.Analysis.Indicator
     public class RelativeStrengthIndexByTuple : RelativeStrengthIndex<decimal, decimal?>
     {
         public RelativeStrengthIndexByTuple(IEnumerable<decimal> inputs, int periodCount) 
-            : base(inputs, i => i, (i, otm) => otm, periodCount)
+            : base(inputs, i => i, periodCount)
         {
         }
     }
@@ -33,7 +33,7 @@ namespace Trady.Analysis.Indicator
     public class RelativeStrengthIndex : RelativeStrengthIndex<Candle, AnalyzableTick<decimal?>>
     {
         public RelativeStrengthIndex(IEnumerable<Candle> inputs, int periodCount)
-            : base(inputs, i => i.Close, (i, otm) => new AnalyzableTick<decimal?>(i.DateTime, otm), periodCount)
+            : base(inputs, i => i.Close, periodCount)
         {
         }
     }

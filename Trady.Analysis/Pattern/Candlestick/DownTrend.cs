@@ -9,7 +9,7 @@ namespace Trady.Analysis.Pattern.Candlestick
 {
     public class DownTrend<TInput, TOutput> : AnalyzableBase<TInput, (decimal High, decimal Low), bool?, TOutput>
     {
-        public DownTrend(IEnumerable<TInput> inputs, Func<TInput, (decimal High, decimal Low)> inputMapper, Func<TInput, bool?, TOutput> outputMapper, int periodCount = 3) : base(inputs, inputMapper, outputMapper)
+        public DownTrend(IEnumerable<TInput> inputs, Func<TInput, (decimal High, decimal Low)> inputMapper, int periodCount = 3) : base(inputs, inputMapper)
         {
             PeriodCount = periodCount;
         }
@@ -36,7 +36,7 @@ namespace Trady.Analysis.Pattern.Candlestick
     public class DownTrendByTuple : DownTrend<(decimal High, decimal Low), bool?>
     {
         public DownTrendByTuple(IEnumerable<(decimal High, decimal Low)> inputs, int periodCount = 3) 
-            : base(inputs, i => i, (i, otm) => otm, periodCount)
+            : base(inputs, i => i, periodCount)
         {
         }
     }
@@ -44,7 +44,7 @@ namespace Trady.Analysis.Pattern.Candlestick
     public class DownTrend : DownTrend<Candle, AnalyzableTick<bool?>>
     {
         public DownTrend(IEnumerable<Candle> inputs, int periodCount = 3) 
-            : base(inputs, i => (i.High, i.Low), (i, otm) => new AnalyzableTick<bool?>(i.DateTime, otm), periodCount)
+            : base(inputs, i => (i.High, i.Low), periodCount)
         {
         }
     }

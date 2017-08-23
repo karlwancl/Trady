@@ -8,7 +8,7 @@ namespace Trady.Analysis.Indicator
 {
     public class EfficiencyRatio<TInput, TOutput> : AnalyzableBase<TInput, decimal, decimal?, TOutput>
     {
-        public EfficiencyRatio(IEnumerable<TInput> inputs, Func<TInput, decimal> inputMapper, Func<TInput, decimal?, TOutput> outputMapper, int periodCount) : base(inputs, inputMapper, outputMapper)
+        public EfficiencyRatio(IEnumerable<TInput> inputs, Func<TInput, decimal> inputMapper, int periodCount) : base(inputs, inputMapper)
         {
             PeriodCount = periodCount;
         }
@@ -29,7 +29,7 @@ namespace Trady.Analysis.Indicator
     public class EfficiencyRatioByTuple : EfficiencyRatio<decimal, decimal?>
     {
         public EfficiencyRatioByTuple(IEnumerable<decimal> inputs, int periodCount) 
-            : base(inputs, i => i, (i, otm) => otm, periodCount)
+            : base(inputs, i => i, periodCount)
         {
         }
     }
@@ -37,7 +37,7 @@ namespace Trady.Analysis.Indicator
     public class EfficiencyRatio : EfficiencyRatio<Candle, AnalyzableTick<decimal?>>
     {
         public EfficiencyRatio(IEnumerable<Candle> inputs, int periodCount) 
-            : base(inputs, i => i.Close, (i, otm) => new AnalyzableTick<decimal?>(i.DateTime, otm), periodCount)
+            : base(inputs, i => i.Close, periodCount)
         {
         }
     }

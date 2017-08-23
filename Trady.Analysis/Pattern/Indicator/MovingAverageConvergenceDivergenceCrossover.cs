@@ -12,7 +12,7 @@ namespace Trady.Analysis.Pattern.Indicator
     {
         readonly MovingAverageConvergenceDivergenceByTuple _macd;
 
-        public MovingAverageConvergenceDivergenceCrossover(IEnumerable<TInput> inputs, Func<TInput, decimal> inputMapper, Func<TInput, Crossover?, TOutput> outputMapper, int emaPeriodCount1, int emaPeriodCount2, int demPeriodCount) : base(inputs, inputMapper, outputMapper)
+        public MovingAverageConvergenceDivergenceCrossover(IEnumerable<TInput> inputs, Func<TInput, decimal> inputMapper, int emaPeriodCount1, int emaPeriodCount2, int demPeriodCount) : base(inputs, inputMapper)
         {
 			_macd = new MovingAverageConvergenceDivergenceByTuple(inputs.Select(inputMapper), emaPeriodCount1, emaPeriodCount2, demPeriodCount);
 		}
@@ -24,7 +24,7 @@ namespace Trady.Analysis.Pattern.Indicator
     public class MovingAverageConvergenceDivergenceCrossoverByTuple : MovingAverageConvergenceDivergenceCrossover<decimal, Crossover?>
     {
         public MovingAverageConvergenceDivergenceCrossoverByTuple(IEnumerable<decimal> inputs, int emaPeriodCount1, int emaPeriodCount2, int demPeriodCount) 
-            : base(inputs, i => i, (i, otm) => otm, emaPeriodCount1, emaPeriodCount2, demPeriodCount)
+            : base(inputs, i => i, emaPeriodCount1, emaPeriodCount2, demPeriodCount)
         {
         }
     }
@@ -32,7 +32,7 @@ namespace Trady.Analysis.Pattern.Indicator
     public class MovingAverageConvergenceDivergenceCrossover : MovingAverageConvergenceDivergenceCrossover<Candle, AnalyzableTick<Crossover?>>
     {
         public MovingAverageConvergenceDivergenceCrossover(IEnumerable<Candle> inputs, int emaPeriodCount1, int emaPeriodCount2, int demPeriodCount) 
-            : base(inputs, i => i.Close, (i, otm) => new AnalyzableTick<Crossover?>(i.DateTime, otm), emaPeriodCount1, emaPeriodCount2, demPeriodCount)
+            : base(inputs, i => i.Close, emaPeriodCount1, emaPeriodCount2, demPeriodCount)
         {
         }
     }

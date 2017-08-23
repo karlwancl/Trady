@@ -12,7 +12,7 @@ namespace Trady.Analysis.Indicator
         {
             readonly FastByTuple _fastSto;
 
-            public Full(IEnumerable<TInput> inputs, Func<TInput, (decimal High, decimal Low, decimal Close)> inputMapper, Func<TInput, (decimal? K, decimal? D, decimal? J), TOutput> outputMapper, int periodCount, int smaPeriodCountK, int smaPeriodCountD) : base(inputs, inputMapper, outputMapper)
+            public Full(IEnumerable<TInput> inputs, Func<TInput, (decimal High, decimal Low, decimal Close)> inputMapper, int periodCount, int smaPeriodCountK, int smaPeriodCountD) : base(inputs, inputMapper)
             {
                 _fastSto = new FastByTuple(inputs.Select(inputMapper), periodCount, smaPeriodCountK);
 
@@ -39,7 +39,7 @@ namespace Trady.Analysis.Indicator
         public class FullByTuple : Full<(decimal High, decimal Low, decimal Close), (decimal? K, decimal? D, decimal? J)>
         {
             public FullByTuple(IEnumerable<(decimal High, decimal Low, decimal Close)> inputs, int periodCount, int smaPeriodCountK, int smaPeriodCountD) 
-                : base(inputs, i => i, (i, otm) => otm, periodCount, smaPeriodCountK, smaPeriodCountD)
+                : base(inputs, i => i, periodCount, smaPeriodCountK, smaPeriodCountD)
             {
             }
         }
@@ -47,7 +47,7 @@ namespace Trady.Analysis.Indicator
         public class Full : Full<Candle, AnalyzableTick<(decimal? K, decimal? D, decimal? J)>>
         {
             public Full(IEnumerable<Candle> inputs, int periodCount, int smaPeriodCountK, int smaPeriodCountD) 
-                : base(inputs, i => (i.High, i.Low, i.Close), (i, otm) => new AnalyzableTick<(decimal? K, decimal? D, decimal? J)>(i.DateTime, otm), periodCount, smaPeriodCountK, smaPeriodCountD)
+                : base(inputs, i => (i.High, i.Low, i.Close), periodCount, smaPeriodCountK, smaPeriodCountD)
             {
             }
         }

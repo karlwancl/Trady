@@ -8,7 +8,7 @@ namespace Trady.Analysis.Indicator
 {
     public class OnBalanceVolume<TInput, TOutput> : CumulativeAnalyzableBase<TInput, (decimal Close, decimal Volume), decimal?, TOutput>
     {
-        public OnBalanceVolume(IEnumerable<TInput> inputs, Func<TInput, (decimal Close, decimal Volume)> inputMapper, Func<TInput, decimal?, TOutput> outputMapper) : base(inputs, inputMapper, outputMapper)
+        public OnBalanceVolume(IEnumerable<TInput> inputs, Func<TInput, (decimal Close, decimal Volume)> inputMapper) : base(inputs, inputMapper)
         {
         }
 
@@ -26,7 +26,7 @@ namespace Trady.Analysis.Indicator
     public class OnBalanceVolumeByTuple : OnBalanceVolume<(decimal Close, decimal Volume), decimal?>
     {
         public OnBalanceVolumeByTuple(IEnumerable<(decimal Close, decimal Volume)> inputs) 
-            : base(inputs, i => i, (i, otm) => otm)
+            : base(inputs, i => i)
         {
         }
     }
@@ -34,7 +34,7 @@ namespace Trady.Analysis.Indicator
     public class OnBalanceVolume : OnBalanceVolume<Candle, AnalyzableTick<decimal?>>
     {
         public OnBalanceVolume(IEnumerable<Candle> inputs) 
-            : base(inputs, i => (i.Close, i.Volume), (i, otm) => new AnalyzableTick<decimal?>(i.DateTime, otm))
+            : base(inputs, i => (i.Close, i.Volume))
         {
         }
     }

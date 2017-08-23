@@ -9,7 +9,7 @@ namespace Trady.Analysis.Indicator
 {
     public class StandardDeviation<TInput, TOutput> : AnalyzableBase<TInput, decimal, decimal?, TOutput>
     {
-        public StandardDeviation(IEnumerable<TInput> inputs, Func<TInput, decimal> inputMapper, Func<TInput, decimal?, TOutput> outputMapper, int periodCount) : base(inputs, inputMapper, outputMapper)
+        public StandardDeviation(IEnumerable<TInput> inputs, Func<TInput, decimal> inputMapper, int periodCount) : base(inputs, inputMapper)
         {
             PeriodCount = periodCount;
         }
@@ -22,7 +22,7 @@ namespace Trady.Analysis.Indicator
     public class StandardDeviationByTuple : StandardDeviation<decimal, decimal?>
     {
         public StandardDeviationByTuple(IEnumerable<decimal> inputs, int periodCount) 
-            : base(inputs, i => i, (i, otm) => otm, periodCount)
+            : base(inputs, i => i, periodCount)
         {
         }
     }
@@ -30,7 +30,7 @@ namespace Trady.Analysis.Indicator
     public class StandardDeviation : StandardDeviation<Candle, AnalyzableTick<decimal?>>
     {
         public StandardDeviation(IEnumerable<Candle> inputs, int periodCount) 
-            : base(inputs, i => i.Close, (i, otm) => new AnalyzableTick<decimal?>(i.DateTime, otm), periodCount)
+            : base(inputs, i => i.Close, periodCount)
         {
         }
     }

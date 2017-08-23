@@ -10,7 +10,7 @@ namespace Trady.Analysis.Pattern.Indicator
     {
         readonly int _periodCount;
 
-        public IsHighestPrice(IEnumerable<TInput> inputs, Func<TInput, decimal> inputMapper, Func<TInput, bool?, TOutput> outputMapper, int periodCount) : base(inputs, inputMapper, outputMapper)
+        public IsHighestPrice(IEnumerable<TInput> inputs, Func<TInput, decimal> inputMapper, int periodCount) : base(inputs, inputMapper)
         {
 			_periodCount = periodCount;
 		}
@@ -22,7 +22,7 @@ namespace Trady.Analysis.Pattern.Indicator
     public class IsHighestPriceByTuple : IsHighestPrice<decimal, bool?>
     {
         public IsHighestPriceByTuple(IEnumerable<decimal> inputs, int periodCount) 
-            : base(inputs, i => i, (i, otm) => otm, periodCount)
+            : base(inputs, i => i, periodCount)
         {
         }
     }
@@ -30,7 +30,7 @@ namespace Trady.Analysis.Pattern.Indicator
     public class IsHighestPrice : IsHighestPrice<Candle, AnalyzableTick<bool?>>
     {
         public IsHighestPrice(IEnumerable<Candle> inputs, int periodCount) 
-            : base(inputs, i => i.Close, (i, otm) => new AnalyzableTick<bool?>(i.DateTime, otm), periodCount)
+            : base(inputs, i => i.Close, periodCount)
         {
         }
     }

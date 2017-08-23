@@ -16,7 +16,7 @@ namespace Trady.Analysis.Pattern.Candlestick
         readonly BullishByTuple _bullish;
         readonly LongDayByTuple _longDay;
 
-        public BullishLongDay(IEnumerable<TInput> inputs, Func<TInput, (decimal Open, decimal Close)> inputMapper, Func<TInput, bool, TOutput> outputMapper, int periodCount = 20, decimal threshold = 0.75m) : base(inputs, inputMapper, outputMapper)
+        public BullishLongDay(IEnumerable<TInput> inputs, Func<TInput, (decimal Open, decimal Close)> inputMapper, int periodCount = 20, decimal threshold = 0.75m) : base(inputs, inputMapper)
         {
 			_bullish = new BullishByTuple(inputs.Select(inputMapper));
             _longDay = new LongDayByTuple(inputs.Select(inputMapper), periodCount, threshold);
@@ -36,7 +36,7 @@ namespace Trady.Analysis.Pattern.Candlestick
     public class BullishLongDayByTuple : BullishLongDay<(decimal Open, decimal Close), bool>
     {
         public BullishLongDayByTuple(IEnumerable<(decimal Open, decimal Close)> inputs, int periodCount = 20, decimal threshold = 0.75M) 
-            : base(inputs, i => i, (i, otm) => otm, periodCount, threshold)
+            : base(inputs, i => i, periodCount, threshold)
         {
         }
     }
@@ -44,7 +44,7 @@ namespace Trady.Analysis.Pattern.Candlestick
     public class BullishLongDay : BullishLongDay<Candle, AnalyzableTick<bool>>
     {
         public BullishLongDay(IEnumerable<Candle> inputs, int periodCount = 20, decimal threshold = 0.75M) 
-            : base(inputs, i => (i.Open, i.Close), (i, otm) => new AnalyzableTick<bool>(i.DateTime, otm), periodCount, threshold)
+            : base(inputs, i => (i.Open, i.Close), periodCount, threshold)
         {
         }
     }

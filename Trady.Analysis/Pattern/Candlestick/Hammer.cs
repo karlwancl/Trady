@@ -13,7 +13,7 @@ namespace Trady.Analysis.Pattern.Candlestick
     {
         ShortDayByTuple _shortDay;
 
-        public Hammer(IEnumerable<TInput> inputs, Func<TInput, (decimal Open, decimal High, decimal Low, decimal Close)> inputMapper, Func<TInput, bool?, TOutput> outputMapper, int shortPeriodCount = 20, decimal shortThreshold = 0.25m) : base(inputs, inputMapper, outputMapper)
+        public Hammer(IEnumerable<TInput> inputs, Func<TInput, (decimal Open, decimal High, decimal Low, decimal Close)> inputMapper, int shortPeriodCount = 20, decimal shortThreshold = 0.25m) : base(inputs, inputMapper)
         {
             var mappedInputs = inputs.Select(inputMapper);
             _shortDay = new ShortDayByTuple(mappedInputs.Select(i => (i.Open, i.Close)), shortPeriodCount, shortThreshold);
@@ -28,7 +28,7 @@ namespace Trady.Analysis.Pattern.Candlestick
     public class HammerByTuple : Hammer<(decimal Open, decimal High, decimal Low, decimal Close), bool?>
     {
         public HammerByTuple(IEnumerable<(decimal Open, decimal High, decimal Low, decimal Close)> inputs, int shortPeriodCount = 20, decimal shortThreshold = 0.25M) 
-            : base(inputs, i => i, (i, otm) => otm, shortPeriodCount, shortThreshold)
+            : base(inputs, i => i, shortPeriodCount, shortThreshold)
         {
         }
     }
@@ -36,7 +36,7 @@ namespace Trady.Analysis.Pattern.Candlestick
     public class Hammer : Hammer<Candle, AnalyzableTick<bool?>>
     {
         public Hammer(IEnumerable<Candle> inputs, int shortPeriodCount = 20, decimal shortThreshold = 0.25M) 
-            : base(inputs, i => (i.Open, i.High, i.Low, i.Close), (i, otm) => new AnalyzableTick<bool?>(i.DateTime, otm), shortPeriodCount, shortThreshold)
+            : base(inputs, i => (i.Open, i.High, i.Low, i.Close), shortPeriodCount, shortThreshold)
         {
         }
     }

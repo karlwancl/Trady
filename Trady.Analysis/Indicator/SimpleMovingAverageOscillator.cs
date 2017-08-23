@@ -11,7 +11,7 @@ namespace Trady.Analysis.Indicator
         readonly SimpleMovingAverageByTuple _sma2;
         readonly SimpleMovingAverageByTuple _sma1;
 
-        public SimpleMovingAverageOscillator(IEnumerable<TInput> inputs, Func<TInput, decimal> inputMapper, Func<TInput, decimal?, TOutput> outputMapper, int periodCount1, int periodCount2) : base(inputs, inputMapper, outputMapper)
+        public SimpleMovingAverageOscillator(IEnumerable<TInput> inputs, Func<TInput, decimal> inputMapper, int periodCount1, int periodCount2) : base(inputs, inputMapper)
         {
 			_sma1 = new SimpleMovingAverageByTuple(inputs.Select(inputMapper), periodCount1);
 			_sma2 = new SimpleMovingAverageByTuple(inputs.Select(inputMapper), periodCount2);
@@ -30,7 +30,7 @@ namespace Trady.Analysis.Indicator
     public class SimpleMovingAverageOscillatorByTuple : SimpleMovingAverageOscillator<decimal, decimal?>
     {
         public SimpleMovingAverageOscillatorByTuple(IEnumerable<decimal> inputs, int periodCount1, int periodCount2) 
-            : base(inputs, i => i, (i, otm) => otm, periodCount1, periodCount2)
+            : base(inputs, i => i, periodCount1, periodCount2)
         {
         }
     }
@@ -38,7 +38,7 @@ namespace Trady.Analysis.Indicator
     public class SimpleMovingAverageOscillator : SimpleMovingAverageOscillator<Candle, AnalyzableTick<decimal?>>
     {
         public SimpleMovingAverageOscillator(IEnumerable<Candle> inputs, int periodCount1, int periodCount2) 
-            : base(inputs, i => i.Close, (i, otm) => new AnalyzableTick<decimal?>(i.DateTime, otm), periodCount1, periodCount2)
+            : base(inputs, i => i.Close, periodCount1, periodCount2)
         {
         }
     }

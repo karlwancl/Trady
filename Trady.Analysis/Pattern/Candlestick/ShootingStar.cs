@@ -10,7 +10,7 @@ namespace Trady.Analysis.Pattern.Candlestick
     /// </summary>
     public class ShootingStar<TInput, TOutput> : AnalyzableBase<TInput, (decimal Open, decimal High, decimal Low, decimal Close), bool?, TOutput>
     {
-        public ShootingStar(IEnumerable<TInput> inputs, Func<TInput, (decimal Open, decimal High, decimal Low, decimal Close)> inputMapper, Func<TInput, bool?, TOutput> outputMapper) : base(inputs, inputMapper, outputMapper)
+        public ShootingStar(IEnumerable<TInput> inputs, Func<TInput, (decimal Open, decimal High, decimal Low, decimal Close)> inputMapper) : base(inputs, inputMapper)
         {
         }
 
@@ -23,7 +23,7 @@ namespace Trady.Analysis.Pattern.Candlestick
     public class ShootingStarByTuple : ShootingStar<(decimal Open, decimal High, decimal Low, decimal Close), bool?>
     {
         public ShootingStarByTuple(IEnumerable<(decimal Open, decimal High, decimal Low, decimal Close)> inputs) 
-            : base(inputs, i => i, (i, otm) => otm)
+            : base(inputs, i => i)
         {
         }
     }
@@ -31,7 +31,7 @@ namespace Trady.Analysis.Pattern.Candlestick
     public class ShootingStar : ShootingStar<Candle, AnalyzableTick<bool?>>
     {
         public ShootingStar(IEnumerable<Candle> inputs) 
-            : base(inputs, i => (i.Open, i.High, i.Low, i.Close), (i, otm) => new AnalyzableTick<bool?>(i.DateTime, otm))
+            : base(inputs, i => (i.Open, i.High, i.Low, i.Close))
         {
         }
     }

@@ -8,7 +8,7 @@ namespace Trady.Analysis.Indicator
 {
     public class TrueRange<TInput, TOutput> : AnalyzableBase<TInput, (decimal High, decimal Low, decimal Close), decimal?, TOutput>
     {
-        public TrueRange(IEnumerable<TInput> inputs, Func<TInput, (decimal High, decimal Low, decimal Close)> inputMapper, Func<TInput, decimal?, TOutput> outputMapper) : base(inputs, inputMapper, outputMapper)
+        public TrueRange(IEnumerable<TInput> inputs, Func<TInput, (decimal High, decimal Low, decimal Close)> inputMapper) : base(inputs, inputMapper)
         {
         }
 
@@ -23,7 +23,7 @@ namespace Trady.Analysis.Indicator
     public class TrueRangeByTuple : TrueRange<(decimal High, decimal Low, decimal Close), decimal?>
     {
         public TrueRangeByTuple(IEnumerable<(decimal High, decimal Low, decimal Close)> inputs) 
-            : base(inputs, i => i, (i, otm) => otm)
+            : base(inputs, i => i)
         {
         }
     }
@@ -31,7 +31,7 @@ namespace Trady.Analysis.Indicator
     public class TrueRange : TrueRange<Candle, AnalyzableTick<decimal?>>
     {
         public TrueRange(IEnumerable<Candle> inputs) 
-            : base(inputs, i => (i.High, i.Low, i.Close), (i, otm) => new AnalyzableTick<decimal?>(i.DateTime, otm))
+            : base(inputs, i => (i.High, i.Low, i.Close))
         {
         }
     }

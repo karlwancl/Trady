@@ -10,7 +10,8 @@ namespace Trady.Analysis.Indicator
     {
         BollingerBandsByTuple _bb;
 
-        public BollingerBandWidth(IEnumerable<TInput> inputs, Func<TInput, decimal> inputMapper, Func<TInput, decimal?, TOutput> outputMapper, int periodCount, decimal sdCount) : base(inputs, inputMapper, outputMapper)
+        public BollingerBandWidth(IEnumerable<TInput> inputs, Func<TInput, decimal> inputMapper, int periodCount, decimal sdCount) 
+            : base(inputs, inputMapper)
         {
 			_bb = new BollingerBandsByTuple(inputs.Select(inputMapper), periodCount, sdCount);
 
@@ -32,7 +33,7 @@ namespace Trady.Analysis.Indicator
     public class BollingerBandWidthByTuple : BollingerBandWidth<decimal, decimal?>
     {
         public BollingerBandWidthByTuple(IEnumerable<decimal> inputs, int periodCount, decimal sdCount) 
-            : base(inputs, i => i, (i, otm) => otm, periodCount, sdCount)
+            : base(inputs, i => i, periodCount, sdCount)
         {
         }
     }
@@ -40,7 +41,7 @@ namespace Trady.Analysis.Indicator
     public class BollingerBandWidth : BollingerBandWidth<Candle, AnalyzableTick<decimal?>>
     {
         public BollingerBandWidth(IEnumerable<Candle> inputs, int periodCount, decimal sdCount) 
-            : base(inputs, i => i.Close, (i, otm) => new AnalyzableTick<decimal?>(i.DateTime, otm), periodCount, sdCount)
+            : base(inputs, i => i.Close, periodCount, sdCount)
         {
         }
     }

@@ -9,7 +9,7 @@ namespace Trady.Analysis.Pattern.Candlestick
 {
     public class Bearish<TInput, TOutput> : AnalyzableBase<TInput, (decimal Open, decimal Close), bool, TOutput>
     {
-        public Bearish(IEnumerable<TInput> inputs, Func<TInput, (decimal Open, decimal Close)> inputMapper, Func<TInput, bool, TOutput> outputMapper) : base(inputs, inputMapper, outputMapper)
+        public Bearish(IEnumerable<TInput> inputs, Func<TInput, (decimal Open, decimal Close)> inputMapper) : base(inputs, inputMapper)
         {
         }
 
@@ -20,7 +20,7 @@ namespace Trady.Analysis.Pattern.Candlestick
     public class BearishByTuple : Bearish<(decimal Open, decimal Close), bool>
     {
         public BearishByTuple(IEnumerable<(decimal Open, decimal Close)> inputs) 
-            : base(inputs, i => i, (i, otm) => otm)
+            : base(inputs, i => i)
         {
         }
     }
@@ -28,7 +28,7 @@ namespace Trady.Analysis.Pattern.Candlestick
     public class Bearish : Bearish<Candle, AnalyzableTick<bool>>
     {
         public Bearish(IEnumerable<Candle> inputs) 
-            : base(inputs, i => (i.Open, i.Close), (i, otm) => new AnalyzableTick<bool>(i.DateTime, otm))
+            : base(inputs, i => (i.Open, i.Close))
         {
         }
     }

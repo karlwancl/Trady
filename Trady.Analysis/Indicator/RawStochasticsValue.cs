@@ -11,7 +11,7 @@ namespace Trady.Analysis.Indicator
         readonly HighestHighByTuple _hh;
         readonly LowestLowByTuple _ll;
 
-        public RawStochasticsValue(IEnumerable<TInput> inputs, Func<TInput, (decimal High, decimal Low, decimal Close)> inputMapper, Func<TInput, decimal?, TOutput> outputMapper, int periodCount) : base(inputs, inputMapper, outputMapper)
+        public RawStochasticsValue(IEnumerable<TInput> inputs, Func<TInput, (decimal High, decimal Low, decimal Close)> inputMapper, int periodCount) : base(inputs, inputMapper)
         {
 			_hh = new HighestHighByTuple(inputs.Select(i => inputMapper(i).High), periodCount);
 			_ll = new LowestLowByTuple(inputs.Select(i => inputMapper(i).Low), periodCount);
@@ -32,7 +32,7 @@ namespace Trady.Analysis.Indicator
     public class RawStochasticsValueByTuple : RawStochasticsValue<(decimal High, decimal Low, decimal Close), decimal?>
     {
         public RawStochasticsValueByTuple(IEnumerable<(decimal High, decimal Low, decimal Close)> inputs, int periodCount) 
-            : base(inputs, i => i, (i, otm) => otm, periodCount)
+            : base(inputs, i => i, periodCount)
         {
         }
     }
@@ -40,7 +40,7 @@ namespace Trady.Analysis.Indicator
     public class RawStochasticsValue : RawStochasticsValue<Candle, AnalyzableTick<decimal?>>
     {
         public RawStochasticsValue(IEnumerable<Candle> inputs, int periodCount) 
-            : base(inputs, i => (i.High, i.Low, i.Close), (i, otm) => new AnalyzableTick<decimal?>(i.DateTime, otm), periodCount)
+            : base(inputs, i => (i.High, i.Low, i.Close), periodCount)
         {
         }
     }

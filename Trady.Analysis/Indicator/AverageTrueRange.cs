@@ -11,7 +11,8 @@ namespace Trady.Analysis.Indicator
         readonly TrueRangeByTuple _tr;
         readonly GenericExponentialMovingAverage _trEma;
 
-        public AverageTrueRange(IEnumerable<TInput> inputs, Func<TInput, (decimal High, decimal Low, decimal Close)> inputMapper, Func<TInput, decimal?, TOutput> outputMapper, int periodCount) : base(inputs, inputMapper, outputMapper)
+        public AverageTrueRange(IEnumerable<TInput> inputs, Func<TInput, (decimal High, decimal Low, decimal Close)> inputMapper, int periodCount) 
+            : base(inputs, inputMapper)
         {
             _tr = new TrueRangeByTuple(inputs.Select(inputMapper));
 
@@ -33,7 +34,7 @@ namespace Trady.Analysis.Indicator
     public class AverageTrueRangeByTuple : AverageTrueRange<(decimal High, decimal Low, decimal Close), decimal?>
     {
         public AverageTrueRangeByTuple(IEnumerable<(decimal High, decimal Low, decimal Close)> inputs, int periodCount) 
-            : base(inputs, i => i, (i, otm) => otm, periodCount)
+            : base(inputs, i => i, periodCount)
         {
         }
     }
@@ -41,7 +42,7 @@ namespace Trady.Analysis.Indicator
     public class AverageTrueRange : AverageTrueRange<Candle, AnalyzableTick<decimal?>>
     {
         public AverageTrueRange(IEnumerable<Candle> inputs, int periodCount) 
-            : base(inputs, i => (i.High, i.Low, i.Close), (i, otm) => new AnalyzableTick<decimal?>(i.DateTime, otm), periodCount)
+            : base(inputs, i => (i.High, i.Low, i.Close), periodCount)
         {
         }
     }

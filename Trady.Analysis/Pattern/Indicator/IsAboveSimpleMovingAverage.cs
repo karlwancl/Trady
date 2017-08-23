@@ -12,7 +12,7 @@ namespace Trady.Analysis.Pattern.Indicator
     {
         readonly SimpleMovingAverageByTuple _sma;
 
-        public IsAboveSimpleMovingAverage(IEnumerable<TInput> inputs, Func<TInput, decimal> inputMapper, Func<TInput, bool?, TOutput> outputMapper, int periodCount) : base(inputs, inputMapper, outputMapper)
+        public IsAboveSimpleMovingAverage(IEnumerable<TInput> inputs, Func<TInput, decimal> inputMapper, int periodCount) : base(inputs, inputMapper)
         {
 			_sma = new SimpleMovingAverageByTuple(inputs.Select(inputMapper), periodCount);
 		}
@@ -24,7 +24,7 @@ namespace Trady.Analysis.Pattern.Indicator
     public class IsAboveSimpleMovingAverageByTuple : IsAboveSimpleMovingAverage<decimal, bool?>
     {
         public IsAboveSimpleMovingAverageByTuple(IEnumerable<decimal> inputs, int periodCount) 
-            : base(inputs, i => i, (i, otm) => otm, periodCount)
+            : base(inputs, i => i, periodCount)
         {
         }
     }
@@ -32,7 +32,7 @@ namespace Trady.Analysis.Pattern.Indicator
     public class IsAboveSimpleMovingAverage : IsAboveSimpleMovingAverage<Candle, AnalyzableTick<bool?>>
     {
         public IsAboveSimpleMovingAverage(IEnumerable<Candle> inputs, int periodCount)
-            : base(inputs, i => i.Close, (i, otm) => new AnalyzableTick<bool?>(i.DateTime, otm), periodCount)
+            : base(inputs, i => i.Close, periodCount)
         {
         }
     }

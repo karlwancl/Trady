@@ -16,7 +16,7 @@ namespace Trady.Analysis.Pattern.Candlestick
         ShortDayByTuple _shortDay;
         BearishLongDayByTuple _bearishLongDay;
 
-        public MorningStar(IEnumerable<TInput> inputs, Func<TInput, (decimal Open, decimal High, decimal Low, decimal Close)> inputMapper, Func<TInput, bool?, TOutput> outputMapper, int downTrendPeriodCount = 3, int periodCount = 20, decimal shortThreshold = 0.25m, decimal longThreshold = 0.75m, decimal threshold = 0.1m) : base(inputs, inputMapper, outputMapper)
+        public MorningStar(IEnumerable<TInput> inputs, Func<TInput, (decimal Open, decimal High, decimal Low, decimal Close)> inputMapper, int downTrendPeriodCount = 3, int periodCount = 20, decimal shortThreshold = 0.25m, decimal longThreshold = 0.75m, decimal threshold = 0.1m) : base(inputs, inputMapper)
         {
             var mappedInputs = inputs.Select(inputMapper);
 
@@ -58,7 +58,7 @@ namespace Trady.Analysis.Pattern.Candlestick
     public class MorningStarByTuple : MorningStar<(decimal Open, decimal High, decimal Low, decimal Close), bool?>
     {
         public MorningStarByTuple(IEnumerable<(decimal Open, decimal High, decimal Low, decimal Close)> inputs, int downTrendPeriodCount = 3, int periodCount = 20, decimal shortThreshold = 0.25M, decimal longThreshold = 0.75M, decimal threshold = 0.1M) 
-            : base(inputs, i => i, (i, otm) => otm, downTrendPeriodCount, periodCount, shortThreshold, longThreshold, threshold)
+            : base(inputs, i => i, downTrendPeriodCount, periodCount, shortThreshold, longThreshold, threshold)
         {
         }
     }
@@ -66,7 +66,7 @@ namespace Trady.Analysis.Pattern.Candlestick
     public class MorningStar : MorningStar<Candle, AnalyzableTick<bool?>>
     {
         public MorningStar(IEnumerable<Candle> inputs, int downTrendPeriodCount = 3, int periodCount = 20, decimal shortThreshold = 0.25M, decimal longThreshold = 0.75M, decimal threshold = 0.1M) 
-            : base(inputs, i => (i.Open, i.High, i.Low, i.Close), (i, otm) => new AnalyzableTick<bool?>(i.DateTime, otm), downTrendPeriodCount, periodCount, shortThreshold, longThreshold, threshold)
+            : base(inputs, i => (i.Open, i.High, i.Low, i.Close), downTrendPeriodCount, periodCount, shortThreshold, longThreshold, threshold)
         {
         }
     }

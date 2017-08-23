@@ -8,7 +8,7 @@ namespace Trady.Analysis.Indicator
 {
     public class MinusDirectionalMovement<TInput, TOutput> : AnalyzableBase<TInput, decimal, decimal?, TOutput>
     {
-        public MinusDirectionalMovement(IEnumerable<TInput> inputs, Func<TInput, decimal> inputMapper, Func<TInput, decimal?, TOutput> outputMapper) : base(inputs, inputMapper, outputMapper)
+        public MinusDirectionalMovement(IEnumerable<TInput> inputs, Func<TInput, decimal> inputMapper) : base(inputs, inputMapper)
         {
         }
 
@@ -19,7 +19,7 @@ namespace Trady.Analysis.Indicator
     public class MinusDirectionalMovementByTuple : MinusDirectionalMovement<decimal, decimal?>
     {
         public MinusDirectionalMovementByTuple(IEnumerable<decimal> inputs) 
-            : base(inputs, i => i, (i, otm) => otm)
+            : base(inputs, i => i)
         {
         }
     }
@@ -27,7 +27,7 @@ namespace Trady.Analysis.Indicator
     public class MinusDirectionalMovement : MinusDirectionalMovement<Candle, AnalyzableTick<decimal?>>
     {
         public MinusDirectionalMovement(IEnumerable<Candle> inputs) 
-            : base(inputs, i => i.Low, (i, otm) => new AnalyzableTick<decimal?>(i.DateTime, otm))
+            : base(inputs, i => i.Low)
         {
         }
     }

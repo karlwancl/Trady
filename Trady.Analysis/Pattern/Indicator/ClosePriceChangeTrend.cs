@@ -12,7 +12,7 @@ namespace Trady.Analysis.Pattern.Indicator
     {
         readonly ClosePriceChangeByTuple _closePriceChange;
 
-        public ClosePriceChangeTrend(IEnumerable<TInput> inputs, Func<TInput, decimal> inputMapper, Func<TInput, Trend?, TOutput> outputMapper) : base(inputs, inputMapper, outputMapper)
+        public ClosePriceChangeTrend(IEnumerable<TInput> inputs, Func<TInput, decimal> inputMapper) : base(inputs, inputMapper)
         {
 			_closePriceChange = new ClosePriceChangeByTuple(inputs.Select(inputMapper));
 		}
@@ -24,7 +24,7 @@ namespace Trady.Analysis.Pattern.Indicator
     public class ClosePriceChangeTrendByTuple : ClosePriceChangeTrend<decimal, Trend?>
     {
         public ClosePriceChangeTrendByTuple(IEnumerable<decimal> inputs) 
-            : base(inputs, i => i, (i, otm) => otm)
+            : base(inputs, i => i)
         {
         }
     }
@@ -32,7 +32,7 @@ namespace Trady.Analysis.Pattern.Indicator
     public class ClosePriceChangeTrend : ClosePriceChangeTrend<Candle, AnalyzableTick<Trend?>>
     {
         public ClosePriceChangeTrend(IEnumerable<Candle> inputs)
-            : base(inputs, i => i.Close, (i, otm) => new AnalyzableTick<Trend?>(i.DateTime, otm))
+            : base(inputs, i => i.Close)
         {
         }
     }

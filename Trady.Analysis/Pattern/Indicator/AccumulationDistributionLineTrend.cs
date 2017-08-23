@@ -12,7 +12,7 @@ namespace Trady.Analysis.Pattern.Indicator
     {
         readonly AccumulationDistributionLineByTuple _accumDist;
 
-        public AccumulationDistributionLineTrend(IEnumerable<TInput> inputs, Func<TInput, (decimal High, decimal Low, decimal Close, decimal Volume)> inputMapper, Func<TInput, Trend?, TOutput> outputMapper) : base(inputs, inputMapper, outputMapper)
+        public AccumulationDistributionLineTrend(IEnumerable<TInput> inputs, Func<TInput, (decimal High, decimal Low, decimal Close, decimal Volume)> inputMapper) : base(inputs, inputMapper)
         {
             _accumDist = new AccumulationDistributionLineByTuple(inputs.Select(inputMapper));
         }
@@ -24,7 +24,7 @@ namespace Trady.Analysis.Pattern.Indicator
     public class AccumulationDistributionLineTrendByTuple : AccumulationDistributionLineTrend<(decimal High, decimal Low, decimal Close, decimal Volume), Trend?>
     {
         public AccumulationDistributionLineTrendByTuple(IEnumerable<(decimal High, decimal Low, decimal Close, decimal Volume)> inputs) 
-            : base(inputs, i => i, (i, otm) => otm)
+            : base(inputs, i => i)
         {
         }
     }
@@ -32,7 +32,7 @@ namespace Trady.Analysis.Pattern.Indicator
     public class AccumulationDistributionLineTrend : AccumulationDistributionLineTrend<Candle, AnalyzableTick<Trend?>>
     {
         public AccumulationDistributionLineTrend(IEnumerable<Candle> inputs) 
-            : base(inputs, i => (i.High, i.Low, i.Close, i.Volume), (i, otm) => new AnalyzableTick<Trend?>(i.DateTime, otm))
+            : base(inputs, i => (i.High, i.Low, i.Close, i.Volume))
         {
         }
     }

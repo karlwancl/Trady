@@ -12,7 +12,8 @@ namespace Trady.Analysis.Indicator
         readonly LowestLowByTuple _ll;
         readonly AverageTrueRangeByTuple _atr;
 
-        public ChandelierExit(IEnumerable<TInput> inputs, Func<TInput, (decimal High, decimal Low, decimal Close)> inputMapper, Func<TInput, (decimal? Long, decimal? Short), TOutput> outputMapper, int periodCount, decimal atrCount) : base(inputs, inputMapper, outputMapper)
+        public ChandelierExit(IEnumerable<TInput> inputs, Func<TInput, (decimal High, decimal Low, decimal Close)> inputMapper, int periodCount, decimal atrCount) 
+            : base(inputs, inputMapper)
         {
 			_hh = new HighestHighByTuple(inputs.Select(i => inputMapper(i).High), periodCount);
 			_ll = new LowestLowByTuple(inputs.Select(i => inputMapper(i).Low), periodCount);
@@ -38,7 +39,7 @@ namespace Trady.Analysis.Indicator
     public class ChandelierExitByTuple : ChandelierExit<(decimal High, decimal Low, decimal Close), (decimal? Long, decimal? Short)>
     {
         public ChandelierExitByTuple(IEnumerable<(decimal High, decimal Low, decimal Close)> inputs, int periodCount, decimal atrCount) 
-            : base(inputs, i => i, (i, otm) => otm, periodCount, atrCount)
+            : base(inputs, i => i, periodCount, atrCount)
         {
         }
     }
@@ -46,7 +47,7 @@ namespace Trady.Analysis.Indicator
     public class ChandelierExit : ChandelierExit<Candle, AnalyzableTick<(decimal? Long, decimal? Short)>>
     {
         public ChandelierExit(IEnumerable<Candle> inputs, int periodCount, decimal atrCount) 
-            : base(inputs, i => (i.High, i.Low, i.Close), (i, otm) => new AnalyzableTick<(decimal? Long, decimal? Short)>(i.DateTime, otm), periodCount, atrCount)
+            : base(inputs, i => (i.High, i.Low, i.Close), periodCount, atrCount)
         {
         }
     }

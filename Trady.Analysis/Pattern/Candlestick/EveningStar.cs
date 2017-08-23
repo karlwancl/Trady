@@ -16,8 +16,8 @@ namespace Trady.Analysis.Pattern.Candlestick
         ShortDayByTuple _shortDay;
         BearishLongDayByTuple _bearishLongDay;
 
-        public EveningStar(IEnumerable<TInput> inputs, Func<TInput, (decimal Open, decimal High, decimal Low, decimal Close)> inputMapper, Func<TInput, bool?, TOutput> outputMapper, int upTrendPeriodCount = 3, int periodCount = 20, decimal shortThreshold = 0.25m, decimal longThreshold = 0.75m, decimal threshold = 0.1m)
-            : base(inputs, inputMapper, outputMapper)
+        public EveningStar(IEnumerable<TInput> inputs, Func<TInput, (decimal Open, decimal High, decimal Low, decimal Close)> inputMapper, int upTrendPeriodCount = 3, int periodCount = 20, decimal shortThreshold = 0.25m, decimal longThreshold = 0.75m, decimal threshold = 0.1m)
+            : base(inputs, inputMapper)
         {
             var mappedInputs = inputs.Select(inputMapper);
 
@@ -59,7 +59,7 @@ namespace Trady.Analysis.Pattern.Candlestick
     public class EveningStarByTuple : EveningStar<(decimal Open, decimal High, decimal Low, decimal Close), bool?>
     {
         public EveningStarByTuple(IEnumerable<(decimal Open, decimal High, decimal Low, decimal Close)> inputs, int upTrendPeriodCount = 3, int periodCount = 20, decimal shortThreshold = 0.25M, decimal longThreshold = 0.75M, decimal threshold = 0.1M) 
-            : base(inputs, i => i, (i, otm) => otm, upTrendPeriodCount, periodCount, shortThreshold, longThreshold, threshold)
+            : base(inputs, i => i, upTrendPeriodCount, periodCount, shortThreshold, longThreshold, threshold)
         {
         }
     }
@@ -67,7 +67,7 @@ namespace Trady.Analysis.Pattern.Candlestick
     public class EveningStar : EveningStar<Candle, AnalyzableTick<bool?>>
     {
         public EveningStar(IEnumerable<Candle> inputs, int upTrendPeriodCount = 3, int periodCount = 20, decimal shortThreshold = 0.25M, decimal longThreshold = 0.75M, decimal threshold = 0.1M) 
-            : base(inputs, i => (i.Open, i.High, i.Low, i.Close), (i, otm) => new AnalyzableTick<bool?>(i.DateTime, otm), upTrendPeriodCount, periodCount, shortThreshold, longThreshold, threshold)
+            : base(inputs, i => (i.Open, i.High, i.Low, i.Close), upTrendPeriodCount, periodCount, shortThreshold, longThreshold, threshold)
         {
         }
     }

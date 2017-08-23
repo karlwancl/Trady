@@ -48,7 +48,7 @@ namespace Trady.Test
             // I don't know how much it should return and actually it doesn't matter.
             // I just want to make a point that if someone wants to do strange calculations 
             // they can be done
-            var smaWay3 = new SimpleMovingAverage<Candle, AnalyzableTick<decimal?>>(candles, c => c.High - c.Low, (c, otm) => new AnalyzableTick<decimal?>(c.DateTime, otm) ,periodCount);
+            var smaWay3 = new SimpleMovingAverage<Candle, AnalyzableTick<decimal?>>(candles, c => c.High - c.Low, periodCount);
             result = smaWay3[candles.Count() - 1];
             Assert.IsNotNull(result);
 

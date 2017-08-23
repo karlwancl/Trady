@@ -11,7 +11,7 @@ namespace Trady.Analysis.Indicator
         LowestLowByTuple _shortLowestLow, _middleLowestLow;
         Func<int, decimal?> _conversionLine, _baseLine, _leadingSpanB;
 
-        public IchimokuCloud(IEnumerable<TInput> inputs, Func<TInput, (decimal High, decimal Low, decimal Close)> inputMapper, Func<TInput, (decimal? ConversionLine, decimal? BaseLine, decimal? LeadingSpanA, decimal? LeadingSpanB, decimal? LaggingSpan), TOutput> outputMapper, int shortPeriodCount, int middlePeriodCount, int longPeriodCount) : base(inputs, inputMapper, outputMapper)
+        public IchimokuCloud(IEnumerable<TInput> inputs, Func<TInput, (decimal High, decimal Low, decimal Close)> inputMapper, int shortPeriodCount, int middlePeriodCount, int longPeriodCount) : base(inputs, inputMapper)
         {
             var highs = inputs.Select(i => inputMapper(i).High);
             var lows = inputs.Select(i => inputMapper(i).Low);
@@ -68,7 +68,7 @@ namespace Trady.Analysis.Indicator
     public class IchimokuCloudByTuple : IchimokuCloud<(decimal High, decimal Low, decimal Close), (decimal? ConversionLine, decimal? BaseLine, decimal? LeadingSpanA, decimal? LeadingSpanB, decimal? LaggingSpan)>
     {
         public IchimokuCloudByTuple(IEnumerable<(decimal High, decimal Low, decimal Close)> inputs, int shortPeriodCount, int middlePeriodCount, int longPeriodCount) 
-            : base(inputs, i => i, (i, otm) => otm, shortPeriodCount, middlePeriodCount, longPeriodCount)
+            : base(inputs, i => i, shortPeriodCount, middlePeriodCount, longPeriodCount)
         {
         }
     }
@@ -76,7 +76,7 @@ namespace Trady.Analysis.Indicator
     public class IchimokuCloud : IchimokuCloud<Candle, AnalyzableTick<(decimal? ConversionLine, decimal? BaseLine, decimal? LeadingSpanA, decimal? LeadingSpanB, decimal? LaggingSpan)>>
     {
         public IchimokuCloud(IEnumerable<Candle> inputs, int shortPeriodCount, int middlePeriodCount, int longPeriodCount) 
-            : base(inputs, i => (i.High, i.Low, i.Close), (i, otm) => new AnalyzableTick<(decimal? ConversionLine, decimal? BaseLine, decimal? LeadingSpanA, decimal? LeadingSpanB, decimal? LaggingSpan)>(i?.DateTime, otm), shortPeriodCount, middlePeriodCount, longPeriodCount)
+            : base(inputs, i => (i.High, i.Low, i.Close), shortPeriodCount, middlePeriodCount, longPeriodCount)
         {
         }
     }

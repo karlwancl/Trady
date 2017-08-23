@@ -10,11 +10,12 @@ namespace Trady.Analysis.Indicator
     {
         readonly AroonByTuple _aroon;
 
-        public AroonOscillator(IEnumerable<TInput> inputs, Func<TInput, (decimal High, decimal Low)> inputMapper, Func<TInput, decimal?, TOutput> outputMapper, int periodCount) : base(inputs, inputMapper, outputMapper)
+        public AroonOscillator(IEnumerable<TInput> inputs, Func<TInput, (decimal High, decimal Low)> inputMapper, int periodCount) 
+            : base(inputs, inputMapper)
         {
 			_aroon = new AroonByTuple(inputs.Select(inputMapper), periodCount);
 			PeriodCount = periodCount;
-        }
+		}
 
         public int PeriodCount { get; }
 
@@ -28,7 +29,7 @@ namespace Trady.Analysis.Indicator
     public class AroonOscillatorByTuple : AroonOscillator<(decimal High, decimal Low), decimal?>
     {
         public AroonOscillatorByTuple(IEnumerable<(decimal High, decimal Low)> inputs, int periodCount) 
-            : base(inputs, i => i, (i, otm) => otm, periodCount)
+            : base(inputs, i => i, periodCount)
         {
         }
     }
@@ -36,7 +37,7 @@ namespace Trady.Analysis.Indicator
     public class AroonOscillator : AroonOscillator<Candle, AnalyzableTick<decimal?>>
     {
         public AroonOscillator(IEnumerable<Candle> inputs, int periodCount) 
-            : base(inputs, i => (i.High, i.Low), (i, otm) => new AnalyzableTick<decimal?>(i.DateTime, otm), periodCount)
+            : base(inputs, i => (i.High, i.Low), periodCount)
         {
         }
     }

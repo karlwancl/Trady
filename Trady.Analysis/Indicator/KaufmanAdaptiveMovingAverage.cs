@@ -11,7 +11,7 @@ namespace Trady.Analysis.Indicator
         EfficiencyRatioByTuple _er;
         GenericExponentialMovingAverage _gema;
 
-        public KaufmanAdaptiveMovingAverage(IEnumerable<TInput> inputs, Func<TInput, decimal> inputMapper, Func<TInput, decimal?, TOutput> outputMapper, int periodCount, int emaFastPeriodCount, int emaSlowPeriodCount) : base(inputs, inputMapper, outputMapper)
+        public KaufmanAdaptiveMovingAverage(IEnumerable<TInput> inputs, Func<TInput, decimal> inputMapper, int periodCount, int emaFastPeriodCount, int emaSlowPeriodCount) : base(inputs, inputMapper)
         {
 			_er = new EfficiencyRatioByTuple(inputs.Select(inputMapper), periodCount);
 
@@ -45,7 +45,7 @@ namespace Trady.Analysis.Indicator
     public class KaufmanAdaptiveMovingAverageByTuple : KaufmanAdaptiveMovingAverage<decimal, decimal?>
     {
         public KaufmanAdaptiveMovingAverageByTuple(IEnumerable<decimal> inputs, int periodCount, int emaFastPeriodCount, int emaSlowPeriodCount) 
-            : base(inputs, i => i, (i, otm) => otm, periodCount, emaFastPeriodCount, emaSlowPeriodCount)
+            : base(inputs, i => i, periodCount, emaFastPeriodCount, emaSlowPeriodCount)
         {
         }
     }
@@ -53,7 +53,7 @@ namespace Trady.Analysis.Indicator
     public class KaufmanAdaptiveMovingAverage : KaufmanAdaptiveMovingAverage<Candle, AnalyzableTick<decimal?>>
     {
         public KaufmanAdaptiveMovingAverage(IEnumerable<Candle> inputs, int periodCount, int emaFastPeriodCount, int emaSlowPeriodCount)
-            : base(inputs, i => i.Close, (i, otm) => new AnalyzableTick<decimal?>(i.DateTime, otm), periodCount, emaFastPeriodCount, emaSlowPeriodCount)
+            : base(inputs, i => i.Close, periodCount, emaFastPeriodCount, emaSlowPeriodCount)
         {
         }
     }

@@ -13,7 +13,7 @@ namespace Trady.Analysis.Pattern.Candlestick
     {
         DojiByTuple _doji;
 
-        public DragonflyDoji(IEnumerable<TInput> inputs, Func<TInput, (decimal Open, decimal High, decimal Low, decimal Close)> inputMapper, Func<TInput, bool, TOutput> outputMapper, decimal dojiThreshold = 0.1m, decimal shadowThreshold = 0.1m) : base(inputs, inputMapper, outputMapper)
+        public DragonflyDoji(IEnumerable<TInput> inputs, Func<TInput, (decimal Open, decimal High, decimal Low, decimal Close)> inputMapper, decimal dojiThreshold = 0.1m, decimal shadowThreshold = 0.1m) : base(inputs, inputMapper)
         {
             _doji = new DojiByTuple(inputs.Select(inputMapper), dojiThreshold);
 
@@ -36,7 +36,7 @@ namespace Trady.Analysis.Pattern.Candlestick
     public class DragonifyDojiByTuple : DragonflyDoji<(decimal Open, decimal High, decimal Low, decimal Close), bool>
     {
         public DragonifyDojiByTuple(IEnumerable<(decimal Open, decimal High, decimal Low, decimal Close)> inputs, decimal dojiThreshold = 0.1M, decimal shadowThreshold = 0.1M) 
-            : base(inputs, i => i, (i, otm) => otm, dojiThreshold, shadowThreshold)
+            : base(inputs, i => i, dojiThreshold, shadowThreshold)
         {
         }
     }
@@ -44,7 +44,7 @@ namespace Trady.Analysis.Pattern.Candlestick
     public class DragonifyDoji : DragonflyDoji<Candle, AnalyzableTick<bool>>
     {
         public DragonifyDoji(IEnumerable<Candle> inputs, decimal dojiThreshold = 0.1M, decimal shadowThreshold = 0.1M) 
-            : base(inputs, i => (i.Open, i.High, i.Low, i.Close), (i, otm) => new AnalyzableTick<bool>(i.DateTime, otm), dojiThreshold, shadowThreshold)
+            : base(inputs, i => (i.Open, i.High, i.Low, i.Close), dojiThreshold, shadowThreshold)
         {
         }
     }

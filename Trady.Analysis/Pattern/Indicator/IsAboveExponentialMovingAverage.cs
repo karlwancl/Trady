@@ -12,7 +12,7 @@ namespace Trady.Analysis.Pattern.Indicator
     {
         readonly ExponentialMovingAverageByTuple _ema;
 
-        public IsAboveExponentialMovingAverage(IEnumerable<TInput> inputs, Func<TInput, decimal> inputMapper, Func<TInput, bool?, TOutput> outputMapper, int periodCount) : base(inputs, inputMapper, outputMapper)
+        public IsAboveExponentialMovingAverage(IEnumerable<TInput> inputs, Func<TInput, decimal> inputMapper, int periodCount) : base(inputs, inputMapper)
         {
 			_ema = new ExponentialMovingAverageByTuple(inputs.Select(inputMapper), periodCount);
 		}
@@ -24,7 +24,7 @@ namespace Trady.Analysis.Pattern.Indicator
     public class IsAboveExponentialMovingAverageByTuple : IsAboveExponentialMovingAverage<decimal, bool?>
     {
         public IsAboveExponentialMovingAverageByTuple(IEnumerable<decimal> inputs, int periodCount) 
-            : base(inputs, i => i, (i, otm) => otm, periodCount)
+            : base(inputs, i => i, periodCount)
         {
         }
     }
@@ -32,7 +32,7 @@ namespace Trady.Analysis.Pattern.Indicator
     public class IsAboveExponentialMovingAverage : IsAboveExponentialMovingAverage<Candle, AnalyzableTick<bool?>>
     {
         public IsAboveExponentialMovingAverage(IEnumerable<Candle> inputs, int periodCount) 
-            : base(inputs, i => i.Close, (i, otm) => new AnalyzableTick<bool?>(i.DateTime, otm), periodCount)
+            : base(inputs, i => i.Close, periodCount)
         {
         }
     }

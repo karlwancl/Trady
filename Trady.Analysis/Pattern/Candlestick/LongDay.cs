@@ -10,7 +10,7 @@ namespace Trady.Analysis.Pattern.Candlestick
 {
     public class LongDay<TInput, TOutput> : AnalyzableBase<TInput, (decimal Open, decimal Close), bool, TOutput>
     {
-        public LongDay(IEnumerable<TInput> inputs, Func<TInput, (decimal Open, decimal Close)> inputMapper, Func<TInput, bool, TOutput> outputMapper, int periodCount = 20, decimal threshold = 0.75m) : base(inputs, inputMapper, outputMapper)
+        public LongDay(IEnumerable<TInput> inputs, Func<TInput, (decimal Open, decimal Close)> inputMapper, int periodCount = 20, decimal threshold = 0.75m) : base(inputs, inputMapper)
         {
             PeriodCount = periodCount;
             Threshold = threshold;
@@ -30,7 +30,7 @@ namespace Trady.Analysis.Pattern.Candlestick
     public class LongDayByTuple : LongDay<(decimal Open, decimal Close), bool>
     {
         public LongDayByTuple(IEnumerable<(decimal Open, decimal Close)> inputs, int periodCount = 20, decimal threshold = 0.75M) 
-            : base(inputs, i => i, (i, otm) => otm, periodCount, threshold)
+            : base(inputs, i => i, periodCount, threshold)
         {
         }
     }
@@ -38,7 +38,7 @@ namespace Trady.Analysis.Pattern.Candlestick
     public class LongDay : LongDay<Candle, AnalyzableTick<bool>>
     {
         public LongDay(IEnumerable<Candle> inputs, int periodCount = 20, decimal threshold = 0.75M) 
-            : base(inputs, i => (i.Open, i.Close), (i, otm) => new AnalyzableTick<bool>(i.DateTime, otm), periodCount, threshold)
+            : base(inputs, i => (i.Open, i.Close), periodCount, threshold)
         {
         }
     }

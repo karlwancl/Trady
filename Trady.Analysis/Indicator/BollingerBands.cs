@@ -11,7 +11,8 @@ namespace Trady.Analysis.Indicator
         readonly SimpleMovingAverageByTuple _sma;
         readonly StandardDeviationByTuple _sd;
 
-        public BollingerBands(IEnumerable<TInput> inputs, Func<TInput, decimal> inputMapper, Func<TInput, (decimal? LowerBand, decimal? MiddleBand, decimal? UpperBand), TOutput> outputMapper, int periodCount, decimal sdCount) : base(inputs, inputMapper, outputMapper)
+        public BollingerBands(IEnumerable<TInput> inputs, Func<TInput, decimal> inputMapper, int periodCount, decimal sdCount) 
+            : base(inputs, inputMapper)
         {
 			_sma = new SimpleMovingAverageByTuple(inputs.Select(inputMapper), periodCount);
 			_sd = new StandardDeviationByTuple(inputs.Select(inputMapper), periodCount);
@@ -35,7 +36,7 @@ namespace Trady.Analysis.Indicator
     public class BollingerBandsByTuple : BollingerBands<decimal, (decimal? LowerBand, decimal? MiddleBand, decimal? UpperBand)>
     {
         public BollingerBandsByTuple(IEnumerable<decimal> inputs, int periodCount, decimal sdCount) 
-            : base(inputs, i => i, (i, otm) => otm, periodCount, sdCount)
+            : base(inputs, i => i, periodCount, sdCount)
         {
         }
     }
@@ -43,7 +44,7 @@ namespace Trady.Analysis.Indicator
     public class BollingerBands : BollingerBands<Candle, AnalyzableTick<(decimal? LowerBand, decimal? MiddleBand, decimal? UpperBand)>>
     {
         public BollingerBands(IEnumerable<Candle> inputs, int periodCount, decimal sdCount) 
-            : base(inputs, i => i.Close, (i, otm) => new AnalyzableTick<(decimal? LowerBand, decimal? MiddleBand, decimal? UpperBand)>(i.DateTime, otm), periodCount, sdCount)
+            : base(inputs, i => i.Close, periodCount, sdCount)
         {
         }
     }

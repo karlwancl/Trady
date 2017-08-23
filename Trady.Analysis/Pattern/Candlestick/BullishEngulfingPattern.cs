@@ -15,7 +15,7 @@ namespace Trady.Analysis.Pattern.Candlestick
         BearishByTuple _bearish;
         BullishByTuple _bullish;
 
-        public BullishEngulfingPattern(IEnumerable<TInput> inputs, Func<TInput, (decimal Open, decimal High, decimal Low, decimal Close)> inputMapper, Func<TInput, bool?, TOutput> outputMapper, int downTrendPeriodCount = 3) : base(inputs, inputMapper, outputMapper)
+        public BullishEngulfingPattern(IEnumerable<TInput> inputs, Func<TInput, (decimal Open, decimal High, decimal Low, decimal Close)> inputMapper, int downTrendPeriodCount = 3) : base(inputs, inputMapper)
         {
             var mappedInputs = inputs.Select(inputMapper);
             _downTrend = new DownTrendByTuple(mappedInputs.Select(i => (i.High, i.Low)), downTrendPeriodCount);
@@ -40,7 +40,7 @@ namespace Trady.Analysis.Pattern.Candlestick
     public class BullishEngulfingPatternByTuple : BullishEngulfingPattern<(decimal Open, decimal High, decimal Low, decimal Close), bool?>
     {
         public BullishEngulfingPatternByTuple(IEnumerable<(decimal Open, decimal High, decimal Low, decimal Close)> inputs, int downTrendPeriodCount = 3) 
-            : base(inputs, i => i, (i, otm) => otm, downTrendPeriodCount)
+            : base(inputs, i => i, downTrendPeriodCount)
         {
         }
     }
@@ -48,7 +48,7 @@ namespace Trady.Analysis.Pattern.Candlestick
     public class BullishEngulfingPattern : BullishEngulfingPattern<Candle, AnalyzableTick<bool?>>
     {
         public BullishEngulfingPattern(IEnumerable<Candle> inputs, int downTrendPeriodCount = 3)
-            : base(inputs, i => (i.Open, i.High, i.Low, i.Close), (i, otm) => new AnalyzableTick<bool?>(i.DateTime, otm), downTrendPeriodCount)
+            : base(inputs, i => (i.Open, i.High, i.Low, i.Close), downTrendPeriodCount)
         {
         }
     }

@@ -15,11 +15,10 @@ namespace Trady.Analysis.Pattern.Indicator
 			public Full(
 				IEnumerable<TInput> inputs,
 				Func<TInput, (decimal High, decimal Low, decimal Close)> inputMapper,
-				Func<TInput, Crossover?, TOutput> outputMapper,
 				int periodCount,
 				int smaPeriodCountK,
                 int smaPeriodCountD)
-				: base(inputs, inputMapper, outputMapper, new Stochastics.FullByTuple(inputs.Select(inputMapper), periodCount, smaPeriodCountK, smaPeriodCountD))
+				: base(inputs, inputMapper, new Stochastics.FullByTuple(inputs.Select(inputMapper), periodCount, smaPeriodCountK, smaPeriodCountD))
 			{
 			}
 		}
@@ -27,7 +26,7 @@ namespace Trady.Analysis.Pattern.Indicator
 		public class FullByTuple : Full<(decimal High, decimal Low, decimal Close), Crossover?>
 		{
 			public FullByTuple(IEnumerable<(decimal High, decimal Low, decimal Close)> inputs, int periodCount, int smaPeriodCountK, int smaPeriodCountD)
-				: base(inputs, i => i, (i, otm) => otm, periodCount, smaPeriodCountK, smaPeriodCountD)
+				: base(inputs, i => i, periodCount, smaPeriodCountK, smaPeriodCountD)
 			{
 			}
 		}
@@ -35,7 +34,7 @@ namespace Trady.Analysis.Pattern.Indicator
 		public class Full : Full<Candle, AnalyzableTick<Crossover?>>
 		{
 			public Full(IEnumerable<Candle> inputs, int periodCount, int smaPeriodCountK, int smaPeriodCountD)
-				: base(inputs, i => (i.High, i.Low, i.Close), (i, otm) => new AnalyzableTick<Crossover?>(i.DateTime, otm), periodCount, smaPeriodCountK, smaPeriodCountD)
+				: base(inputs, i => (i.High, i.Low, i.Close), periodCount, smaPeriodCountK, smaPeriodCountD)
 			{
 			}
 		}

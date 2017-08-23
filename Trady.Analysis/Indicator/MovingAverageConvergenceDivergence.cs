@@ -12,7 +12,7 @@ namespace Trady.Analysis.Indicator
         readonly GenericExponentialMovingAverage _signal;
         readonly Func<int, decimal?> _macd;
 
-        public MovingAverageConvergenceDivergence(IEnumerable<TInput> inputs, Func<TInput, decimal> inputMapper, Func<TInput, (decimal? MacdLine, decimal? SignalLine, decimal? MacdHistogram), TOutput> outputMapper, int emaPeriodCount1, int emaPeriodCount2, int demPeriodCount) : base(inputs, inputMapper, outputMapper)
+        public MovingAverageConvergenceDivergence(IEnumerable<TInput> inputs, Func<TInput, decimal> inputMapper, int emaPeriodCount1, int emaPeriodCount2, int demPeriodCount) : base(inputs, inputMapper)
         {
 			_ema1 = new ExponentialMovingAverageByTuple(inputs.Select(inputMapper), emaPeriodCount1);
 			_ema2 = new ExponentialMovingAverageByTuple(inputs.Select(inputMapper), emaPeriodCount2);
@@ -47,7 +47,7 @@ namespace Trady.Analysis.Indicator
     public class MovingAverageConvergenceDivergenceByTuple : MovingAverageConvergenceDivergence<decimal, (decimal? MacdLine, decimal? SignalLine, decimal? MacdHistogram)>
     {
         public MovingAverageConvergenceDivergenceByTuple(IEnumerable<decimal> inputs, int emaPeriodCount1, int emaPeriodCount2, int demPeriodCount) 
-            : base(inputs, i => i, (i, otm) => otm, emaPeriodCount1, emaPeriodCount2, demPeriodCount)
+            : base(inputs, i => i, emaPeriodCount1, emaPeriodCount2, demPeriodCount)
         {
         }
     }
@@ -55,7 +55,7 @@ namespace Trady.Analysis.Indicator
     public class MovingAverageConvergenceDivergence : MovingAverageConvergenceDivergence<Candle, AnalyzableTick<(decimal? MacdLine, decimal? SignalLine, decimal? MacdHistogram)>>
     {
         public MovingAverageConvergenceDivergence(IEnumerable<Candle> inputs, int emaPeriodCount1, int emaPeriodCount2, int demPeriodCount) 
-            : base(inputs, i => i.Close, (i, otm) => new AnalyzableTick<(decimal? MacdLine, decimal? SignalLine, decimal? MacdHistogram)>(i.DateTime, otm), emaPeriodCount1, emaPeriodCount2, demPeriodCount)
+            : base(inputs, i => i.Close, emaPeriodCount1, emaPeriodCount2, demPeriodCount)
         {
         }
     }

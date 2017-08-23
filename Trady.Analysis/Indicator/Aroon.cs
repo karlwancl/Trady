@@ -12,12 +12,13 @@ namespace Trady.Analysis.Indicator
         readonly HighestHighByTuple _hh;
         readonly LowestLowByTuple _ll;
 
-        public Aroon(IEnumerable<TInput> inputs, Func<TInput, (decimal High, decimal Low)> inputMapper, Func<TInput, (decimal? Up, decimal? Down), TOutput> outputMapper, int periodCount) : base(inputs, inputMapper, outputMapper)
+        protected Aroon(IEnumerable<TInput> inputs, Func<TInput, (decimal High, decimal Low)> inputMapper, int periodCount) 
+            : base(inputs, inputMapper)
         {
 			_hh = new HighestHighByTuple(inputs.Select(i => inputMapper(i).High), periodCount);
 			_ll = new LowestLowByTuple(inputs.Select(i => inputMapper(i).Low), periodCount);
 			PeriodCount = periodCount;
-        }
+		}
 
         public int PeriodCount { get; }
 
@@ -46,7 +47,7 @@ namespace Trady.Analysis.Indicator
     public class AroonByTuple : Aroon<(decimal High, decimal Low), (decimal? Up, decimal? Down)>
     {
         public AroonByTuple(IEnumerable<(decimal High, decimal Low)> inputs, int periodCount) 
-            : base(inputs, i => i, (i, otm) => otm, periodCount)
+            : base(inputs, i => i, periodCount)
         {
         }
     }
@@ -54,7 +55,7 @@ namespace Trady.Analysis.Indicator
     public class Aroon : Aroon<Candle, AnalyzableTick<(decimal? Up, decimal? Down)>>
     {
         public Aroon(IEnumerable<Candle> inputs, int periodCount) 
-            : base(inputs, i => (i.High, i.Low), (i, otm) => new AnalyzableTick<(decimal? Up, decimal? Down)>(i.DateTime, otm), periodCount)
+            : base(inputs, i => (i.High, i.Low), periodCount)
         {
         }
     }

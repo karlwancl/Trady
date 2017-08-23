@@ -12,7 +12,7 @@ namespace Trady.Analysis.Pattern.Indicator
     {
         readonly OnBalanceVolumeByTuple _obv;
 
-        public OnBalanceVolumeTrend(IEnumerable<TInput> inputs, Func<TInput, (decimal Close, decimal Volume)> inputMapper, Func<TInput, Trend?, TOutput> outputMapper) : base(inputs, inputMapper, outputMapper)
+        public OnBalanceVolumeTrend(IEnumerable<TInput> inputs, Func<TInput, (decimal Close, decimal Volume)> inputMapper) : base(inputs, inputMapper)
         {
 			_obv = new OnBalanceVolumeByTuple(inputs.Select(inputMapper));
 		}
@@ -24,7 +24,7 @@ namespace Trady.Analysis.Pattern.Indicator
     public class OnBalanceVolumeTrendByTuple : OnBalanceVolumeTrend<(decimal Close, decimal Volume), Trend?>
     {
         public OnBalanceVolumeTrendByTuple(IEnumerable<(decimal Close, decimal Volume)> inputs) 
-            : base(inputs, i => i, (i, otm) => otm)
+            : base(inputs, i => i)
         {
         }
     }
@@ -32,7 +32,7 @@ namespace Trady.Analysis.Pattern.Indicator
     public class OnBalanceVolumeTrend : OnBalanceVolumeTrend<Candle, AnalyzableTick<Trend?>>
     {
         public OnBalanceVolumeTrend(IEnumerable<Candle> inputs) 
-            : base(inputs, i => (i.Close, i.Volume), (i, otm) => new AnalyzableTick<Trend?>(i.DateTime, otm))
+            : base(inputs, i => (i.Close, i.Volume))
         {
         }
     }

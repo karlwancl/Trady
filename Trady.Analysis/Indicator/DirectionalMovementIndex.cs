@@ -11,7 +11,8 @@ namespace Trady.Analysis.Indicator
         readonly PlusDirectionalIndicatorByTuple _pdi;
         readonly MinusDirectionalIndicatorByTuple _mdi;
 
-        public DirectionalMovementIndex(IEnumerable<TInput> inputs, Func<TInput, (decimal High, decimal Low, decimal Close)> inputMapper, Func<TInput, decimal?, TOutput> outputMapper, int periodCount) : base(inputs, inputMapper, outputMapper)
+        public DirectionalMovementIndex(IEnumerable<TInput> inputs, Func<TInput, (decimal High, decimal Low, decimal Close)> inputMapper, int periodCount) 
+            : base(inputs, inputMapper)
         {
 			_pdi = new PlusDirectionalIndicatorByTuple(inputs.Select(inputMapper), periodCount);
 			_mdi = new MinusDirectionalIndicatorByTuple(inputs.Select(inputMapper), periodCount);
@@ -30,7 +31,7 @@ namespace Trady.Analysis.Indicator
     public class DirectionalMovementIndexByTuple : DirectionalMovementIndex<(decimal High, decimal Low, decimal Close), decimal?>
     {
         public DirectionalMovementIndexByTuple(IEnumerable<(decimal High, decimal Low, decimal Close)> inputs, int periodCount)
-            : base(inputs, i => i, (i, otm) => otm, periodCount)
+            : base(inputs, i => i, periodCount)
         {
         }
     }
@@ -38,7 +39,7 @@ namespace Trady.Analysis.Indicator
     public class DirectionalMovementIndex : DirectionalMovementIndex<Candle, AnalyzableTick<decimal?>>
     {
         public DirectionalMovementIndex(IEnumerable<Candle> inputs, int periodCount) 
-            : base(inputs, i => (i.High, i.Low, i.Close), (i, otm) => new AnalyzableTick<decimal?>(i.DateTime, otm), periodCount)
+            : base(inputs, i => (i.High, i.Low, i.Close), periodCount)
         {
         }
     }

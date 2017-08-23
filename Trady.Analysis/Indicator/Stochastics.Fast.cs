@@ -12,7 +12,7 @@ namespace Trady.Analysis.Indicator
         {
             readonly RawStochasticsValueByTuple _rsv;
 
-            public Fast(IEnumerable<TInput> inputs, Func<TInput, (decimal High, decimal Low, decimal Close)> inputMapper, Func<TInput, (decimal? K, decimal? D, decimal? J), TOutput> outputMapper, int periodCount, int smaPeriodCount) : base(inputs, inputMapper, outputMapper)
+            public Fast(IEnumerable<TInput> inputs, Func<TInput, (decimal High, decimal Low, decimal Close)> inputMapper, int periodCount, int smaPeriodCount) : base(inputs, inputMapper)
             {
                 _rsv = new RawStochasticsValueByTuple(inputs.Select(inputMapper), periodCount);
 
@@ -36,7 +36,7 @@ namespace Trady.Analysis.Indicator
         public class FastByTuple : Fast<(decimal High, decimal Low, decimal Close), (decimal? K, decimal? D, decimal? J)>
         {
             public FastByTuple(IEnumerable<(decimal High, decimal Low, decimal Close)> inputs, int periodCount, int smaPeriodCount) 
-                : base(inputs, i => i, (i, otm) => otm, periodCount, smaPeriodCount)
+                : base(inputs, i => i, periodCount, smaPeriodCount)
             {
             }
         }
@@ -44,7 +44,7 @@ namespace Trady.Analysis.Indicator
         public class Fast : Fast<Candle, AnalyzableTick<(decimal? K, decimal? D, decimal? J)>>
         {
             public Fast(IEnumerable<Candle> inputs, int periodCount, int smaPeriodCount) 
-                : base(inputs, i => (i.High, i.Low, i.Close), (i, otm) => new AnalyzableTick<(decimal? K, decimal? D, decimal? J)>(i.DateTime, otm), periodCount, smaPeriodCount)
+                : base(inputs, i => (i.High, i.Low, i.Close), periodCount, smaPeriodCount)
             {
             }
         }

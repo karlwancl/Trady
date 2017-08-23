@@ -10,7 +10,7 @@ namespace Trady.Analysis.Indicator
     {
         readonly GenericExponentialMovingAverage _ema;
 
-        public ExponentialMovingAverage(IEnumerable<TInput> inputs, Func<TInput, decimal> inputMapper, Func<TInput, decimal?, TOutput> outputMapper, int periodCount) : base(inputs, inputMapper, outputMapper)
+        public ExponentialMovingAverage(IEnumerable<TInput> inputs, Func<TInput, decimal> inputMapper, int periodCount) : base(inputs, inputMapper)
         {
             _ema = new GenericExponentialMovingAverage(
                 0,
@@ -30,7 +30,7 @@ namespace Trady.Analysis.Indicator
     public class ExponentialMovingAverageByTuple : ExponentialMovingAverage<decimal, decimal?>
     {
         public ExponentialMovingAverageByTuple(IEnumerable<decimal> inputs, int periodCount) 
-            : base(inputs, i => i, (i, otm) => otm, periodCount)
+            : base(inputs, i => i, periodCount)
         {
         }
     }
@@ -38,7 +38,7 @@ namespace Trady.Analysis.Indicator
     public class ExponentialMovingAverage : ExponentialMovingAverage<Candle, AnalyzableTick<decimal?>>
     {
         public ExponentialMovingAverage(IEnumerable<Candle> inputs, int periodCount) 
-            : base(inputs, i => i.Close, (i, otm) => new AnalyzableTick<decimal?>(i.DateTime, otm), periodCount)
+            : base(inputs, i => i.Close, periodCount)
         {
         }
     }

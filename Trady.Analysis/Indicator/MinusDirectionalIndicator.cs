@@ -13,7 +13,7 @@ namespace Trady.Analysis.Indicator
         readonly GenericExponentialMovingAverage _tmdmEma;
         readonly AverageTrueRangeByTuple _atr;
 
-        public MinusDirectionalIndicator(IEnumerable<TInput> inputs, Func<TInput, (decimal High, decimal Low, decimal Close)> inputMapper, Func<TInput, decimal?, TOutput> outputMapper, int periodCount) : base(inputs, inputMapper, outputMapper)
+        public MinusDirectionalIndicator(IEnumerable<TInput> inputs, Func<TInput, (decimal High, decimal Low, decimal Close)> inputMapper, int periodCount) : base(inputs, inputMapper)
         {
 			_pdm = new PlusDirectionalMovementByTuple(inputs.Select(i => inputMapper(i).High));
 			_mdm = new MinusDirectionalMovementByTuple(inputs.Select(i => inputMapper(i).Low));
@@ -41,7 +41,7 @@ namespace Trady.Analysis.Indicator
     public class MinusDirectionalIndicatorByTuple : MinusDirectionalIndicator<(decimal High, decimal Low, decimal Close), decimal?>
     {
         public MinusDirectionalIndicatorByTuple(IEnumerable<(decimal High, decimal Low, decimal Close)> inputs, int periodCount) 
-            : base(inputs, i => i, (i, otm) => otm, periodCount)
+            : base(inputs, i => i, periodCount)
         {
         }
     }
@@ -49,7 +49,7 @@ namespace Trady.Analysis.Indicator
     public class MinusDirectionalIndicator : MinusDirectionalIndicator<Candle, AnalyzableTick<decimal?>>
     {
         public MinusDirectionalIndicator(IEnumerable<Candle> inputs, int periodCount) 
-            : base(inputs, i => (i.High, i.Low, i.Close), (i, otm) => new AnalyzableTick<decimal?>(i.DateTime, otm), periodCount)
+            : base(inputs, i => (i.High, i.Low, i.Close), periodCount)
         {
         }
     }

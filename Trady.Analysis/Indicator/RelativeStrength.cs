@@ -11,7 +11,7 @@ namespace Trady.Analysis.Indicator
         ClosePriceChangeByTuple _closePriceChange;
         GenericExponentialMovingAverage _uEma, _dEma;
 
-        public RelativeStrength(IEnumerable<TInput> inputs, Func<TInput, decimal> inputMapper, Func<TInput, decimal?, TOutput> outputMapper, int periodCount) : base(inputs, inputMapper, outputMapper)
+        public RelativeStrength(IEnumerable<TInput> inputs, Func<TInput, decimal> inputMapper, int periodCount) : base(inputs, inputMapper)
         {
             _closePriceChange = new ClosePriceChangeByTuple(inputs.Select(inputMapper));
 
@@ -49,7 +49,7 @@ namespace Trady.Analysis.Indicator
     public class RelativeStrengthByTuple : RelativeStrength<decimal, decimal?>
     {
         public RelativeStrengthByTuple(IEnumerable<decimal> inputs, int periodCount) 
-            : base(inputs, i => i, (i, otm) => otm, periodCount)
+            : base(inputs, i => i, periodCount)
         {
         }
     }
@@ -57,7 +57,7 @@ namespace Trady.Analysis.Indicator
     public class RelativeStrength : RelativeStrength<Candle, AnalyzableTick<decimal?>>
     {
         public RelativeStrength(IEnumerable<Candle> inputs, int periodCount) 
-            : base(inputs, i => i.Close, (i, otm) => new AnalyzableTick<decimal?>(i.DateTime, otm), periodCount)
+            : base(inputs, i => i.Close, periodCount)
         {
         }
     }

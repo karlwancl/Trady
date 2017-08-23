@@ -12,7 +12,7 @@ namespace Trady.Analysis.Pattern.Indicator
     {
         readonly MovingAverageConvergenceDivergenceByTuple _macd;
 
-        public MovingAverageConvergenceDivergenceOscillatorTrend(IEnumerable<TInput> inputs, Func<TInput, decimal> inputMapper, Func<TInput, Trend?, TOutput> outputMapper, int emaPeriodCount1, int emaPeriodCount2, int demPeriodCount) : base(inputs, inputMapper, outputMapper)
+        public MovingAverageConvergenceDivergenceOscillatorTrend(IEnumerable<TInput> inputs, Func<TInput, decimal> inputMapper, int emaPeriodCount1, int emaPeriodCount2, int demPeriodCount) : base(inputs, inputMapper)
         {
 			_macd = new MovingAverageConvergenceDivergenceByTuple(inputs.Select(inputMapper), emaPeriodCount1, emaPeriodCount2, demPeriodCount);
 		}
@@ -24,7 +24,7 @@ namespace Trady.Analysis.Pattern.Indicator
     public class MovingAverageConvergenceDivergenceOscillatorTrendByTuple : MovingAverageConvergenceDivergenceOscillatorTrend<decimal, Trend?>
     {
         public MovingAverageConvergenceDivergenceOscillatorTrendByTuple(IEnumerable<decimal> inputs, int emaPeriodCount1, int emaPeriodCount2, int demPeriodCount) 
-            : base(inputs, i => i, (i, otm) => otm, emaPeriodCount1, emaPeriodCount2, demPeriodCount)
+            : base(inputs, i => i, emaPeriodCount1, emaPeriodCount2, demPeriodCount)
         {
         }
     }
@@ -32,7 +32,7 @@ namespace Trady.Analysis.Pattern.Indicator
     public class MovingAverageConvergenceDivergenceOscillatorTrend : MovingAverageConvergenceDivergenceOscillatorTrend<Candle, AnalyzableTick<Trend?>>
     {
         public MovingAverageConvergenceDivergenceOscillatorTrend(IEnumerable<Candle> inputs, int emaPeriodCount1, int emaPeriodCount2, int demPeriodCount)
-            : base(inputs, i => i.Close, (i, otm) => new AnalyzableTick<Trend?>(i.DateTime, otm), emaPeriodCount1, emaPeriodCount2, demPeriodCount)
+            : base(inputs, i => i.Close, emaPeriodCount1, emaPeriodCount2, demPeriodCount)
         {
         }
     }

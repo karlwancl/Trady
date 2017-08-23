@@ -15,10 +15,9 @@ namespace Trady.Analysis.Pattern.Indicator
 			protected Slow(
 				IEnumerable<TInput> inputs,
 				Func<TInput, (decimal High, decimal Low, decimal Close)> inputMapper,
-				Func<TInput, Overtrade?, TOutput> outputMapper,
 				int periodCount,
 				int smaPeriodCountD)
-				: base(inputs, inputMapper, outputMapper, new Stochastics.SlowByTuple(inputs.Select(inputMapper), periodCount, smaPeriodCountD))
+				: base(inputs, inputMapper, new Stochastics.SlowByTuple(inputs.Select(inputMapper), periodCount, smaPeriodCountD))
 			{
 			}
 		}
@@ -26,7 +25,7 @@ namespace Trady.Analysis.Pattern.Indicator
 		public class SlowByTuple : Slow<(decimal High, decimal Low, decimal Close), Overtrade?>
 		{
 			public SlowByTuple(IEnumerable<(decimal High, decimal Low, decimal Close)> inputs, int periodCount, int smaPeriodCountD)
-				: base(inputs, i => i, (i, otm) => otm, periodCount, smaPeriodCountD)
+				: base(inputs, i => i, periodCount, smaPeriodCountD)
 			{
 			}
 		}
@@ -34,7 +33,7 @@ namespace Trady.Analysis.Pattern.Indicator
 		public class Slow : Slow<Candle, AnalyzableTick<Overtrade?>>
 		{
 			public Slow(IEnumerable<Candle> inputs, int periodCount, int smaPeriodCountD)
-				: base(inputs, i => (i.High, i.Low, i.Close), (i, otm) => new AnalyzableTick<Overtrade?>(i.DateTime, otm), periodCount, smaPeriodCountD)
+				: base(inputs, i => (i.High, i.Low, i.Close), periodCount, smaPeriodCountD)
 			{
 			}
 		}
