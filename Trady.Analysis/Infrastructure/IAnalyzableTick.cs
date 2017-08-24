@@ -4,10 +4,12 @@ namespace Trady.Analysis.Infrastructure
     public interface IAnalyzableTick
     {
 		DateTime? DateTime { get; }
+
+        object Tick { get; }
 	}
 
     public interface IAnalyzableTick<T>: IAnalyzableTick
     {
-        T Tick { get; }
+        new T Tick { get; }
     }
 }

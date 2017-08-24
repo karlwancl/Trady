@@ -8,7 +8,9 @@ namespace Trady.Analysis.Infrastructure
 		public DateTime? DateTime { get; }
 		public T Tick { get; }
 
-		public AnalyzableTick(DateTime? dateTime, T tick)
+        object IAnalyzableTick.Tick => Tick;
+
+        public AnalyzableTick(DateTime? dateTime, T tick)
 		{
 			Tick = tick;
 			DateTime = dateTime;
