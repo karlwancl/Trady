@@ -21,7 +21,7 @@ namespace Trady.Analysis.Strategy.Rule
         public IEnumerable<TOutput> Execute(IEnumerable<TInput> inputs, int? startIndex = default(int?), int? endIndex = default(int?))
         {
             var output = new List<TOutput>();
-            for (int i = startIndex ?? 0; i < (endIndex ?? (inputs.Count() - 1)); i++)
+            for (int i = startIndex ?? 0; i <= (endIndex ?? (inputs.Count() - 1)); i++)
 			{
 				var indexedCandle = IndexedObjectConstructor(inputs, i);
 				for (int j = 0; j < Rules.Count(); j++)

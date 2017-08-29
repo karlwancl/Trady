@@ -223,7 +223,7 @@ namespace Trady.Test
            var indicator = new IchimokuCloud(candles, 9, middlePeriodCount, 52);
            var results = indicator.Compute();
 
-           var currResult = results[results.Count() - middlePeriodCount - 1];
+            var currResult = results.ElementAt(results.Count() - middlePeriodCount - 1);
            Assert.IsTrue(138.70m.IsApproximatelyEquals(currResult.Tick.ConversionLine.Value));
            Assert.IsTrue(136.45m.IsApproximatelyEquals(currResult.Tick.BaseLine.Value));
 
@@ -231,7 +231,7 @@ namespace Trady.Test
            Assert.IsTrue(137.57m.IsApproximatelyEquals(leadingResult.Tick.LeadingSpanA.Value));
            Assert.IsTrue(128.82m.IsApproximatelyEquals(leadingResult.Tick.LeadingSpanB.Value));
 
-           var laggingResult = results[results.Count() - 2 * middlePeriodCount - 1];
+            var laggingResult = results.ElementAt(results.Count() - 2 * middlePeriodCount - 1);
            Assert.IsTrue(139.94m.IsApproximatelyEquals(laggingResult.Tick.LaggingSpan.Value));
         }
 

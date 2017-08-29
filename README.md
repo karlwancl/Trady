@@ -9,19 +9,33 @@ Trady is a handy library for computing technical indicators, and targets to be a
 This library is intended for personal use, use with care for production environment.
 
 ### Currently Available Features
-* Stock data feeding (via [Quandl.NET](https://github.com/salmonthinlion/Quandl.NET), [YahooFinanceApi](https://github.com/salmonthinlion/YahooFinanceApi), [StooqApi](https://github.com/salmonthinlion/StooqApi))
+* Stock data feeding (via CSV File, [Quandl.NET](https://github.com/lppkarl/Quandl.NET), [YahooFinanceApi](https://github.com/lppkarl/YahooFinanceApi), [StooqApi](https://github.com/lppkarl/StooqApi), [Nuba.Finance.Google](https://github.com/nubasoftware/Nuba.Finance.Google))
 * Indicator computing (including SMA, EMA, RSI, MACD, BB, etc.)
 * Strategy building & backtesting
 
-### Recent Update (25th, June 2017)
-* (Breaking-Change) Equity class is removed! IList\<Candle> is used directly as a replacement, make sure the input candle list is in time-ascending order.
-* (Breaking-Change) ITick interface is removed! Indicator result no longer includes DateTime property, please map the DateTime from the source array.
-* (Breaking-Change) Some indicator result object has been simplified. e.g. You can directly call candles.Sma(30).First() instead of candles.Sma(30).First().Sma to get the sma result.
-* Simplified custom indicator building, you can now implement by inheriting from AnalyzableBase<TInput, TOutput>, no extra IndicatorResult class is needed.
-* (Breaking-Change) Removed GetOrCreateAnalytic<T>() for indicator instance creation, just use 'new' keyword for all the things.
-* (Breaking-Change) TickProvider class is removed.
-* (Breaking-Change) IndexCandle is renamed as IndexedCandle
-* StooqImporter is added.
+### Updates from 2.0.x to 2.1.0 (Currently 2.1.0-beta3)
+** Trady.Analysis module **
+* All IList interfaces are replaced by IEnumerable for accepting a wider range of input
+* Computes from different input now have different output 
+    * Tuples => decimal?/Tuples 
+    * Candles => AnalyzableTick\<decimal?>/AnalyzableTick\<Tuples> where AnalyzableTick<T> includes DateTime in its property 
+* As of the above change, "Tick" property is used for the indicator result's value if it's computed from candles
+* Portfolio-related items have been moved under Trady.Analysis.Strategy.Portfolio namespace. Classes & methods are renamed
+    * Portfolio => Builder/Runner
+    * RunBackTest() => Run()
+    * RunBackTestAsync() => RunAsync()
+* Added IndexedObject & RuleExecutor for signal capturing by rules
+
+** Trady.Importer module **
+* All IList interfaces are replaced by IEnumerable to align with the new changes
+* Added GoogleFinanceImporter (adapter to [Nuba.Google.Finance](https://github.com/nubasoftware/Nuba.Finance.Google), thanks to [@fernaramburu](https://github.com/fernaramburu))
+* Separated importers are also available for modular installation:
+    * Trady.Importer.Csv
+    * Trady.Importer.Yahoo
+    * Trady.Importer.Quandl
+    * Trady.Importer.Stooq
+    * Trady.Importer.Google
+* Align importer's behavior, startTime & endTime is inclusive now for all importers
 
 ### Supported Platforms
 * .NET Core 1.0 or above
@@ -61,14 +75,16 @@ Nuget package is available in modules, please install the package according to t
     * [Implement Your Own Indicator - Moving Average Type](#ImplementYourOwnIndicatorMovingAverageType)
     
 * Backtesting
+    * [Capture signals by rules](#CaptureSignalByRules)
     * [Strategy Building And Backtesting](#StrategyBuildingAndBacktesting)
     * [Implement Your Own Pattern](#ImplementYourOwnPattern)
 
 <a name="tldr"></a>
 ### Tldr
-    var importer = new QuandlWikiImporter(apiKey);
+    var importer = new YahooFinanceImporter();
     var candles = await importer.ImportAsync("FB");
-    Console.WriteLine(candles.Sma(30).Last());
+    var last = candles.Sma(30).Last();
+    Console.WriteLine($"{last.DateTime}, {last.Tick}");
 [Back to content](#Content)
 
 <a name="ImportStockData"></a>
@@ -82,6 +98,9 @@ Nuget package is available in modules, please install the package according to t
     // From Stooq
     var importer = new StooqImporter();
 
+    // From Google Finance
+    var importer = new GoogleFinanceImporter();
+
     // Or from dedicated csv file
     var importer = new CsvImporter("FB.csv");
 
@@ -94,7 +113,7 @@ Nuget package is available in modules, please install the package according to t
     // You can also implement your own importer by implementing the IImporter interface
     public class MyImporter : IImporter
     {
-        public async Task<IList<Candle>> ImportAsync(string symbol, DateTime? startTime = null, DateTime? endTime = null, PeriodOption period = PeriodOption.Daily, CancellationToken token = default(CancellationToken))
+        public async Task<IEnumerable<Candle>> ImportAsync(string symbol, DateTime? startTime = null, DateTime? endTime = null, PeriodOption period = PeriodOption.Daily, CancellationToken token = default(CancellationToken))
         {
             // Your implementation to return a list of candles
         }
@@ -115,134 +134,122 @@ Nuget package is available in modules, please install the package according to t
 
 <a name="ComputeIndicators"></a>
 #### Compute indicators
-    // There are 2 ways to compute indicators
-    1. By indicator extension (Some common indicators only)
-        var smaTs = candles.Sma(30, startIndex, endIndex);
-        
-    2. By instance creation
-        var smaTs = new SimplemMovingAverage(candles, 30).Compute(startIndex, endIndex);
+    // This library supports computing from tuples or candles
+    var closes = new List<decimal>{
+        2428.370117,
+        2425.550049,
+        2430.01001,
+        2468.110107
+    };
+    var smaTs = closes.Sma(30, startIndex, endIndex);
+    Or, 
+    var smaTs = new SimpleMovingAverageByTuple(closes, 30).Compute(startIndex, endIndex);
+
+    var candles = await importer.ImportAsync("FB");
+    var smaTs = candles.Sma(30, startIndex, endIndex);
+    Or,
+    var smaTs = new SimpleMovingAverage(candles, 30).Compute(startIndex, endIndex);
+
 [Back to content](#Content)
 
 <a name="ImplementYourOwnIndicatorSimpleType"></a>
 #### Implement your own indicator - Simple Type
     // You can also implement your own indicator by extending the AnalyzableBase<TInput, TOutput> class
-    public class MyIndicator : AnalyzableBase<decimal, decimal?>
+    public class MyIndicator : AnalyzableBase<Candle, AnalyzableTick<decimal?>>
     {
-        private SimpleMovingAverage _smaIndicator;
+        // Backing indicator for the indicator
+        SimpleMovingAverageByTuple _sma;
 
-        // You should provide the following 2 constructors for the indicator class
-        public MyIndicator(IList<decimal> closes, int param1): base(closes)
+        public MyIndicator(IEnumerable<Candle> inputs, int periodCount) : base(inputs)
         {
-            // Your construction code here
-
-            // You can make use of other indicators for computing your own indicator
-            _smaIndicator = new SimpleMovingAverage(closes, param1);
+            // Initialize reference indicators, or other required stuff here
+            _sma = new SimpleMovingAverageByTuple(inputs.Select(i => i.Close), periodCount);
         }
 
-        public MyIndicator(IList<Candle> candles, int param1) 
-            : this(candles.Select(c => c.Close).ToList(), param1)
+        // Implement the compute algorithm, uses mappedInputs, index & backing indicators for computation here
+        protected override AnalyzableTick<decimal?> ComputeByIndexImpl(IEnumerable<Candle> mappedInputs, int index)
         {
-        }
-
-        protected override decimal? ComputeByIndexImpl(int index)
-        {
-            // Your indicator implementation to return the result
-        }
+			return new AnalyzableTick<decimal?>(mappedInputs.ElementAt(index).DateTime, _sma[index]);
+		}
     }
 
     // Use case
     var results = new MyIndicator(candles, 30).Compute();
     foreach (var r in results)
     {
-        Console.WriteLine($"{r.Value}");
+        Console.WriteLine($"{r.DateTime}, {r.Tick.Value}");
     }
 [Back to content](#Content)
 
 <a name="ImplementYourOwnIndicatorCummulativeType"></a>
 #### Implement your own indicator - Cummulative Type
     // You can implement your own indicator by extending the CummulativeAnalyzableBase<TInput, TOutput> class
-    public class MyCummulativeIndicator : CummulativeAnalyzableBase<decimal, decimal?>
+    public class MyCumulativeIndicator : CumulativeAnalyzableBase<Candle, AnalyzableTick<decimal?>>
     {
-        // You should provide the following 2 constructors for the indicator class
-        public MyIndicator(IList<decimal> closes): base(closes)
+        // Backing indicator for the indicator
+        SimpleMovingAverageByTuple _sma;
+
+        public MyCumulativeIndicator(IEnumerable<Candle> inputs, int periodCount) : base(inputs)
         {
-            // Your construction code here
+            // Initialize reference indicators, or other required stuff here
+            _sma = new SimpleMovingAverageByTuple(inputs.Select(i => i.Close), periodCount);
         }
 
-        public MyIndicator(IList<Candle> candles) 
-            : this(candles.Select(c => c.Close).ToList())
+        // Implement the compute algorithm for index > InitialValueIndex, uses mappedInputs, index, prev analyzable tick & backing indicators for computation here
+        protected override AnalyzableTick<decimal?> ComputeCumulativeValue(IEnumerable<Candle> mappedInputs, int index, AnalyzableTick<decimal?> prevOutputToMap)
         {
+            return new AnalyzableTick<decimal?>(mappedInputs.ElementAt(index).DateTime, _sma[index] + prevOutputToMap.Tick);
         }
 
-        // The first index value that needs calculation
-        protected override int InitialValueIndex => 0;
-
-        // The computation method for computing indicator when index < FirstIndexValue
-        protected override decimal? ComputeNullValue(int index)
+        // Same for the above but for index = InitialValueIndex
+        protected override AnalyzableTick<decimal?> ComputeInitialValue(IEnumerable<Candle> mappedInputs, int index)
         {
-            // Your implementation to return IndicatorResult
-            // Typically, it should return null
+            return new AnalyzableTick<decimal?>(mappedInputs.ElementAt(index).DateTime, _sma[index]);
         }
 
-        // The computation method for computing indicator when index == FirstIndexValue
-        protected override decimal? ComputeInitialValue(int index)
-        {
-            // Your implementation to return IndicatorResult
-            // Typically, it should be calculated by the previous n terms
-        }
-
-        // The computation method for computing indicator when index > FirstIndexValue
-        protected override decimal? ComputeIndexValue(int index, decimal? prevOutput)
-        {
-            // Your implementation to return value
-            // You can use the prevOutput instance provided by the cache to calculate the new value here
-        }
+        // You can also override the InitialValueIndex property & ComputeNullValue method if needed
     }
 
     // Use case
     var results = new MyCumulativeIndicator(candles).compute();
     foreach (var r in results)
     {
-        Console.WriteLine($"{r.Value}");
+        Console.WriteLine($"{r.DateTime}, {r.Tick.Value}");
     }   
 [Back to content](#Content)
 
 <a name="ImplementYourOwnIndicatorMovingAverageType"></a>
 #### Implement your own indicator - Moving-Average Type
     // You can make use of the GenericExponentialMovingAverage class to get rid of implementing MA-related indicator on your own
-    public class MyMaIndicator : AnalyzableBase<decimal, decimal?>
+     public class MyGemaIndicator : AnalyzableBase<Candle, AnalyzableTick<decimal?>>
     {
-        private GenericExponentialMovingAverage _gemaIndicator;
+        GenericExponentialMovingAverage _gema;
 
-        public MyMaIndicator(IList<Candle> candles) 
-            : this(candles.Select(c => c.Close).ToList())
+        public MyGemaIndicator(IEnumerable<Candle> inputs, int periodCount) : base(inputs)
         {
+            // parameters: initialValueIndex, initialValueFunction, indexValueFunction, smoothingFactorFunction
+			_gema = new GenericExponentialMovingAverage(
+				0,
+				i => inputs.Select(ip => ip.Close).ElementAt(i),
+				i => inputs.Select(ip => ip.Close).ElementAt(i),
+				i => 2.0m / (periodCount + 1),
+				inputs.Count());
         }
 
-        public MyMaIndicator(IList<decimal> closes) : base(closes)
+        protected override AnalyzableTick<decimal?> ComputeByIndexImpl(IEnumerable<Candle> mappedInputs, int index)
         {
-            // The constructor intakes the following parameters:
-            //  1. IList<TInput> instance (in this example, a IList<decimal>)
-            //  2. Initial Value Index
-            //  3. Inital Value Function
-            //  4. Index Value Function
-            //  5. Smoothing Factor Function (1.0m / periodCount for Mema, 2.0m / (periodCount + 1.0m) for Ema)
-
-            _gemaIndicator = new GenericExponentialMovingAverage(
-                closes,
-                firstValueIndex,
-                i => firstValueFunction,
-                i => indexValueFunction,
-                i => smoothingFactorFunction
-            );
-        }
-
-        protected override decimal? ComputeByIndexImpl(int index)
-        {
-            // Your indicator implementation to return the result
+            return new AnalyzableTick<decimal?>(mappedInputs.ElementAt(index).DateTime, _gema[index]);
         }
     }
 [Back to content](#Content)
+
+<a name="CaptureSignalByRules"></a>
+#### Capture signals by rules
+    // The following shows the number of candles that fulfill both the IsAboveSma(30) & IsAboveSma(10) rule
+    var rule = Rule.Create(c => c.IsAboveSma(30))
+        .And(c => c.IsAboveSma(10));
+    var validObjects = new SimpleRuleExecutor(rule).Execute(candles);
+    Console.WriteLine(validObjects.Count());
 
 <a name="StrategyBuildingAndBacktesting"></a>
 #### Strategy building & backtesting
@@ -257,7 +264,7 @@ Nuget package is available in modules, please install the package according to t
         .Or(c => c.IsSmaBearishCross(10, 30));
 
     // Create portfolio instance by using PortfolioBuilder
-    var portfolio = new PortfolioBuilder()
+    var runner = new Builder()
         .Add(equity, 10)
         .Add(equity2, 30)
         .Buy(buyRule)
@@ -265,7 +272,7 @@ Nuget package is available in modules, please install the package according to t
         .Build();
     
     // Start backtesting with the portfolio
-    var result = await portfolio.RunBacktestAsync(10000, 1);
+    var result = await runner.RunAsync(10000, 1);
 
     // Get backtest result for the portfolio
     Console.WriteLine(string.Format("Transaction count: {0:#.##}, P/L ratio: {1:0.##}%, Principal: {2:#}, Total: {3:#}",
@@ -298,8 +305,8 @@ Nuget package is available in modules, please install the package according to t
     // Use case
     var buyRule = Rule.Create(c => c.IsSma10LargerThanSma30());
     var sellRule = Rule.Create(c => c.IsSma30LargerThanSma10());
-    var portfolio = new PortfolioBuilder().Add(candles, 10).Buy(buyRule).Sell(sellRule).Build();
-    var result = await portfolio.RunBacktestAsync(10000, 1);
+    var runner = new Builder().Add(candles, 10).Buy(buyRule).Sell(sellRule).Build();
+    var result = await runner.RunAsync(10000, 1);
 [Back to content](#Content)
 
 ### Backlog

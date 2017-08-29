@@ -7,7 +7,7 @@ namespace Trady.Core.Infrastructure
 {
     public interface IAnalyzable
     {
-        IList Compute(int? startIndex = null, int? endIndex = null);
+        IEnumerable Compute(int? startIndex = null, int? endIndex = null);
 
         object this[int i] { get; }
     }
@@ -20,7 +20,7 @@ namespace Trady.Core.Infrastructure
         /// <returns>The computed outputs.</returns>
         /// <param name="startIndex">Start index.</param>
         /// <param name="endIndex">End index.</param>
-        new IList<TOutput> Compute(int? startIndex = null, int? endIndex = null);
+        new IEnumerable<TOutput> Compute(int? startIndex = null, int? endIndex = null);
 
         /// <summary>
         /// Gets the <see cref="T:Trady.Core.Infrastructure.IAnalyzable2`2"/> at the specified index.

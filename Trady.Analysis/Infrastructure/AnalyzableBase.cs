@@ -41,7 +41,7 @@ namespace Trady.Analysis.Infrastructure
 
         bool IsTOutputAnalyzableTick { get; }
 
-        public IList<TOutput> Compute(int? startIndex = null, int? endIndex = null)
+        public IEnumerable<TOutput> Compute(int? startIndex = null, int? endIndex = null)
         {
             var ticks = new List<TOutput>();
 
@@ -80,7 +80,7 @@ namespace Trady.Analysis.Infrastructure
 
         protected abstract TOutputToMap ComputeByIndexImpl(IEnumerable<TMappedInput> mappedInputs, int index);
 
-        IList IAnalyzable.Compute(int? startIndex, int? endIndex) => (IList)Compute(startIndex, endIndex);
+        IEnumerable IAnalyzable.Compute(int? startIndex, int? endIndex) => Compute(startIndex, endIndex);
 
         protected IDictionary<int, TOutputToMap> Cache { get; }
 
@@ -91,10 +91,10 @@ namespace Trady.Analysis.Infrastructure
         object IAnalyzable.this[int i] => this[i];
     }
 
-    //public abstract class AnalyzableBase<TInput, TOutput> : AnalyzableBase<TInput, TInput, TOutput, TOutput>
-    //{
-    //    protected AnalyzableBase(IEnumerable<TInput> inputs) : base(inputs, i => i)
-    //    {
-    //    }
-    //}
+    public abstract class AnalyzableBase<TInput, TOutput> : AnalyzableBase<TInput, TInput, TOutput, TOutput>
+    {
+        protected AnalyzableBase(IEnumerable<TInput> inputs) : base(inputs, i => i)
+        {
+        }
+    }
 }

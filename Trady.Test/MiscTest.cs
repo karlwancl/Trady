@@ -24,6 +24,15 @@ namespace Trady.Test
         }
 
         [TestMethod]
+        public async Task TestRuleExecutorAsync()
+        {
+            var candles = await ImportCandlesAsync();
+            var rule = Rule.Create(ic => ic.IsAboveSma(30));
+            var validObjects = new SimpleRuleExecutor(rule).Execute(candles);
+            Assert.IsTrue(validObjects.Count() == 774);
+        }
+
+        [TestMethod]
         public async Task TestTransformationAsync()
         {
             var candles = await ImportCandlesAsync();

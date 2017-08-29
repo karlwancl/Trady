@@ -14,14 +14,7 @@
     <PackageId>Trady.Analysis</PackageId>
     <PackageTags>Trady;Technical;Analysis;Finance;Stock</PackageTags>
     <PackageReleaseNotes>
-[17/8/2017] (Breaking Change) Makes clear between computation with tuples and computation with candles. Tuple input -&gt; Tuple output, Candle input -&gt; Tuple with datetime output
-[26/6/2017] Multiple Culture Support, Extended ClosePricePercentageChange and ClosePriceChange (Thanks to @fernaramburu for the contribution)
-[25/6/2017] Various breaking changes, please refer to https://github.com/lppkarl/Trady
-[22/3/2017] Some breaking changes, fix indicators: BbWidth, Adxr, IchimokuCloud, Atr, indicators added: Er, Kama, Mema, Sd
-[26/2/2017] System structure refinement, merged with Trady.Strategy project
-[24/2/2017] Removed the needs of adding RegisterDependencies, added TickProviderBase class to help constructing tick provider for value retrieval      
-[23/2/2017] Renamed some classes and methods, some bug fix on indicator computation
-[21/2/2017] First release
+[29/8/2017] Various changes from v2.0, please refer to https://github.com/lppkarl/Trady/tree/v2.1
     </PackageReleaseNotes>
     <PackageProjectUrl>https://github.com/lppkarl/Trady</PackageProjectUrl>
     <PackageLicenseUrl>https://github.com/lppkarl/Trady/blob/master/LICENSE</PackageLicenseUrl>
