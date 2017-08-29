@@ -1,14 +1,15 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Trady.Analysis.Strategy;
+using Trady.Analysis.Strategy.Portfolio;
+using Trady.Analysis.Strategy.Rule;
 using Trady.Core;
 using Trady.Core.Period;
-using System.IO;
-using Trady.Analysis.Strategy;
-using Trady.Analysis.Strategy.Rule;
 using Trady.Importer;
 
 namespace Trady.Test
@@ -45,18 +46,19 @@ namespace Trady.Test
 			var buyRule = Rule.Create(ic => ic.IsMacdBullishCross(12, 26, 9));
 			var sellRule = Rule.Create(ic => ic.IsMacdBearishCross(12, 26, 9));
 
-			var portfolio = new Portfolio()
-				.Add(candles)
-				.Buy(buyRule)
-				.Sell(sellRule);
+            var runner = new Builder()
+                .Add(candles)
+                .Buy(buyRule)
+                .Sell(sellRule)
+                .Build();
 
 			var file = File.Create(logPath);
 			file.Dispose();
 
-			portfolio.OnBought += Portfolio_OnBought;
-			portfolio.OnSold += Portfolio_OnSold;
+			runner.OnBought += Portfolio_OnBought;
+			runner.OnSold += Portfolio_OnSold;
 
-			var result = await portfolio.RunBacktestAsync(10000);
+			var result = runner.RunAsync(10000).Result;
 			var expecteds = new List<Transaction>
 			{
 				new Transaction(candles, 19, new DateTime(2012, 6, 15), TransactionType.Buy, 350, 9977.75m),

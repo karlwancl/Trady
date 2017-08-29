@@ -8,6 +8,8 @@ namespace Trady.Core.Infrastructure
     public interface IAnalyzable
     {
         IList Compute(int? startIndex = null, int? endIndex = null);
+
+        object this[int i] { get; }
     }
 
     public interface IAnalyzable<TOutput> : IAnalyzable
@@ -24,6 +26,6 @@ namespace Trady.Core.Infrastructure
         /// Gets the <see cref="T:Trady.Core.Infrastructure.IAnalyzable2`2"/> at the specified index.
         /// </summary>
         /// <param name="i">Index.</param>
-		TOutput this[int i] { get; }
+		new TOutput this[int i] { get; }
     }
 }

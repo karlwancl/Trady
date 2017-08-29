@@ -51,4 +51,7 @@
     <ProjectReference Include="..\Trady.Core\Trady.Core.csproj" />
   </ItemGroup>
   <!--<Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />-->
+  <ItemGroup>
+    <Folder Include="Strategy\Portfolio\" />
+  </ItemGroup>
 </Project>

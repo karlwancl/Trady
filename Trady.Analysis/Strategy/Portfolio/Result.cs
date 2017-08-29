@@ -3,22 +3,22 @@ using System.Collections.Generic;
 using System.Linq;
 using Trady.Core;
 
-namespace Trady.Analysis.Strategy
+namespace Trady.Analysis.Strategy.Portfolio
 {
     public class Result
     {
-        public Result(IReadOnlyDictionary<IEnumerable<Candle>, decimal> preAssetCashMap, IDictionary<IEnumerable<Candle>, decimal> postAssetCashMap, IList<Transaction> transactions)
+        internal Result(IReadOnlyDictionary<IEnumerable<Candle>, decimal> preAssetCashMap, IDictionary<IEnumerable<Candle>, decimal> postAssetCashMap, IList<Transaction> transactions)
         {
             PreAssetCashMap = preAssetCashMap;
             PostAssetCashMap = postAssetCashMap;
             Transactions = transactions;
         }
 
-        public IReadOnlyDictionary<IEnumerable<Candle>, decimal> PreAssetCashMap { get; private set; }
+        public IReadOnlyDictionary<IEnumerable<Candle>, decimal> PreAssetCashMap { get; }
 
-        public IDictionary<IEnumerable<Candle>, decimal> PostAssetCashMap { get; private set; }
+        public IDictionary<IEnumerable<Candle>, decimal> PostAssetCashMap { get; }
 
-        public IEnumerable<Transaction> Transactions { get; private set; }
+        public IEnumerable<Transaction> Transactions { get; }
 
         #region Count
 

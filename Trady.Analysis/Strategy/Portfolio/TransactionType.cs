@@ -1,4 +1,4 @@
-﻿namespace Trady.Analysis.Strategy
+﻿namespace Trady.Analysis.Strategy.Portfolio
 {
     public enum TransactionType
     {

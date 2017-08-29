@@ -87,6 +87,8 @@ namespace Trady.Analysis.Infrastructure
         static ConstructorInfo AnalyzableTickConstructor => typeof(TOutput).GetConstructors().First();
 
         static Func<DateTime?, TOutputToMap, TOutput> AnalyzableTickMapper => (d, otm) => (TOutput)AnalyzableTickConstructor.Invoke(new object[] { d, otm });
+
+        object IAnalyzable.this[int i] => this[i];
     }
 
     //public abstract class AnalyzableBase<TInput, TOutput> : AnalyzableBase<TInput, TInput, TOutput, TOutput>
