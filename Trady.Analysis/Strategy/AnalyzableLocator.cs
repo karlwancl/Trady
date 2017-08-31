@@ -32,7 +32,7 @@ namespace Trady.Analysis.Strategy
                     .FirstOrDefault(c => c.GetParameters().Any() && typeof(IEnumerable<Candle>).Equals(c.GetParameters().First().ParameterType));
 
                 if (ctor == null)
-                    throw new TargetInvocationException("Can't find default constructor for instantiation, please make sure that the analyzable has a constructor with IList<Candle> as the first parameter",
+                    throw new TargetInvocationException("Can't find default constructor for instantiation, please make sure that the analyzable has a constructor with IEnumerable<Candle> as the first parameter",
                         new ArgumentNullException(nameof(ctor)));
 
                 output = _cache.Set(key, (TAnalyzable)ctor.Invoke(paramsList.ToArray()), _policy);
