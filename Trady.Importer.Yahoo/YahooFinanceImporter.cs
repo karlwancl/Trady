@@ -11,10 +11,10 @@ namespace Trady.Importer
 {
     public class YahooFinanceImporter : IImporter
     {
-        static readonly DateTime UnixMinDateTime = new DateTime(1901, 12, 13);
-        static readonly DateTime UnixMaxDateTime = new DateTime(2038, 1, 19);
+        private static readonly DateTime UnixMinDateTime = new DateTime(1901, 12, 13);
+        private static readonly DateTime UnixMaxDateTime = new DateTime(2038, 1, 19);
 
-        static readonly IDictionary<PeriodOption, Period> PeriodMap = new Dictionary<PeriodOption, Period>
+        private static readonly IDictionary<PeriodOption, Period> PeriodMap = new Dictionary<PeriodOption, Period>
         {
             {PeriodOption.Daily, Period.Daily },
             {PeriodOption.Weekly, Period.Weekly },
@@ -30,7 +30,7 @@ namespace Trady.Importer
         /// <param name="endTime">End time.</param>
         /// <param name="period">Period.</param>
         /// <param name="token">Token.</param>
-        public async Task<IEnumerable<Core.Candle>> ImportAsync(string symbol, DateTime? startTime = default(DateTime?), DateTime? endTime = default(DateTime?), PeriodOption period = PeriodOption.Daily, CancellationToken token = default(CancellationToken))
+        public async Task<IReadOnlyList<Core.Candle>> ImportAsync(string symbol, DateTime? startTime = default(DateTime?), DateTime? endTime = default(DateTime?), PeriodOption period = PeriodOption.Daily, CancellationToken token = default(CancellationToken))
         {
             if (period != PeriodOption.Daily && period != PeriodOption.Weekly && period != PeriodOption.Monthly)
                 throw new ArgumentException("This importer only supports daily, weekly & monthly data");
@@ -39,19 +39,22 @@ namespace Trady.Importer
             var corrEndTime = AddPeriod((endTime > UnixMaxDateTime ? UnixMaxDateTime : endTime) ?? UnixMaxDateTime, period);
             var candles = await Yahoo.GetHistoricalAsync(symbol, corrStartTime, corrEndTime, PeriodMap[period], false, token);
 
-            return candles.Select(c => new Core.Candle(c.DateTime, c.Open, c.High, c.Low, c.Close, c.Volume)).OrderBy(c => c.DateTime);
+            return candles.Select(c => new Core.Candle(c.DateTime, c.Open, c.High, c.Low, c.Close, c.Volume)).OrderBy(c => c.DateTime).ToList();
         }
 
-        static DateTime AddPeriod(DateTime dateTime, PeriodOption period)
+        private static DateTime AddPeriod(DateTime dateTime, PeriodOption period)
         {
             switch (period)
             {
                 case PeriodOption.Daily:
                     return dateTime.AddDays(1);
+
                 case PeriodOption.Weekly:
                     return dateTime.AddDays(7);
+
                 case PeriodOption.Monthly:
                     return dateTime.AddMonths(1);
+
                 default:
                     return dateTime;
             }

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-
-namespace Trady.Core.Period
+﻿namespace Trady.Core.Period
 {
     /// <summary>
     /// Use for time-series transformation, applied to period wider than or equals daily

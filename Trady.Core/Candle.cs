@@ -1,5 +1,4 @@
 ﻿using System;
-using Trady.Core.Infrastructure;
 
 namespace Trady.Core
 {
@@ -15,7 +14,7 @@ namespace Trady.Core
             Volume = volume;
         }
 
-		public DateTime DateTime { get; }
+        public DateTime DateTime { get; }
 
         public decimal Open { get; }
 

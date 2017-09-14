@@ -8,7 +8,7 @@ namespace Trady.Analysis.Indicator
 {
     public class ExponentialMovingAverage<TInput, TOutput> : AnalyzableBase<TInput, decimal, decimal?, TOutput>
     {
-        readonly GenericExponentialMovingAverage _ema;
+        private readonly GenericExponentialMovingAverage _ema;
 
         public ExponentialMovingAverage(IEnumerable<TInput> inputs, Func<TInput, decimal> inputMapper, int periodCount) : base(inputs, inputMapper)
         {
@@ -19,17 +19,17 @@ namespace Trady.Analysis.Indicator
                 i => 2.0m / (periodCount + 1),
                 inputs.Count());
 
-			PeriodCount = periodCount;
+            PeriodCount = periodCount;
         }
 
         public int PeriodCount { get; }
 
-        protected override decimal? ComputeByIndexImpl(IEnumerable<decimal> mappedInputs, int index) => _ema[index];
+        protected override decimal? ComputeByIndexImpl(IReadOnlyList<decimal> mappedInputs, int index) => _ema[index];
     }
 
     public class ExponentialMovingAverageByTuple : ExponentialMovingAverage<decimal, decimal?>
     {
-        public ExponentialMovingAverageByTuple(IEnumerable<decimal> inputs, int periodCount) 
+        public ExponentialMovingAverageByTuple(IEnumerable<decimal> inputs, int periodCount)
             : base(inputs, i => i, periodCount)
         {
         }
@@ -37,7 +37,7 @@ namespace Trady.Analysis.Indicator
 
     public class ExponentialMovingAverage : ExponentialMovingAverage<Candle, AnalyzableTick<decimal?>>
     {
-        public ExponentialMovingAverage(IEnumerable<Candle> inputs, int periodCount) 
+        public ExponentialMovingAverage(IEnumerable<Candle> inputs, int periodCount)
             : base(inputs, i => i.Close, periodCount)
         {
         }

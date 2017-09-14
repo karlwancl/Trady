@@ -4,11 +4,11 @@ using Trady.Analysis.Infrastructure;
 
 namespace Trady.Analysis.Indicator
 {
-    class GenericExponentialMovingAverage: CumulativeAnalyzableBase<decimal?, decimal?>
+    internal class GenericExponentialMovingAverage : CumulativeAnalyzableBase<decimal?, decimal?>
     {
-        readonly int _initialValueIndex;
-        readonly Func<int, decimal?> _inputFunction;
-        readonly Func<int, decimal> _smoothingFactorFunction;
+        private readonly int _initialValueIndex;
+        private readonly Func<int, decimal?> _inputFunction;
+        private readonly Func<int, decimal> _smoothingFactorFunction;
 
         // TODO: Hacking with empty array, may improve the implementation later
         public GenericExponentialMovingAverage(int initialValueIndex, Func<int, decimal?> initialValueFunction, Func<int, decimal?> indexValueFunction, Func<int, decimal> smoothingFactorFunction, int inputCount)
@@ -21,9 +21,9 @@ namespace Trady.Analysis.Indicator
 
         protected override int InitialValueIndex => _initialValueIndex;
 
-        protected override decimal? ComputeInitialValue(IEnumerable<decimal?> mappedInputs, int index) => _inputFunction(index);
+        protected override decimal? ComputeInitialValue(IReadOnlyList<decimal?> mappedInputs, int index) => _inputFunction(index);
 
-        protected override decimal? ComputeCumulativeValue(IEnumerable<decimal?> mappedInputs, int index, decimal? prevOutputToMap)
+        protected override decimal? ComputeCumulativeValue(IReadOnlyList<decimal?> mappedInputs, int index, decimal? prevOutputToMap)
             => prevOutputToMap + (_smoothingFactorFunction(index) * (_inputFunction(index) - prevOutputToMap));
-	}
+    }
 }

@@ -8,8 +8,8 @@ namespace Trady.Analysis.Indicator
 {
     public class AverageDirectionalIndex<TInput, TOutput> : AnalyzableBase<TInput, (decimal High, decimal Low, decimal Close), decimal?, TOutput>
     {
-        DirectionalMovementIndexByTuple _dx;
-        readonly GenericExponentialMovingAverage _adx;
+        private DirectionalMovementIndexByTuple _dx;
+        private readonly GenericExponentialMovingAverage _adx;
 
         public AverageDirectionalIndex(IEnumerable<TInput> inputs, Func<TInput, (decimal High, decimal Low, decimal Close)> inputMapper, int periodCount) : base(inputs, inputMapper)
         {
@@ -27,12 +27,12 @@ namespace Trady.Analysis.Indicator
 
         public int PeriodCount { get; }
 
-        protected override decimal? ComputeByIndexImpl(IEnumerable<(decimal High, decimal Low, decimal Close)> mappedInputs, int index) => _adx[index];
+        protected override decimal? ComputeByIndexImpl(IReadOnlyList<(decimal High, decimal Low, decimal Close)> mappedInputs, int index) => _adx[index];
     }
 
     public class AverageDirectionalIndexByTuple : AverageDirectionalIndex<(decimal High, decimal Low, decimal Close), decimal?>
     {
-        public AverageDirectionalIndexByTuple(IEnumerable<(decimal High, decimal Low, decimal Close)> inputs, int periodCount) 
+        public AverageDirectionalIndexByTuple(IEnumerable<(decimal High, decimal Low, decimal Close)> inputs, int periodCount)
             : base(inputs, i => i, periodCount)
         {
         }
@@ -40,7 +40,7 @@ namespace Trady.Analysis.Indicator
 
     public class AverageDirectionalIndex : AverageDirectionalIndex<Candle, AnalyzableTick<decimal?>>
     {
-        public AverageDirectionalIndex(IEnumerable<Candle> inputs, int periodCount) 
+        public AverageDirectionalIndex(IEnumerable<Candle> inputs, int periodCount)
             : base(inputs, i => (i.High, i.Low, i.Close), periodCount)
         {
         }

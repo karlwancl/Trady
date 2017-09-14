@@ -1,29 +1,29 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Trady.Analysis.Strategy.Rule;
 using Trady.Core;
 using Trady.Core.Infrastructure;
-using Trady.Analysis.Strategy.Rule;
 
 namespace Trady.Analysis.Strategy
 {
     public class IndexedCandle : Candle, IIndexedObject<Candle>
     {
         public IndexedCandle(IEnumerable<Candle> candles, int index)
-            : base(candles.ElementAt(index).DateTime, 
-                   candles.ElementAt(index).Open, 
-                   candles.ElementAt(index).High, 
-                   candles.ElementAt(index).Low, 
-                   candles.ElementAt(index).Close, 
+            : base(candles.ElementAt(index).DateTime,
+                   candles.ElementAt(index).Open,
+                   candles.ElementAt(index).High,
+                   candles.ElementAt(index).Low,
+                   candles.ElementAt(index).Close,
                    candles.ElementAt(index).Volume)
         {
             BackingList = candles;
             Index = index;
         }
 
-        public IEnumerable<Candle> BackingList {get;}
+        public IEnumerable<Candle> BackingList { get; }
 
-        public int Index {get;}
+        public int Index { get; }
 
         public IndexedCandle Prev => Index - 1 >= 0 ? new IndexedCandle(BackingList, Index - 1) : null;
 

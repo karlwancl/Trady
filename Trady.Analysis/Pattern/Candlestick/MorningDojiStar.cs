@@ -11,12 +11,12 @@ namespace Trady.Analysis.Pattern.Candlestick
     /// </summary>
     public class MorningDojiStar<TInput, TOutput> : AnalyzableBase<TInput, (decimal Open, decimal High, decimal Low, decimal Close), bool?, TOutput>
     {
-        DownTrendByTuple _downTrend;
-        BullishLongDayByTuple _bullishLongDay;
-        DojiByTuple _doji;
-        BearishLongDayByTuple _bearishLongDay;
+        private DownTrendByTuple _downTrend;
+        private BullishLongDayByTuple _bullishLongDay;
+        private DojiByTuple _doji;
+        private BearishLongDayByTuple _bearishLongDay;
 
-        public MorningDojiStar(IEnumerable<TInput> inputs, Func<TInput, (decimal Open, decimal High, decimal Low, decimal Close)> inputMapper, int downTrendPeriodCount = 3, int periodCount = 20, decimal longThreshold = 0.75m, decimal dojiThreshold = 0.25m, decimal threshold = 0.1m) 
+        public MorningDojiStar(IEnumerable<TInput> inputs, Func<TInput, (decimal Open, decimal High, decimal Low, decimal Close)> inputMapper, int downTrendPeriodCount = 3, int periodCount = 20, decimal longThreshold = 0.75m, decimal dojiThreshold = 0.25m, decimal threshold = 0.1m)
             : base(inputs, inputMapper)
         {
             var mappedInputs = inputs.Select(inputMapper);
@@ -40,19 +40,19 @@ namespace Trady.Analysis.Pattern.Candlestick
         public decimal DojiThreshold { get; }
         public decimal Threshold { get; }
 
-        protected override bool? ComputeByIndexImpl(IEnumerable<(decimal Open, decimal High, decimal Low, decimal Close)> mappedInputs, int index)
+        protected override bool? ComputeByIndexImpl(IReadOnlyList<(decimal Open, decimal High, decimal Low, decimal Close)> mappedInputs, int index)
         {
             if (index < 2) return null;
 
-            Func<int, decimal> midPoint = i => (mappedInputs.ElementAt(i).Open + mappedInputs.ElementAt(i).Close) / 2;
+            Func<int, decimal> midPoint = i => (mappedInputs[i].Open + mappedInputs[i].Close) / 2;
 
             return (_downTrend[index - 1] ?? false) &&
                 _bearishLongDay[index - 2] &&
                 _doji[index - 1] &&
-                (midPoint(index - 1) < mappedInputs.ElementAt(index - 2).Close) &&
+                (midPoint(index - 1) < mappedInputs[index - 2].Close) &&
                 _bullishLongDay[index] &&
-                (mappedInputs.ElementAt(index).Open > Math.Max(mappedInputs.ElementAt(index - 1).Open, mappedInputs.ElementAt(index - 1).Close)) && 
-                Math.Abs((mappedInputs.ElementAt(index).Close - midPoint(index - 2)) / midPoint(index - 2)) < Threshold;
+                (mappedInputs[index].Open > Math.Max(mappedInputs[index - 1].Open, mappedInputs[index - 1].Close)) &&
+                Math.Abs((mappedInputs[index].Close - midPoint(index - 2)) / midPoint(index - 2)) < Threshold;
         }
     }
 

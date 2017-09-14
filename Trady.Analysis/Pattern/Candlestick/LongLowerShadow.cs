@@ -18,16 +18,16 @@ namespace Trady.Analysis.Pattern.Candlestick
         public int PeriodCount { get; }
         public decimal Threshold { get; }
 
-        protected override bool? ComputeByIndexImpl(IEnumerable<(decimal Open, decimal Low, decimal Close)> mappedInputs, int index)
+        protected override bool? ComputeByIndexImpl(IReadOnlyList<(decimal Open, decimal Low, decimal Close)> mappedInputs, int index)
         {
             var lowerShadows = mappedInputs.Select(i => Math.Min(i.Open, i.Close) - i.Low);
-			return lowerShadows.ElementAt(index) < lowerShadows.Percentile(PeriodCount, index, Threshold);
+            return lowerShadows.ElementAt(index) < lowerShadows.Percentile(PeriodCount, index, Threshold);
         }
     }
 
     public class LongLowerShadowByTuple : LongLowerShadow<(decimal Open, decimal Low, decimal Close), bool?>
     {
-        public LongLowerShadowByTuple(IEnumerable<(decimal Open, decimal Low, decimal Close)> inputs, int periodCount = 20, decimal threshold = 0.25M) 
+        public LongLowerShadowByTuple(IEnumerable<(decimal Open, decimal Low, decimal Close)> inputs, int periodCount = 20, decimal threshold = 0.25M)
             : base(inputs, i => i, periodCount, threshold)
         {
         }
@@ -35,7 +35,7 @@ namespace Trady.Analysis.Pattern.Candlestick
 
     public class LongLowerShadow : LongLowerShadow<Candle, AnalyzableTick<bool?>>
     {
-        public LongLowerShadow(IEnumerable<Candle> inputs, int periodCount = 20, decimal threshold = 0.25M) 
+        public LongLowerShadow(IEnumerable<Candle> inputs, int periodCount = 20, decimal threshold = 0.25M)
             : base(inputs, i => (i.Open, i.Low, i.Close), periodCount, threshold)
         {
         }

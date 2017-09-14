@@ -4,9 +4,9 @@ using System.Linq;
 
 namespace Trady.Analysis.Helper
 {
-    static class Misc
+    internal static class Misc
     {
-        static object syncLock = new object();
+        private static object syncLock = new object();
 
         public static int? FindIndexOrDefault<T>(this IEnumerable<T> list, Predicate<T> predicate, int? defaultValue = null)
         {

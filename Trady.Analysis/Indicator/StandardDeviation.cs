@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Trady.Analysis.Helper;
 using Trady.Analysis.Infrastructure;
 using Trady.Core;
@@ -16,12 +15,12 @@ namespace Trady.Analysis.Indicator
 
         public int PeriodCount { get; }
 
-        protected override decimal? ComputeByIndexImpl(IEnumerable<decimal> mappedInputs, int index) => mappedInputs.SdInt(PeriodCount, index);
+        protected override decimal? ComputeByIndexImpl(IReadOnlyList<decimal> mappedInputs, int index) => mappedInputs.SdInt(PeriodCount, index);
     }
 
     public class StandardDeviationByTuple : StandardDeviation<decimal, decimal?>
     {
-        public StandardDeviationByTuple(IEnumerable<decimal> inputs, int periodCount) 
+        public StandardDeviationByTuple(IEnumerable<decimal> inputs, int periodCount)
             : base(inputs, i => i, periodCount)
         {
         }
@@ -29,7 +28,7 @@ namespace Trady.Analysis.Indicator
 
     public class StandardDeviation : StandardDeviation<Candle, AnalyzableTick<decimal?>>
     {
-        public StandardDeviation(IEnumerable<Candle> inputs, int periodCount) 
+        public StandardDeviation(IEnumerable<Candle> inputs, int periodCount)
             : base(inputs, i => i.Close, periodCount)
         {
         }

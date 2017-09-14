@@ -14,7 +14,7 @@ namespace Trady.Analysis.Pattern.Candlestick
         {
         }
 
-        protected override bool? ComputeByIndexImpl(IEnumerable<(decimal Open, decimal High, decimal Low, decimal Close)> mappedInputs, int index)
+        protected override bool? ComputeByIndexImpl(IReadOnlyList<(decimal Open, decimal High, decimal Low, decimal Close)> mappedInputs, int index)
         {
             throw new NotImplementedException();
         }

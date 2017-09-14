@@ -8,11 +8,11 @@ using Trady.Core.Infrastructure;
 
 namespace Trady.Analysis.Strategy
 {
-    static class AnalyzableLocator
+    internal static class AnalyzableLocator
     {
-        static IMemoryCache _cache = new MemoryCache(new MemoryCacheOptions());
+        private static IMemoryCache _cache = new MemoryCache(new MemoryCacheOptions());
 
-        static MemoryCacheEntryOptions _policy = new MemoryCacheEntryOptions
+        private static MemoryCacheEntryOptions _policy = new MemoryCacheEntryOptions
         {
             SlidingExpiration = TimeSpan.FromMinutes(1)
         };

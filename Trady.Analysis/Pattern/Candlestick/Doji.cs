@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Trady.Analysis.Infrastructure;
 using Trady.Core;
 
@@ -15,13 +14,13 @@ namespace Trady.Analysis.Pattern.Candlestick
 
         public decimal Threshold { get; }
 
-        protected override bool ComputeByIndexImpl(IEnumerable<(decimal Open, decimal High, decimal Low, decimal Close)> mappedInputs, int index)
-            => Math.Abs(mappedInputs.ElementAt(index).Close - mappedInputs.ElementAt(index).Open) < Threshold * (mappedInputs.ElementAt(index).High - mappedInputs.ElementAt(index).Low);
-	}
+        protected override bool ComputeByIndexImpl(IReadOnlyList<(decimal Open, decimal High, decimal Low, decimal Close)> mappedInputs, int index)
+            => Math.Abs(mappedInputs[index].Close - mappedInputs[index].Open) < Threshold * (mappedInputs[index].High - mappedInputs[index].Low);
+    }
 
     public class DojiByTuple : Doji<(decimal Open, decimal High, decimal Low, decimal Close), bool>
     {
-        public DojiByTuple(IEnumerable<(decimal Open, decimal High, decimal Low, decimal Close)> inputs, decimal threshold = 0.1M) 
+        public DojiByTuple(IEnumerable<(decimal Open, decimal High, decimal Low, decimal Close)> inputs, decimal threshold = 0.1M)
             : base(inputs, i => i, threshold)
         {
         }
@@ -29,7 +28,7 @@ namespace Trady.Analysis.Pattern.Candlestick
 
     public class Doji : Doji<Candle, AnalyzableTick<bool>>
     {
-        public Doji(IEnumerable<Candle> inputs, decimal threshold = 0.1M) 
+        public Doji(IEnumerable<Candle> inputs, decimal threshold = 0.1M)
             : base(inputs, i => (i.Open, i.High, i.Low, i.Close), threshold)
         {
         }

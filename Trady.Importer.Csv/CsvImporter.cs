@@ -1,4 +1,5 @@
 ﻿using CsvHelper;
+using CsvHelper.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -6,7 +7,6 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using CsvHelper.Configuration;
 using Trady.Core;
 using Trady.Core.Period;
 
@@ -14,12 +14,11 @@ namespace Trady.Importer
 {
     public class CsvImporter : IImporter
     {
-        string _path;
-        readonly CultureInfo _culture;
+        private string _path;
+        private readonly CultureInfo _culture;
 
         public CsvImporter(string path) : this(path, CultureInfo.CurrentCulture)
         {
-
         }
 
         public CsvImporter(string path, CultureInfo culture)
@@ -28,9 +27,8 @@ namespace Trady.Importer
             _culture = culture;
         }
 
-        public async Task<IEnumerable<Candle>> ImportAsync(string symbol, DateTime? startTime = null, DateTime? endTime = null, PeriodOption period = PeriodOption.Daily, CancellationToken token = default(CancellationToken))
-        {
-            return await Task.Factory.StartNew(() =>
+        public async Task<IReadOnlyList<Candle>> ImportAsync(string symbol, DateTime? startTime = null, DateTime? endTime = null, PeriodOption period = PeriodOption.Daily, CancellationToken token = default(CancellationToken))
+            => await Task.Factory.StartNew(() =>
             {
                 using (var fs = File.OpenRead(_path))
                 using (var sr = new StreamReader(fs))
@@ -43,10 +41,9 @@ namespace Trady.Importer
                         if ((!startTime.HasValue || date >= startTime) && (!endTime.HasValue || date <= endTime))
                             candles.Add(GetRecord(csvReader));
                     }
-                    return candles.OrderBy(c => c.DateTime);
+                    return candles.OrderBy(c => c.DateTime).ToList();
                 }
             });
-        }
 
         public Candle GetRecord(CsvReader csv)
         {
@@ -60,6 +57,5 @@ namespace Trady.Importer
                 csv.GetField<Decimal>(5)
             );
         }
-
     }
 }

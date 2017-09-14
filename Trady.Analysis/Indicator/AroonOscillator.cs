@@ -8,27 +8,27 @@ namespace Trady.Analysis.Indicator
 {
     public class AroonOscillator<TInput, TOutput> : AnalyzableBase<TInput, (decimal High, decimal Low), decimal?, TOutput>
     {
-        readonly AroonByTuple _aroon;
+        private readonly AroonByTuple _aroon;
 
-        public AroonOscillator(IEnumerable<TInput> inputs, Func<TInput, (decimal High, decimal Low)> inputMapper, int periodCount) 
+        public AroonOscillator(IEnumerable<TInput> inputs, Func<TInput, (decimal High, decimal Low)> inputMapper, int periodCount)
             : base(inputs, inputMapper)
         {
-			_aroon = new AroonByTuple(inputs.Select(inputMapper), periodCount);
-			PeriodCount = periodCount;
-		}
+            _aroon = new AroonByTuple(inputs.Select(inputMapper), periodCount);
+            PeriodCount = periodCount;
+        }
 
         public int PeriodCount { get; }
 
-        protected override decimal? ComputeByIndexImpl(IEnumerable<(decimal High, decimal Low)> mappedInputs, int index)
+        protected override decimal? ComputeByIndexImpl(IReadOnlyList<(decimal High, decimal Low)> mappedInputs, int index)
         {
-			var aroon = _aroon[index];
-			return (aroon.Up - aroon.Down);
+            var aroon = _aroon[index];
+            return (aroon.Up - aroon.Down);
         }
     }
 
     public class AroonOscillatorByTuple : AroonOscillator<(decimal High, decimal Low), decimal?>
     {
-        public AroonOscillatorByTuple(IEnumerable<(decimal High, decimal Low)> inputs, int periodCount) 
+        public AroonOscillatorByTuple(IEnumerable<(decimal High, decimal Low)> inputs, int periodCount)
             : base(inputs, i => i, periodCount)
         {
         }
@@ -36,7 +36,7 @@ namespace Trady.Analysis.Indicator
 
     public class AroonOscillator : AroonOscillator<Candle, AnalyzableTick<decimal?>>
     {
-        public AroonOscillator(IEnumerable<Candle> inputs, int periodCount) 
+        public AroonOscillator(IEnumerable<Candle> inputs, int periodCount)
             : base(inputs, i => (i.High, i.Low), periodCount)
         {
         }

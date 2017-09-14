@@ -1,26 +1,26 @@
-﻿using System;
+﻿using Nuba.Finance.Google;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Trady.Core.Period;
-using Nuba.Finance.Google;
-using System.Linq;
 using Trady.Core;
+using Trady.Core.Period;
 
 namespace Trady.Importer
 {
-    public class GoogleFinanceImporter: IImporter
+    public class GoogleFinanceImporter : IImporter
     {
-        LatestQuotesService _lqs;
+        private LatestQuotesService _lqs;
 
         public GoogleFinanceImporter()
         {
             _lqs = new LatestQuotesService();
         }
 
-        const char SymbolSeparator = '/';
+        private const char SymbolSeparator = '/';
 
-        static readonly IDictionary<PeriodOption, int> PeriodMap = new Dictionary<PeriodOption, int>
+        private static readonly IDictionary<PeriodOption, int> PeriodMap = new Dictionary<PeriodOption, int>
         {
             {PeriodOption.PerSecond, Frequency.EverySecond},
             {PeriodOption.PerMinute, Frequency.EveryMinute},
@@ -28,7 +28,7 @@ namespace Trady.Importer
             {PeriodOption.Daily, Frequency.EveryDay}
         };
 
-        public async Task<IEnumerable<Core.Candle>> ImportAsync(string symbol, DateTime? startTime = default(DateTime?), DateTime? endTime = default(DateTime?), PeriodOption period = PeriodOption.Daily, CancellationToken token = default(CancellationToken))
+        public async Task<IReadOnlyList<Core.Candle>> ImportAsync(string symbol, DateTime? startTime = default(DateTime?), DateTime? endTime = default(DateTime?), PeriodOption period = PeriodOption.Daily, CancellationToken token = default(CancellationToken))
         {
             if (!PeriodMap.TryGetValue(period, out int frequency))
                 throw new ArgumentException("This importer only supports second, minute, hourly & daily data");
@@ -38,7 +38,7 @@ namespace Trady.Importer
 
             string[] syms = symbol.Split(SymbolSeparator);
             var candles = await Task.Run(() => _lqs.GetValues(syms[0].ToUpper(), syms[1], PeriodMap[period], startTime, endTime));
-            return candles.Select(c => new Core.Candle(c.Date, c.Open, c.High, c.Low, c.Close, c.Volume)).OrderBy(c => c.DateTime);
+            return candles.Select(c => new Core.Candle(c.Date, c.Open, c.High, c.Low, c.Close, c.Volume)).OrderBy(c => c.DateTime).ToList();
         }
     }
 }

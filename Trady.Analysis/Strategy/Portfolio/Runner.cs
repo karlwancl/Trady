@@ -10,8 +10,8 @@ namespace Trady.Analysis.Strategy.Portfolio
 {
     public class Runner
     {
-        IDictionary<IEnumerable<Candle>, int> _weightings;
-        IRule<IndexedCandle> _buyRule, _sellRule;
+        private IDictionary<IEnumerable<Candle>, int> _weightings;
+        private IRule<IndexedCandle> _buyRule, _sellRule;
 
         internal Runner(IDictionary<IEnumerable<Candle>, int> weightings, IRule<IndexedCandle> buyRule, IRule<IndexedCandle> sellRule)
         {
@@ -21,9 +21,11 @@ namespace Trady.Analysis.Strategy.Portfolio
         }
 
         public event BuyHandler OnBought;
+
         public delegate void BuyHandler(IEnumerable<Candle> candles, int index, DateTime dateTime, decimal buyPrice, int quantity, decimal absCashFlow, decimal currentCashAmount);
 
         public event SellHandler OnSold;
+
         public delegate void SellHandler(IEnumerable<Candle> candles, int index, DateTime dateTime, decimal sellPrice, int quantity, decimal absCashFlow, decimal currentCashAmount, decimal plRatio);
 
         public async Task<Result> RunAsync(decimal principal, decimal premium = 1.0m, DateTime? startTime = null, DateTime? endTime = null)
@@ -54,7 +56,7 @@ namespace Trady.Analysis.Strategy.Portfolio
             return new Result(preAssetCashMap, assetCashMap, transactions);
         }
 
-        BuySellRuleExecutor CreateRuleExecutor(IEnumerable<Candle> candles, decimal premium, IDictionary<IEnumerable<Candle>, decimal> assetCashMap, List<Transaction> transactions)
+        private BuySellRuleExecutor CreateRuleExecutor(IEnumerable<Candle> candles, decimal premium, IDictionary<IEnumerable<Candle>, decimal> assetCashMap, List<Transaction> transactions)
         {
             Func<IRule<IndexedCandle>> buyRule = () =>
             {
@@ -72,16 +74,16 @@ namespace Trady.Analysis.Strategy.Portfolio
             {
                 var type = (TransactionType)i;
                 if (type.Equals(TransactionType.Buy))
-					BuyAsset(ic, premium, assetCashMap, transactions);
+                    BuyAsset(ic, premium, assetCashMap, transactions);
                 else
-					SellAsset(ic, premium, assetCashMap, transactions);
+                    SellAsset(ic, premium, assetCashMap, transactions);
                 return ((TransactionType)i, ic);
             };
 
             return new BuySellRuleExecutor(outputFunc, buyRule, sellRule);
         }
 
-        void BuyAsset(IndexedCandle indexedCandle, decimal premium, IDictionary<IEnumerable<Candle>, decimal> assetCashMap, IList<Transaction> transactions)
+        private void BuyAsset(IndexedCandle indexedCandle, decimal premium, IDictionary<IEnumerable<Candle>, decimal> assetCashMap, IList<Transaction> transactions)
         {
             if (assetCashMap.TryGetValue(indexedCandle.BackingList, out decimal cash))
             {
@@ -96,7 +98,7 @@ namespace Trady.Analysis.Strategy.Portfolio
             }
         }
 
-        void SellAsset(IndexedCandle indexedCandle, decimal premium, IDictionary<IEnumerable<Candle>, decimal> assetCashMap, IList<Transaction> transactions)
+        private void SellAsset(IndexedCandle indexedCandle, decimal premium, IDictionary<IEnumerable<Candle>, decimal> assetCashMap, IList<Transaction> transactions)
         {
             if (assetCashMap.TryGetValue(indexedCandle.BackingList, out _))
             {

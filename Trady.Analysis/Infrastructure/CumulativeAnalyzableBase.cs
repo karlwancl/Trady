@@ -11,7 +11,7 @@ namespace Trady.Analysis.Infrastructure
         {
         }
 
-        protected sealed override TOutputToMap ComputeByIndexImpl(IEnumerable<TMappedInput> mappedInputs, int index)
+        protected sealed override TOutputToMap ComputeByIndexImpl(IReadOnlyList<TMappedInput> mappedInputs, int index)
         {
             var tick = default(TOutputToMap);
             if (index < InitialValueIndex)
@@ -20,7 +20,7 @@ namespace Trady.Analysis.Infrastructure
                 tick = ComputeInitialValue(mappedInputs, index);
             else
             {
-                int idx = Cache.Select(kvp => kvp.Key).Where(k => k >= InitialValueIndex).DefaultIfEmpty(InitialValueIndex).Max();
+                int idx = Cache.Keys.DefaultIfEmpty(InitialValueIndex).Where(k => k >= InitialValueIndex).Max();
                 for (int i = idx; i < index; i++)
                 {
                     var prevTick = ComputeByIndex(mappedInputs, i);
@@ -33,16 +33,16 @@ namespace Trady.Analysis.Infrastructure
 
         protected virtual int InitialValueIndex { get; } = 0;
 
-        protected virtual TOutputToMap ComputeNullValue(IEnumerable<TMappedInput> mappedInputs, int index) => default(TOutputToMap);
+        protected virtual TOutputToMap ComputeNullValue(IReadOnlyList<TMappedInput> mappedInputs, int index) => default(TOutputToMap);
 
-        protected abstract TOutputToMap ComputeInitialValue(IEnumerable<TMappedInput> mappedInputs, int index);
+        protected abstract TOutputToMap ComputeInitialValue(IReadOnlyList<TMappedInput> mappedInputs, int index);
 
-        protected abstract TOutputToMap ComputeCumulativeValue(IEnumerable<TMappedInput> mappedInputs, int index, TOutputToMap prevOutputToMap);
+        protected abstract TOutputToMap ComputeCumulativeValue(IReadOnlyList<TMappedInput> mappedInputs, int index, TOutputToMap prevOutputToMap);
     }
 
     public abstract class CumulativeAnalyzableBase<TInput, TOutput> : CumulativeAnalyzableBase<TInput, TInput, TOutput, TOutput>
     {
-        public CumulativeAnalyzableBase(IEnumerable<TInput> inputs) 
+        public CumulativeAnalyzableBase(IEnumerable<TInput> inputs)
             : base(inputs, i => i)
         {
         }

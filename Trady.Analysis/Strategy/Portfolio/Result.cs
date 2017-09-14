@@ -84,6 +84,5 @@ namespace Trady.Analysis.Strategy.Portfolio
         }
 
         #endregion Sum
-
     }
 }

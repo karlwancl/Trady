@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Trady.Analysis.Infrastructure;
 using Trady.Core;
 
@@ -13,13 +11,13 @@ namespace Trady.Analysis.Pattern.Candlestick
         {
         }
 
-        protected override bool ComputeByIndexImpl(IEnumerable<(decimal Open, decimal Close)> mappedInputs, int index)
-            => mappedInputs.ElementAt(index).Open > mappedInputs.ElementAt(index).Close;
-	}
+        protected override bool ComputeByIndexImpl(IReadOnlyList<(decimal Open, decimal Close)> mappedInputs, int index)
+            => mappedInputs[index].Open > mappedInputs[index].Close;
+    }
 
     public class BearishByTuple : Bearish<(decimal Open, decimal Close), bool>
     {
-        public BearishByTuple(IEnumerable<(decimal Open, decimal Close)> inputs) 
+        public BearishByTuple(IEnumerable<(decimal Open, decimal Close)> inputs)
             : base(inputs, i => i)
         {
         }
@@ -27,7 +25,7 @@ namespace Trady.Analysis.Pattern.Candlestick
 
     public class Bearish : Bearish<Candle, AnalyzableTick<bool>>
     {
-        public Bearish(IEnumerable<Candle> inputs) 
+        public Bearish(IEnumerable<Candle> inputs)
             : base(inputs, i => (i.Open, i.Close))
         {
         }

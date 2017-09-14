@@ -11,9 +11,9 @@ namespace Trady.Analysis.Pattern.Candlestick
     /// </summary>
     public class BullishEngulfingPattern<TInput, TOutput> : AnalyzableBase<TInput, (decimal Open, decimal High, decimal Low, decimal Close), bool?, TOutput>
     {
-        DownTrendByTuple _downTrend;
-        BearishByTuple _bearish;
-        BullishByTuple _bullish;
+        private DownTrendByTuple _downTrend;
+        private BearishByTuple _bearish;
+        private BullishByTuple _bullish;
 
         public BullishEngulfingPattern(IEnumerable<TInput> inputs, Func<TInput, (decimal Open, decimal High, decimal Low, decimal Close)> inputMapper, int downTrendPeriodCount = 3) : base(inputs, inputMapper)
         {
@@ -29,17 +29,17 @@ namespace Trady.Analysis.Pattern.Candlestick
 
         public int DownTrendPeriodCount { get; }
 
-        protected override bool? ComputeByIndexImpl(IEnumerable<(decimal Open, decimal High, decimal Low, decimal Close)> mappedInputs, int index)
+        protected override bool? ComputeByIndexImpl(IReadOnlyList<(decimal Open, decimal High, decimal Low, decimal Close)> mappedInputs, int index)
         {
-			if (index < 1) return null;
-            bool isEngulf = mappedInputs.ElementAt(index).Open < mappedInputs.ElementAt(index - 1).Close && mappedInputs.ElementAt(index).Close > mappedInputs.ElementAt(index - 1).Open;
-			return (_downTrend[index - 1] ?? false) && _bearish[index - 1] && _bullish[index] && isEngulf;
+            if (index < 1) return null;
+            bool isEngulf = mappedInputs[index].Open < mappedInputs[index - 1].Close && mappedInputs[index].Close > mappedInputs[index - 1].Open;
+            return (_downTrend[index - 1] ?? false) && _bearish[index - 1] && _bullish[index] && isEngulf;
         }
     }
 
     public class BullishEngulfingPatternByTuple : BullishEngulfingPattern<(decimal Open, decimal High, decimal Low, decimal Close), bool?>
     {
-        public BullishEngulfingPatternByTuple(IEnumerable<(decimal Open, decimal High, decimal Low, decimal Close)> inputs, int downTrendPeriodCount = 3) 
+        public BullishEngulfingPatternByTuple(IEnumerable<(decimal Open, decimal High, decimal Low, decimal Close)> inputs, int downTrendPeriodCount = 3)
             : base(inputs, i => i, downTrendPeriodCount)
         {
         }

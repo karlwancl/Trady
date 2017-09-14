@@ -11,10 +11,10 @@ namespace Trady.Analysis.Pattern.Candlestick
     /// </summary>
     public class MorningStar<TInput, TOutput> : AnalyzableBase<TInput, (decimal Open, decimal High, decimal Low, decimal Close), bool?, TOutput>
     {
-        DownTrendByTuple _downTrend;
-        BullishLongDayByTuple _bullishLongDay;
-        ShortDayByTuple _shortDay;
-        BearishLongDayByTuple _bearishLongDay;
+        private DownTrendByTuple _downTrend;
+        private BullishLongDayByTuple _bullishLongDay;
+        private ShortDayByTuple _shortDay;
+        private BearishLongDayByTuple _bearishLongDay;
 
         public MorningStar(IEnumerable<TInput> inputs, Func<TInput, (decimal Open, decimal High, decimal Low, decimal Close)> inputMapper, int downTrendPeriodCount = 3, int periodCount = 20, decimal shortThreshold = 0.25m, decimal longThreshold = 0.75m, decimal threshold = 0.1m) : base(inputs, inputMapper)
         {
@@ -39,25 +39,25 @@ namespace Trady.Analysis.Pattern.Candlestick
         public decimal ShortThreshold { get; }
         public decimal Threshold { get; }
 
-        protected override bool? ComputeByIndexImpl(IEnumerable<(decimal Open, decimal High, decimal Low, decimal Close)> mappedInputs, int index)
+        protected override bool? ComputeByIndexImpl(IReadOnlyList<(decimal Open, decimal High, decimal Low, decimal Close)> mappedInputs, int index)
         {
             if (index < 2) return null;
 
-            Func<int, decimal> midPoint = i => (mappedInputs.ElementAt(i).Open + mappedInputs.ElementAt(i).Close) / 2;
+            Func<int, decimal> midPoint = i => (mappedInputs[i].Open + mappedInputs[i].Close) / 2;
 
             return (_downTrend[index - 1] ?? false) &&
                 _bearishLongDay[index - 2] &&
                 _shortDay[index - 1] &&
-                (mappedInputs.ElementAt(index - 1).Close < mappedInputs.ElementAt(index - 2).Close) &&
+                (mappedInputs[index - 1].Close < mappedInputs[index - 2].Close) &&
                 _bullishLongDay[index] &&
-                (mappedInputs.ElementAt(index).Open > Math.Max(mappedInputs.ElementAt(index - 1).Open, mappedInputs.ElementAt(index - 1).Close)) &&
-                Math.Abs((mappedInputs.ElementAt(index).Close - midPoint(index - 2)) / midPoint(index - 2)) < Threshold;
+                (mappedInputs[index].Open > Math.Max(mappedInputs[index - 1].Open, mappedInputs[index - 1].Close)) &&
+                Math.Abs((mappedInputs[index].Close - midPoint(index - 2)) / midPoint(index - 2)) < Threshold;
         }
     }
 
     public class MorningStarByTuple : MorningStar<(decimal Open, decimal High, decimal Low, decimal Close), bool?>
     {
-        public MorningStarByTuple(IEnumerable<(decimal Open, decimal High, decimal Low, decimal Close)> inputs, int downTrendPeriodCount = 3, int periodCount = 20, decimal shortThreshold = 0.25M, decimal longThreshold = 0.75M, decimal threshold = 0.1M) 
+        public MorningStarByTuple(IEnumerable<(decimal Open, decimal High, decimal Low, decimal Close)> inputs, int downTrendPeriodCount = 3, int periodCount = 20, decimal shortThreshold = 0.25M, decimal longThreshold = 0.75M, decimal threshold = 0.1M)
             : base(inputs, i => i, downTrendPeriodCount, periodCount, shortThreshold, longThreshold, threshold)
         {
         }
@@ -65,7 +65,7 @@ namespace Trady.Analysis.Pattern.Candlestick
 
     public class MorningStar : MorningStar<Candle, AnalyzableTick<bool?>>
     {
-        public MorningStar(IEnumerable<Candle> inputs, int downTrendPeriodCount = 3, int periodCount = 20, decimal shortThreshold = 0.25M, decimal longThreshold = 0.75M, decimal threshold = 0.1M) 
+        public MorningStar(IEnumerable<Candle> inputs, int downTrendPeriodCount = 3, int periodCount = 20, decimal shortThreshold = 0.25M, decimal longThreshold = 0.75M, decimal threshold = 0.1M)
             : base(inputs, i => (i.Open, i.High, i.Low, i.Close), downTrendPeriodCount, periodCount, shortThreshold, longThreshold, threshold)
         {
         }

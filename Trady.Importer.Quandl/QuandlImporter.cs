@@ -12,15 +12,15 @@ namespace Trady.Importer
 {
     public class QuandlImporter : IImporter
     {
-        static readonly IDictionary<PeriodOption, Collapse> PeriodMap = new Dictionary<PeriodOption, Collapse>
+        private static readonly IDictionary<PeriodOption, Collapse> PeriodMap = new Dictionary<PeriodOption, Collapse>
         {
             {PeriodOption.Daily, Collapse.Daily },
             {PeriodOption.Weekly, Collapse.Weekly },
             {PeriodOption.Monthly, Collapse.Monthly }
         };
 
-        readonly QuandlClient _client;
-        readonly string _databaseCode;
+        private readonly QuandlClient _client;
+        private readonly string _databaseCode;
 
         public QuandlImporter(string apiKey, string databaseCode)
         {
@@ -28,14 +28,13 @@ namespace Trady.Importer
             _databaseCode = databaseCode;
         }
 
-        public async Task<IEnumerable<Candle>> ImportAsync(string symbol, DateTime? startTime = null, DateTime? endTime = null, PeriodOption period = PeriodOption.Daily, CancellationToken token = default(CancellationToken))
+        public async Task<IReadOnlyList<Candle>> ImportAsync(string symbol, DateTime? startTime = null, DateTime? endTime = null, PeriodOption period = PeriodOption.Daily, CancellationToken token = default(CancellationToken))
         {
             if (period != PeriodOption.Daily && period != PeriodOption.Weekly && period != PeriodOption.Monthly)
                 throw new ArgumentException("This importer only supports daily, weekly & monthly data");
 
-            //var response = await _client.Dataset.GetAsync(_databaseCode, symbol, startDate: startTime, endDate: endTime, token: token, collapse: PeriodMap[period]).ConfigureAwait(false);
             var response = await _client.Timeseries.GetDataAsync(_databaseCode, symbol, startDate: startTime, endDate: endTime, token: token, collapse: PeriodMap[period]).ConfigureAwait(false);
-            return response.DatasetData.Data.Where(r => !r.IsNullOrWhitespace()).Select(r => r.CreateCandle()).OrderBy(c => c.DateTime);
+            return response.DatasetData.Data.Where(r => !r.IsNullOrWhitespace()).Select(r => r.CreateCandle()).OrderBy(c => c.DateTime).ToList();
         }
     }
 

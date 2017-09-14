@@ -16,7 +16,7 @@ namespace Trady.Analysis.Indicator
             PeriodCount = periodCount;
         }
 
-        protected override decimal? ComputeByIndexImpl(IEnumerable<decimal> mappedInputs, int index)
+        protected override decimal? ComputeByIndexImpl(IReadOnlyList<decimal> mappedInputs, int index)
             => mappedInputs.Avg(PeriodCount, index);
     }
 

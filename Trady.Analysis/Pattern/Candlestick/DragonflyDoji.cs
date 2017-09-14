@@ -11,7 +11,7 @@ namespace Trady.Analysis.Pattern.Candlestick
     /// </summary>
     public class DragonflyDoji<TInput, TOutput> : AnalyzableBase<TInput, (decimal Open, decimal High, decimal Low, decimal Close), bool, TOutput>
     {
-        DojiByTuple _doji;
+        private DojiByTuple _doji;
 
         public DragonflyDoji(IEnumerable<TInput> inputs, Func<TInput, (decimal Open, decimal High, decimal Low, decimal Close)> inputMapper, decimal dojiThreshold = 0.1m, decimal shadowThreshold = 0.1m) : base(inputs, inputMapper)
         {
@@ -25,17 +25,17 @@ namespace Trady.Analysis.Pattern.Candlestick
 
         public decimal ShadowThreshold { get; }
 
-        protected override bool ComputeByIndexImpl(IEnumerable<(decimal Open, decimal High, decimal Low, decimal Close)> mappedInputs, int index)
+        protected override bool ComputeByIndexImpl(IReadOnlyList<(decimal Open, decimal High, decimal Low, decimal Close)> mappedInputs, int index)
         {
-            var mean = (mappedInputs.ElementAt(index).Open + mappedInputs.ElementAt(index).Close) / 2;
-            bool isDragonify = (mappedInputs.ElementAt(index).High - mean) < ShadowThreshold * (mappedInputs.ElementAt(index).High - mappedInputs.ElementAt(index).Low);
-			return _doji[index] && isDragonify;        
+            var mean = (mappedInputs[index].Open + mappedInputs[index].Close) / 2;
+            bool isDragonify = (mappedInputs[index].High - mean) < ShadowThreshold * (mappedInputs[index].High - mappedInputs[index].Low);
+            return _doji[index] && isDragonify;
         }
     }
 
     public class DragonifyDojiByTuple : DragonflyDoji<(decimal Open, decimal High, decimal Low, decimal Close), bool>
     {
-        public DragonifyDojiByTuple(IEnumerable<(decimal Open, decimal High, decimal Low, decimal Close)> inputs, decimal dojiThreshold = 0.1M, decimal shadowThreshold = 0.1M) 
+        public DragonifyDojiByTuple(IEnumerable<(decimal Open, decimal High, decimal Low, decimal Close)> inputs, decimal dojiThreshold = 0.1M, decimal shadowThreshold = 0.1M)
             : base(inputs, i => i, dojiThreshold, shadowThreshold)
         {
         }
@@ -43,7 +43,7 @@ namespace Trady.Analysis.Pattern.Candlestick
 
     public class DragonifyDoji : DragonflyDoji<Candle, AnalyzableTick<bool>>
     {
-        public DragonifyDoji(IEnumerable<Candle> inputs, decimal dojiThreshold = 0.1M, decimal shadowThreshold = 0.1M) 
+        public DragonifyDoji(IEnumerable<Candle> inputs, decimal dojiThreshold = 0.1M, decimal shadowThreshold = 0.1M)
             : base(inputs, i => (i.Open, i.High, i.Low, i.Close), dojiThreshold, shadowThreshold)
         {
         }

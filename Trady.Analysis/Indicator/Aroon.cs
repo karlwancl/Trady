@@ -9,44 +9,44 @@ namespace Trady.Analysis.Indicator
 {
     public class Aroon<TInput, TOutput> : AnalyzableBase<TInput, (decimal High, decimal Low), (decimal? Up, decimal? Down), TOutput>
     {
-        readonly HighestHighByTuple _hh;
-        readonly LowestLowByTuple _ll;
+        private readonly HighestHighByTuple _hh;
+        private readonly LowestLowByTuple _ll;
 
-        protected Aroon(IEnumerable<TInput> inputs, Func<TInput, (decimal High, decimal Low)> inputMapper, int periodCount) 
+        protected Aroon(IEnumerable<TInput> inputs, Func<TInput, (decimal High, decimal Low)> inputMapper, int periodCount)
             : base(inputs, inputMapper)
         {
-			_hh = new HighestHighByTuple(inputs.Select(i => inputMapper(i).High), periodCount);
-			_ll = new LowestLowByTuple(inputs.Select(i => inputMapper(i).Low), periodCount);
-			PeriodCount = periodCount;
-		}
+            _hh = new HighestHighByTuple(inputs.Select(i => inputMapper(i).High), periodCount);
+            _ll = new LowestLowByTuple(inputs.Select(i => inputMapper(i).Low), periodCount);
+            PeriodCount = periodCount;
+        }
 
         public int PeriodCount { get; }
 
-        protected override (decimal? Up, decimal? Down) ComputeByIndexImpl(IEnumerable<(decimal High, decimal Low)> mappedInputs, int index)
+        protected override (decimal? Up, decimal? Down) ComputeByIndexImpl(IReadOnlyList<(decimal High, decimal Low)> mappedInputs, int index)
         {
-			if (index < PeriodCount - 1)
-				return (null, null);
+            if (index < PeriodCount - 1)
+                return (null, null);
 
-			var nearestIndexToHighestHigh = index - PeriodCount + 1 + mappedInputs
-				.Skip(index - PeriodCount + 1)
-				.Take(PeriodCount)
-				.FindLastIndexOrDefault(i => i.High == _hh[index]);
+            var nearestIndexToHighestHigh = index - PeriodCount + 1 + mappedInputs
+                .Skip(index - PeriodCount + 1)
+                .Take(PeriodCount)
+                .FindLastIndexOrDefault(i => i.High == _hh[index]);
 
-			var nearestIndexToLowestLow = index - PeriodCount + 1 + mappedInputs
-				.Skip(index - PeriodCount + 1)
-				.Take(PeriodCount)
-				.FindLastIndexOrDefault(i => i.Low == _ll[index]);
+            var nearestIndexToLowestLow = index - PeriodCount + 1 + mappedInputs
+                .Skip(index - PeriodCount + 1)
+                .Take(PeriodCount)
+                .FindLastIndexOrDefault(i => i.Low == _ll[index]);
 
-			var up = 100.0m * (PeriodCount - (index - nearestIndexToHighestHigh)) / PeriodCount;
-			var down = 100.0m * (PeriodCount - (index - nearestIndexToLowestLow)) / PeriodCount;
+            var up = 100.0m * (PeriodCount - (index - nearestIndexToHighestHigh)) / PeriodCount;
+            var down = 100.0m * (PeriodCount - (index - nearestIndexToLowestLow)) / PeriodCount;
 
-			return (up, down);        
+            return (up, down);
         }
     }
 
     public class AroonByTuple : Aroon<(decimal High, decimal Low), (decimal? Up, decimal? Down)>
     {
-        public AroonByTuple(IEnumerable<(decimal High, decimal Low)> inputs, int periodCount) 
+        public AroonByTuple(IEnumerable<(decimal High, decimal Low)> inputs, int periodCount)
             : base(inputs, i => i, periodCount)
         {
         }
@@ -54,7 +54,7 @@ namespace Trady.Analysis.Indicator
 
     public class Aroon : Aroon<Candle, AnalyzableTick<(decimal? Up, decimal? Down)>>
     {
-        public Aroon(IEnumerable<Candle> inputs, int periodCount) 
+        public Aroon(IEnumerable<Candle> inputs, int periodCount)
             : base(inputs, i => (i.High, i.Low), periodCount)
         {
         }

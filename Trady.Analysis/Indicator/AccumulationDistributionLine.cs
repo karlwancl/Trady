@@ -6,7 +6,7 @@ using Trady.Core;
 
 namespace Trady.Analysis.Indicator
 {
-    public class AccumulationDistributionLine<TInput, TOutput> 
+    public class AccumulationDistributionLine<TInput, TOutput>
         : CumulativeAnalyzableBase<TInput, (decimal High, decimal Low, decimal Close, decimal Volume), decimal?, TOutput>
     {
         protected AccumulationDistributionLine(IEnumerable<TInput> inputs, Func<TInput, (decimal High, decimal Low, decimal Close, decimal Volume)> inputMapper) : base(inputs, inputMapper)
@@ -15,26 +15,26 @@ namespace Trady.Analysis.Indicator
 
         protected override int InitialValueIndex => 0;
 
-        protected override decimal? ComputeNullValue(IEnumerable<(decimal High, decimal Low, decimal Close, decimal Volume)> mappedInputs, int index) => null;
+        protected override decimal? ComputeNullValue(IReadOnlyList<(decimal High, decimal Low, decimal Close, decimal Volume)> mappedInputs, int index) => null;
 
-        protected override decimal? ComputeInitialValue(IEnumerable<(decimal High, decimal Low, decimal Close, decimal Volume)> mappedInputs, int index) => mappedInputs.ElementAt(index).Volume;
+        protected override decimal? ComputeInitialValue(IReadOnlyList<(decimal High, decimal Low, decimal Close, decimal Volume)> mappedInputs, int index) => mappedInputs.ElementAt(index).Volume;
 
-        protected override decimal? ComputeCumulativeValue(IEnumerable<(decimal High, decimal Low, decimal Close, decimal Volume)> mappedInputs, int index, decimal? prevOutputToMap)
+        protected override decimal? ComputeCumulativeValue(IReadOnlyList<(decimal High, decimal Low, decimal Close, decimal Volume)> mappedInputs, int index, decimal? prevOutputToMap)
         {
-            var input = mappedInputs.ElementAt(index);
-            var prevInput = mappedInputs.ElementAt(index - 1);
+            var input = mappedInputs[index];
+            var prevInput = mappedInputs[index - 1];
 
-			decimal ratio = (input.High == input.Low) ?
-				(input.Close / prevInput.Close) - 1 :
-				(input.Close * 2 - input.Low - input.High) / (input.High - input.Low);
+            decimal ratio = (input.High == input.Low) ?
+                (input.Close / prevInput.Close) - 1 :
+                (input.Close * 2 - input.Low - input.High) / (input.High - input.Low);
 
-			return prevOutputToMap + ratio * input.Volume;
+            return prevOutputToMap + ratio * input.Volume;
         }
     }
 
     public class AccumulationDistributionLineByTuple : AccumulationDistributionLine<(decimal High, decimal Low, decimal Close, decimal Volume), decimal?>
     {
-        public AccumulationDistributionLineByTuple(IEnumerable<(decimal High, decimal Low, decimal Close, decimal Volume)> inputs) 
+        public AccumulationDistributionLineByTuple(IEnumerable<(decimal High, decimal Low, decimal Close, decimal Volume)> inputs)
             : base(inputs, i => i)
         {
         }
@@ -42,7 +42,7 @@ namespace Trady.Analysis.Indicator
 
     public class AccumulationDistributionLine : AccumulationDistributionLine<Candle, AnalyzableTick<decimal?>>
     {
-        public AccumulationDistributionLine(IEnumerable<Candle> inputs) 
+        public AccumulationDistributionLine(IEnumerable<Candle> inputs)
             : base(inputs, c => (c.High, c.Low, c.Close, c.Volume))
         {
         }

@@ -8,8 +8,8 @@ namespace Trady.Analysis.Indicator
 {
     public class RelativeStrength<TInput, TOutput> : AnalyzableBase<TInput, decimal, decimal?, TOutput>
     {
-        ClosePriceChangeByTuple _closePriceChange;
-        GenericExponentialMovingAverage _uEma, _dEma;
+        private ClosePriceChangeByTuple _closePriceChange;
+        private GenericExponentialMovingAverage _uEma, _dEma;
 
         public RelativeStrength(IEnumerable<TInput> inputs, Func<TInput, decimal> inputMapper, int periodCount) : base(inputs, inputMapper)
         {
@@ -37,7 +37,7 @@ namespace Trady.Analysis.Indicator
 
         public int PeriodCount { get; }
 
-        protected override decimal? ComputeByIndexImpl(IEnumerable<decimal> mappedInputs, int index)
+        protected override decimal? ComputeByIndexImpl(IReadOnlyList<decimal> mappedInputs, int index)
         {
             var uEma = _uEma[index];
             var dEma = _dEma[index];
@@ -48,7 +48,7 @@ namespace Trady.Analysis.Indicator
 
     public class RelativeStrengthByTuple : RelativeStrength<decimal, decimal?>
     {
-        public RelativeStrengthByTuple(IEnumerable<decimal> inputs, int periodCount) 
+        public RelativeStrengthByTuple(IEnumerable<decimal> inputs, int periodCount)
             : base(inputs, i => i, periodCount)
         {
         }
@@ -56,7 +56,7 @@ namespace Trady.Analysis.Indicator
 
     public class RelativeStrength : RelativeStrength<Candle, AnalyzableTick<decimal?>>
     {
-        public RelativeStrength(IEnumerable<Candle> inputs, int periodCount) 
+        public RelativeStrength(IEnumerable<Candle> inputs, int periodCount)
             : base(inputs, i => i.Close, periodCount)
         {
         }

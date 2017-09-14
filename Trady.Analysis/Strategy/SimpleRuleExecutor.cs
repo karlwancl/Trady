@@ -7,7 +7,7 @@ namespace Trady.Analysis.Strategy
 {
     public class SimpleRuleExecutor : RuleExecutorBase<Candle, IndexedCandle, IndexedCandle>
     {
-        public SimpleRuleExecutor(IRule<IndexedCandle> rule) 
+        public SimpleRuleExecutor(IRule<IndexedCandle> rule)
             : base((l, i) => l, () => rule)
         {
         }

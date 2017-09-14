@@ -10,20 +10,20 @@ namespace Trady.Analysis.Pattern.Indicator
 {
     public class IsAboveSimpleMovingAverage<TInput, TOutput> : AnalyzableBase<TInput, decimal, bool?, TOutput>
     {
-        readonly SimpleMovingAverageByTuple _sma;
+        private readonly SimpleMovingAverageByTuple _sma;
 
         public IsAboveSimpleMovingAverage(IEnumerable<TInput> inputs, Func<TInput, decimal> inputMapper, int periodCount) : base(inputs, inputMapper)
         {
-			_sma = new SimpleMovingAverageByTuple(inputs.Select(inputMapper), periodCount);
-		}
+            _sma = new SimpleMovingAverageByTuple(inputs.Select(inputMapper), periodCount);
+        }
 
-        protected override bool? ComputeByIndexImpl(IEnumerable<decimal> mappedInputs, int index)
-            => mappedInputs.ElementAt(index).IsLargerThan(_sma[index]);
-	}
+        protected override bool? ComputeByIndexImpl(IReadOnlyList<decimal> mappedInputs, int index)
+            => mappedInputs[index].IsLargerThan(_sma[index]);
+    }
 
     public class IsAboveSimpleMovingAverageByTuple : IsAboveSimpleMovingAverage<decimal, bool?>
     {
-        public IsAboveSimpleMovingAverageByTuple(IEnumerable<decimal> inputs, int periodCount) 
+        public IsAboveSimpleMovingAverageByTuple(IEnumerable<decimal> inputs, int periodCount)
             : base(inputs, i => i, periodCount)
         {
         }

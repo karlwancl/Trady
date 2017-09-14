@@ -15,13 +15,13 @@ namespace Trady.Analysis.Indicator
 
         public int PeriodCount { get; }
 
-        protected override decimal? ComputeByIndexImpl(IEnumerable<decimal> mappedInputs, int index)
+        protected override decimal? ComputeByIndexImpl(IReadOnlyList<decimal> mappedInputs, int index)
             => index >= PeriodCount - 1 ? mappedInputs.Skip(index - PeriodCount + 1).Take(PeriodCount).Max() : (decimal?)null;
     }
 
     public class HighestHighByTuple : HighestHigh<decimal, decimal?>
     {
-        public HighestHighByTuple(IEnumerable<decimal> inputs,int periodCount) 
+        public HighestHighByTuple(IEnumerable<decimal> inputs, int periodCount)
             : base(inputs, i => i, periodCount)
         {
         }
@@ -29,7 +29,7 @@ namespace Trady.Analysis.Indicator
 
     public class HighestHigh : HighestHigh<Candle, AnalyzableTick<decimal?>>
     {
-        public HighestHigh(IEnumerable<Candle> inputs, int periodCount) 
+        public HighestHigh(IEnumerable<Candle> inputs, int periodCount)
             : base(inputs, i => i.High, periodCount)
         {
         }

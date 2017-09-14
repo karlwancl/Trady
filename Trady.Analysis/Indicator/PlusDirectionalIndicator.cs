@@ -8,17 +8,17 @@ namespace Trady.Analysis.Indicator
 {
     public class PlusDirectionalIndicator<TInput, TOutput> : AnalyzableBase<TInput, (decimal High, decimal Low, decimal Close), decimal?, TOutput>
     {
-        PlusDirectionalMovementByTuple _pdm;
-        MinusDirectionalMovementByTuple _mdm;
-        readonly GenericExponentialMovingAverage _tpdmEma;
-        readonly AverageTrueRangeByTuple _atr;
+        private PlusDirectionalMovementByTuple _pdm;
+        private MinusDirectionalMovementByTuple _mdm;
+        private readonly GenericExponentialMovingAverage _tpdmEma;
+        private readonly AverageTrueRangeByTuple _atr;
 
         public PlusDirectionalIndicator(IEnumerable<TInput> inputs, Func<TInput, (decimal High, decimal Low, decimal Close)> inputMapper, int periodCount) : base(inputs, inputMapper)
         {
-			_pdm = new PlusDirectionalMovementByTuple(inputs.Select(i => inputMapper(i).High));
-			_mdm = new MinusDirectionalMovementByTuple(inputs.Select(i => inputMapper(i).Low));
+            _pdm = new PlusDirectionalMovementByTuple(inputs.Select(i => inputMapper(i).High));
+            _mdm = new MinusDirectionalMovementByTuple(inputs.Select(i => inputMapper(i).Low));
 
-			Func<int, decimal?> tpdm = i => (_pdm[i] > 0 && _pdm[i] > _mdm[i]) ? _pdm[i] : 0;
+            Func<int, decimal?> tpdm = i => (_pdm[i] > 0 && _pdm[i] > _mdm[i]) ? _pdm[i] : 0;
 
             _tpdmEma = new GenericExponentialMovingAverage(
                 periodCount,
@@ -27,20 +27,20 @@ namespace Trady.Analysis.Indicator
                 i => 1.0m / periodCount,
                 inputs.Count());
 
-			_atr = new AverageTrueRangeByTuple(inputs.Select(inputMapper), periodCount);
+            _atr = new AverageTrueRangeByTuple(inputs.Select(inputMapper), periodCount);
 
-			PeriodCount = periodCount;
+            PeriodCount = periodCount;
         }
 
         public int PeriodCount { get; }
 
-        protected override decimal? ComputeByIndexImpl(IEnumerable<(decimal High, decimal Low, decimal Close)> mappedInputs, int index)
-			=> _tpdmEma[index] / _atr[index] * 100;
-	}
+        protected override decimal? ComputeByIndexImpl(IReadOnlyList<(decimal High, decimal Low, decimal Close)> mappedInputs, int index)
+            => _tpdmEma[index] / _atr[index] * 100;
+    }
 
     public class PlusDirectionalIndicatorByTuple : PlusDirectionalIndicator<(decimal High, decimal Low, decimal Close), decimal?>
     {
-        public PlusDirectionalIndicatorByTuple(IEnumerable<(decimal High, decimal Low, decimal Close)> inputs, int periodCount) 
+        public PlusDirectionalIndicatorByTuple(IEnumerable<(decimal High, decimal Low, decimal Close)> inputs, int periodCount)
             : base(inputs, i => i, periodCount)
         {
         }
@@ -48,7 +48,7 @@ namespace Trady.Analysis.Indicator
 
     public class PlusDirectionalIndicator : PlusDirectionalIndicator<Candle, AnalyzableTick<decimal?>>
     {
-        public PlusDirectionalIndicator(IEnumerable<Candle> inputs, int periodCount) 
+        public PlusDirectionalIndicator(IEnumerable<Candle> inputs, int periodCount)
             : base(inputs, i => (i.High, i.Low, i.Close), periodCount)
         {
         }

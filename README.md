@@ -15,7 +15,8 @@ This library is intended for personal use, use with care for production environm
 
 ### Updates from 2.0.x to 2.1.0 (Currently 2.1.0-beta3)
 ** Trady.Analysis module **
-* All IList interfaces are replaced by IEnumerable for accepting a wider range of input
+* The indicator now intakes IEnumerable<T> instance instead of IList<T>
+* The indicator now outputs IReadOnlyList<T> instance instead of IList<T>
 * Computes from different input now have different output 
     * Tuples => decimal?/Tuples 
     * Candles => AnalyzableTick\<decimal?>/AnalyzableTick\<Tuples> where AnalyzableTick<T> includes DateTime in its property 
@@ -27,7 +28,7 @@ This library is intended for personal use, use with care for production environm
 * Added IndexedObject & RuleExecutor for signal capturing by rules
 
 ** Trady.Importer module **
-* All IList interfaces are replaced by IEnumerable to align with the new changes
+* The candles are exported as IReadOnlyList<Candle> instead of IList<Candle>
 * Added GoogleFinanceImporter (adapter to [Nuba.Google.Finance](https://github.com/nubasoftware/Nuba.Finance.Google), thanks to [@fernaramburu](https://github.com/fernaramburu))
 * Separated importers are also available for modular installation:
     * Trady.Importer.Csv
@@ -167,9 +168,9 @@ Nuget package is available in modules, please install the package according to t
         }
 
         // Implement the compute algorithm, uses mappedInputs, index & backing indicators for computation here
-        protected override AnalyzableTick<decimal?> ComputeByIndexImpl(IEnumerable<Candle> mappedInputs, int index)
+        protected override AnalyzableTick<decimal?> ComputeByIndexImpl(IReadOnlyList<Candle> mappedInputs, int index)
         {
-			return new AnalyzableTick<decimal?>(mappedInputs.ElementAt(index).DateTime, _sma[index]);
+			return new AnalyzableTick<decimal?>(mappedInputs[index].DateTime, _sma[index]);
 		}
     }
 
@@ -196,15 +197,15 @@ Nuget package is available in modules, please install the package according to t
         }
 
         // Implement the compute algorithm for index > InitialValueIndex, uses mappedInputs, index, prev analyzable tick & backing indicators for computation here
-        protected override AnalyzableTick<decimal?> ComputeCumulativeValue(IEnumerable<Candle> mappedInputs, int index, AnalyzableTick<decimal?> prevOutputToMap)
+        protected override AnalyzableTick<decimal?> ComputeCumulativeValue(IReadOnlyList<Candle> mappedInputs, int index, AnalyzableTick<decimal?> prevOutputToMap)
         {
-            return new AnalyzableTick<decimal?>(mappedInputs.ElementAt(index).DateTime, _sma[index] + prevOutputToMap.Tick);
+            return new AnalyzableTick<decimal?>(mappedInputs[index].DateTime, _sma[index] + prevOutputToMap.Tick);
         }
 
         // Same for the above but for index = InitialValueIndex
-        protected override AnalyzableTick<decimal?> ComputeInitialValue(IEnumerable<Candle> mappedInputs, int index)
+        protected override AnalyzableTick<decimal?> ComputeInitialValue(IReadOnlyList<Candle> mappedInputs, int index)
         {
-            return new AnalyzableTick<decimal?>(mappedInputs.ElementAt(index).DateTime, _sma[index]);
+            return new AnalyzableTick<decimal?>(mappedInputs[index].DateTime, _sma[index]);
         }
 
         // You can also override the InitialValueIndex property & ComputeNullValue method if needed
@@ -236,9 +237,9 @@ Nuget package is available in modules, please install the package according to t
 				inputs.Count());
         }
 
-        protected override AnalyzableTick<decimal?> ComputeByIndexImpl(IEnumerable<Candle> mappedInputs, int index)
+        protected override AnalyzableTick<decimal?> ComputeByIndexImpl(IReadOnlyList<Candle> mappedInputs, int index)
         {
-            return new AnalyzableTick<decimal?>(mappedInputs.ElementAt(index).DateTime, _gema[index]);
+            return new AnalyzableTick<decimal?>(mappedInputs[index].DateTime, _gema[index]);
         }
     }
 [Back to content](#Content)

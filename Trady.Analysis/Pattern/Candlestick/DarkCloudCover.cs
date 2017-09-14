@@ -11,10 +11,10 @@ namespace Trady.Analysis.Pattern.Candlestick
     /// </summary>
     public class DarkCloudCover<TInput, TOutput> : AnalyzableBase<TInput, (decimal Open, decimal High, decimal Low, decimal Close), bool?, TOutput>
     {
-        UpTrendByTuple _upTrend;
-        DownTrendByTuple _downTrend;
-        BullishByTuple _bullish;
-        BearishByTuple _bearish;
+        private UpTrendByTuple _upTrend;
+        private DownTrendByTuple _downTrend;
+        private BullishByTuple _bullish;
+        private BearishByTuple _bearish;
 
         public DarkCloudCover(IEnumerable<TInput> inputs, Func<TInput, (decimal Open, decimal High, decimal Low, decimal Close)> inputMapper, int upTrendPeriodCount = 3, int downTrendPeriodCount = 3, int longPeriodCount = 20, decimal longThreshold = 0.75m)
             : base(inputs, inputMapper)
@@ -43,12 +43,12 @@ namespace Trady.Analysis.Pattern.Candlestick
 
         public decimal LongThreshold { get; }
 
-        protected override bool? ComputeByIndexImpl(IEnumerable<(decimal Open, decimal High, decimal Low, decimal Close)> mappedInputs, int index)
+        protected override bool? ComputeByIndexImpl(IReadOnlyList<(decimal Open, decimal High, decimal Low, decimal Close)> mappedInputs, int index)
         {
-			if (index < DownTrendPeriodCount) return null;
-			int i = index - DownTrendPeriodCount;
-            bool isPassThrough = mappedInputs.ElementAt(i + 1).Open > mappedInputs.ElementAt(i).Close && mappedInputs.ElementAt(i + 1).Close < (mappedInputs.ElementAt(i).Open + mappedInputs.ElementAt(i).Close) / 2;
-			return (_upTrend[i] ?? false) && _bullish[i] && isPassThrough && _bearish[i + 1];        
+            if (index < DownTrendPeriodCount) return null;
+            int i = index - DownTrendPeriodCount;
+            bool isPassThrough = mappedInputs[i + 1].Open > mappedInputs[i].Close && mappedInputs[i + 1].Close < (mappedInputs[i].Open + mappedInputs[i].Close) / 2;
+            return (_upTrend[i] ?? false) && _bullish[i] && isPassThrough && _bearish[i + 1];
         }
     }
 
@@ -62,7 +62,7 @@ namespace Trady.Analysis.Pattern.Candlestick
 
     public class DarkCloudCover : DarkCloudCover<Candle, AnalyzableTick<bool?>>
     {
-        public DarkCloudCover(IEnumerable<Candle> inputs, int upTrendPeriodCount = 3, int downTrendPeriodCount = 3, int longPeriodCount = 20, decimal longThreshold = 0.75M) 
+        public DarkCloudCover(IEnumerable<Candle> inputs, int upTrendPeriodCount = 3, int downTrendPeriodCount = 3, int longPeriodCount = 20, decimal longThreshold = 0.75M)
             : base(inputs, i => (i.Open, i.High, i.Low, i.Close), upTrendPeriodCount, downTrendPeriodCount, longPeriodCount, longThreshold)
         {
         }

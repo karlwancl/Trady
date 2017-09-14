@@ -8,7 +8,6 @@ namespace Trady.Core.Period
         {
         }
 
-
         public override uint OrderOfTransformation => 30;
 
         public override bool IsTimestamp(DateTime dateTime)

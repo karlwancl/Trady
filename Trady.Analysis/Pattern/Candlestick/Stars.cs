@@ -14,7 +14,7 @@ namespace Trady.Analysis.Pattern.Candlestick
         {
         }
 
-        protected override bool? ComputeByIndexImpl(IEnumerable<(decimal Open, decimal High, decimal Low, decimal Close)> mappedInputs, int index)
+        protected override bool? ComputeByIndexImpl(IReadOnlyList<(decimal Open, decimal High, decimal Low, decimal Close)> mappedInputs, int index)
         {
             throw new NotImplementedException();
         }
@@ -22,7 +22,7 @@ namespace Trady.Analysis.Pattern.Candlestick
 
     public class StarsByTuple : Stars<(decimal Open, decimal High, decimal Low, decimal Close), bool?>
     {
-        public StarsByTuple(IEnumerable<(decimal Open, decimal High, decimal Low, decimal Close)> inputs) 
+        public StarsByTuple(IEnumerable<(decimal Open, decimal High, decimal Low, decimal Close)> inputs)
             : base(inputs, i => i)
         {
         }
@@ -30,7 +30,7 @@ namespace Trady.Analysis.Pattern.Candlestick
 
     public class Stars : Stars<Candle, AnalyzableTick<bool?>>
     {
-        public Stars(IEnumerable<Candle> inputs) 
+        public Stars(IEnumerable<Candle> inputs)
             : base(inputs, i => (i.Open, i.High, i.Low, i.Close))
         {
         }

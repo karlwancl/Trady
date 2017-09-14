@@ -10,20 +10,20 @@ namespace Trady.Analysis.Pattern.Indicator
 {
     public class ClosePriceChangeTrend<TInput, TOutput> : AnalyzableBase<TInput, decimal, Trend?, TOutput>
     {
-        readonly ClosePriceChangeByTuple _closePriceChange;
+        private readonly ClosePriceChangeByTuple _closePriceChange;
 
         public ClosePriceChangeTrend(IEnumerable<TInput> inputs, Func<TInput, decimal> inputMapper) : base(inputs, inputMapper)
         {
-			_closePriceChange = new ClosePriceChangeByTuple(inputs.Select(inputMapper));
-		}
+            _closePriceChange = new ClosePriceChangeByTuple(inputs.Select(inputMapper));
+        }
 
-        protected override Trend? ComputeByIndexImpl(IEnumerable<decimal> mappedInputs, int index)
-			=> StateHelper.IsTrending(_closePriceChange[index]);
-	}
+        protected override Trend? ComputeByIndexImpl(IReadOnlyList<decimal> mappedInputs, int index)
+            => StateHelper.IsTrending(_closePriceChange[index]);
+    }
 
     public class ClosePriceChangeTrendByTuple : ClosePriceChangeTrend<decimal, Trend?>
     {
-        public ClosePriceChangeTrendByTuple(IEnumerable<decimal> inputs) 
+        public ClosePriceChangeTrendByTuple(IEnumerable<decimal> inputs)
             : base(inputs, i => i)
         {
         }

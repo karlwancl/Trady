@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Trady.Analysis.Infrastructure;
 using Trady.Core;
 
@@ -12,13 +11,13 @@ namespace Trady.Analysis.Indicator
         {
         }
 
-        protected override decimal? ComputeByIndexImpl(IEnumerable<decimal> mappedInputs, int index)
-            => index > 0 ? mappedInputs.ElementAt(index) - mappedInputs.ElementAt(index - 1) : (decimal?)null;
+        protected override decimal? ComputeByIndexImpl(IReadOnlyList<decimal> mappedInputs, int index)
+            => index > 0 ? mappedInputs[index] - mappedInputs[index - 1] : (decimal?)null;
     }
 
     public class PlusDirectionalMovementByTuple : PlusDirectionalMovement<decimal, decimal?>
     {
-        public PlusDirectionalMovementByTuple(IEnumerable<decimal> inputs) 
+        public PlusDirectionalMovementByTuple(IEnumerable<decimal> inputs)
             : base(inputs, i => i)
         {
         }
@@ -26,7 +25,7 @@ namespace Trady.Analysis.Indicator
 
     public class PlusDirectionalMovement : PlusDirectionalMovement<Candle, AnalyzableTick<decimal?>>
     {
-        public PlusDirectionalMovement(IEnumerable<Candle> inputs) 
+        public PlusDirectionalMovement(IEnumerable<Candle> inputs)
             : base(inputs, i => i.High)
         {
         }

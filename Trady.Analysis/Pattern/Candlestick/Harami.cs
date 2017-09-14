@@ -14,7 +14,7 @@ namespace Trady.Analysis.Pattern.Candlestick
         {
         }
 
-        protected override bool? ComputeByIndexImpl(IEnumerable<(decimal Open, decimal High, decimal Low, decimal Close)> mappedInputs, int index)
+        protected override bool? ComputeByIndexImpl(IReadOnlyList<(decimal Open, decimal High, decimal Low, decimal Close)> mappedInputs, int index)
         {
             throw new NotImplementedException();
         }
@@ -22,7 +22,7 @@ namespace Trady.Analysis.Pattern.Candlestick
 
     public class HaramiByTuple : Harami<(decimal Open, decimal High, decimal Low, decimal Close), bool?>
     {
-        public HaramiByTuple(IEnumerable<(decimal Open, decimal High, decimal Low, decimal Close)> inputs) 
+        public HaramiByTuple(IEnumerable<(decimal Open, decimal High, decimal Low, decimal Close)> inputs)
             : base(inputs, i => i)
         {
         }
@@ -30,7 +30,7 @@ namespace Trady.Analysis.Pattern.Candlestick
 
     public class Harami : Harami<Candle, AnalyzableTick<bool?>>
     {
-        public Harami(IEnumerable<Candle> inputs) 
+        public Harami(IEnumerable<Candle> inputs)
             : base(inputs, i => (i.Open, i.High, i.Low, i.Close))
         {
         }

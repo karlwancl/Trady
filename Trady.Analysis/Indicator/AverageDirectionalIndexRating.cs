@@ -8,9 +8,9 @@ namespace Trady.Analysis.Indicator
 {
     public class AverageDirectionalIndexRating<TInput, TOutput> : AnalyzableBase<TInput, (decimal High, decimal Low, decimal Close), decimal?, TOutput>
     {
-        readonly AverageDirectionalIndexByTuple _adx;
+        private readonly AverageDirectionalIndexByTuple _adx;
 
-        public AverageDirectionalIndexRating(IEnumerable<TInput> inputs, Func<TInput, (decimal High, decimal Low, decimal Close)> inputMapper, int periodCount, int adxrPeriodCount) 
+        public AverageDirectionalIndexRating(IEnumerable<TInput> inputs, Func<TInput, (decimal High, decimal Low, decimal Close)> inputMapper, int periodCount, int adxrPeriodCount)
             : base(inputs, inputMapper)
         {
             _adx = new AverageDirectionalIndexByTuple(inputs.Select(inputMapper), periodCount);
@@ -23,7 +23,7 @@ namespace Trady.Analysis.Indicator
 
         public int AdxrPeriodCount { get; }
 
-        protected override decimal? ComputeByIndexImpl(IEnumerable<(decimal High, decimal Low, decimal Close)> mappedInputs, int index)
+        protected override decimal? ComputeByIndexImpl(IReadOnlyList<(decimal High, decimal Low, decimal Close)> mappedInputs, int index)
             => index >= AdxrPeriodCount ? (_adx[index] + _adx[index - AdxrPeriodCount]) / 2 : null;
     }
 

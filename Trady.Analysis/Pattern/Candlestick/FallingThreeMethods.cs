@@ -11,9 +11,9 @@ namespace Trady.Analysis.Pattern.Candlestick
     /// </summary>
     public class FallingThreeMethods<TInput, TOutput> : AnalyzableBase<TInput, (decimal Open, decimal High, decimal Low, decimal Close), bool?, TOutput>
     {
-        DownTrendByTuple _downTrend;
-        ShortDayByTuple _shortDay;
-        BearishLongDayByTuple _bearishLongDay;
+        private DownTrendByTuple _downTrend;
+        private ShortDayByTuple _shortDay;
+        private BearishLongDayByTuple _bearishLongDay;
 
         public FallingThreeMethods(IEnumerable<TInput> inputs, Func<TInput, (decimal Open, decimal High, decimal Low, decimal Close)> inputMapper, int downTrendPeriodCount = 3, int periodCount = 20, decimal shortThreshold = 0.25m, decimal longThreshold = 0.75m) : base(inputs, inputMapper)
         {
@@ -36,7 +36,7 @@ namespace Trady.Analysis.Pattern.Candlestick
         public decimal ShortThreshold { get; }
         public decimal LongThreshold { get; }
 
-        protected override bool? ComputeByIndexImpl(IEnumerable<(decimal Open, decimal High, decimal Low, decimal Close)> mappedInputs, int index)
+        protected override bool? ComputeByIndexImpl(IReadOnlyList<(decimal Open, decimal High, decimal Low, decimal Close)> mappedInputs, int index)
         {
             if (index == 0)
                 return null;
@@ -44,15 +44,15 @@ namespace Trady.Analysis.Pattern.Candlestick
             if (!_bearishLongDay[index] || !_shortDay[index - 1])
                 return false;
 
-            Func<int, bool> isAsc = i => mappedInputs.ElementAt(i).Close > mappedInputs.ElementAt(i - 1).Close && mappedInputs.ElementAt(i).Open > mappedInputs.ElementAt(i - 1).Open;
+            Func<int, bool> isAsc = i => mappedInputs[i].Close > mappedInputs[i - 1].Close && mappedInputs[i].Open > mappedInputs[i - 1].Open;
             for (int i = index - 1; i >= DownTrendPeriodCount; i--)
             {
                 if (_shortDay[i] && !_bearishLongDay[i - 1] && !isAsc(i))
                     return false;
                 else if (_bearishLongDay[i])
-                    return (mappedInputs.ElementAt(index).Low < mappedInputs.ElementAt(i).Low) &&
-                        (mappedInputs.ElementAt(i).Low < mappedInputs.ElementAt(i + 1).Low) &&
-                        (mappedInputs.ElementAt(i).High > mappedInputs.ElementAt(index - 1).High) &&
+                    return (mappedInputs[index].Low < mappedInputs[i].Low) &&
+                        (mappedInputs[i].Low < mappedInputs[i + 1].Low) &&
+                        (mappedInputs[i].High > mappedInputs[index - 1].High) &&
                         (_downTrend[i] ?? false);
             }
             return false;
@@ -61,7 +61,7 @@ namespace Trady.Analysis.Pattern.Candlestick
 
     public class FallingThreeMethodsByTuple : FallingThreeMethods<(decimal Open, decimal High, decimal Low, decimal Close), bool?>
     {
-        public FallingThreeMethodsByTuple(IEnumerable<(decimal Open, decimal High, decimal Low, decimal Close)> inputs, int downTrendPeriodCount = 3, int periodCount = 20, decimal shortThreshold = 0.25M, decimal longThreshold = 0.75M) 
+        public FallingThreeMethodsByTuple(IEnumerable<(decimal Open, decimal High, decimal Low, decimal Close)> inputs, int downTrendPeriodCount = 3, int periodCount = 20, decimal shortThreshold = 0.25M, decimal longThreshold = 0.75M)
             : base(inputs, i => i, downTrendPeriodCount, periodCount, shortThreshold, longThreshold)
         {
         }
@@ -69,7 +69,7 @@ namespace Trady.Analysis.Pattern.Candlestick
 
     public class FallingThreeMethods : FallingThreeMethods<Candle, AnalyzableTick<bool?>>
     {
-        public FallingThreeMethods(IEnumerable<Candle> inputs, int downTrendPeriodCount = 3, int periodCount = 20, decimal shortThreshold = 0.25M, decimal longThreshold = 0.75M) 
+        public FallingThreeMethods(IEnumerable<Candle> inputs, int downTrendPeriodCount = 3, int periodCount = 20, decimal shortThreshold = 0.25M, decimal longThreshold = 0.75M)
             : base(inputs, i => (i.Open, i.High, i.Low, i.Close), downTrendPeriodCount, periodCount, shortThreshold, longThreshold)
         {
         }

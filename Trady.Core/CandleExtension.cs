@@ -20,12 +20,12 @@ namespace Trady.Core
 
         #region candle list transformation
 
-        public static IEnumerable<Candle> Transform<TSourcePeriod, TTargetPeriod>(this IEnumerable<Candle> candles)
+        public static IReadOnlyList<Candle> Transform<TSourcePeriod, TTargetPeriod>(this IEnumerable<Candle> candles)
             where TSourcePeriod : IPeriod
             where TTargetPeriod : IPeriod
         {
             if (typeof(TSourcePeriod).Equals(typeof(TTargetPeriod)))
-                return candles;
+                return candles.ToList();
 
             if (!IsTimeframesValid<TSourcePeriod>(candles, out Candle err))
                 throw new InvalidTimeframeException(err.DateTime);
@@ -52,7 +52,7 @@ namespace Trady.Core
             return outCandles;
         }
 
-        static bool IsTimeframesValid<TPeriod>(IEnumerable<Candle> candles, out Candle err)
+        private static bool IsTimeframesValid<TPeriod>(IEnumerable<Candle> candles, out Candle err)
             where TPeriod : IPeriod
         {
             var periodInstance = Activator.CreateInstance<TPeriod>();
@@ -69,7 +69,7 @@ namespace Trady.Core
             return true;
         }
 
-        static bool IsTransformationValid<TSourcePeriod, TTargetPeriod>()
+        private static bool IsTransformationValid<TSourcePeriod, TTargetPeriod>()
             where TSourcePeriod : IPeriod
             where TTargetPeriod : IPeriod
         {
@@ -90,7 +90,7 @@ namespace Trady.Core
             return true;
         }
 
-        static Candle ComputeCandle(IEnumerable<Candle> candles, DateTime startTime, DateTime endTime)
+        private static Candle ComputeCandle(IEnumerable<Candle> candles, DateTime startTime, DateTime endTime)
         {
             var candle = candles.Where(c => c.DateTime >= startTime && c.DateTime < endTime);
             if (candle.Any())

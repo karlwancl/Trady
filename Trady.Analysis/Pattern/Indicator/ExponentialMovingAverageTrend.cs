@@ -10,20 +10,20 @@ namespace Trady.Analysis.Pattern.Indicator
 {
     public class ExponentialMovingAverageTrend<TInput, TOutput> : AnalyzableBase<TInput, decimal, Trend?, TOutput>
     {
-        readonly ExponentialMovingAverageByTuple _ema;
+        private readonly ExponentialMovingAverageByTuple _ema;
 
         public ExponentialMovingAverageTrend(IEnumerable<TInput> inputs, Func<TInput, decimal> inputMapper, int periodCount) : base(inputs, inputMapper)
         {
-			_ema = new ExponentialMovingAverageByTuple(inputs.Select(inputMapper), periodCount);
-		}
+            _ema = new ExponentialMovingAverageByTuple(inputs.Select(inputMapper), periodCount);
+        }
 
-        protected override Trend? ComputeByIndexImpl(IEnumerable<decimal> mappedInputs, int index)
-			=> StateHelper.IsTrending(_ema[index]);
-	}
+        protected override Trend? ComputeByIndexImpl(IReadOnlyList<decimal> mappedInputs, int index)
+            => StateHelper.IsTrending(_ema[index]);
+    }
 
     public class ExponentialMovingAverageTrendByTuple : ExponentialMovingAverageTrend<decimal, Trend?>
     {
-        public ExponentialMovingAverageTrendByTuple(IEnumerable<decimal> inputs, int periodCount) 
+        public ExponentialMovingAverageTrendByTuple(IEnumerable<decimal> inputs, int periodCount)
             : base(inputs, i => i, periodCount)
         {
         }
@@ -31,7 +31,7 @@ namespace Trady.Analysis.Pattern.Indicator
 
     public class ExponentialMovingAverageTrend : ExponentialMovingAverageTrend<Candle, AnalyzableTick<Trend?>>
     {
-        public ExponentialMovingAverageTrend(IEnumerable<Candle> inputs, int periodCount) 
+        public ExponentialMovingAverageTrend(IEnumerable<Candle> inputs, int periodCount)
             : base(inputs, i => i.Close, periodCount)
         {
         }

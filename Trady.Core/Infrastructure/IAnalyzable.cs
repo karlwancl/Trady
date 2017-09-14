@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Trady.Core.Infrastructure
 {
@@ -20,7 +18,7 @@ namespace Trady.Core.Infrastructure
         /// <returns>The computed outputs.</returns>
         /// <param name="startIndex">Start index.</param>
         /// <param name="endIndex">End index.</param>
-        new IEnumerable<TOutput> Compute(int? startIndex = null, int? endIndex = null);
+        new IReadOnlyList<TOutput> Compute(int? startIndex = null, int? endIndex = null);
 
         /// <summary>
         /// Gets the <see cref="T:Trady.Core.Infrastructure.IAnalyzable2`2"/> at the specified index.

@@ -14,7 +14,7 @@ namespace Trady.Analysis.Pattern.Candlestick
         {
         }
 
-        protected override bool? ComputeByIndexImpl(IEnumerable<(decimal Open, decimal High, decimal Low, decimal Close)> mappedInputs, int index)
+        protected override bool? ComputeByIndexImpl(IReadOnlyList<(decimal Open, decimal High, decimal Low, decimal Close)> mappedInputs, int index)
         {
             throw new NotImplementedException();
         }
@@ -22,7 +22,7 @@ namespace Trady.Analysis.Pattern.Candlestick
 
     public class MarubozuByTuple : Marubozu<(decimal Open, decimal High, decimal Low, decimal Close), bool?>
     {
-        public MarubozuByTuple(IEnumerable<(decimal Open, decimal High, decimal Low, decimal Close)> inputs) 
+        public MarubozuByTuple(IEnumerable<(decimal Open, decimal High, decimal Low, decimal Close)> inputs)
             : base(inputs, i => i)
         {
         }
@@ -30,7 +30,7 @@ namespace Trady.Analysis.Pattern.Candlestick
 
     public class Marubozu : Marubozu<Candle, AnalyzableTick<bool?>>
     {
-        public Marubozu(IEnumerable<Candle> inputs) 
+        public Marubozu(IEnumerable<Candle> inputs)
             : base(inputs, i => (i.Open, i.High, i.Low, i.Close))
         {
         }

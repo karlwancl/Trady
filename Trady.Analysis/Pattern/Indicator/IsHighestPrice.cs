@@ -8,20 +8,20 @@ namespace Trady.Analysis.Pattern.Indicator
 {
     public class IsHighestPrice<TInput, TOutput> : AnalyzableBase<TInput, decimal, bool?, TOutput>
     {
-        readonly int _periodCount;
+        private readonly int _periodCount;
 
         public IsHighestPrice(IEnumerable<TInput> inputs, Func<TInput, decimal> inputMapper, int periodCount) : base(inputs, inputMapper)
         {
-			_periodCount = periodCount;
-		}
+            _periodCount = periodCount;
+        }
 
-        protected override bool? ComputeByIndexImpl(IEnumerable<decimal> mappedInputs, int index)
-            => mappedInputs.Skip(mappedInputs.Count() - _periodCount).Max() == mappedInputs.ElementAt(index);
-	}
+        protected override bool? ComputeByIndexImpl(IReadOnlyList<decimal> mappedInputs, int index)
+            => mappedInputs.Skip(mappedInputs.Count - _periodCount).Max() == mappedInputs[index];
+    }
 
     public class IsHighestPriceByTuple : IsHighestPrice<decimal, bool?>
     {
-        public IsHighestPriceByTuple(IEnumerable<decimal> inputs, int periodCount) 
+        public IsHighestPriceByTuple(IEnumerable<decimal> inputs, int periodCount)
             : base(inputs, i => i, periodCount)
         {
         }
@@ -29,7 +29,7 @@ namespace Trady.Analysis.Pattern.Indicator
 
     public class IsHighestPrice : IsHighestPrice<Candle, AnalyzableTick<bool?>>
     {
-        public IsHighestPrice(IEnumerable<Candle> inputs, int periodCount) 
+        public IsHighestPrice(IEnumerable<Candle> inputs, int periodCount)
             : base(inputs, i => i.Close, periodCount)
         {
         }

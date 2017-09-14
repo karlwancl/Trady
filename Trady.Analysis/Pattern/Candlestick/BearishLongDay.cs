@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using Trady.Analysis.Helper;
 using Trady.Analysis.Infrastructure;
 using Trady.Core;
 
@@ -10,8 +8,8 @@ namespace Trady.Analysis.Pattern.Candlestick
 {
     public class BearishLongDay<TInput, TOutput> : AnalyzableBase<TInput, (decimal Open, decimal Close), bool, TOutput>
     {
-        BearishByTuple _bearish;
-        LongDayByTuple _longDay;
+        private BearishByTuple _bearish;
+        private LongDayByTuple _longDay;
 
         public BearishLongDay(IEnumerable<TInput> inputs, Func<TInput, (decimal Open, decimal Close)> inputMapper, int periodCount = 20, decimal threshold = 0.75m) : base(inputs, inputMapper)
         {
@@ -26,9 +24,9 @@ namespace Trady.Analysis.Pattern.Candlestick
 
         public decimal Threshold { get; }
 
-        protected override bool ComputeByIndexImpl(IEnumerable<(decimal Open, decimal Close)> mappedInputs, int index)
-			=> _bearish[index] && _longDay[index];
-	}
+        protected override bool ComputeByIndexImpl(IReadOnlyList<(decimal Open, decimal Close)> mappedInputs, int index)
+            => _bearish[index] && _longDay[index];
+    }
 
     public class BearishLongDayByTuple : BearishLongDay<(decimal Open, decimal Close), bool>
     {
@@ -40,7 +38,7 @@ namespace Trady.Analysis.Pattern.Candlestick
 
     public class BearishLongDay : BearishLongDay<Candle, AnalyzableTick<bool>>
     {
-        public BearishLongDay(IEnumerable<Candle> inputs, int periodCount = 20, decimal threshold = 0.75M) 
+        public BearishLongDay(IEnumerable<Candle> inputs, int periodCount = 20, decimal threshold = 0.75M)
             : base(inputs, i => (i.Open, i.Close), periodCount, threshold)
         {
         }

@@ -14,7 +14,7 @@ namespace Trady.Analysis.Pattern.Candlestick
         {
         }
 
-        protected override bool? ComputeByIndexImpl(IEnumerable<(decimal Open, decimal High, decimal Low, decimal Close)> mappedInputs, int index)
+        protected override bool? ComputeByIndexImpl(IReadOnlyList<(decimal Open, decimal High, decimal Low, decimal Close)> mappedInputs, int index)
         {
             throw new NotImplementedException();
         }
@@ -22,7 +22,7 @@ namespace Trady.Analysis.Pattern.Candlestick
 
     public class PiercingLineByTuple : PiercingLine<(decimal Open, decimal High, decimal Low, decimal Close), bool?>
     {
-        public PiercingLineByTuple(IEnumerable<(decimal Open, decimal High, decimal Low, decimal Close)> inputs) 
+        public PiercingLineByTuple(IEnumerable<(decimal Open, decimal High, decimal Low, decimal Close)> inputs)
             : base(inputs, i => i)
         {
         }
@@ -30,10 +30,9 @@ namespace Trady.Analysis.Pattern.Candlestick
 
     public class PiercingLine : PiercingLine<Candle, AnalyzableTick<bool?>>
     {
-        public PiercingLine(IEnumerable<Candle> inputs) 
+        public PiercingLine(IEnumerable<Candle> inputs)
             : base(inputs, i => (i.Open, i.High, i.Low, i.Close))
         {
         }
     }
-
 }

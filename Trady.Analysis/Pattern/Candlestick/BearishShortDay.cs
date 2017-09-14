@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using Trady.Analysis.Helper;
 using Trady.Analysis.Infrastructure;
 using Trady.Core;
 
@@ -10,8 +8,8 @@ namespace Trady.Analysis.Pattern.Candlestick
 {
     public class BearishShortDay<TInput, TOutput> : AnalyzableBase<TInput, (decimal Open, decimal Close), bool, TOutput>
     {
-        BearishByTuple _bearish;
-        ShortDayByTuple _shortDay;
+        private BearishByTuple _bearish;
+        private ShortDayByTuple _shortDay;
 
         public BearishShortDay(IEnumerable<TInput> inputs, Func<TInput, (decimal Open, decimal Close)> inputMapper, int periodCount = 20, decimal threshold = 0.25m) : base(inputs, inputMapper)
         {
@@ -27,13 +25,13 @@ namespace Trady.Analysis.Pattern.Candlestick
 
         public decimal Threshold { get; }
 
-        protected override bool ComputeByIndexImpl(IEnumerable<(decimal Open, decimal Close)> mappedInputs, int index)
-			=> _bearish[index] && _shortDay[index];
-	}
+        protected override bool ComputeByIndexImpl(IReadOnlyList<(decimal Open, decimal Close)> mappedInputs, int index)
+            => _bearish[index] && _shortDay[index];
+    }
 
     public class BearishShortDayByTuple : BearishShortDay<(decimal Open, decimal Close), bool>
     {
-        public BearishShortDayByTuple(IEnumerable<(decimal Open, decimal Close)> inputs, int periodCount = 20, decimal threshold = 0.25M) 
+        public BearishShortDayByTuple(IEnumerable<(decimal Open, decimal Close)> inputs, int periodCount = 20, decimal threshold = 0.25M)
             : base(inputs, i => i, periodCount, threshold)
         {
         }
@@ -41,7 +39,7 @@ namespace Trady.Analysis.Pattern.Candlestick
 
     public class BearishShortDay : BearishShortDay<Candle, AnalyzableTick<bool>>
     {
-        public BearishShortDay(IEnumerable<Candle> inputs, int periodCount = 20, decimal threshold = 0.25M) 
+        public BearishShortDay(IEnumerable<Candle> inputs, int periodCount = 20, decimal threshold = 0.25M)
             : base(inputs, i => (i.Open, i.Close), periodCount, threshold)
         {
         }

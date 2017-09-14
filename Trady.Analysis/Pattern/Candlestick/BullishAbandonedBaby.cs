@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Trady.Analysis.Infrastructure;
-using Trady.Analysis.Pattern.State;
 using Trady.Core;
 
 namespace Trady.Analysis.Pattern.Candlestick
@@ -12,12 +11,12 @@ namespace Trady.Analysis.Pattern.Candlestick
     /// </summary>
     public class BullishAbandonedBaby<TInput, TOutput> : AnalyzableBase<TInput, (decimal Open, decimal High, decimal Low, decimal Close), bool?, TOutput>
     {
-        DownTrendByTuple _downTrend;
-        BearishLongDayByTuple _bearishLongDay;
-        BullishLongDayByTuple _bullishLongDay;
-        DojiByTuple _doji;
+        private DownTrendByTuple _downTrend;
+        private BearishLongDayByTuple _bearishLongDay;
+        private BullishLongDayByTuple _bullishLongDay;
+        private DojiByTuple _doji;
 
-        public BullishAbandonedBaby(IEnumerable<TInput> inputs, Func<TInput, (decimal Open, decimal High, decimal Low, decimal Close)> inputMapper, int downTrendPeriodCount = 3, int longPeriodCount = 20, decimal longThreshold = 0.75m, decimal dojiThreshold = 0.1m) 
+        public BullishAbandonedBaby(IEnumerable<TInput> inputs, Func<TInput, (decimal Open, decimal High, decimal Low, decimal Close)> inputMapper, int downTrendPeriodCount = 3, int longPeriodCount = 20, decimal longThreshold = 0.75m, decimal dojiThreshold = 0.1m)
             : base(inputs, inputMapper)
         {
             var mappedInputs = inputs.Select(inputMapper);
@@ -42,18 +41,18 @@ namespace Trady.Analysis.Pattern.Candlestick
 
         public decimal DojiThreshold { get; }
 
-        protected override bool? ComputeByIndexImpl(IEnumerable<(decimal Open, decimal High, decimal Low, decimal Close)> mappedInputs, int index)
+        protected override bool? ComputeByIndexImpl(IReadOnlyList<(decimal Open, decimal High, decimal Low, decimal Close)> mappedInputs, int index)
         {
-			if (index < 2) return null;
-			if (!_doji[index - 1]) return false;
-            bool isGapped = mappedInputs.ElementAt(index - 1).High < mappedInputs.ElementAt(index - 2).Low && mappedInputs.ElementAt(index - 1).High < mappedInputs.ElementAt(index).Low;
-			return (_downTrend[index - 1] ?? false) && _bearishLongDay[index - 2] && isGapped && _bullishLongDay[index];
+            if (index < 2) return null;
+            if (!_doji[index - 1]) return false;
+            bool isGapped = mappedInputs[index - 1].High < mappedInputs[index - 2].Low && mappedInputs[index - 1].High < mappedInputs[index].Low;
+            return (_downTrend[index - 1] ?? false) && _bearishLongDay[index - 2] && isGapped && _bullishLongDay[index];
         }
     }
 
     public class BullishAbandonedBabyByTuple : BullishAbandonedBaby<(decimal Open, decimal High, decimal Low, decimal Close), bool?>
     {
-        public BullishAbandonedBabyByTuple(IEnumerable<(decimal Open, decimal High, decimal Low, decimal Close)> inputs, int downTrendPeriodCount = 3, int longPeriodCount = 20, decimal longThreshold = 0.75M, decimal dojiThreshold = 0.1M) 
+        public BullishAbandonedBabyByTuple(IEnumerable<(decimal Open, decimal High, decimal Low, decimal Close)> inputs, int downTrendPeriodCount = 3, int longPeriodCount = 20, decimal longThreshold = 0.75M, decimal dojiThreshold = 0.1M)
             : base(inputs, i => i, downTrendPeriodCount, longPeriodCount, longThreshold, dojiThreshold)
         {
         }
@@ -61,7 +60,7 @@ namespace Trady.Analysis.Pattern.Candlestick
 
     public class BullishAbandonedBaby : BullishAbandonedBaby<Candle, AnalyzableTick<bool?>>
     {
-        public BullishAbandonedBaby(IEnumerable<Candle> inputs, int downTrendPeriodCount = 3, int longPeriodCount = 20, decimal longThreshold = 0.75M, decimal dojiThreshold = 0.1M) 
+        public BullishAbandonedBaby(IEnumerable<Candle> inputs, int downTrendPeriodCount = 3, int longPeriodCount = 20, decimal longThreshold = 0.75M, decimal dojiThreshold = 0.1M)
             : base(inputs, i => (i.Open, i.High, i.Low, i.Close), downTrendPeriodCount, longPeriodCount, longThreshold, dojiThreshold)
         {
         }

@@ -10,7 +10,7 @@ namespace Trady.Analysis.Indicator
     {
         public class Fast<TInput, TOutput> : AnalyzableBase<TInput, (decimal High, decimal Low, decimal Close), (decimal? K, decimal? D, decimal? J), TOutput>
         {
-            readonly RawStochasticsValueByTuple _rsv;
+            private readonly RawStochasticsValueByTuple _rsv;
 
             public Fast(IEnumerable<TInput> inputs, Func<TInput, (decimal High, decimal Low, decimal Close)> inputMapper, int periodCount, int smaPeriodCount) : base(inputs, inputMapper)
             {
@@ -24,7 +24,7 @@ namespace Trady.Analysis.Indicator
 
             public int SmaPeriodCount { get; }
 
-            protected override (decimal? K, decimal? D, decimal? J) ComputeByIndexImpl(IEnumerable<(decimal High, decimal Low, decimal Close)> mappedInputs, int index)
+            protected override (decimal? K, decimal? D, decimal? J) ComputeByIndexImpl(IReadOnlyList<(decimal High, decimal Low, decimal Close)> mappedInputs, int index)
             {
                 decimal? rsv = _rsv[index];
                 Func<int, decimal?> rsvFunc = i => _rsv[index - SmaPeriodCount + i + 1];
@@ -35,7 +35,7 @@ namespace Trady.Analysis.Indicator
 
         public class FastByTuple : Fast<(decimal High, decimal Low, decimal Close), (decimal? K, decimal? D, decimal? J)>
         {
-            public FastByTuple(IEnumerable<(decimal High, decimal Low, decimal Close)> inputs, int periodCount, int smaPeriodCount) 
+            public FastByTuple(IEnumerable<(decimal High, decimal Low, decimal Close)> inputs, int periodCount, int smaPeriodCount)
                 : base(inputs, i => i, periodCount, smaPeriodCount)
             {
             }
@@ -43,7 +43,7 @@ namespace Trady.Analysis.Indicator
 
         public class Fast : Fast<Candle, AnalyzableTick<(decimal? K, decimal? D, decimal? J)>>
         {
-            public Fast(IEnumerable<Candle> inputs, int periodCount, int smaPeriodCount) 
+            public Fast(IEnumerable<Candle> inputs, int periodCount, int smaPeriodCount)
                 : base(inputs, i => (i.High, i.Low, i.Close), periodCount, smaPeriodCount)
             {
             }
