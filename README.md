@@ -21,7 +21,7 @@ This library is intended for personal use, use with care for production environm
     * Tuples => decimal?/Tuples 
     * Candles => AnalyzableTick\<decimal?>/AnalyzableTick\<Tuples> where AnalyzableTick<T> includes DateTime in its property 
 * As of the above change, "Tick" property is used for the indicator result's value if it's computed from candles
-* Portfolio-related items have been moved under Trady.AnalysisBacktest namespace. Classes & methods are renamed
+* Portfolio-related items have been moved under Trady.Analysis.Backtest namespace. Classes & methods are renamed
     * Portfolio => Builder/Runner
     * RunBackTest() => Run()
     * RunBackTestAsync() => RunAsync()
@@ -115,7 +115,7 @@ Nuget package is available in modules, please install the package according to t
     // You can also implement your own importer by implementing the IImporter interface
     public class MyImporter : IImporter
     {
-        public async Task<IEnumerable<Candle>> ImportAsync(string symbol, DateTime? startTime = null, DateTime? endTime = null, PeriodOption period = PeriodOption.Daily, CancellationToken token = default(CancellationToken))
+        public async Task<IReadOnlyList<Candle>> ImportAsync(string symbol, DateTime? startTime = null, DateTime? endTime = null, PeriodOption period = PeriodOption.Daily, CancellationToken token = default(CancellationToken))
         {
             // Your implementation to return a list of candles
         }
@@ -213,7 +213,7 @@ Nuget package is available in modules, please install the package according to t
     }
 
     // Use case
-    var results = new MyCumulativeIndicator(candles).compute();
+    var results = new MyCumulativeIndicator(candles).Compute();
     foreach (var r in results)
     {
         Console.WriteLine($"{r.DateTime}, {r.Tick.Value}");
