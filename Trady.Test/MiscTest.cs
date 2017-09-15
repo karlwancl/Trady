@@ -5,12 +5,11 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Trady.Analysis.Strategy;
-using Trady.Analysis.Strategy.Portfolio;
-using Trady.Analysis.Strategy.Rule;
 using Trady.Core;
 using Trady.Core.Period;
 using Trady.Importer;
+using Trady.Analysis.Backtest;
+using Trady.Analysis;
 
 namespace Trady.Test
 {
@@ -28,7 +27,9 @@ namespace Trady.Test
         {
             var candles = await ImportCandlesAsync();
             var rule = Rule.Create(ic => ic.IsAboveSma(30));
-            var validObjects = new SimpleRuleExecutor(rule).Execute(candles);
+            IReadOnlyList<Candle> validObjects;
+            using (var ctx = new AnalyzeContext(candles))
+                validObjects = new SimpleRuleExecutor(ctx, rule).Execute();
             Assert.IsTrue(validObjects.Count() == 774);
         }
 

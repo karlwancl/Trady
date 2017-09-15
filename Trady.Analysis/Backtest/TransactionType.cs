@@ -1,4 +1,4 @@
-﻿namespace Trady.Analysis.Strategy.Portfolio
+﻿namespace Trady.Analysis.Backtest
 {
     public enum TransactionType
     {

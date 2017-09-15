@@ -1,19 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Trady.Analysis.Helper;
-using Trady.Analysis.Strategy.Rule;
 using Trady.Core;
+using Trady.Core.Infrastructure;
 
-namespace Trady.Analysis.Strategy.Portfolio
+namespace Trady.Analysis.Backtest
 {
     public class Runner
     {
         private IDictionary<IEnumerable<Candle>, int> _weightings;
-        private IRule<IndexedCandle> _buyRule, _sellRule;
+        private Predicate<IndexedCandle> _buyRule, _sellRule;
 
-        internal Runner(IDictionary<IEnumerable<Candle>, int> weightings, IRule<IndexedCandle> buyRule, IRule<IndexedCandle> sellRule)
+        internal Runner(
+            IDictionary<IEnumerable<Candle>, int> weightings, 
+            Predicate<IndexedCandle> buyRule, 
+            Predicate<IndexedCandle> sellRule)
         {
             _weightings = weightings;
             _buyRule = buyRule;
@@ -28,8 +32,8 @@ namespace Trady.Analysis.Strategy.Portfolio
 
         public delegate void SellHandler(IEnumerable<Candle> candles, int index, DateTime dateTime, decimal sellPrice, int quantity, decimal absCashFlow, decimal currentCashAmount, decimal plRatio);
 
-        public async Task<Result> RunAsync(decimal principal, decimal premium = 1.0m, DateTime? startTime = null, DateTime? endTime = null)
-            => await Task.Factory.StartNew(() => Run(principal, premium, startTime, endTime));
+        public Task<Result> RunAsync(decimal principal, decimal premium = 1.0m, DateTime? startTime = null, DateTime? endTime = null)
+            => Task.Factory.StartNew(() => Run(principal, premium, startTime, endTime));
 
         public Result Run(decimal principal, decimal premium = 1.0m, DateTime? startTime = null, DateTime? endTime = null)
         {
@@ -50,37 +54,47 @@ namespace Trady.Analysis.Strategy.Portfolio
                 var asset = assetCashMap.ElementAt(i).Key;
                 var startIndex = asset.FindIndexOrDefault(c => c.DateTime >= (startTime ?? DateTime.MinValue), 0).Value;
                 var endIndex = asset.FindLastIndexOrDefault(c => c.DateTime <= (endTime ?? DateTime.MaxValue), asset.Count() - 1).Value;
-                CreateRuleExecutor(asset, premium, assetCashMap, transactions).Execute(asset, startIndex, endIndex);
+                using (var context = new AnalyzeContext(asset))
+                {
+                    var executor = CreateBuySellRuleExecutor(context, premium, assetCashMap, transactions);
+                    executor.Execute(startIndex, endIndex);
+                    Console.WriteLine("Not ended");
+                }
             }
 
             return new Result(preAssetCashMap, assetCashMap, transactions);
         }
 
-        private BuySellRuleExecutor CreateRuleExecutor(IEnumerable<Candle> candles, decimal premium, IDictionary<IEnumerable<Candle>, decimal> assetCashMap, List<Transaction> transactions)
+        private BuySellRuleExecutor CreateBuySellRuleExecutor(IAnalyzeContext<Candle> context, decimal premium, IDictionary<IEnumerable<Candle>, decimal> assetCashMap, List<Transaction> transactions)
         {
-            Func<IRule<IndexedCandle>> buyRule = () =>
+            try
             {
-                var isPrevBuy = transactions.LastOrDefault(t => t.Candles.Equals(candles))?.Type == TransactionType.Buy;
-                return new Rule<IndexedCandle>(ic => !isPrevBuy && _buyRule.IsValid(ic));
-            };
+                Func<IEnumerable<Transaction>, IAnalyzeContext<Candle>, TransactionType, bool> isPreviousTrnsactionA = (ts, ctx, tt)
+                    => ts.LastOrDefault(_t => _t.Candles.Equals(ctx.BackingList))?.Type == tt;
 
-            Func<IRule<IndexedCandle>> sellRule = () =>
+                Predicate<IndexedCandle> buyRule = ic
+                    => !isPreviousTrnsactionA(transactions, ic.Context, TransactionType.Buy) && _buyRule(ic);
+
+                Predicate<IndexedCandle> sellRule = ic
+                    => !isPreviousTrnsactionA(transactions, ic.Context, TransactionType.Sell) && _sellRule(ic);
+
+                Func<IndexedCandle, int, (TransactionType, IndexedCandle)> outputFunc = (ic, i) =>
+                {
+                    var type = (TransactionType)i;
+                    if (type.Equals(TransactionType.Buy))
+                        BuyAsset(ic, premium, assetCashMap, transactions);
+                    else
+                        SellAsset(ic, premium, assetCashMap, transactions);
+                    return ((TransactionType)i, ic);
+                };
+
+                return new BuySellRuleExecutor(outputFunc, context, buyRule, sellRule);
+            }
+            catch (Exception ex)
             {
-                var isPrevSell = transactions.LastOrDefault(t => t.Candles.Equals(candles))?.Type == TransactionType.Sell;
-                return new Rule<IndexedCandle>(ic => !isPrevSell && _sellRule.IsValid(ic));
-            };
-
-            Func<IndexedCandle, int, (TransactionType, IndexedCandle)> outputFunc = (ic, i) =>
-            {
-                var type = (TransactionType)i;
-                if (type.Equals(TransactionType.Buy))
-                    BuyAsset(ic, premium, assetCashMap, transactions);
-                else
-                    SellAsset(ic, premium, assetCashMap, transactions);
-                return ((TransactionType)i, ic);
-            };
-
-            return new BuySellRuleExecutor(outputFunc, buyRule, sellRule);
+                Console.WriteLine(ex);
+                throw;
+            }
         }
 
         private void BuyAsset(IndexedCandle indexedCandle, decimal premium, IDictionary<IEnumerable<Candle>, decimal> assetCashMap, IList<Transaction> transactions)

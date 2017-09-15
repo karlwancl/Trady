@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Trady.Core;
 using Trady.Core.Period;
+using Trady.Core.Infrastructure;
 
 namespace Trady.Importer
 {

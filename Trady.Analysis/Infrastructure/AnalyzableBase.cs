@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Trady.Analysis.Helper;
 using Trady.Core;
 using Trady.Core.Infrastructure;
 
@@ -32,8 +31,6 @@ namespace Trady.Analysis.Infrastructure
             _mappedInputs = inputs.Select(inputMapper).ToList();
             if (_isTInputCandle)
                 _mappedDatetime = inputs.Select(i => (i as Candle).DateTime).ToList();
-
-            Cache = new Dictionary<int, TOutputToMap>();    // TODO: Needs careful handling
         }
 
         public IReadOnlyList<TOutput> Compute(int? startIndex = null, int? endIndex = null)
@@ -53,7 +50,7 @@ namespace Trady.Analysis.Infrastructure
         {
             get
             {
-                dynamic outputToMap = ComputeByIndex(_mappedInputs, index);
+                dynamic outputToMap = ComputeByIndexImpl(_mappedInputs, index);
                 var datetime = index >= 0 && index < _mappedInputs.Count ? (_mappedDatetime?[index] ?? default(DateTime?)) : default(DateTime?);
                 return _isTOutputAnalyzableTick ? AnalyzableTickMapper(datetime, outputToMap) : outputToMap;
 
@@ -62,20 +59,7 @@ namespace Trady.Analysis.Infrastructure
             }
         }
 
-        protected TOutputToMap ComputeByIndex(IReadOnlyList<TMappedInput> mappedInputs, int index)
-        {
-            if (Cache.TryGetValue(index, out TOutputToMap value))
-                return value;
-
-            value = ComputeByIndexImpl(mappedInputs, index);
-            Cache.AddOrUpdate(index, value);
-
-            return value;
-        }
-
         protected abstract TOutputToMap ComputeByIndexImpl(IReadOnlyList<TMappedInput> mappedInputs, int index);
-
-        protected IDictionary<int, TOutputToMap> Cache { get; }
 
         IEnumerable IAnalyzable.Compute(int? startIndex, int? endIndex) => Compute(startIndex, endIndex);
 

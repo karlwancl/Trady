@@ -1,13 +1,14 @@
 using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 
-namespace Trady.Analysis.Strategy.Rule
+namespace Trady.Core.Infrastructure
 {
     public interface IRuleExecutor<TInput, TIndexed, TOutput> where TIndexed : IIndexedObject<TInput>
     {
-        Func<IRule<TIndexed>>[] Rules { get; }
+        Predicate<TIndexed>[] Rules { get; }
 
-        IEnumerable<TOutput> Execute(IEnumerable<TInput> inputs, int? startIndex = null, int? endIndex = null);
+        IReadOnlyList<TOutput> Execute(int? startIndex = null, int? endIndex = null);
 
         Func<TIndexed, int, TOutput> OutputFunc { get; }
     }

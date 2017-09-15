@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
+using Trady.Analysis.Indicator;
 using Trady.Analysis.Infrastructure;
 using Trady.Core;
 
-namespace Trady.Analysis.Indicator
+namespace Trady.Analysis
 {
-    public static class CandlesExtension
+    public static class CandleExtension
     {
         #region Candles
 

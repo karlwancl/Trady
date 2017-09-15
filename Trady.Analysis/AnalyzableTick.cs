@@ -1,6 +1,7 @@
 ﻿using System;
+using Trady.Core.Infrastructure;
 
-namespace Trady.Analysis.Infrastructure
+namespace Trady.Analysis
 {
     public class AnalyzableTick<T> : IAnalyzableTick<T>
     {

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Trady.Core;
+using Trady.Core.Infrastructure;
 using Trady.Core.Period;
 using YahooFinanceApi;
 

@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Trady.Analysis.Infrastructure;
 using Trady.Core;
+using Trady.Analysis;
 
 namespace Trady.Test
 {

@@ -4,7 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Trady.Core.Period;
 
-namespace Trady.Core
+namespace Trady.Core.Infrastructure
 {
     public interface IImporter
     {

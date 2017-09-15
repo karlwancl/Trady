@@ -1,19 +1,22 @@
-﻿using System.Collections.Generic;
-using Trady.Analysis.Strategy.Rule;
+﻿using System;
+using System.Collections.Generic;
 using Trady.Core;
 
-namespace Trady.Analysis.Strategy.Portfolio
+namespace Trady.Analysis.Backtest
 {
     public class Builder
     {
         private IDictionary<IEnumerable<Candle>, int> _weightings;
-        private IRule<IndexedCandle> _buyRule, _sellRule;
+        private Predicate<IndexedCandle> _buyRule, _sellRule;
 
         public Builder() : this(null, null, null)
         {
         }
 
-        private Builder(IDictionary<IEnumerable<Candle>, int> weightings, IRule<IndexedCandle> buyRule, IRule<IndexedCandle> sellRule)
+        private Builder(
+            IDictionary<IEnumerable<Candle>, int> weightings, 
+            Predicate<IndexedCandle> buyRule, 
+            Predicate<IndexedCandle> sellRule)
         {
             _weightings = weightings ?? new Dictionary<IEnumerable<Candle>, int>();
             _buyRule = buyRule;
@@ -26,11 +29,11 @@ namespace Trady.Analysis.Strategy.Portfolio
             return new Builder(_weightings, _buyRule, _sellRule);
         }
 
-        public Builder Buy(IRule<IndexedCandle> rule)
-            => new Builder(_weightings, _buyRule?.Or(rule) ?? rule, _sellRule);
+        public Builder Buy(Predicate<IndexedCandle> rule)
+            => new Builder(_weightings, ic => _buyRule == null ? rule(ic) : rule(ic) || _buyRule(ic), _sellRule);
 
-        public Builder Sell(IRule<IndexedCandle> rule)
-            => new Builder(_weightings, _buyRule, _sellRule?.Or(rule) ?? rule);
+        public Builder Sell(Predicate<IndexedCandle> rule)
+            => new Builder(_weightings, _buyRule, ic => _sellRule  == null ? rule(ic) : rule(ic) || _sellRule(ic));
 
         public Runner Build()
             => new Runner(_weightings, _buyRule, _sellRule);

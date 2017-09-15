@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Trady.Analysis.Infrastructure
+namespace Trady.Core.Infrastructure
 {
     public interface IAnalyzableTick
     {

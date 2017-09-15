@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Trady.Analysis.Strategy.Rule
+namespace Trady.Core.Infrastructure
 {
     public interface IIndexedObject
     {
@@ -14,6 +14,8 @@ namespace Trady.Analysis.Strategy.Rule
         IIndexedObject Next { get; }
 
         object Underlying { get; }
+
+        IAnalyzeContext Context { get; set; }
     }
 
     public interface IIndexedObject<T> : IIndexedObject
@@ -25,5 +27,7 @@ namespace Trady.Analysis.Strategy.Rule
         new IIndexedObject<T> Next { get; }
 
         new T Underlying { get; }
+
+        new IAnalyzeContext<T> Context { get; set; }
     }
 }

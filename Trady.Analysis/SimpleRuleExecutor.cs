@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using Trady.Analysis.Strategy.Rule;
+using Trady.Analysis.Infrastructure;
 using Trady.Core;
+using Trady.Core.Infrastructure;
 
-namespace Trady.Analysis.Strategy
+namespace Trady.Analysis
 {
     public class SimpleRuleExecutor : RuleExecutorBase<Candle, IndexedCandle, IndexedCandle>
     {
-        public SimpleRuleExecutor(IRule<IndexedCandle> rule)
-            : base((l, i) => l, () => rule)
+        public SimpleRuleExecutor(IAnalyzeContext<Candle> context, Predicate<IndexedCandle> rule)
+            : base((l, i) => l, context, new Predicate<IndexedCandle>[] { rule })
         {
         }
 

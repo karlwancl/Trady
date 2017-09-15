@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using Trady.Core;
 
-namespace Trady.Analysis.Strategy.Portfolio
+namespace Trady.Analysis.Backtest
 {
     public class Transaction : IEquatable<Transaction>
     {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Trady.Core;
 
-namespace Trady.Analysis.Strategy.Portfolio
+namespace Trady.Analysis.Backtest
 {
     public class Result
     {

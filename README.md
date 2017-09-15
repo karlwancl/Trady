@@ -21,11 +21,12 @@ This library is intended for personal use, use with care for production environm
     * Tuples => decimal?/Tuples 
     * Candles => AnalyzableTick\<decimal?>/AnalyzableTick\<Tuples> where AnalyzableTick<T> includes DateTime in its property 
 * As of the above change, "Tick" property is used for the indicator result's value if it's computed from candles
-* Portfolio-related items have been moved under Trady.Analysis.Strategy.Portfolio namespace. Classes & methods are renamed
+* Portfolio-related items have been moved under Trady.AnalysisBacktest namespace. Classes & methods are renamed
     * Portfolio => Builder/Runner
     * RunBackTest() => Run()
     * RunBackTestAsync() => RunAsync()
 * Added IndexedObject & RuleExecutor for signal capturing by rules
+* Bugfix: Removed AnalyzableLocator to fix memory issue, replaced with AnalyzeContext for indicator caching
 
 ** Trady.Importer module **
 * The candles are exported as IReadOnlyList<Candle> instead of IList<Candle>
@@ -249,8 +250,12 @@ Nuget package is available in modules, please install the package according to t
     // The following shows the number of candles that fulfill both the IsAboveSma(30) & IsAboveSma(10) rule
     var rule = Rule.Create(c => c.IsAboveSma(30))
         .And(c => c.IsAboveSma(10));
-    var validObjects = new SimpleRuleExecutor(rule).Execute(candles);
-    Console.WriteLine(validObjects.Count());
+
+    using (var ctx = new AnalyzeContext(candles))
+    {
+        var validObjects = new SimpleRuleExecutor(ctx, rule).Execute();
+        Console.WriteLine(validObjects.Count());
+    }
 
 <a name="StrategyBuildingAndBacktesting"></a>
 #### Strategy building & backtesting
@@ -290,15 +295,15 @@ Nuget package is available in modules, please install the package according to t
     {
         public static bool IsSma30LargerThanSma10(this IndexedCandle ic)
         {
-            var sma30 = ic.Get<SimpleMovingAverage>(30).ComputeByIndex(ic.Index);
-            var sma10 = ic.Get<SimpleMovingAverage>(10).ComputeByIndex(ic.Index);
+            var sma30 = ic.Get<SimpleMovingAverage>(30)[ic.Index];
+            var sma10 = ic.Get<SimpleMovingAverage>(10)[ic.Index];
             return sma30 > sma10;
         }
         
         public static bool IsSma10LargerThanSma30(this IndexedCandle ic)
         {
-            var sma30 = ic.Get<SimpleMovingAverage>(30).ComputeByIndex(ic.Index);
-            var sma10 = ic.Get<SimpleMovingAverage>(10).ComputeByIndex(ic.Index);
+            var sma30 = ic.Get<SimpleMovingAverage>(30)[ic.Index];
+            var sma10 = ic.Get<SimpleMovingAverage>(10)[ic.Index];
             return sma10 > sma30;
         }
     }

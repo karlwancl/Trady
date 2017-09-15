@@ -2,7 +2,7 @@
 using Trady.Analysis.Pattern.Indicator;
 using Trady.Analysis.Pattern.State;
 
-namespace Trady.Analysis.Strategy
+namespace Trady.Analysis
 {
     public static class IndexedCandleExtension
     {

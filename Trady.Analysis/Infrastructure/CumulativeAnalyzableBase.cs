@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using Trady.Analysis.Helper;
@@ -7,12 +8,18 @@ namespace Trady.Analysis.Infrastructure
 {
     public abstract class CumulativeAnalyzableBase<TInput, TMappedInput, TOutputToMap, TOutput> : AnalyzableBase<TInput, TMappedInput, TOutputToMap, TOutput>
     {
+        private ConcurrentDictionary<int, TOutputToMap> _cache;
+
         protected CumulativeAnalyzableBase(IEnumerable<TInput> inputs, Func<TInput, TMappedInput> inputMapper) : base(inputs, inputMapper)
         {
+            _cache = new ConcurrentDictionary<int, TOutputToMap>();
         }
 
         protected sealed override TOutputToMap ComputeByIndexImpl(IReadOnlyList<TMappedInput> mappedInputs, int index)
         {
+            if (_cache.TryGetValue(index, out TOutputToMap t))
+                return t;
+
             var tick = default(TOutputToMap);
             if (index < InitialValueIndex)
                 tick = ComputeNullValue(mappedInputs, index);
@@ -20,14 +27,16 @@ namespace Trady.Analysis.Infrastructure
                 tick = ComputeInitialValue(mappedInputs, index);
             else
             {
-                int idx = Cache.Keys.DefaultIfEmpty(InitialValueIndex).Where(k => k >= InitialValueIndex).Max();
-                for (int i = idx; i < index; i++)
+                // get start index of calculation to cache
+                int cacheStartIndex = _cache.Keys.DefaultIfEmpty(InitialValueIndex).Where(k => k >= InitialValueIndex).Max();
+                for (int i = cacheStartIndex; i < index; i++)
                 {
-                    var prevTick = ComputeByIndex(mappedInputs, i);
+                    var prevTick = _cache.GetOrAdd(i, _i => ComputeByIndexImpl(mappedInputs, _i));
                     tick = ComputeCumulativeValue(mappedInputs, i + 1, prevTick);
-                    Cache.AddOrUpdate(i + 1, tick);
+                    _cache.AddOrUpdate(i + 1, tick, (_i, _t) => tick);
                 }
             }
+
             return tick;
         }
 

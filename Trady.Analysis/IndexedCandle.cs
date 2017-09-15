@@ -1,14 +1,16 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Trady.Analysis.Strategy.Rule;
+using Trady.Analysis.Infrastructure;
 using Trady.Core;
 using Trady.Core.Infrastructure;
 
-namespace Trady.Analysis.Strategy
+namespace Trady.Analysis
 {
     public class IndexedCandle : Candle, IIndexedObject<Candle>
     {
+        private IAnalyzeContext _context;
+
         public IndexedCandle(IEnumerable<Candle> candles, int index)
             : base(candles.ElementAt(index).DateTime,
                    candles.ElementAt(index).Open,
@@ -31,6 +33,14 @@ namespace Trady.Analysis.Strategy
 
         public Candle Underlying => BackingList.ElementAt(Index);
 
+        public IAnalyzeContext<Candle> Context
+        {
+            get => (IAnalyzeContext<Candle>)_context;
+            set {
+                _context = value;
+            }
+        }
+
         IEnumerable IIndexedObject.BackingList => BackingList;
 
         IIndexedObject IIndexedObject.Prev => Prev;
@@ -43,7 +53,19 @@ namespace Trady.Analysis.Strategy
 
         object IIndexedObject.Underlying => Underlying;
 
+        IAnalyzeContext IIndexedObject.Context
+        {
+            get => _context;
+            set {
+                _context = value;
+            }
+        }
+
         public TAnalyzable Get<TAnalyzable>(params object[] @params) where TAnalyzable : IAnalyzable
-            => BackingList.GetOrCreateAnalyzable<TAnalyzable>(@params);
+        {
+            if (Context == null)
+                return AnalyzableFactory.CreateAnalyzable<TAnalyzable>(BackingList, @params);
+            return Context.Get<TAnalyzable>(@params);
+        }
     }
 }
