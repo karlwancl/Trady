@@ -63,6 +63,15 @@ namespace Trady.Analysis
         public static IReadOnlyList<AnalyzableTick<decimal?>> HighestHigh(this IEnumerable<Candle> candles, int periodCount, int? startIndex = null, int? endIndex = null)
             => new HighestHigh(candles, periodCount).Compute(startIndex, endIndex);
 
+        public static IReadOnlyList<AnalyzableTick<decimal?>> HistoricalHighestHigh(this IEnumerable<Candle> candles, int? startIndex = null, int? endIndex = null)
+            => new HistoricalHighestHigh(candles).Compute(startIndex, endIndex);
+
+        public static IReadOnlyList<AnalyzableTick<decimal?>> HistoricalHighestClose(this IEnumerable<Candle> candles, int? startIndex = null, int? endIndex = null)
+            => new HistoricalHighestClose(candles).Compute(startIndex, endIndex);
+
+        public static IReadOnlyList<AnalyzableTick<decimal?>> HighestClose(this IEnumerable<Candle> candles, int periodCount, int? startIndex = null, int? endIndex = null)
+            => new HighestClose(candles, periodCount).Compute(startIndex, endIndex);
+
         public static IReadOnlyList<AnalyzableTick<(decimal? ConversionLine, decimal? BaseLine, decimal? LeadingSpanA, decimal? LeadingSpanB, decimal? LaggingSpan)>> Ichimoku(this IEnumerable<Candle> candles, int shortPeriodCount, int middlePeriodCount, int longPeriodCount, int? startIndex = null, int? endIndex = null)
             => new IchimokuCloud(candles, shortPeriodCount, middlePeriodCount, longPeriodCount).Compute(startIndex, endIndex);
 
@@ -71,6 +80,15 @@ namespace Trady.Analysis
 
         public static IReadOnlyList<AnalyzableTick<decimal?>> LowestLow(this IEnumerable<Candle> candles, int periodCount, int? startIndex = null, int? endIndex = null)
             => new LowestLow(candles, periodCount).Compute(startIndex, endIndex);
+
+        public static IReadOnlyList<AnalyzableTick<decimal?>> HistoricalLowestLow(this IEnumerable<Candle> candles, int? startIndex = null, int? endIndex = null)
+            => new HistoricalLowestLow(candles).Compute(startIndex, endIndex);
+
+        public static IReadOnlyList<AnalyzableTick<decimal?>> HistoricalLowestClose(this IEnumerable<Candle> candles, int? startIndex = null, int? endIndex = null)
+            => new HistoricalLowestClose(candles).Compute(startIndex, endIndex);
+
+        public static IReadOnlyList<AnalyzableTick<decimal?>> LowestClose(this IEnumerable<Candle> candles, int periodCount, int? startIndex = null, int? endIndex = null)
+            => new LowestClose(candles, periodCount).Compute(startIndex, endIndex);
 
         public static IReadOnlyList<AnalyzableTick<decimal?>> Mdi(this IEnumerable<Candle> candles, int periodCount, int? startIndex = null, int? endIndex = null)
             => new MinusDirectionalIndicator(candles, periodCount).Compute(startIndex, endIndex);
@@ -178,8 +196,8 @@ namespace Trady.Analysis
         public static IReadOnlyList<decimal?> EmaOsc(this IEnumerable<decimal> inputs, int periodCount1, int periodCount2, int? startIndex = null, int? endIndex = null)
             => new ExponentialMovingAverageOscillatorByTuple(inputs, periodCount1, periodCount2).Compute(startIndex, endIndex);
 
-        public static IReadOnlyList<decimal?> HighestHigh(this IEnumerable<decimal> inputs, int periodCount, int? startIndex = null, int? endIndex = null)
-            => new HighestHighByTuple(inputs, periodCount).Compute(startIndex, endIndex);
+        public static IReadOnlyList<decimal?> Highest(this IEnumerable<decimal> inputs, int periodCount, int? startIndex = null, int? endIndex = null)
+            => new HighestByTuple(inputs, periodCount).Compute(startIndex, endIndex);
 
         public static IReadOnlyList<(decimal? ConversionLine, decimal? BaseLine, decimal? LeadingSpanA, decimal? LeadingSpanB, decimal? LaggingSpan)> Ichimoku(this IEnumerable<(decimal High, decimal Low, decimal Close)> inputs, int shortPeriodCount, int middlePeriodCount, int longPeriodCount, int? startIndex = null, int? endIndex = null)
             => new IchimokuCloudByTuple(inputs, shortPeriodCount, middlePeriodCount, longPeriodCount).Compute(startIndex, endIndex);
@@ -187,8 +205,8 @@ namespace Trady.Analysis
         public static IReadOnlyList<decimal?> Kama(this IEnumerable<decimal> inputs, int periodCount, int emaFastPeriodCount, int emaSlowPeriodCount, int? startIndex = null, int? endIndex = null)
             => new KaufmanAdaptiveMovingAverageByTuple(inputs, periodCount, emaFastPeriodCount, emaSlowPeriodCount).Compute(startIndex, endIndex);
 
-        public static IReadOnlyList<decimal?> LowestLow(this IEnumerable<decimal> inputs, int periodCount, int? startIndex = null, int? endIndex = null)
-            => new LowestLowByTuple(inputs, periodCount).Compute(startIndex, endIndex);
+        public static IReadOnlyList<decimal?> Lowest(this IEnumerable<decimal> inputs, int periodCount, int? startIndex = null, int? endIndex = null)
+            => new LowestByTuple(inputs, periodCount).Compute(startIndex, endIndex);
 
         public static IReadOnlyList<decimal?> Mdi(this IEnumerable<(decimal High, decimal Low, decimal Close)> inputs, int periodCount, int? startIndex = null, int? endIndex = null)
             => new MinusDirectionalIndicatorByTuple(inputs, periodCount).Compute(startIndex, endIndex);

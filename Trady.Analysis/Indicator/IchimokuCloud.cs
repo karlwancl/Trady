@@ -8,24 +8,26 @@ namespace Trady.Analysis.Indicator
 {
     public class IchimokuCloud<TInput, TOutput> : AnalyzableBase<TInput, (decimal High, decimal Low, decimal Close), (decimal? ConversionLine, decimal? BaseLine, decimal? LeadingSpanA, decimal? LeadingSpanB, decimal? LaggingSpan), TOutput>
     {
-        private LowestLowByTuple _shortLowestLow, _middleLowestLow;
-        private Func<int, decimal?> _conversionLine, _baseLine, _leadingSpanB;
+        private LowestByTuple _shortLowestLow, _middleLowestLow;
+        private readonly Func<int, decimal?> _leadingSpanB;
+        private readonly Func<int, decimal?> _baseLine;
+        private readonly Func<int, decimal?> _conversionLine;
 
         public IchimokuCloud(IEnumerable<TInput> inputs, Func<TInput, (decimal High, decimal Low, decimal Close)> inputMapper, int shortPeriodCount, int middlePeriodCount, int longPeriodCount) : base(inputs, inputMapper)
         {
             var highs = inputs.Select(i => inputMapper(i).High);
             var lows = inputs.Select(i => inputMapper(i).Low);
 
-            var shortHighestHigh = new HighestHighByTuple(highs, shortPeriodCount);
-            _shortLowestLow = new LowestLowByTuple(lows, shortPeriodCount);
+            var shortHighestHigh = new HighestByTuple(highs, shortPeriodCount);
+            _shortLowestLow = new LowestByTuple(lows, shortPeriodCount);
             _conversionLine = i => (shortHighestHigh[i] + _shortLowestLow[i]) / 2;
 
-            var middleHighestHigh = new HighestHighByTuple(highs, middlePeriodCount);
-            _middleLowestLow = new LowestLowByTuple(lows, middlePeriodCount);
+            var middleHighestHigh = new HighestByTuple(highs, middlePeriodCount);
+            _middleLowestLow = new LowestByTuple(lows, middlePeriodCount);
             _baseLine = i => (middleHighestHigh[i] + _middleLowestLow[i]) / 2;
 
-            var longHighestHigh = new HighestHighByTuple(highs, longPeriodCount);
-            var longLowestLow = new LowestLowByTuple(lows, longPeriodCount);
+            var longHighestHigh = new HighestByTuple(highs, longPeriodCount);
+            var longLowestLow = new LowestByTuple(lows, longPeriodCount);
             _leadingSpanB = i => (longHighestHigh[i] + longLowestLow[i]) / 2;
 
             ShortPeriodCount = shortPeriodCount;

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Trady.Analysis.Indicator;
 using Trady.Core;
 using Trady.Importer;
+using System;
 
 namespace Trady.Test
 {
@@ -204,12 +205,66 @@ namespace Trady.Test
         }
 
         [TestMethod]
+        public async Task TestHighestCloseAsync()
+        {
+            var candles = await ImportCandlesAsync();
+            var indicator = new HighestClose(candles, 10);
+            var result = indicator[candles.Count() - 1];
+            Assert.IsTrue(139.99m.IsApproximatelyEquals(result.Tick.Value));
+        }
+
+        [TestMethod]
+        public async Task TestHistoricalHighestHighAsync()
+        {
+            var candles = await ImportCandlesAsync();
+            var indicator = new HistoricalHighestHigh(candles);
+            var result = indicator[candles.Count() - 1];   
+            Assert.IsTrue(140.34m.IsApproximatelyEquals(result.Tick.Value));
+        }
+
+        [TestMethod]
+        public async Task TestHistoricalHighestCloseAsync()
+        {
+            var candles = await ImportCandlesAsync();
+            var indicator = new HistoricalHighestClose(candles);
+            var result = indicator[candles.Count() - 1];
+            Assert.IsTrue(139.99m.IsApproximatelyEquals(result.Tick.Value));
+        }
+
+        [TestMethod]
         public async Task TestLowestLowAsync()
         {
             var candles = await ImportCandlesAsync();
             var indicator = new LowestLow(candles, 10);
             var result = indicator[candles.Count() - 1];
             Assert.IsTrue(136.99m.IsApproximatelyEquals(result.Tick.Value));
+        }
+
+        [TestMethod]
+        public async Task TestLowestCloseAsync()
+        {
+            var candles = await ImportCandlesAsync();
+            var indicator = new LowestClose(candles, 10);
+            var result = indicator[candles.Count() - 1];
+            Assert.IsTrue(137.3m.IsApproximatelyEquals(result.Tick.Value));
+        }
+
+        [TestMethod]
+        public async Task TestHistoricalLowestLowAsync()
+        {
+            var candles = await ImportCandlesAsync();
+            var indicator = new HistoricalLowestLow(candles);
+            var result = indicator[candles.Count() - 1];
+            Assert.IsTrue(17.55m.IsApproximatelyEquals(result.Tick.Value));
+        }
+
+        [TestMethod]
+        public async Task TestHistoricalLowestCloseAsync()
+        {
+            var candles = await ImportCandlesAsync();
+            var indicator = new HistoricalLowestClose(candles);
+            var result = indicator[candles.Count() - 1];
+            Assert.IsTrue(17.729m.IsApproximatelyEquals(result.Tick.Value));
         }
 
         [TestMethod]

@@ -48,8 +48,9 @@ This library is intended for personal use, use with care for production environm
 
 ### Currently Supported Indicators
 | AccumDist | Aroon | AroonOsc | Adxr | Atr | Bb | BbWidth | Chandlr | ClosePriceChange | ClosePricePercentageChange |
-| Dmi | Er | Ema | EmaOsc | HighestHigh | Ichimoku | Kama | LowestLow | Mema | Macd |
-| Obv | Rsv | Rs | Rsi | Sma | SmaOsc | Sd | FastSto | FullSto | SlowSto |
+ Dmi | Er | Ema | EmaOsc | HighestHigh | HighestClose | HistoricalHighestHigh | HistoricalHighestClose | Ichimoku | 
+ Kama | LowestLow | LowestClose | HistoricalLowestLow | HistoricalLowestClose | Mema | Macd | Obv | Rsv | Rs | Rsi | 
+ Sma | SmaOsc | Sd | FastSto | FullSto | SlowSto |
 
 ### How To Install
 Nuget package is available in modules, please install the package according to the needs

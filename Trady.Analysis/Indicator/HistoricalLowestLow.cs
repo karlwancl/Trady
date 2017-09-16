@@ -6,10 +6,10 @@ using Trady.Core;
 
 namespace Trady.Analysis.Indicator
 {
-    public class LowestLow : Lowest<Candle, AnalyzableTick<decimal?>>
+    public class HistoricalLowestLow : HistoricalLowest<Candle, AnalyzableTick<decimal?>>
     {
-        public LowestLow(IEnumerable<Candle> inputs, int periodCount)
-            : base(inputs, i => i.Low, periodCount)
+        public HistoricalLowestLow(IEnumerable<Candle> inputs)
+            : base(inputs, i => i.Low)
         {
         }
     }

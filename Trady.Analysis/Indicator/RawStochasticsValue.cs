@@ -8,13 +8,13 @@ namespace Trady.Analysis.Indicator
 {
     public class RawStochasticsValue<TInput, TOutput> : AnalyzableBase<TInput, (decimal High, decimal Low, decimal Close), decimal?, TOutput>
     {
-        private readonly HighestHighByTuple _hh;
-        private readonly LowestLowByTuple _ll;
+        private readonly HighestByTuple _hh;
+        private readonly LowestByTuple _ll;
 
         public RawStochasticsValue(IEnumerable<TInput> inputs, Func<TInput, (decimal High, decimal Low, decimal Close)> inputMapper, int periodCount) : base(inputs, inputMapper)
         {
-            _hh = new HighestHighByTuple(inputs.Select(i => inputMapper(i).High), periodCount);
-            _ll = new LowestLowByTuple(inputs.Select(i => inputMapper(i).Low), periodCount);
+            _hh = new HighestByTuple(inputs.Select(i => inputMapper(i).High), periodCount);
+            _ll = new LowestByTuple(inputs.Select(i => inputMapper(i).Low), periodCount);
 
             PeriodCount = periodCount;
         }
