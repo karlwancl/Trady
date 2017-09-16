@@ -6,7 +6,7 @@ using Trady.Core;
 
 namespace Trady.Analysis.Indicator
 {
-    public class SimpleMovingAverageOscillator<TInput, TOutput> : AnalyzableBase<TInput, decimal, decimal?, TOutput>
+    public class SimpleMovingAverageOscillator<TInput, TOutput> : NumericAnalyzableBase<TInput, decimal, TOutput>
     {
         private readonly SimpleMovingAverageByTuple _sma2;
         private readonly SimpleMovingAverageByTuple _sma1;

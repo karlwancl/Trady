@@ -6,7 +6,7 @@ using Trady.Core;
 
 namespace Trady.Analysis.Indicator
 {
-    public class OnBalanceVolume<TInput, TOutput> : CumulativeAnalyzableBase<TInput, (decimal Close, decimal Volume), decimal?, TOutput>
+    public class OnBalanceVolume<TInput, TOutput> : CumulativeNumericAnalyzableBase<TInput, (decimal Close, decimal Volume), TOutput>
     {
         public OnBalanceVolume(IEnumerable<TInput> inputs, Func<TInput, (decimal Close, decimal Volume)> inputMapper) : base(inputs, inputMapper)
         {

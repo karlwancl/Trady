@@ -6,7 +6,8 @@ using Trady.Core;
 
 namespace Trady.Analysis.Indicator
 {
-    public class MovingAverageConvergenceDivergence<TInput, TOutput> : AnalyzableBase<TInput, decimal, (decimal? MacdLine, decimal? SignalLine, decimal? MacdHistogram), TOutput>
+    public class MovingAverageConvergenceDivergence<TInput, TOutput> 
+        : AnalyzableBase<TInput, decimal, (decimal? MacdLine, decimal? SignalLine, decimal? MacdHistogram), TOutput>
     {
         private ExponentialMovingAverageByTuple _ema1, _ema2;
         private readonly GenericExponentialMovingAverage _signal;

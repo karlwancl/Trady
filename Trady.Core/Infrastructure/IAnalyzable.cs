@@ -26,4 +26,11 @@ namespace Trady.Core.Infrastructure
         /// <param name="i">Index.</param>
 		new TOutput this[int i] { get; }
     }
+
+    public interface INumericAnalyzable<TOutput>: IAnalyzable<TOutput>
+	{
+        IReadOnlyList<TOutput> ComputeChange(int? startIndex = null, int? endIndex = null);
+
+		TOutput Change(int index);
+	}
 }

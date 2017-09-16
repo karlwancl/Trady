@@ -7,7 +7,7 @@ using Trady.Core;
 namespace Trady.Analysis.Indicator
 {
     public class AccumulationDistributionLine<TInput, TOutput>
-        : CumulativeAnalyzableBase<TInput, (decimal High, decimal Low, decimal Close, decimal Volume), decimal?, TOutput>
+        : CumulativeNumericAnalyzableBase<TInput, (decimal High, decimal Low, decimal Close, decimal Volume), TOutput>
     {
         protected AccumulationDistributionLine(IEnumerable<TInput> inputs, Func<TInput, (decimal High, decimal Low, decimal Close, decimal Volume)> inputMapper) : base(inputs, inputMapper)
         {

@@ -6,7 +6,7 @@ using Trady.Core;
 
 namespace Trady.Analysis.Indicator
 {
-    public class Lowest<TInput, TOutput> : AnalyzableBase<TInput, decimal, decimal?, TOutput>
+    public class Lowest<TInput, TOutput> : NumericAnalyzableBase<TInput, decimal, TOutput>
     {
         public Lowest(IEnumerable<TInput> inputs, Func<TInput, decimal> inputMapper, int periodCount) : base(inputs, inputMapper)
         {

@@ -6,7 +6,7 @@ using Trady.Core;
 
 namespace Trady.Analysis.Indicator
 {
-    public class HistoricalHighest<TInput, TOutput> : AnalyzableBase<TInput, decimal, decimal?, TOutput>
+    public class HistoricalHighest<TInput, TOutput> : NumericAnalyzableBase<TInput, decimal, TOutput>
     {
         public HistoricalHighest(IEnumerable<TInput> inputs, Func<TInput, decimal> inputMapper) : base(inputs, inputMapper)
         {

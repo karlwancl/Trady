@@ -6,7 +6,7 @@ using Trady.Core;
 
 namespace Trady.Analysis.Indicator
 {
-    public class SimpleMovingAverage<TInput, TOutput> : AnalyzableBase<TInput, decimal, decimal?, TOutput>
+    public class SimpleMovingAverage<TInput, TOutput> : NumericAnalyzableBase<TInput, decimal, TOutput>
     {
         public int PeriodCount { get; }
 

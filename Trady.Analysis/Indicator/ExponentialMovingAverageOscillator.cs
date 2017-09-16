@@ -6,7 +6,7 @@ using Trady.Core;
 
 namespace Trady.Analysis.Indicator
 {
-    public class ExponentialMovingAverageOscillator<TInput, TOutput> : AnalyzableBase<TInput, decimal, decimal?, TOutput>
+    public class ExponentialMovingAverageOscillator<TInput, TOutput> : NumericAnalyzableBase<TInput, decimal, TOutput>
     {
         private readonly ExponentialMovingAverageByTuple _ema2;
         private readonly ExponentialMovingAverageByTuple _ema1;

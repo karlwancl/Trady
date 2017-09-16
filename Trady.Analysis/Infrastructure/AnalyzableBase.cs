@@ -36,33 +36,38 @@ namespace Trady.Analysis.Infrastructure
             Cache = new ConcurrentDictionary<int, TOutputToMap>();
         }
 
-        public IReadOnlyList<TOutput> Compute(int? startIndex = null, int? endIndex = null)
+        internal protected IReadOnlyList<TOutput> Compute(Func<int, TOutput> outputFunc, int? startIndex, int? endIndex)
         {
-            int computedStartIndex = GetComputeStartIndex(startIndex);
-            int computedEndIndex = GetComputeEndIndex(endIndex);
-            return Enumerable.Range(computedStartIndex, computedEndIndex - computedStartIndex + 1)
-                .Select(i => this[i])
-                .ToList();
+			int computedStartIndex = GetComputeStartIndex(startIndex);
+			int computedEndIndex = GetComputeEndIndex(endIndex);
+			return Enumerable.Range(computedStartIndex, computedEndIndex - computedStartIndex + 1)
+				.Select(i => outputFunc(i))
+				.ToList();      
         }
+
+        public IReadOnlyList<TOutput> Compute(int? startIndex = null, int? endIndex = null)
+            => Compute(i => this[i], startIndex, endIndex);
 
         protected virtual int GetComputeStartIndex(int? startIndex) => startIndex ?? 0;
 
         protected virtual int GetComputeEndIndex(int? endIndex) => endIndex ?? _mappedInputs.Count - 1;
 
-        public TOutput this[int index]
+        internal protected TOutput Get(Func<int, TOutputToMap> otmFunc, int index)
         {
-            get
-            {
-                dynamic outputToMap = Cache.GetOrAdd(index, i => ComputeByIndexImpl(_mappedInputs, i));
-                var datetime = index >= 0 && index < _mappedInputs.Count ? (_mappedDatetime?[index] ?? default(DateTime?)) : default(DateTime?);
-                return _isTOutputAnalyzableTick ? AnalyzableTickMapper(datetime, outputToMap) : outputToMap;
+			dynamic outputToMap = otmFunc(index);
+			var datetime = index >= 0 && index < _mappedInputs.Count ? (_mappedDatetime?[index] ?? default(DateTime?)) : default(DateTime?);
+			return _isTOutputAnalyzableTick ? AnalyzableTickMapper(datetime, outputToMap) : outputToMap;
 
-                TOutput AnalyzableTickMapper(DateTime? d, TOutputToMap otm)
-                    => (TOutput)typeof(TOutput).GetConstructors().First().Invoke(new object[] { d, otm });
-            }
+			TOutput AnalyzableTickMapper(DateTime? d, TOutputToMap otm)
+				=> (TOutput)typeof(TOutput).GetConstructors().First().Invoke(new object[] { d, otm });
         }
-                               
-        protected abstract TOutputToMap ComputeByIndexImpl(IReadOnlyList<TMappedInput> mappedInputs, int index);
+
+        public TOutput this[int index] => Get(ComputeByIndex, index);
+
+		internal protected TOutputToMap ComputeByIndex(int index)
+	        => Cache.GetOrAdd(index, i => ComputeByIndexImpl(_mappedInputs, i));
+
+		protected abstract TOutputToMap ComputeByIndexImpl(IReadOnlyList<TMappedInput> mappedInputs, int index);
 
         protected ConcurrentDictionary<int, TOutputToMap> Cache { get; }
 
