@@ -6,16 +6,16 @@ namespace Trady.Analysis
 {
     public static class IndexedCandleExtension
     {
-        public static decimal? PriceChange(this IndexedCandle ic)
+        public static decimal? ClosePriceChange(this IndexedCandle ic)
             => ic.Get<ClosePriceChange>()[ic.Index].Tick;
 
-        public static decimal? PricePercentageChange(this IndexedCandle ic)
+        public static decimal? ClosePricePercentageChange(this IndexedCandle ic)
             => ic.Get<ClosePricePercentageChange>()[ic.Index].Tick;
 
-        public static bool IsCandlesBullish(this IndexedCandle ic)
+        public static bool IsBullish(this IndexedCandle ic)
             => ic.Get<ClosePriceChangeTrend>()[ic.Index].Tick == Trend.Bullish;
 
-        public static bool IsCandlesBearish(this IndexedCandle ic)
+        public static bool IsBearish(this IndexedCandle ic)
             => ic.Get<ClosePriceChangeTrend>()[ic.Index].Tick == Trend.Bearish;
 
         public static bool IsAccumDistBullish(this IndexedCandle ic)
@@ -32,12 +32,6 @@ namespace Trady.Analysis
 
         public static bool IsInBbRange(this IndexedCandle ic, int periodCount, int sdCount)
             => ic.Get<BollingerBandsInRange>(periodCount, sdCount)[ic.Index].Tick == Overboundary.InRange;
-
-        public static bool IsHighest(this IndexedCandle ic, int periodCount)
-            => ic.Get<IsHighestPrice>(periodCount)[ic.Index].Tick ?? false;
-
-        public static bool IsLowest(this IndexedCandle ic, int periodCount)
-            => ic.Get<IsLowestPrice>(periodCount)[ic.Index].Tick ?? false;
 
         public static bool IsRsiOverbought(this IndexedCandle ic, int periodCount)
             => ic.Get<RelativeStrengthIndexOvertrade>(periodCount)[ic.Index].Tick == Overtrade.Overbought;
@@ -152,5 +146,29 @@ namespace Trady.Analysis
 
         public static bool IsSlowStoBearishCross(this IndexedCandle ic, int periodCount, int smaPeriodCountD)
             => ic.Get<StochasticsCrossover.Slow>(periodCount, smaPeriodCountD)[ic.Index].Tick == Crossover.BearishCrossover;
+
+        public static bool IsBreakingHistoricalHighestHigh(this IndexedCandle ic)
+            => ic.Get<IsBreakingHistoricalHighestHigh>()[ic.Index]?.Tick ?? false;
+
+        public static bool IsBreakingHistoricalHighestClose(this IndexedCandle ic)
+            => ic.Get<IsBreakingHistoricalHighestClose>()[ic.Index]?.Tick ?? false;
+
+        public static bool IsBreakingHistoricalLowestLow(this IndexedCandle ic)
+            => ic.Get<IsBreakingHistoricalLowestLow>()[ic.Index]?.Tick ?? false;
+
+        public static bool IsBreakingHistoricalLowestClose(this IndexedCandle ic)
+            => ic.Get<IsBreakingHistoricalLowestClose>()[ic.Index]?.Tick ?? false;
+
+        public static bool IsBreakingHighestHigh(this IndexedCandle ic, int periodCount)
+            => ic.Get<IsBreakingHighestHigh>(periodCount)[ic.Index]?.Tick ?? false;
+
+        public static bool IsBreakingHighestClose(this IndexedCandle ic, int periodCount)
+            => ic.Get<IsBreakingHighestClose>(periodCount)[ic.Index]?.Tick ?? false;
+
+        public static bool IsBreakingLowestLow(this IndexedCandle ic, int periodCount)
+            => ic.Get<IsBreakingLowestLow>(periodCount)[ic.Index]?.Tick ?? false;
+
+        public static bool IsBreakingLowestClose(this IndexedCandle ic, int periodCount)
+            => ic.Get<IsBreakingLowestClose>(periodCount)[ic.Index]?.Tick ?? false;
     }
 }

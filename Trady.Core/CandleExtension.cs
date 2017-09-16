@@ -14,9 +14,9 @@ namespace Trady.Core
 
         public static decimal GetBody(this Candle candle) => Math.Abs(candle.Open - candle.Close);
 
-        public static bool IsBullish(this Candle candle) => candle.Open - candle.Close > 0;
+        public static bool IsBull(this Candle candle) => candle.Open - candle.Close > 0;
 
-        public static bool IsBearish(this Candle candle) => candle.Open - candle.Close < 0;
+        public static bool IsBear(this Candle candle) => candle.Open - candle.Close < 0;
 
         #region candle list transformation
 
