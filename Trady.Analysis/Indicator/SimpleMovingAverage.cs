@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Trady.Analysis.Helper;
 using Trady.Analysis.Infrastructure;
 using Trady.Core;
+using Trady.Core.Infrastructure;
 
 namespace Trady.Analysis.Indicator
 {
@@ -17,7 +18,7 @@ namespace Trady.Analysis.Indicator
         }
 
         protected override decimal? ComputeByIndexImpl(IReadOnlyList<decimal> mappedInputs, int index)
-            => mappedInputs.Avg(PeriodCount, index);
+            => mappedInputs._Average(PeriodCount, index);
     }
 
     public class SimpleMovingAverageByTuple : SimpleMovingAverage<decimal, decimal?>
@@ -28,7 +29,7 @@ namespace Trady.Analysis.Indicator
 
     public class SimpleMovingAverage : SimpleMovingAverage<Candle, AnalyzableTick<decimal?>>
     {
-        public SimpleMovingAverage(IEnumerable<Candle> candles, int periodCount)
-            : base(candles, c => c.Close, periodCount) { }
+        public SimpleMovingAverage(IEnumerable<Candle> inputs, int periodCount)
+            : base(inputs, i => i.Close, periodCount) { }
     }
 }

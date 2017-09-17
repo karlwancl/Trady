@@ -2,9 +2,9 @@
 
 namespace Trady.Core.Infrastructure
 {
-    public interface IAnalyzableTick
+    public interface IAnalyzableTick : ITick
     {
-        DateTime? DateTime { get; }
+        new DateTime? DateTime { get; }
 
         object Tick { get; }
     }

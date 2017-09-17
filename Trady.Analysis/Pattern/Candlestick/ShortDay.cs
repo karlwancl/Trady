@@ -22,7 +22,7 @@ namespace Trady.Analysis.Pattern.Candlestick
         protected override bool ComputeByIndexImpl(IReadOnlyList<(decimal Open, decimal Close)> mappedInputs, int index)
         {
             var bodyLengths = mappedInputs.Select(i => Math.Abs(i.Close - i.Open));
-            return bodyLengths.ElementAt(index) < bodyLengths.Percentile(PeriodCount, index, Threshold);
+            return bodyLengths.ElementAt(index) < bodyLengths._Percentile(PeriodCount, index, Threshold);
         }
     }
 

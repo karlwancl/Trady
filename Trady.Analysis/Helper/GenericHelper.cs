@@ -19,10 +19,10 @@ namespace Trady.Analysis.Helper
             return index == -1 ? defaultValue : index;
         }
 
-        public static decimal? Avg(this IEnumerable<decimal> values, int periodCount, int index)
+        public static decimal? _Average(this IEnumerable<decimal> values, int periodCount, int index)
             => index >= periodCount - 1 ? values.Skip(index - periodCount + 1).Take(periodCount).Average() : (decimal?)null;
 
-        public static decimal? SdInt(this IEnumerable<decimal> values, int periodCount, int index)
+        public static decimal? _StandardDeviation(this IEnumerable<decimal> values, int periodCount, int index)
         {
             if (index < periodCount - 1)
                 return null;
@@ -33,10 +33,10 @@ namespace Trady.Analysis.Helper
             return Convert.ToDecimal(Math.Sqrt(Convert.ToDouble(diffSum / (vs.Count() - 1))));
         }
 
-        public static decimal? Median(this IList<decimal> values, int periodCount, int index)
-            => Percentile(values, periodCount, index, 0.5m);
+        public static decimal? _Median(this IList<decimal> values, int periodCount, int index)
+            => _Percentile(values, periodCount, index, 0.5m);
 
-        public static decimal? Percentile(this IEnumerable<decimal> values, int periodCount, int index, decimal percentile)
+        public static decimal? _Percentile(this IEnumerable<decimal> values, int periodCount, int index, decimal percentile)
         {
             if (percentile < 0 || percentile > 1)
                 throw new ArgumentException("Percentile should be between 0 and 1", nameof(percentile));

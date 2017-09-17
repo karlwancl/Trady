@@ -12,19 +12,19 @@
             return value1.Value > value2.Value;
         }
 
-        public static Trend? IsTrending(decimal? last, decimal? secondLast)
-        {
-            if (!last.HasValue || !secondLast.HasValue) return null;
-            return IsTrending(last.Value - secondLast.Value);
-        }
+        //public static Trend? IsTrending(decimal? last, decimal? secondLast)
+        //{
+        //    if (!last.HasValue || !secondLast.HasValue) return null;
+        //    return IsTrending(last.Value - secondLast.Value);
+        //}
 
-        public static Trend? IsTrending(decimal? change)
-        {
-            if (!change.HasValue) return null;
-            if (change.Value > 0) return Trend.Bullish;
-            if (change.Value < 0) return Trend.Bearish;
-            return Trend.Neutral;
-        }
+        //public static Trend? IsTrending(decimal? change)
+        //{
+        //    if (!change.HasValue) return null;
+        //    if (change.Value > 0) return Trend.Bullish;
+        //    if (change.Value < 0) return Trend.Bearish;
+        //    return Trend.Neutral;
+        //}
 
         public static Overboundary? IsOverbound(decimal? value, decimal? lower, decimal? upper)
         {

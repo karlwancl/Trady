@@ -1,8 +1,9 @@
 ﻿using System;
+using Trady.Core.Infrastructure;
 
 namespace Trady.Core
 {
-    public class Candle
+    public class Candle : ITick
     {
         public Candle(DateTime dateTime, decimal open, decimal high, decimal low, decimal close, decimal volume)
         {

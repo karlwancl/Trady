@@ -12,9 +12,6 @@ namespace Trady.Analysis
         public static IReadOnlyList<AnalyzableTick<decimal?>> AccumDist(this IEnumerable<Candle> candles, int? startIndex = null, int? endIndex = null)
             => new AccumulationDistributionLine(candles).Compute(startIndex, endIndex);
 
-        public static IReadOnlyList<AnalyzableTick<decimal?>> AccumDistChange(this IEnumerable<Candle> candles, int? startIndex = null, int? endIndex = null)
-            => new AccumulationDistributionLineChange(candles).Compute(startIndex, endIndex);
-
         public static IReadOnlyList<AnalyzableTick<(decimal? Up, decimal? Down)>> Aroon(this IEnumerable<Candle> candles, int periodCount, int? startIndex = null, int? endIndex = null)
             => new Aroon(candles, periodCount).Compute(startIndex, endIndex);
 
@@ -150,9 +147,6 @@ namespace Trady.Analysis
 
         public static IReadOnlyList<decimal?> AccumDist(this IEnumerable<(decimal High, decimal Low, decimal Close, decimal Volume)> inputs, int? startIndex = null, int? endIndex = null)
             => new AccumulationDistributionLineByTuple(inputs).Compute(startIndex, endIndex);
-
-        public static IReadOnlyList<decimal?> AccumDistChange(this IEnumerable<(decimal High, decimal Low, decimal Close, decimal Volume)> inputs, int? startIndex = null, int? endIndex = null)
-            => new AccumulationDistributionLineChangeByTuple(inputs).Compute(startIndex, endIndex);
 
         public static IReadOnlyList<(decimal? Up, decimal? Down)> Aroon(this IEnumerable<(decimal High, decimal Low)> inputs, int periodCount, int? startIndex = null, int? endIndex = null)
             => new AroonByTuple(inputs, periodCount).Compute(startIndex, endIndex);

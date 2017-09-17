@@ -10,6 +10,8 @@ namespace Trady.Analysis
 
         object IAnalyzableTick.Tick => Tick;
 
+        DateTime ITick.DateTime => DateTime.GetValueOrDefault();
+
         public AnalyzableTick(DateTime? dateTime, T tick)
         {
             Tick = tick;

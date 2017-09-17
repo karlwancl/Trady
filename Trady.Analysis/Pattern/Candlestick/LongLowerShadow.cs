@@ -21,7 +21,7 @@ namespace Trady.Analysis.Pattern.Candlestick
         protected override bool? ComputeByIndexImpl(IReadOnlyList<(decimal Open, decimal Low, decimal Close)> mappedInputs, int index)
         {
             var lowerShadows = mappedInputs.Select(i => Math.Min(i.Open, i.Close) - i.Low);
-            return lowerShadows.ElementAt(index) < lowerShadows.Percentile(PeriodCount, index, Threshold);
+            return lowerShadows.ElementAt(index) < lowerShadows._Percentile(PeriodCount, index, Threshold);
         }
     }
 
