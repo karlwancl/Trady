@@ -404,5 +404,32 @@ namespace Trady.Test
             Assert.IsTrue(93.25m.IsApproximatelyEquals(result.Tick.D.Value));
             Assert.IsTrue(90.43m.IsApproximatelyEquals(result.Tick.J.Value));
         }
+
+		[TestMethod]
+		public async Task TestFastStoOscAsync()
+		{
+			var candles = await ImportCandlesAsync();
+			var indicator = new StochasticsOscillator.Fast(candles, 14, 3);
+			var result = indicator[candles.Count() - 1];
+            Assert.IsTrue((-1.7m).IsApproximatelyEquals(result.Tick.Value));
+		}
+
+		[TestMethod]
+		public async Task TestSlowStoOscAsync()
+		{
+			var candles = await ImportCandlesAsync();
+			var indicator = new StochasticsOscillator.Slow(candles, 14, 3);
+			var result = indicator[candles.Count() - 1];
+			Assert.IsTrue((-0.94m).IsApproximatelyEquals(result.Tick.Value));
+		}
+
+		[TestMethod]
+		public async Task TestFullStoOscAsync()
+		{
+			var candles = await ImportCandlesAsync();
+			var indicator = new StochasticsOscillator.Full(candles, 14, 3, 3);
+			var result = indicator[candles.Count() - 1];
+			Assert.IsTrue((-0.94m).IsApproximatelyEquals(result.Tick.Value));
+		}
     }
 }

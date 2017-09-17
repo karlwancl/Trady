@@ -141,6 +141,15 @@ namespace Trady.Analysis
         public static IReadOnlyList<AnalyzableTick<(decimal? K, decimal? D, decimal? J)>> SlowSto(this IEnumerable<Candle> candles, int periodCount, int smaPeriodCountD, int? startIndex = null, int? endIndex = null)
             => new Stochastics.Slow(candles, periodCount, smaPeriodCountD).Compute(startIndex, endIndex);
 
+		public static IReadOnlyList<AnalyzableTick<decimal?>> FastStoOsc(this IEnumerable<Candle> candles, int periodCount, int smaPeriodCount, int? startIndex = null, int? endIndex = null)
+	        => new StochasticsOscillator.Fast(candles, periodCount, smaPeriodCount).Compute(startIndex, endIndex);
+
+		public static IReadOnlyList<AnalyzableTick<decimal?>> FullStoOsc(this IEnumerable<Candle> candles, int periodCount, int smaPeriodCountK, int smaPeriodCountD, int? startIndex = null, int? endIndex = null)
+			=> new StochasticsOscillator.Full(candles, periodCount, smaPeriodCountK, smaPeriodCountD).Compute(startIndex, endIndex);
+
+		public static IReadOnlyList<AnalyzableTick<decimal?>> SlowStoOsc(this IEnumerable<Candle> candles, int periodCount, int smaPeriodCountD, int? startIndex = null, int? endIndex = null)
+			=> new StochasticsOscillator.Slow(candles, periodCount, smaPeriodCountD).Compute(startIndex, endIndex);
+
         public static IReadOnlyList<AnalyzableTick<decimal?>> Tr(this IEnumerable<Candle> candles, int? startIndex = null, int? endIndex = null)
             => new TrueRange(candles).Compute(startIndex, endIndex);
 
@@ -261,6 +270,15 @@ namespace Trady.Analysis
 
         public static IReadOnlyList<(decimal? K, decimal? D, decimal? J)> SlowSto(this IEnumerable<(decimal High, decimal Low, decimal Close)> inputs, int periodCount, int smaPeriodCountD, int? startIndex = null, int? endIndex = null)
             => new Stochastics.SlowByTuple(inputs, periodCount, smaPeriodCountD).Compute(startIndex, endIndex);
+
+		public static IReadOnlyList<decimal?> FastStoOsc(this IEnumerable<(decimal High, decimal Low, decimal Close)> inputs, int periodCount, int smaPeriodCount, int? startIndex = null, int? endIndex = null)
+	        => new StochasticsOscillator.FastByTuple(inputs, periodCount, smaPeriodCount).Compute(startIndex, endIndex);
+
+		public static IReadOnlyList<decimal?> FullStoOsc(this IEnumerable<(decimal High, decimal Low, decimal Close)> inputs, int periodCount, int smaPeriodCountK, int smaPeriodCountD, int? startIndex = null, int? endIndex = null)
+			=> new StochasticsOscillator.FullByTuple(inputs, periodCount, smaPeriodCountK, smaPeriodCountD).Compute(startIndex, endIndex);
+
+		public static IReadOnlyList<decimal?> SlowStoOsc(this IEnumerable<(decimal High, decimal Low, decimal Close)> inputs, int periodCount, int smaPeriodCountD, int? startIndex = null, int? endIndex = null)
+			=> new StochasticsOscillator.SlowByTuple(inputs, periodCount, smaPeriodCountD).Compute(startIndex, endIndex);
 
         public static IReadOnlyList<decimal?> Tr(this IEnumerable<(decimal High, decimal Low, decimal Close)> inputs, int? startIndex = null, int? endIndex = null)
             => new TrueRangeByTuple(inputs).Compute(startIndex, endIndex);

@@ -37,8 +37,8 @@
     </PackageReference>
     <PackageReference Include="System.Reflection.TypeExtensions" Version="4.3.0">
     </PackageReference>
-    <PackageReference Include="System.ValueTuple" Version="4.3.0" />
     <PackageReference Include="Microsoft.CSharp" Version="4.4.0" />
+    <PackageReference Include="System.ValueTuple" Version="4.4.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Trady.Core\Trady.Core.csproj" />
@@ -46,6 +46,7 @@
   <!--<Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />-->
   <ItemGroup>
     <Folder Include="Backtest\" />
+    <Folder Include="Candlestick\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="Strategy\Rule\UnaryOperationBase.cs" />
