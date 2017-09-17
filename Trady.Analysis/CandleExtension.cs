@@ -102,6 +102,9 @@ namespace Trady.Analysis
         public static IReadOnlyList<AnalyzableTick<(decimal? MacdLine, decimal? SignalLine, decimal? MacdHistogram)>> Macd(this IEnumerable<Candle> candles, int emaPeriodCount1, int emaPeriodCount2, int demPeriodCount, int? startIndex = null, int? endIndex = null)
             => new MovingAverageConvergenceDivergence(candles, emaPeriodCount1, emaPeriodCount2, demPeriodCount).Compute(startIndex, endIndex);
 
+		public static IReadOnlyList<AnalyzableTick<decimal?>> MacdHistogram(this IEnumerable<Candle> candles, int emaPeriodCount1, int emaPeriodCount2, int demPeriodCount, int? startIndex = null, int? endIndex = null)
+	        => new MovingAverageConvergenceDivergenceHistogram(candles, emaPeriodCount1, emaPeriodCount2, demPeriodCount).Compute(startIndex, endIndex);
+
         public static IReadOnlyList<AnalyzableTick<decimal?>> Obv(this IEnumerable<Candle> candles, int? startIndex = null, int? endIndex = null)
             => new OnBalanceVolume(candles).Compute(startIndex, endIndex);
 
@@ -219,6 +222,9 @@ namespace Trady.Analysis
 
         public static IReadOnlyList<(decimal? MacdLine, decimal? SignalLine, decimal? MacdHistogram)> Macd(this IEnumerable<decimal> inputs, int emaPeriodCount1, int emaPeriodCount2, int demPeriodCount, int? startIndex = null, int? endIndex = null)
             => new MovingAverageConvergenceDivergenceByTuple(inputs, emaPeriodCount1, emaPeriodCount2, demPeriodCount).Compute(startIndex, endIndex);
+
+		public static IReadOnlyList<decimal?> MacdHistogram(this IEnumerable<decimal> inputs, int emaPeriodCount1, int emaPeriodCount2, int demPeriodCount, int? startIndex = null, int? endIndex = null)
+	        => new MovingAverageConvergenceDivergenceHistogramByTuple(inputs, emaPeriodCount1, emaPeriodCount2, demPeriodCount).Compute(startIndex, endIndex);
 
         public static IReadOnlyList<decimal?> Obv(this IEnumerable<(decimal Close, decimal Volume)> inputs, int? startIndex = null, int? endIndex = null)
             => new OnBalanceVolumeByTuple(inputs).Compute(startIndex, endIndex);

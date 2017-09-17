@@ -14,22 +14,22 @@ namespace Trady.Analysis
             => ic.Get<ClosePricePercentageChange>()[ic.Index].Tick;
 
         public static bool IsBullish(this IndexedCandle ic)
-            => ic.Get<ClosePriceChange>()[ic.Index].Tick.IsTrue(t => t > 0);
+            => ic.Get<ClosePriceChange>()[ic.Index].Tick.IsPositive();
 
         public static bool IsBearish(this IndexedCandle ic)
-            => ic.Get<ClosePriceChange>()[ic.Index].Tick.IsTrue(t => t < 0);
+            => ic.Get<ClosePriceChange>()[ic.Index].Tick.IsNegative();
 
         public static bool IsAccumDistBullish(this IndexedCandle ic)
-            => ic.Get<AccumulationDistributionLine>().Change(ic.Index).Tick.IsTrue(t => t > 0);
+            => ic.Get<AccumulationDistributionLine>().Change(ic.Index).Tick.IsPositive();
 
         public static bool IsAccumDistBearish(this IndexedCandle ic)
-            => ic.Get<AccumulationDistributionLine>().Change(ic.Index).Tick.IsTrue(t => t < 0);
+            => ic.Get<AccumulationDistributionLine>().Change(ic.Index).Tick.IsNegative();
 
         public static bool IsObvBullish(this IndexedCandle ic)
-            => ic.Get<OnBalanceVolume>().Change(ic.Index).Tick.IsTrue(i => i > 0);
+            => ic.Get<OnBalanceVolume>().Change(ic.Index).Tick.IsPositive();
 
         public static bool IsObvBearish(this IndexedCandle ic)
-            => ic.Get<OnBalanceVolume>().Change(ic.Index).Tick.IsTrue(i => i < 0);
+            => ic.Get<OnBalanceVolume>().Change(ic.Index).Tick.IsNegative();
 
 		public static bool IsInBbRange(this IndexedCandle ic, int periodCount, int sdCount)
             => ic.Get<BollingerBandsInRange>(periodCount, sdCount)[ic.Index].Tick == Overboundary.InRange;
@@ -65,52 +65,34 @@ namespace Trady.Analysis
             => ic.Get<IsAboveExponentialMovingAverage>(periodCount)[ic.Index].Tick ?? false;
 
         public static bool IsSmaBullish(this IndexedCandle ic, int periodCount)
-            => ic.Get<SimpleMovingAverage>(periodCount).Change(ic.Index).Tick.IsTrue(t => t > 0);
+            => ic.Get<SimpleMovingAverage>(periodCount).Change(ic.Index).Tick.IsPositive();
 
         public static bool IsSmaBearish(this IndexedCandle ic, int periodCount)
-            => ic.Get<SimpleMovingAverage>(periodCount).Change(ic.Index).Tick.IsTrue(t => t < 0);
+            => ic.Get<SimpleMovingAverage>(periodCount).Change(ic.Index).Tick.IsNegative();
 
         public static bool IsSmaOscBullish(this IndexedCandle ic, int periodCount1, int periodCount2)
-            => ic.Get<SimpleMovingAverageOscillator>(periodCount1, periodCount2).Change(ic.Index).Tick.IsTrue(t => t > 0);
+            => ic.Get<SimpleMovingAverageOscillator>(periodCount1, periodCount2).Change(ic.Index).Tick.IsPositive();
 
         public static bool IsSmaOscBearish(this IndexedCandle ic, int periodCount1, int periodCount2)
-            => ic.Get<SimpleMovingAverageOscillator>(periodCount1, periodCount2).Change(ic.Index).Tick.IsTrue(t => t < 0);
+            => ic.Get<SimpleMovingAverageOscillator>(periodCount1, periodCount2).Change(ic.Index).Tick.IsNegative();
 
         public static bool IsEmaBullish(this IndexedCandle ic, int periodCount)
-            => ic.Get<ExponentialMovingAverage>(periodCount).Change(ic.Index).Tick.IsTrue(t => t > 0);
+            => ic.Get<ExponentialMovingAverage>(periodCount).Change(ic.Index).Tick.IsPositive();
 
         public static bool IsEmaBearish(this IndexedCandle ic, int periodCount)
-            => ic.Get<ExponentialMovingAverage>(periodCount).Change(ic.Index).Tick.IsTrue(t => t < 0);
+            => ic.Get<ExponentialMovingAverage>(periodCount).Change(ic.Index).Tick.IsNegative();
 
         public static bool IsEmaOscBullish(this IndexedCandle ic, int periodCount1, int periodCount2)
-            => ic.Get<ExponentialMovingAverageOscillator>(periodCount1, periodCount2).Change(ic.Index).Tick.IsTrue(t => t > 0);
+            => ic.Get<ExponentialMovingAverageOscillator>(periodCount1, periodCount2).Change(ic.Index).Tick.IsPositive();
 
         public static bool IsEmaOscBearish(this IndexedCandle ic, int periodCount1, int periodCount2)
-            => ic.Get<ExponentialMovingAverageOscillator>(periodCount1, periodCount2).Change(ic.Index).Tick.IsTrue(t => t < 0);
+            => ic.Get<ExponentialMovingAverageOscillator>(periodCount1, periodCount2).Change(ic.Index).Tick.IsNegative();
 
         public static bool IsMacdOscBullish(this IndexedCandle ic, int emaPeriodCount1, int emaPeriodCount2, int demPeriodCount)
-            => ic.Get<MovingAverageConvergenceDivergenceOscillator>(emaPeriodCount1, emaPeriodCount2, demPeriodCount)[ic.Index].Tick == Trend.Bullish;
+            => ic.Get<MovingAverageConvergenceDivergenceHistogram>(emaPeriodCount1, emaPeriodCount2, demPeriodCount).Change(ic.Index).Tick.IsPositive();
 
         public static bool IsMacdOscBearish(this IndexedCandle ic, int emaPeriodCount1, int emaPeriodCount2, int demPeriodCount)
-            => ic.Get<MovingAverageConvergenceDivergenceOscillator>(emaPeriodCount1, emaPeriodCount2, demPeriodCount)[ic.Index].Tick == Trend.Bearish;
-
-        public static bool IsFastStoOscBullish(this IndexedCandle ic, int periodCount, int smaPeriodCount)
-            => ic.Get<StochasticsOscillatorTrend.Fast>(periodCount, smaPeriodCount)[ic.Index].Tick == Trend.Bullish;
-
-        public static bool IsFastStoOscBearish(this IndexedCandle ic, int periodCount, int smaPeriodCount)
-            => ic.Get<StochasticsOscillatorTrend.Fast>(periodCount, smaPeriodCount)[ic.Index].Tick == Trend.Bearish;
-
-        public static bool IsFullStoOscBullish(this IndexedCandle ic, int periodCount, int smaPeriodCountK, int smaPeriodCountD)
-            => ic.Get<StochasticsOscillatorTrend.Full>(periodCount, smaPeriodCountK, smaPeriodCountD)[ic.Index].Tick == Trend.Bullish;
-
-        public static bool IsFullStoOscBearish(this IndexedCandle ic, int periodCount, int smaPeriodCountK, int smaPeriodCountD)
-            => ic.Get<StochasticsOscillatorTrend.Full>(periodCount, smaPeriodCountK, smaPeriodCountD)[ic.Index].Tick == Trend.Bearish;
-
-        public static bool IsSlowStoOscBullish(this IndexedCandle ic, int periodCount, int smaPeriodCountD)
-            => ic.Get<StochasticsOscillatorTrend.Slow>(periodCount, smaPeriodCountD)[ic.Index].Tick == Trend.Bullish;
-
-        public static bool IsSlowStoOscBearish(this IndexedCandle ic, int periodCount, int smaPeriodCountD)
-            => ic.Get<StochasticsOscillatorTrend.Slow>(periodCount, smaPeriodCountD)[ic.Index].Tick == Trend.Bearish;
+            => ic.Get<MovingAverageConvergenceDivergenceHistogram>(emaPeriodCount1, emaPeriodCount2, demPeriodCount).Change(ic.Index).Tick.IsNegative();
 
         public static bool IsSmaBullishCross(this IndexedCandle ic, int periodCount1, int periodCount2)
             => ic.Get<SimpleMovingAverageCrossover>(periodCount1, periodCount2)[ic.Index].Tick == Crossover.BullishCrossover;
@@ -149,27 +131,27 @@ namespace Trady.Analysis
             => ic.Get<StochasticsCrossover.Slow>(periodCount, smaPeriodCountD)[ic.Index].Tick == Crossover.BearishCrossover;
 
         public static bool IsBreakingHistoricalHighestHigh(this IndexedCandle ic)
-            => ic.Get<HistoricalHighestHigh>().Change(ic.Index).Tick.IsTrue(t => t > 0);
+            => ic.Get<HistoricalHighestHigh>().Change(ic.Index).Tick.IsPositive();
 
         public static bool IsBreakingHistoricalHighestClose(this IndexedCandle ic)
-            => ic.Get<HistoricalHighestClose>().Change(ic.Index).Tick.IsTrue(t => t > 0);
+            => ic.Get<HistoricalHighestClose>().Change(ic.Index).Tick.IsPositive();
 
         public static bool IsBreakingHistoricalLowestLow(this IndexedCandle ic)
-            => ic.Get<HistoricalLowestLow>().Change(ic.Index).Tick.IsTrue(t => t < 0);
+            => ic.Get<HistoricalLowestLow>().Change(ic.Index).Tick.IsNegative();
 
         public static bool IsBreakingHistoricalLowestClose(this IndexedCandle ic)
-            => ic.Get<HistoricalLowestClose>().Change(ic.Index).Tick.IsTrue(t => t < 0);
+            => ic.Get<HistoricalLowestClose>().Change(ic.Index).Tick.IsNegative();
 
         public static bool IsBreakingHighestHigh(this IndexedCandle ic, int periodCount)
-            => ic.Get<HighestHigh>(periodCount).Change(ic.Index).Tick.IsTrue(t => t > 0);
+            => ic.Get<HighestHigh>(periodCount).Change(ic.Index).Tick.IsPositive();
 
         public static bool IsBreakingHighestClose(this IndexedCandle ic, int periodCount)
-            => ic.Get<HighestClose>(periodCount).Change(ic.Index).Tick.IsTrue(t => t > 0);
+            => ic.Get<HighestClose>(periodCount).Change(ic.Index).Tick.IsPositive();
 
         public static bool IsBreakingLowestLow(this IndexedCandle ic, int periodCount)
-            => ic.Get<LowestLow>(periodCount).Change(ic.Index).Tick.IsTrue(t => t < 0);
+            => ic.Get<LowestLow>(periodCount).Change(ic.Index).Tick.IsNegative();
 
         public static bool IsBreakingLowestClose(this IndexedCandle ic, int periodCount)
-            => ic.Get<LowestClose>(periodCount).Change(ic.Index).Tick.IsTrue(t => t < 0);
+            => ic.Get<LowestClose>(periodCount).Change(ic.Index).Tick.IsNegative();
     }
 }

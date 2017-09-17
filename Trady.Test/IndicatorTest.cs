@@ -307,6 +307,15 @@ namespace Trady.Test
             Assert.IsTrue((-0.053m).IsApproximatelyEquals(result.Tick.MacdHistogram.Value));
         }
 
+		[TestMethod]
+		public async Task TestMacdHistogramAsync()
+		{
+			var candles = await ImportCandlesAsync();
+			var indicator = new MovingAverageConvergenceDivergenceHistogram(candles, 12, 26, 9);
+			var result = indicator[candles.Count() - 1];
+			Assert.IsTrue((-0.053m).IsApproximatelyEquals(result.Tick.Value));
+		}
+
         [TestMethod]
         public async Task TestObvAsync()
         {
