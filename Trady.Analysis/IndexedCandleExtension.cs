@@ -103,6 +103,24 @@ namespace Trady.Analysis
         public static bool IsMacdOscBearish(this IndexedCandle ic, int emaPeriodCount1, int emaPeriodCount2, int demPeriodCount)
             => ic.Get<MovingAverageConvergenceDivergenceHistogram>(emaPeriodCount1, emaPeriodCount2, demPeriodCount).Diff(ic.Index).Tick.IsNegative();
 
+        public static bool IsFastStoOscBullish(this IndexedCandle ic, int periodCount, int smaPeriodCount)
+            => ic.Get<StochasticsOscillator.Fast>(periodCount, smaPeriodCount).Diff(ic.Index).Tick.IsPositive();
+
+        public static bool IsFastStoOscBearish(this IndexedCandle ic, int periodCount, int smaPeriodCount)
+            => ic.Get<StochasticsOscillator.Fast>(periodCount, smaPeriodCount).Diff(ic.Index).Tick.IsNegative();
+
+        public static bool IsFullStoOscBullish(this IndexedCandle ic, int periodCount, int smaPeriodCountK, int smaPeriodCountD)
+            => ic.Get<StochasticsOscillator.Full>(periodCount, smaPeriodCountK, smaPeriodCountD).Diff(ic.Index).Tick.IsPositive();
+
+        public static bool IsFullStoOscBearish(this IndexedCandle ic, int periodCount, int smaPeriodCountK, int smaPeriodCountD)
+            => ic.Get<StochasticsOscillator.Full>(periodCount, smaPeriodCountK, smaPeriodCountD).Diff(ic.Index).Tick.IsNegative();
+
+        public static bool IsSlowStoOscBullish(this IndexedCandle ic, int periodCount, int smaPeriodCountD)
+            => ic.Get<StochasticsOscillator.Slow>(periodCount, smaPeriodCountD).Diff(ic.Index).Tick.IsPositive();
+
+        public static bool IsSlowStoOscBearish(this IndexedCandle ic, int periodCount, int smaPeriodCountD)
+            => ic.Get<StochasticsOscillator.Slow>(periodCount, smaPeriodCountD).Diff(ic.Index).Tick.IsNegative();
+
         public static bool IsSmaBullishCross(this IndexedCandle ic, int periodCount1, int periodCount2)
             => ic.Get<SimpleMovingAverageOscillator>(periodCount1, periodCount2).ComputeNeighbourDiff(ic.Index)
                  .IsTrue((prev, current, _) => prev.Tick.IsNegative() && current.Tick.IsPositive());

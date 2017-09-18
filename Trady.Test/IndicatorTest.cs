@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 using Trady.Analysis.Indicator;
 using Trady.Core;
 using Trady.Importer;
-using System;
+using AFunc = System.Func<System.Collections.Generic.IReadOnlyList<Trady.Core.Candle>, int, decimal?>;
+using Trady.Analysis;
 
 namespace Trady.Test
 {
@@ -18,6 +19,42 @@ namespace Trady.Test
             var csvImporter = new CsvImporter("fb.csv", new CultureInfo("en-US"));
             return await csvImporter.ImportAsync("fb");
         }
+
+        [TestMethod]
+        public async Task TestFuncAsync()
+        {
+			var candles = await ImportCandlesAsync();
+
+            AFunc aFunc = (c, i) => c[i].Close;
+            var a = aFunc.AsAnalyzable(candles);
+            var aResult = a.Ema(30, candles.Count() - 1);
+
+            var results = candles.Ema(30);
+            var result = results[candles.Count() - 1];
+            Assert.AreEqual(aResult, result);
+		}
+
+		[TestMethod]
+		public async Task TestMedianAsync()
+		{
+			var candles = await ImportCandlesAsync();
+            var median = new Median(candles, 10);
+			var result = median[candles.Count() - 1];
+			Assert.IsTrue(139.46m.IsApproximatelyEquals(result.Tick.Value));
+		}
+
+		[TestMethod]
+		public async Task TestPercentileAsync()
+		{
+			var candles = await ImportCandlesAsync();
+            var percentile = new Percentile(candles, 30, 0.7m);
+			var result = percentile[candles.Count() - 1];
+			Assert.IsTrue(137.513m.IsApproximatelyEquals(result.Tick.Value));
+
+            percentile = new Percentile(candles, 10, 0.2m);
+            result = percentile[candles.Count() - 1];
+            Assert.IsTrue(138.138m.IsApproximatelyEquals(result.Tick.Value));
+		}
 
         [TestMethod]
         public async Task TestSmaAsync()

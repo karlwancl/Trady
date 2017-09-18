@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Trady.Analysis.Helper;
 using Trady.Analysis.Infrastructure;
 using Trady.Core;
@@ -18,7 +19,7 @@ namespace Trady.Analysis.Indicator
         }
 
         protected override decimal? ComputeByIndexImpl(IReadOnlyList<decimal> mappedInputs, int index)
-            => mappedInputs._Average(PeriodCount, index);
+            => index >= PeriodCount - 1 ? mappedInputs.Skip(index - PeriodCount + 1).Take(PeriodCount).Average() : (decimal?)null;
     }
 
     public class SimpleMovingAverageByTuple : SimpleMovingAverage<decimal, decimal?>

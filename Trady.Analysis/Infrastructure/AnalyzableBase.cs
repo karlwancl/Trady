@@ -36,63 +36,64 @@ namespace Trady.Analysis.Infrastructure
             Cache = new ConcurrentDictionary<int, TOutputToMap>();
         }
 
-        protected int TInputCount => _mappedInputs.Count();
+		public TOutput this[int index] => ComputeAndMap(ComputeByIndex, index);
 
-        internal protected IReadOnlyList<TOutput> Compute(Func<int, TOutput> outputFunc, int? startIndex, int? endIndex)
-        {
-			int computedStartIndex = GetComputeStartIndex(startIndex);
-			int computedEndIndex = GetComputeEndIndex(endIndex);
-			return Enumerable.Range(computedStartIndex, computedEndIndex - computedStartIndex + 1)
-				.Select(i => outputFunc(i))
-				.ToList();      
-        }
-
-        internal protected IReadOnlyList<TOutput> Compute(Func<int, TOutput> outputFunc, IEnumerable<int> indexes)
-            => indexes.Select(outputFunc).ToList();
-
-		// TODO: This method only accept symmetric indicator, IchimokuCloud is not working here
-		internal protected (TOutput Prev, TOutput Current, TOutput Next) Compute(Func<int, TOutput> outputFunc, int index)
-            => (index > 0 ? outputFunc(index - 1) : default(TOutput),
-                outputFunc(index),
-                index < TInputCount ? outputFunc(index + 1) : default(TOutput));
-
-        public IReadOnlyList<TOutput> Compute(int? startIndex = null, int? endIndex = null)
-            => Compute(i => this[i], startIndex, endIndex);
-
-        protected virtual int GetComputeStartIndex(int? startIndex) => startIndex ?? 0;
-
-        protected virtual int GetComputeEndIndex(int? endIndex) => endIndex ?? TInputCount - 1;
-
-        internal protected TOutput Get(Func<int, TOutputToMap> otmFunc, int index)
-        {
-			dynamic outputToMap = otmFunc(index);
-			var datetime = index >= 0 && index < TInputCount ? (_mappedDatetime?[index] ?? default(DateTime?)) : default(DateTime?);
-			return _isTOutputAnalyzableTick ? AnalyzableTickMapper(datetime, outputToMap) : outputToMap;
-
-			TOutput AnalyzableTickMapper(DateTime? d, TOutputToMap otm)
-				=> (TOutput)typeof(TOutput).GetConstructors().First().Invoke(new object[] { d, otm });
-        }
-
-        public TOutput this[int index] => Get(ComputeByIndex, index);
-
-		internal protected TOutputToMap ComputeByIndex(int index)
-	        => Cache.GetOrAdd(index, i => ComputeByIndexImpl(_mappedInputs, i));
-
-		protected abstract TOutputToMap ComputeByIndexImpl(IReadOnlyList<TMappedInput> mappedInputs, int index);
-
-        protected ConcurrentDictionary<int, TOutputToMap> Cache { get; }
+		public IReadOnlyList<TOutput> Compute(int? startIndex = null, int? endIndex = null) => Compute(i => this[i], startIndex, endIndex);
 
         public IReadOnlyList<TOutput> Compute(IEnumerable<int> indexes) => Compute(i => this[i], indexes);
 
         public (TOutput Prev, TOutput Current, TOutput Next) ComputeNeighbour(int index) => Compute(i => this[i], index);
 
-        IEnumerable IAnalyzable.Compute(int? startIndex, int? endIndex) => Compute(startIndex, endIndex);
+		protected abstract TOutputToMap ComputeByIndexImpl(IReadOnlyList<TMappedInput> mappedInputs, int index);
+
+        protected virtual int GetComputeStartIndex(int? startIndex) => startIndex ?? 0;
+
+        protected virtual int GetComputeEndIndex(int? endIndex) => endIndex ?? _mappedInputs.Count() - 1;
+
+		protected ConcurrentDictionary<int, TOutputToMap> Cache { get; }
+
+		#region IAnalyzable implementation
+
+		IEnumerable IAnalyzable.Compute(int? startIndex, int? endIndex) => Compute(startIndex, endIndex);
 
         IEnumerable IAnalyzable.Compute(IEnumerable<int> indexes) => Compute(indexes);
 
         (object Prev, object Current, object Next) IAnalyzable.ComputeNeighbour(int index) => ComputeNeighbour(index);
 
         object IAnalyzable.this[int i] => this[i];
+
+        #endregion
+
+        #region internal protected
+
+        internal protected IReadOnlyList<TMappedInput> MappedInputs => _mappedInputs;
+
+		internal protected IReadOnlyList<TOutput> Compute(Func<int, TOutput> outputFunc, int? startIndex, int? endIndex)
+		{
+			int computedStartIndex = GetComputeStartIndex(startIndex);
+			int computedEndIndex = GetComputeEndIndex(endIndex);
+			return Enumerable.Range(computedStartIndex, computedEndIndex - computedStartIndex + 1).Select(outputFunc).ToList();
+		}
+
+		internal protected IReadOnlyList<TOutput> Compute(Func<int, TOutput> outputFunc, IEnumerable<int> indexes) => indexes.Select(outputFunc).ToList();
+
+        // TODO: This method only accept symmetric indicator (i.e. TInput count == TOutput count), IchimokuCloud is not working here
+		internal protected (TOutput Prev, TOutput Current, TOutput Next) Compute(Func<int, TOutput> outputFunc, int index)
+			=> (index > 0 ? outputFunc(index - 1) : default(TOutput), outputFunc(index), index < _mappedInputs.Count() ? outputFunc(index + 1) : default(TOutput));
+
+		internal protected TOutput ComputeAndMap(Func<int, TOutputToMap> otmFunc, int index)
+		{
+			dynamic outputToMap = otmFunc(index);
+			var datetime = index >= 0 && index < _mappedInputs.Count() ? (_mappedDatetime?[index] ?? default(DateTime?)) : default(DateTime?);
+			return _isTOutputAnalyzableTick ? AnalyzableTickMapper(datetime, outputToMap) : outputToMap;
+
+			TOutput AnalyzableTickMapper(DateTime? d, TOutputToMap otm)
+				=> (TOutput)typeof(TOutput).GetConstructors().First().Invoke(new object[] { d, otm });
+		}
+
+		internal protected TOutputToMap ComputeByIndex(int index) => Cache.GetOrAdd(index, i => ComputeByIndexImpl(_mappedInputs, i));
+
+        #endregion
     }
 
     public abstract class AnalyzableBase<TInput, TOutput> : AnalyzableBase<TInput, TInput, TOutput, TOutput>

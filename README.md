@@ -13,7 +13,7 @@ This library is intended for personal use, use with care for production environm
 * Indicator computing (including SMA, EMA, RSI, MACD, BB, etc.)
 * Strategy building & backtesting
 
-### Updates from 2.0.x to 2.1.0 (Currently 2.1.0-beta3)
+### Updates from 2.0.x to 2.1.0 (Currently 2.1.0-alpha6)
 ** Trady.Analysis module **
 * The indicator now intakes IEnumerable<T> instance instead of IList<T>
 * The indicator now outputs IReadOnlyList<T> instance instead of IList<T>

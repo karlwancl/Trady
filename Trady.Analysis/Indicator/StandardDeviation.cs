@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Trady.Analysis.Helper;
 using Trady.Analysis.Infrastructure;
 using Trady.Core;
@@ -16,7 +17,16 @@ namespace Trady.Analysis.Indicator
 
         public int PeriodCount { get; }
 
-        protected override decimal? ComputeByIndexImpl(IReadOnlyList<decimal> mappedInputs, int index) => mappedInputs._StandardDeviation(PeriodCount, index);
+        protected override decimal? ComputeByIndexImpl(IReadOnlyList<decimal> mappedInputs, int index) 
+        {
+			if (index < PeriodCount - 1)
+				return null;
+
+            var subset = mappedInputs.Skip(index - PeriodCount + 1).Take(PeriodCount);
+            decimal average = subset.Average();
+            decimal sumOfDiff = subset.Select(v => (v - average) * (v - average)).Sum();
+			return Convert.ToDecimal(Math.Sqrt(Convert.ToDouble(sumOfDiff / (subset.Count() - 1))));
+        }
     }
 
     public class StandardDeviationByTuple : StandardDeviation<decimal, decimal?>

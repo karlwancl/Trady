@@ -21,7 +21,7 @@ namespace Trady.Analysis.Candlestick
         protected override bool? ComputeByIndexImpl(IReadOnlyList<(decimal Open, decimal High, decimal Close)> mappedInputs, int index)
         {
             var upperShadows = mappedInputs.Select(i => i.High - Math.Max(i.Open, i.Close));
-            return upperShadows.ElementAt(index) >= upperShadows._Percentile(PeriodCount, index, Threshold);
+            return upperShadows.ElementAt(index) >= upperShadows.Percentile(PeriodCount, Threshold)[index];
         }
     }
 

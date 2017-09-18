@@ -1,29 +1,34 @@
-﻿using System.Collections;
-using System.Collections.Concurrent;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
-using Trady.Analysis.Infrastructure;
-using Trady.Core;
-using Trady.Core.Infrastructure;
 
-namespace Trady.Analysis
+namespace Trady.Analysis.Infrastructure
 {
-    public class AnalyzeContext<TInput> : IAnalyzeContext<TInput>
+    public class FuncEnumerator<TInput>: IEnumerator<TInput>
     {
-        private ConcurrentDictionary<string, IAnalyzable> _cache;
+        public Func<int, TInput> Func { get; }
 
-        public AnalyzeContext(IEnumerable<TInput> backingList)
+        private int _index;
+
+        public FuncEnumerator(Func<int, TInput> func)
         {
-            BackingList = backingList;
-            _cache = new ConcurrentDictionary<string, IAnalyzable>();
+            Func = func;
         }
 
-        public TAnalyzable Get<TAnalyzable>(params object[] parameters) where TAnalyzable : IAnalyzable
-            => (TAnalyzable)_cache.GetOrAdd($"{typeof(TAnalyzable).Name}#{string.Join("|", parameters)}", 
-                                            _ => AnalyzableFactory.CreateAnalyzable<TAnalyzable, TInput>(BackingList, parameters));
+        public TInput Current => Func(_index);
 
-        public IEnumerable<TInput> BackingList { get; }
+        object IEnumerator.Current => Current;
 
-        IEnumerable IAnalyzeContext.BackingList => BackingList;
+        public bool MoveNext()
+        {
+            _index++;
+            return true;
+        }
+
+        public void Reset()
+        {
+            _index = 0;
+        }
 
         #region IDisposable Support
         private bool disposedValue = false; // To detect redundant calls
@@ -45,7 +50,7 @@ namespace Trady.Analysis
         }
 
         // TODO: override a finalizer only if Dispose(bool disposing) above has code to free unmanaged resources.
-        // ~AnalyzeContext() {
+        // ~FuncEnumerator() {
         //   // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
         //   Dispose(false);
         // }
@@ -59,12 +64,5 @@ namespace Trady.Analysis
             // GC.SuppressFinalize(this);
         }
         #endregion
-    }
-
-    public class AnalyzeContext : AnalyzeContext<Candle>
-    {
-        public AnalyzeContext(IEnumerable<Candle> backingList) : base(backingList)
-        {
-        }
     }
 }

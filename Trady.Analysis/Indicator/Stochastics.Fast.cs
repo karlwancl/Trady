@@ -27,8 +27,7 @@ namespace Trady.Analysis.Indicator
             protected override (decimal? K, decimal? D, decimal? J) ComputeByIndexImpl(IReadOnlyList<(decimal High, decimal Low, decimal Close)> mappedInputs, int index)
             {
                 decimal? rsv = _rsv[index];
-                Func<int, decimal?> rsvFunc = i => _rsv[index - SmaPeriodCount + i + 1];
-                decimal? rsvAvg = index >= SmaPeriodCount - 1 ? Enumerable.Range(0, SmaPeriodCount).Average(i => rsvFunc(i)) : null;
+                decimal? rsvAvg = _rsv.Ema(SmaPeriodCount, index);
                 return (rsv, rsvAvg, 3 * rsv - 2 * rsvAvg);
             }
         }
