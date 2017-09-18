@@ -133,15 +133,15 @@ namespace Trady.Test
             Assert.IsTrue(5.165m.IsApproximatelyEquals(result.Tick.Value));
         }
 
-        [TestMethod]
-        public async Task TestChandlrAsync()
-        {
-            var candles = await ImportCandlesAsync();
-            var indicator = new ChandelierExit(candles, 22, 3);
-            var result = indicator[candles.Count() - 1];
-            Assert.IsTrue(135.69m.IsApproximatelyEquals(result.Tick.Long.Value));
-            Assert.IsTrue(137.55m.IsApproximatelyEquals(result.Tick.Short.Value));
-        }
+		[TestMethod]
+		public async Task TestChandlrAsync()
+		{
+			var candles = await ImportCandlesAsync();
+			var indicator = new ChandelierExit(candles, 22, 3);
+			var result = indicator[candles.Count() - 1];
+			Assert.IsTrue(135.69m.IsApproximatelyEquals(result.Tick.Long.Value));
+			Assert.IsTrue(137.55m.IsApproximatelyEquals(result.Tick.Short.Value));
+		}
 
         [TestMethod]
         public async Task TestClosePriceChangedAsync()

@@ -6,7 +6,7 @@ using Trady.Core;
 
 namespace Trady.Analysis.Indicator
 {
-    public class MinusDirectionalIndicator<TInput, TOutput> : AnalyzableBase<TInput, (decimal High, decimal Low, decimal Close), decimal?, TOutput>
+    public class MinusDirectionalIndicator<TInput, TOutput> : NumericAnalyzableBase<TInput, (decimal High, decimal Low, decimal Close), TOutput>
     {
         private PlusDirectionalMovementByTuple _pdm;
         private MinusDirectionalMovementByTuple _mdm;

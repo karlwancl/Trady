@@ -5,7 +5,7 @@ using Trady.Core;
 
 namespace Trady.Analysis.Indicator
 {
-    public class PlusDirectionalMovement<TInput, TOutput> : AnalyzableBase<TInput, decimal, decimal?, TOutput>
+    public class PlusDirectionalMovement<TInput, TOutput> : NumericAnalyzableBase<TInput, decimal, TOutput>
     {
         public PlusDirectionalMovement(IEnumerable<TInput> inputs, Func<TInput, decimal> inputMapper) : base(inputs, inputMapper)
         {

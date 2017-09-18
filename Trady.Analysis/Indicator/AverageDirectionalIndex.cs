@@ -6,7 +6,7 @@ using Trady.Core;
 
 namespace Trady.Analysis.Indicator
 {
-    public class AverageDirectionalIndex<TInput, TOutput> : AnalyzableBase<TInput, (decimal High, decimal Low, decimal Close), decimal?, TOutput>
+    public class AverageDirectionalIndex<TInput, TOutput> : NumericAnalyzableBase<TInput, (decimal High, decimal Low, decimal Close), TOutput>
     {
         private DirectionalMovementIndexByTuple _dx;
         private readonly GenericExponentialMovingAverage _adx;

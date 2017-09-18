@@ -6,7 +6,7 @@ using Trady.Core;
 
 namespace Trady.Analysis.Indicator
 {
-    public class RelativeStrength<TInput, TOutput> : AnalyzableBase<TInput, decimal, decimal?, TOutput>
+    public class RelativeStrength<TInput, TOutput> : NumericAnalyzableBase<TInput, decimal, TOutput>
     {
         private DiffByTuple _closePriceChange;
         private readonly GenericExponentialMovingAverage _dEma;

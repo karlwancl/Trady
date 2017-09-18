@@ -6,7 +6,7 @@ using Trady.Core;
 
 namespace Trady.Analysis.Indicator
 {
-    public class KaufmanAdaptiveMovingAverage<TInput, TOutput> : AnalyzableBase<TInput, decimal, decimal?, TOutput>
+    public class KaufmanAdaptiveMovingAverage<TInput, TOutput> : NumericAnalyzableBase<TInput, decimal, TOutput>
     {
         private EfficiencyRatioByTuple _er;
         private GenericExponentialMovingAverage _gema;

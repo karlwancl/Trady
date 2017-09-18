@@ -6,7 +6,7 @@ using Trady.Core;
 
 namespace Trady.Analysis.Indicator
 {
-    public class Median<TInput, TOutput> : AnalyzableBase<TInput, decimal, decimal?, TOutput>
+    public class Median<TInput, TOutput> : NumericAnalyzableBase<TInput, decimal, TOutput>
     {
         private PercentileByTuple _percentile;
 

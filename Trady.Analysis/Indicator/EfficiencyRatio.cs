@@ -6,7 +6,7 @@ using Trady.Core;
 
 namespace Trady.Analysis.Indicator
 {
-    public class EfficiencyRatio<TInput, TOutput> : AnalyzableBase<TInput, decimal, decimal?, TOutput>
+    public class EfficiencyRatio<TInput, TOutput> : NumericAnalyzableBase<TInput, decimal, TOutput>
     {
         public EfficiencyRatio(IEnumerable<TInput> inputs, Func<TInput, decimal> inputMapper, int periodCount) : base(inputs, inputMapper)
         {

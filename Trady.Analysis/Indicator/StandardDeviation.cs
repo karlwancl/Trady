@@ -8,7 +8,7 @@ using Trady.Core.Infrastructure;
 
 namespace Trady.Analysis.Indicator
 {
-    public class StandardDeviation<TInput, TOutput> : AnalyzableBase<TInput, decimal, decimal?, TOutput>
+    public class StandardDeviation<TInput, TOutput> : NumericAnalyzableBase<TInput, decimal, TOutput>
     {
         public StandardDeviation(IEnumerable<TInput> inputs, Func<TInput, decimal> inputMapper, int periodCount) : base(inputs, inputMapper)
         {

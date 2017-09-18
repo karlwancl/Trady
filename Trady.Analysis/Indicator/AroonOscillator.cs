@@ -6,7 +6,7 @@ using Trady.Core;
 
 namespace Trady.Analysis.Indicator
 {
-    public class AroonOscillator<TInput, TOutput> : AnalyzableBase<TInput, (decimal High, decimal Low), decimal?, TOutput>
+    public class AroonOscillator<TInput, TOutput> : NumericAnalyzableBase<TInput, (decimal High, decimal Low), TOutput>
     {
         private readonly AroonByTuple _aroon;
 

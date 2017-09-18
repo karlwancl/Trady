@@ -6,7 +6,7 @@ using Trady.Core;
 
 namespace Trady.Analysis.Indicator
 {
-    public class RelativeStrengthIndex<TInput, TOutput> : AnalyzableBase<TInput, decimal, decimal?, TOutput>
+    public class RelativeStrengthIndex<TInput, TOutput> : NumericAnalyzableBase<TInput, decimal, TOutput>
     {
         private readonly RelativeStrengthByTuple _rs;
 

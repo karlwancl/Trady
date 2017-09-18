@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Trady.Analysis.Infrastructure;
+﻿using System.Collections.Generic;
 using Trady.Core;
 
 namespace Trady.Analysis.Indicator

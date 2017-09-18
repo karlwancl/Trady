@@ -6,7 +6,7 @@ using Trady.Core;
 
 namespace Trady.Analysis.Indicator
 {
-    public class BollingerBandWidth<TInput, TOutput> : AnalyzableBase<TInput, decimal, decimal?, TOutput>
+    public class BollingerBandWidth<TInput, TOutput> : NumericAnalyzableBase<TInput, decimal, TOutput>
     {
         private BollingerBandsByTuple _bb;
 
