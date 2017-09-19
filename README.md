@@ -15,54 +15,7 @@ This library is intended for personal use, use with care for production environm
 * Strategy backtesting by buy/sell rule
 
 ### Updates from 2.0.x to 2.1.0 (Currently 2.1.0-alpha6)
-** Trady.Analysis module **
-* Change: 
-    * The indicator now intakes IEnumerable<T> instance instead of IList<T>
-    * The indicator now outputs IReadOnlyList<T> instance instead of IList<T>
-    * Computes from different input now have different output 
-        * Tuples => decimal?/Tuples 
-        * Candles => AnalyzableTick\<decimal?/Tuples>
-    * As of the above change, "Tick" property is used for the indicator result's value if it's computed from candles
-    * Backtest-related items have been moved under Trady.Analysis.Backtest namespace. Classes & methods are renamed
-        * Portfolio => Builder + Runner
-        * RunBackTest() => Run()
-        * RunBackTestAsync() => RunAsync()
-    * Candlestick-related items have been moved under Trady.Analysis.Candlestick namespace
-    * Modified Exponential Moving Average is renamed as Modified Moving Average; Short form will be changed from Mema => Mma
-    * Generic Exponential Moving Average is renamed as Generic Moving Average
-    * Basic operations (Diff, PercentDiff, Highest, Lowest, Median, Percentile, Sma, Ema, Mema, Sd) can now intakes IEnumerable\<decimal?>
-* Added new feature: 
-    * Added IndexedObject & RuleExecutor for signal capturing by rules
-    * Introduce NumericAnalyzable for extending simple operations on an indicator, i.e. you can now use .Diff(index) to get the diff value of an indicator on a particular index directly
-    * Decision helper for pattern construction (IsTrue, IsPositive, IsNegative)
-    * AsAnalyzable extension for converting a Func to Analyzable, Func can now benefits from the Analyzable infrastructure
-* Added new indicator: 
-    * (Highest/Lowest)Close
-    * HistoricalHighest(High/Close)
-    * HistoricalLowest(Close/Low)
-    * Median
-    * Percentile
-    * Difference
-    * PercentageDifference
-    * MacdHistogram
-* Added new pattern: 
-    * IsBreakingHighest(High/Close)
-    * IsBreakingLowest(Close/Low)
-    * IsBreakingHistoricalHighest(High/Close)
-    * IsBreakingHistoricalLowest(Close/Low) 
-* Bugfix: 
-    * Removed AnalyzableLocator. AnalyzeContext is in replacement for sharing indicator within a scope
-
-** Trady.Importer module **
-* The candles are exported as IReadOnlyList<Candle> instead of IList<Candle>
-* Added GoogleFinanceImporter (adapter to [Nuba.Google.Finance](https://github.com/nubasoftware/Nuba.Finance.Google), thanks to [@fernaramburu](https://github.com/fernaramburu))
-* Separated importers are also available for modular installation:
-    * Trady.Importer.Csv
-    * Trady.Importer.Yahoo
-    * Trady.Importer.Quandl
-    * Trady.Importer.Stooq
-    * Trady.Importer.Google
-* Align importer's behavior, startTime & endTime is inclusive now for all importers
+Please refer to another markdown document [here](update_from_2.0.x.md)
 
 ### Supported Platforms
 * .NET Core 1.0 or above
@@ -341,15 +294,15 @@ Nuget package is available in modules, please install the package according to t
 
 <a name="ImplementYourOwnIndicatorMovingAverageType"></a>
 #### Implement your own indicator - Moving-Average Type
-    // You can make use of the GenericExponentialMovingAverage class to get rid of implementing MA-related indicator on your own
-     public class MyGemaIndicator : AnalyzableBase<Candle, AnalyzableTick<decimal?>>
+    // You can make use of the GenericMovingAverage class to get rid of implementing MA-related indicator on your own
+     public class MyGmaIndicator : AnalyzableBase<Candle, AnalyzableTick<decimal?>>
     {
-        GenericExponentialMovingAverage _gema;
+        GenericMovingAverage _gma;
 
-        public MyGemaIndicator(IEnumerable<Candle> inputs, int periodCount) : base(inputs)
+        public MyGmaIndicator(IEnumerable<Candle> inputs, int periodCount) : base(inputs)
         {
             // parameters: initialValueIndex, initialValueFunction, indexValueFunction, smoothingFactorFunction
-			_gema = new GenericExponentialMovingAverage(
+			_gma = new GenericMovingAverage(
 				0,
 				i => inputs.Select(ip => ip.Close).ElementAt(i),
 				i => inputs.Select(ip => ip.Close).ElementAt(i),
