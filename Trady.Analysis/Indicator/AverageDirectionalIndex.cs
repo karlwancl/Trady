@@ -9,13 +9,13 @@ namespace Trady.Analysis.Indicator
     public class AverageDirectionalIndex<TInput, TOutput> : NumericAnalyzableBase<TInput, (decimal High, decimal Low, decimal Close), TOutput>
     {
         private DirectionalMovementIndexByTuple _dx;
-        private readonly GenericExponentialMovingAverage _adx;
+        private readonly GenericMovingAverage _adx;
 
         public AverageDirectionalIndex(IEnumerable<TInput> inputs, Func<TInput, (decimal High, decimal Low, decimal Close)> inputMapper, int periodCount) : base(inputs, inputMapper)
         {
             _dx = new DirectionalMovementIndexByTuple(inputs.Select(inputMapper), periodCount);
 
-            _adx = new GenericExponentialMovingAverage(
+            _adx = new GenericMovingAverage(
                 periodCount,
                 i => Enumerable.Range(i - periodCount + 1, periodCount).Select(j => _dx[j]).Average(),
                 i => _dx[i],

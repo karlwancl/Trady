@@ -71,7 +71,7 @@ namespace Trady.Test
         {
             var importer = new CsvImporter("fb.csv", new CultureInfo("en-US"));
             var candles = importer.ImportAsync("FB").Result;
-            Assert.AreEqual(candles.Count(), 1216);
+            Assert.AreEqual(candles.Count(), 1342);
             var firstCandle = candles.First();
             Assert.AreEqual(firstCandle.DateTime, new DateTime(2012, 5, 18));
         }

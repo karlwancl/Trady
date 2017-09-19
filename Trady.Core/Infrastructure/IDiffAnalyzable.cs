@@ -2,7 +2,7 @@
 
 namespace Trady.Core.Infrastructure
 {
-    public interface IDiffAnalyzable<TOutput> : IAnalyzable<TOutput>
+    public interface IDiffAnalyzable<TOutput>
     {
         IReadOnlyList<TOutput> ComputeDiff(int? startIndex = null, int? endIndex = null);
 

@@ -6,17 +6,15 @@ using Trady.Core;
 
 namespace Trady.Analysis.Indicator
 {
-    public class ExponentialMovingAverage<TInput, TOutput> : NumericAnalyzableBase<TInput, decimal, TOutput>
+    public class ExponentialMovingAverage<TInput, TOutput> : NumericAnalyzableBase<TInput, decimal?, TOutput>
     {
-        private readonly GenericExponentialMovingAverage _ema;
+        private readonly GenericMovingAverage _ema;
 
-        public ExponentialMovingAverage(IEnumerable<TInput> inputs, Func<TInput, decimal> inputMapper, int periodCount) : base(inputs, inputMapper)
+        public ExponentialMovingAverage(IEnumerable<TInput> inputs, Func<TInput, decimal?> inputMapper, int periodCount) : base(inputs, inputMapper)
         {
-            _ema = new GenericExponentialMovingAverage(
-                0,
+            _ema = new GenericMovingAverage(
                 i => inputs.Select(inputMapper).ElementAt(i),
-                i => inputs.Select(inputMapper).ElementAt(i),
-                i => 2.0m / (periodCount + 1),
+                2.0m / (periodCount + 1),
                 inputs.Count());
 
             PeriodCount = periodCount;
@@ -24,15 +22,20 @@ namespace Trady.Analysis.Indicator
 
         public int PeriodCount { get; }
 
-        protected override decimal? ComputeByIndexImpl(IReadOnlyList<decimal> mappedInputs, int index) => _ema[index];
+        protected override decimal? ComputeByIndexImpl(IReadOnlyList<decimal?> mappedInputs, int index) => _ema[index];
     }
 
-    public class ExponentialMovingAverageByTuple : ExponentialMovingAverage<decimal, decimal?>
+    public class ExponentialMovingAverageByTuple : ExponentialMovingAverage<decimal?, decimal?>
     {
-        public ExponentialMovingAverageByTuple(IEnumerable<decimal> inputs, int periodCount)
+        public ExponentialMovingAverageByTuple(IEnumerable<decimal?> inputs, int periodCount)
             : base(inputs, i => i, periodCount)
         {
         }
+
+		public ExponentialMovingAverageByTuple(IEnumerable<decimal> inputs, int periodCount)
+	        : this(inputs.Cast<decimal?>(), periodCount)
+		{
+		}
     }
 
     public class ExponentialMovingAverage : ExponentialMovingAverage<Candle, AnalyzableTick<decimal?>>

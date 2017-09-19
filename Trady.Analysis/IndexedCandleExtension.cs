@@ -122,51 +122,51 @@ namespace Trady.Analysis
             => ic.Get<StochasticsOscillator.Slow>(periodCount, smaPeriodCountD).Diff(ic.Index).Tick.IsNegative();
 
         public static bool IsSmaBullishCross(this IndexedCandle ic, int periodCount1, int periodCount2)
-            => ic.Get<SimpleMovingAverageOscillator>(periodCount1, periodCount2).ComputeNeighbourDiff(ic.Index)
+            => ic.Get<SimpleMovingAverageOscillator>(periodCount1, periodCount2).ComputeNeighbour(ic.Index)
                  .IsTrue((prev, current, _) => prev.Tick.IsNegative() && current.Tick.IsPositive());
 
         public static bool IsSmaBearishCross(this IndexedCandle ic, int periodCount1, int periodCount2)
-            => ic.Get<SimpleMovingAverageOscillator>(periodCount1, periodCount2).ComputeNeighbourDiff(ic.Index)
+            => ic.Get<SimpleMovingAverageOscillator>(periodCount1, periodCount2).ComputeNeighbour(ic.Index)
                  .IsTrue((prev, current, _) => prev.Tick.IsPositive() && current.Tick.IsNegative());
 
         public static bool IsEmaBullishCross(this IndexedCandle ic, int periodCount1, int periodCount2)
-            => ic.Get<ExponentialMovingAverageOscillator>(periodCount1, periodCount2).ComputeNeighbourDiff(ic.Index)
+            => ic.Get<ExponentialMovingAverageOscillator>(periodCount1, periodCount2).ComputeNeighbour(ic.Index)
                  .IsTrue((prev, current, _) => prev.Tick.IsNegative() && current.Tick.IsPositive());
 
         public static bool IsEmaBearishCross(this IndexedCandle ic, int periodCount1, int periodCount2)
-            => ic.Get<ExponentialMovingAverageOscillator>(periodCount1, periodCount2).ComputeNeighbourDiff(ic.Index)
+            => ic.Get<ExponentialMovingAverageOscillator>(periodCount1, periodCount2).ComputeNeighbour(ic.Index)
                  .IsTrue((prev, current, _) => prev.Tick.IsPositive() && current.Tick.IsNegative());
 
         public static bool IsMacdBullishCross(this IndexedCandle ic, int emaPeriodCount1, int emaPeriodCount2, int demPeriodCount)
-            => ic.Get<MovingAverageConvergenceDivergenceHistogram>(emaPeriodCount1, emaPeriodCount2, demPeriodCount).ComputeNeighbourDiff(ic.Index)
+            => ic.Get<MovingAverageConvergenceDivergenceHistogram>(emaPeriodCount1, emaPeriodCount2, demPeriodCount).ComputeNeighbour(ic.Index)
                  .IsTrue((prev, current, _) => prev.Tick.IsNegative() && current.Tick.IsPositive());
 
         public static bool IsMacdBearishCross(this IndexedCandle ic, int emaPeriodCount1, int emaPeriodCount2, int demPeriodCount)
-            => ic.Get<MovingAverageConvergenceDivergenceHistogram>(emaPeriodCount1, emaPeriodCount2, demPeriodCount).ComputeNeighbourDiff(ic.Index)
+            => ic.Get<MovingAverageConvergenceDivergenceHistogram>(emaPeriodCount1, emaPeriodCount2, demPeriodCount).ComputeNeighbour(ic.Index)
                  .IsTrue((prev, current, _) => prev.Tick.IsPositive() && current.Tick.IsNegative());
 
         public static bool IsFastStoBullishCross(this IndexedCandle ic, int periodCount, int smaPeriodCount)
-            => ic.Get<StochasticsOscillator.Fast>(periodCount, smaPeriodCount).ComputeNeighbourDiff(ic.Index)
+            => ic.Get<StochasticsOscillator.Fast>(periodCount, smaPeriodCount).ComputeNeighbour(ic.Index)
                  .IsTrue((prev, current, _) => prev.Tick.IsNegative() && current.Tick.IsPositive());
 
         public static bool IsFastStoBearishCross(this IndexedCandle ic, int periodCount, int smaPeriodCount)
-            => ic.Get<StochasticsOscillator.Fast>(periodCount, smaPeriodCount).ComputeNeighbourDiff(ic.Index)
+            => ic.Get<StochasticsOscillator.Fast>(periodCount, smaPeriodCount).ComputeNeighbour(ic.Index)
                  .IsTrue((prev, current, _) => prev.Tick.IsPositive() && current.Tick.IsNegative());
 
         public static bool IsFullStoBullishCross(this IndexedCandle ic, int periodCount, int smaPeriodCountK, int smaPeriodCountD)
-            => ic.Get<StochasticsOscillator.Full>(periodCount, smaPeriodCountK, smaPeriodCountD).ComputeNeighbourDiff(ic.Index)
+            => ic.Get<StochasticsOscillator.Full>(periodCount, smaPeriodCountK, smaPeriodCountD).ComputeNeighbour(ic.Index)
                  .IsTrue((prev, current, _) => prev.Tick.IsNegative() && current.Tick.IsPositive());
 
         public static bool IsFullStoBearishCross(this IndexedCandle ic, int periodCount, int smaPeriodCountK, int smaPeriodCountD)
-            => ic.Get<StochasticsOscillator.Full>(periodCount, smaPeriodCountK, smaPeriodCountD).ComputeNeighbourDiff(ic.Index)
+            => ic.Get<StochasticsOscillator.Full>(periodCount, smaPeriodCountK, smaPeriodCountD).ComputeNeighbour(ic.Index)
                  .IsTrue((prev, current, _) => prev.Tick.IsPositive() && current.Tick.IsNegative());
 
         public static bool IsSlowStoBullishCross(this IndexedCandle ic, int periodCount, int smaPeriodCountD)
-            => ic.Get<StochasticsOscillator.Slow>(periodCount, smaPeriodCountD).ComputeNeighbourDiff(ic.Index)
+            => ic.Get<StochasticsOscillator.Slow>(periodCount, smaPeriodCountD).ComputeNeighbour(ic.Index)
                  .IsTrue((prev, current, _) => prev.Tick.IsNegative() && current.Tick.IsPositive());
 
         public static bool IsSlowStoBearishCross(this IndexedCandle ic, int periodCount, int smaPeriodCountD)
-            => ic.Get<StochasticsOscillator.Slow>(periodCount, smaPeriodCountD).ComputeNeighbourDiff(ic.Index)
+            => ic.Get<StochasticsOscillator.Slow>(periodCount, smaPeriodCountD).ComputeNeighbour(ic.Index)
                  .IsTrue((prev, current, _) => prev.Tick.IsPositive() && current.Tick.IsNegative());
 
         public static bool IsBreakingHistoricalHighestHigh(this IndexedCandle ic)

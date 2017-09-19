@@ -10,7 +10,7 @@ namespace Trady.Analysis.Indicator
     {
         private PlusDirectionalMovementByTuple _pdm;
         private MinusDirectionalMovementByTuple _mdm;
-        private readonly GenericExponentialMovingAverage _tpdmEma;
+        private readonly GenericMovingAverage _tpdmEma;
         private readonly AverageTrueRangeByTuple _atr;
 
         public PlusDirectionalIndicator(IEnumerable<TInput> inputs, Func<TInput, (decimal High, decimal Low, decimal Close)> inputMapper, int periodCount) : base(inputs, inputMapper)
@@ -20,10 +20,10 @@ namespace Trady.Analysis.Indicator
 
             Func<int, decimal?> tpdm = i => (_pdm[i] > 0 && _pdm[i] > _mdm[i]) ? _pdm[i] : 0;
 
-            _tpdmEma = new GenericExponentialMovingAverage(
+            _tpdmEma = new GenericMovingAverage(
                 periodCount,
-                i => Enumerable.Range(i - periodCount + 1, periodCount).Select(j => tpdm(j)).Average(),
-                i => tpdm(i),
+                i => Enumerable.Range(i - periodCount + 1, periodCount).Select(tpdm).Average(),
+                tpdm,
                 i => 1.0m / periodCount,
                 inputs.Count());
 

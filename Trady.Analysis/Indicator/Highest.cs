@@ -6,24 +6,29 @@ using Trady.Core;
 
 namespace Trady.Analysis.Indicator
 {
-    public class Highest<TInput, TOutput> : NumericAnalyzableBase<TInput, decimal, TOutput>
+    public class Highest<TInput, TOutput> : NumericAnalyzableBase<TInput, decimal?, TOutput>
     {
-        public Highest(IEnumerable<TInput> inputs, Func<TInput, decimal> inputMapper, int periodCount) : base(inputs, inputMapper)
+        public Highest(IEnumerable<TInput> inputs, Func<TInput, decimal?> inputMapper, int periodCount) : base(inputs, inputMapper)
         {
             PeriodCount = periodCount;
         }
 
         public int PeriodCount { get; }
 
-        protected override decimal? ComputeByIndexImpl(IReadOnlyList<decimal> mappedInputs, int index)
-            => index >= PeriodCount - 1 ? mappedInputs.Skip(index - PeriodCount + 1).Take(PeriodCount).Max() : (decimal?)null;
+        protected override decimal? ComputeByIndexImpl(IReadOnlyList<decimal?> mappedInputs, int index)
+            => index >= PeriodCount - 1 ? mappedInputs.Skip(index - PeriodCount + 1).Take(PeriodCount).Max() : null;
     }
 
-    public class HighestByTuple : Highest<decimal, decimal?>
+    public class HighestByTuple : Highest<decimal?, decimal?>
     {
-        public HighestByTuple(IEnumerable<decimal> inputs, int periodCount)
+        public HighestByTuple(IEnumerable<decimal?> inputs, int periodCount)
             : base(inputs, i => i, periodCount)
         {
         }
+
+		public HighestByTuple(IEnumerable<decimal> inputs, int periodCount)
+	        : this(inputs.Cast<decimal?>(), periodCount)
+		{
+		}
     }
 }

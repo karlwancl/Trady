@@ -46,7 +46,7 @@ namespace Trady.Analysis.Infrastructure
 
     public abstract class CumulativeAnalyzableBase<TInput, TOutput> : CumulativeAnalyzableBase<TInput, TInput, TOutput, TOutput>
     {
-        public CumulativeAnalyzableBase(IEnumerable<TInput> inputs)
+        protected CumulativeAnalyzableBase(IEnumerable<TInput> inputs)
             : base(inputs, i => i)
         {
         }

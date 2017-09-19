@@ -34,16 +34,16 @@ namespace Trady.Analysis
         public static IReadOnlyList<AnalyzableTick<(decimal? Long, decimal? Short)>> Chandlr(this IEnumerable<Candle> candles, int periodCount, decimal atrCount, int? startIndex = null, int? endIndex = null)
             => new ChandelierExit(candles, periodCount, atrCount).Compute(startIndex, endIndex);
 
-        public static IReadOnlyList<AnalyzableTick<decimal?>> ClosePriceChange(this IEnumerable<Candle> candles, int? startIndex = null, int? endIndex = null)
+        public static IReadOnlyList<AnalyzableTick<decimal?>> CloseDiff(this IEnumerable<Candle> candles, int? startIndex = null, int? endIndex = null)
             => new ClosePriceChange(candles).Compute(startIndex, endIndex);
 
-        public static IReadOnlyList<AnalyzableTick<decimal?>> ClosePriceChange(this IEnumerable<Candle> candles, int numberOfDays, int? startIndex = null, int? endIndex = null)
+        public static IReadOnlyList<AnalyzableTick<decimal?>> CloseDiff(this IEnumerable<Candle> candles, int numberOfDays, int? startIndex = null, int? endIndex = null)
             => new ClosePriceChange(candles, numberOfDays).Compute(startIndex, endIndex);
 
-        public static IReadOnlyList<AnalyzableTick<decimal?>> ClosePricePercentageChange(this IEnumerable<Candle> candles, int? startIndex = null, int? endIndex = null)
+        public static IReadOnlyList<AnalyzableTick<decimal?>> ClosePcDiff(this IEnumerable<Candle> candles, int? startIndex = null, int? endIndex = null)
             => new ClosePricePercentageChange(candles).Compute(startIndex, endIndex);
 
-        public static IReadOnlyList<AnalyzableTick<decimal?>> ClosePricePercentageChange(this IEnumerable<Candle> candles, int numberOfDays, int? startIndex = null, int? endIndex = null)
+        public static IReadOnlyList<AnalyzableTick<decimal?>> ClosePcDiff(this IEnumerable<Candle> candles, int numberOfDays, int? startIndex = null, int? endIndex = null)
             => new ClosePricePercentageChange(candles, numberOfDays).Compute(startIndex, endIndex);
 
         public static IReadOnlyList<AnalyzableTick<decimal?>> Dmi(this IEnumerable<Candle> candles, int periodCount, int? startIndex = null, int? endIndex = null)
@@ -58,16 +58,16 @@ namespace Trady.Analysis
         public static IReadOnlyList<AnalyzableTick<decimal?>> EmaOsc(this IEnumerable<Candle> candles, int periodCount1, int periodCount2, int? startIndex = null, int? endIndex = null)
             => new ExponentialMovingAverageOscillator(candles, periodCount1, periodCount2).Compute(startIndex, endIndex);
 
-        public static IReadOnlyList<AnalyzableTick<decimal?>> HighestHigh(this IEnumerable<Candle> candles, int periodCount, int? startIndex = null, int? endIndex = null)
+        public static IReadOnlyList<AnalyzableTick<decimal?>> HighHigh(this IEnumerable<Candle> candles, int periodCount, int? startIndex = null, int? endIndex = null)
             => new HighestHigh(candles, periodCount).Compute(startIndex, endIndex);
 
-        public static IReadOnlyList<AnalyzableTick<decimal?>> HistoricalHighestHigh(this IEnumerable<Candle> candles, int? startIndex = null, int? endIndex = null)
+        public static IReadOnlyList<AnalyzableTick<decimal?>> HistHighHigh(this IEnumerable<Candle> candles, int? startIndex = null, int? endIndex = null)
             => new HistoricalHighestHigh(candles).Compute(startIndex, endIndex);
 
-        public static IReadOnlyList<AnalyzableTick<decimal?>> HistoricalHighestClose(this IEnumerable<Candle> candles, int? startIndex = null, int? endIndex = null)
+        public static IReadOnlyList<AnalyzableTick<decimal?>> HistHighClose(this IEnumerable<Candle> candles, int? startIndex = null, int? endIndex = null)
             => new HistoricalHighestClose(candles).Compute(startIndex, endIndex);
 
-        public static IReadOnlyList<AnalyzableTick<decimal?>> HighestClose(this IEnumerable<Candle> candles, int periodCount, int? startIndex = null, int? endIndex = null)
+        public static IReadOnlyList<AnalyzableTick<decimal?>> HighClose(this IEnumerable<Candle> candles, int periodCount, int? startIndex = null, int? endIndex = null)
             => new HighestClose(candles, periodCount).Compute(startIndex, endIndex);
 
         public static IReadOnlyList<AnalyzableTick<(decimal? ConversionLine, decimal? BaseLine, decimal? LeadingSpanA, decimal? LeadingSpanB, decimal? LaggingSpan)>> Ichimoku(this IEnumerable<Candle> candles, int shortPeriodCount, int middlePeriodCount, int longPeriodCount, int? startIndex = null, int? endIndex = null)
@@ -76,16 +76,16 @@ namespace Trady.Analysis
         public static IReadOnlyList<AnalyzableTick<decimal?>> Kama(this IEnumerable<Candle> candles, int periodCount, int emaFastPeriodCount, int emaSlowPeriodCount, int? startIndex = null, int? endIndex = null)
             => new KaufmanAdaptiveMovingAverage(candles, periodCount, emaFastPeriodCount, emaSlowPeriodCount).Compute(startIndex, endIndex);
 
-        public static IReadOnlyList<AnalyzableTick<decimal?>> LowestLow(this IEnumerable<Candle> candles, int periodCount, int? startIndex = null, int? endIndex = null)
+        public static IReadOnlyList<AnalyzableTick<decimal?>> LowLow(this IEnumerable<Candle> candles, int periodCount, int? startIndex = null, int? endIndex = null)
             => new LowestLow(candles, periodCount).Compute(startIndex, endIndex);
 
-        public static IReadOnlyList<AnalyzableTick<decimal?>> HistoricalLowestLow(this IEnumerable<Candle> candles, int? startIndex = null, int? endIndex = null)
+        public static IReadOnlyList<AnalyzableTick<decimal?>> HistLowLow(this IEnumerable<Candle> candles, int? startIndex = null, int? endIndex = null)
             => new HistoricalLowestLow(candles).Compute(startIndex, endIndex);
 
-        public static IReadOnlyList<AnalyzableTick<decimal?>> HistoricalLowestClose(this IEnumerable<Candle> candles, int? startIndex = null, int? endIndex = null)
+        public static IReadOnlyList<AnalyzableTick<decimal?>> HistLowClose(this IEnumerable<Candle> candles, int? startIndex = null, int? endIndex = null)
             => new HistoricalLowestClose(candles).Compute(startIndex, endIndex);
 
-        public static IReadOnlyList<AnalyzableTick<decimal?>> LowestClose(this IEnumerable<Candle> candles, int periodCount, int? startIndex = null, int? endIndex = null)
+        public static IReadOnlyList<AnalyzableTick<decimal?>> LowClose(this IEnumerable<Candle> candles, int periodCount, int? startIndex = null, int? endIndex = null)
             => new LowestClose(candles, periodCount).Compute(startIndex, endIndex);
 
         public static IReadOnlyList<AnalyzableTick<decimal?>> Mdi(this IEnumerable<Candle> candles, int periodCount, int? startIndex = null, int? endIndex = null)
@@ -94,13 +94,13 @@ namespace Trady.Analysis
         public static IReadOnlyList<AnalyzableTick<decimal?>> Mdm(this IEnumerable<Candle> candles, int? startIndex = null, int? endIndex = null)
             => new MinusDirectionalMovement(candles).Compute(startIndex, endIndex);
 
-        public static IReadOnlyList<AnalyzableTick<decimal?>> Mema(this IEnumerable<Candle> candles, int periodCount, int? startIndex = null, int? endIndex = null)
-            => new ModifiedExponentialMovingAverage(candles, periodCount).Compute(startIndex, endIndex);
+        public static IReadOnlyList<AnalyzableTick<decimal?>> Mma(this IEnumerable<Candle> candles, int periodCount, int? startIndex = null, int? endIndex = null)
+            => new ModifiedMovingAverage(candles, periodCount).Compute(startIndex, endIndex);
 
         public static IReadOnlyList<AnalyzableTick<(decimal? MacdLine, decimal? SignalLine, decimal? MacdHistogram)>> Macd(this IEnumerable<Candle> candles, int emaPeriodCount1, int emaPeriodCount2, int demPeriodCount, int? startIndex = null, int? endIndex = null)
             => new MovingAverageConvergenceDivergence(candles, emaPeriodCount1, emaPeriodCount2, demPeriodCount).Compute(startIndex, endIndex);
 
-		public static IReadOnlyList<AnalyzableTick<decimal?>> MacdHistogram(this IEnumerable<Candle> candles, int emaPeriodCount1, int emaPeriodCount2, int demPeriodCount, int? startIndex = null, int? endIndex = null)
+        public static IReadOnlyList<AnalyzableTick<decimal?>> MacdHist(this IEnumerable<Candle> candles, int emaPeriodCount1, int emaPeriodCount2, int demPeriodCount, int? startIndex = null, int? endIndex = null)
 	        => new MovingAverageConvergenceDivergenceHistogram(candles, emaPeriodCount1, emaPeriodCount2, demPeriodCount).Compute(startIndex, endIndex);
 
         public static IReadOnlyList<AnalyzableTick<decimal?>> Obv(this IEnumerable<Candle> candles, int? startIndex = null, int? endIndex = null)

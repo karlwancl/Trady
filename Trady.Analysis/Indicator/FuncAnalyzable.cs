@@ -24,13 +24,14 @@ namespace Trady.Analysis.Indicator
         }
 
         public FuncAnalyzable<TInput, TOutput> Init(Func<IReadOnlyList<TInput>, int, decimal?> func)
-            => new FuncAnalyzable<TInput, TOutput>(MappedInputs, func, Parameters);
+            => new FuncAnalyzable<TInput, TOutput>(_mappedInputs, func, Parameters);
 
         protected override decimal? ComputeByIndexImpl(IReadOnlyList<TInput> mappedInputs, int index)
         {
             if (_func == null)
                 throw new NullReferenceException("No func is found for the analyzable, please ensure you have called Init method to init");
 
+            Console.WriteLine(index);
             return _func(mappedInputs, index);
         }
     }

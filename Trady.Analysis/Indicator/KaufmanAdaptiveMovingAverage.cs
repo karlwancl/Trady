@@ -9,7 +9,7 @@ namespace Trady.Analysis.Indicator
     public class KaufmanAdaptiveMovingAverage<TInput, TOutput> : NumericAnalyzableBase<TInput, decimal, TOutput>
     {
         private EfficiencyRatioByTuple _er;
-        private GenericExponentialMovingAverage _gema;
+        private GenericMovingAverage _gema;
 
         public KaufmanAdaptiveMovingAverage(IEnumerable<TInput> inputs, Func<TInput, decimal> inputMapper, int periodCount, int emaFastPeriodCount, int emaSlowPeriodCount) : base(inputs, inputMapper)
         {
@@ -21,11 +21,11 @@ namespace Trady.Analysis.Indicator
                 return Convert.ToDecimal(Math.Pow(erValue * (2.0 / (emaFastPeriodCount + 1) - 2.0 / (emaSlowPeriodCount + 1)) + 2.0 / (emaSlowPeriodCount + 1), 2));
             };
 
-            _gema = new GenericExponentialMovingAverage(
+            _gema = new GenericMovingAverage(
                 periodCount - 1,
                 i => inputs.Select(inputMapper).ElementAt(i),
                 i => inputs.Select(inputMapper).ElementAt(i),
-                i => sc(i),
+                sc,
                 inputs.Count());
 
             PeriodCount = periodCount;

@@ -18,9 +18,10 @@ namespace Trady.Analysis.Infrastructure
     /// </summary>
     public abstract class AnalyzableBase<TInput, TMappedInput, TOutputToMap, TOutput> : IAnalyzable<TOutput>
     {
-        private readonly IReadOnlyList<TMappedInput> _mappedInputs;
-        private readonly IReadOnlyList<DateTime> _mappedDatetime;
         private readonly bool _isTInputCandle, _isTOutputAnalyzableTick;
+
+        internal protected readonly IReadOnlyList<TMappedInput> _mappedInputs;
+        readonly IReadOnlyList<DateTime> _mappedDateTimes;
 
         protected AnalyzableBase(IEnumerable<TInput> inputs, Func<TInput, TMappedInput> inputMapper)
         {
@@ -31,12 +32,12 @@ namespace Trady.Analysis.Infrastructure
 
             _mappedInputs = inputs.Select(inputMapper).ToList();
             if (_isTInputCandle)
-                _mappedDatetime = inputs.Select(i => (i as Candle).DateTime).ToList();
+                _mappedDateTimes = inputs.Select(c => (c as Candle).DateTime).ToList();
 
             Cache = new ConcurrentDictionary<int, TOutputToMap>();
         }
 
-		public TOutput this[int index] => ComputeAndMap(ComputeByIndex, index);
+		public TOutput this[int index] => Map(ComputeByIndex, index);
 
 		public IReadOnlyList<TOutput> Compute(int? startIndex = null, int? endIndex = null) => Compute(i => this[i], startIndex, endIndex);
 
@@ -48,7 +49,7 @@ namespace Trady.Analysis.Infrastructure
 
         protected virtual int GetComputeStartIndex(int? startIndex) => startIndex ?? 0;
 
-        protected virtual int GetComputeEndIndex(int? endIndex) => endIndex ?? _mappedInputs.Count() - 1;
+        protected virtual int GetComputeEndIndex(int? endIndex) => endIndex ?? _mappedInputs.Count - 1;
 
 		protected ConcurrentDictionary<int, TOutputToMap> Cache { get; }
 
@@ -66,8 +67,6 @@ namespace Trady.Analysis.Infrastructure
 
         #region internal protected
 
-        internal protected IReadOnlyList<TMappedInput> MappedInputs => _mappedInputs;
-
 		internal protected IReadOnlyList<TOutput> Compute(Func<int, TOutput> outputFunc, int? startIndex, int? endIndex)
 		{
 			int computedStartIndex = GetComputeStartIndex(startIndex);
@@ -77,14 +76,20 @@ namespace Trady.Analysis.Infrastructure
 
 		internal protected IReadOnlyList<TOutput> Compute(Func<int, TOutput> outputFunc, IEnumerable<int> indexes) => indexes.Select(outputFunc).ToList();
 
-        // TODO: This method only accept symmetric indicator (i.e. TInput count == TOutput count), IchimokuCloud is not working here
-		internal protected (TOutput Prev, TOutput Current, TOutput Next) Compute(Func<int, TOutput> outputFunc, int index)
-			=> (index > 0 ? outputFunc(index - 1) : default(TOutput), outputFunc(index), index < _mappedInputs.Count() ? outputFunc(index + 1) : default(TOutput));
+        // Can only get in-range values from IchimokuCloud
+        internal protected (TOutput Prev, TOutput Current, TOutput Next) Compute(Func<int, TOutput> outputFunc, int index)
+        {
+            var prev = index > 0 ? outputFunc(index - 1) : default(TOutput);
+            var current = outputFunc(index);
+            var next = index < _mappedInputs.Count - 1 ? outputFunc(index + 1) : default(TOutput);
 
-		internal protected TOutput ComputeAndMap(Func<int, TOutputToMap> otmFunc, int index)
+            return (prev, current, next);
+        }
+
+		internal protected TOutput Map(Func<int, TOutputToMap> otmFunc, int index)
 		{
 			dynamic outputToMap = otmFunc(index);
-			var datetime = index >= 0 && index < _mappedInputs.Count() ? (_mappedDatetime?[index] ?? default(DateTime?)) : default(DateTime?);
+            var datetime = index >= 0 && index < _mappedInputs.Count ? (_mappedDateTimes?[index] ?? default(DateTime?)) : default(DateTime?);
 			return _isTOutputAnalyzableTick ? AnalyzableTickMapper(datetime, outputToMap) : outputToMap;
 
 			TOutput AnalyzableTickMapper(DateTime? d, TOutputToMap otm)

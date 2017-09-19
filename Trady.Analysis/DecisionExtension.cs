@@ -1,5 +1,4 @@
 ﻿using System;
-using Trady.Core.Infrastructure;
 using AnTick = Trady.Analysis.AnalyzableTick<decimal?>;
 using AnTp2Tick = Trady.Analysis.AnalyzableTick<(decimal?, decimal?)>;
 using AnTp3Tick = Trady.Analysis.AnalyzableTick<(decimal?, decimal?, decimal?)>;

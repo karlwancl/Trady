@@ -58,7 +58,6 @@ namespace Trady.Analysis.Backtest
                 {
                     var executor = CreateBuySellRuleExecutor(context, premium, assetCashMap, transactions);
                     executor.Execute(startIndex, endIndex);
-                    Console.WriteLine("Not ended");
                 }
             }
 
@@ -67,34 +66,26 @@ namespace Trady.Analysis.Backtest
 
         private BuySellRuleExecutor CreateBuySellRuleExecutor(IAnalyzeContext<Candle> context, decimal premium, IDictionary<IEnumerable<Candle>, decimal> assetCashMap, List<Transaction> transactions)
         {
-            try
+            Func<IEnumerable<Transaction>, IAnalyzeContext<Candle>, TransactionType, bool> isPreviousTransactionA = (ts, ctx, tt)
+                => ts.LastOrDefault(_t => _t.Candles.Equals(ctx.BackingList))?.Type == tt;
+
+            Predicate<IndexedCandle> buyRule = ic
+                => !isPreviousTransactionA(transactions, ic.Context, TransactionType.Buy) && _buyRule(ic);
+
+            Predicate<IndexedCandle> sellRule = ic
+                => !isPreviousTransactionA(transactions, ic.Context, TransactionType.Sell) && _sellRule(ic);
+
+            Func<IndexedCandle, int, (TransactionType, IndexedCandle)> outputFunc = (ic, i) =>
             {
-                Func<IEnumerable<Transaction>, IAnalyzeContext<Candle>, TransactionType, bool> isPreviousTrnsactionA = (ts, ctx, tt)
-                    => ts.LastOrDefault(_t => _t.Candles.Equals(ctx.BackingList))?.Type == tt;
+                var type = (TransactionType)i;
+                if (type.Equals(TransactionType.Buy))
+                    BuyAsset(ic, premium, assetCashMap, transactions);
+                else
+                    SellAsset(ic, premium, assetCashMap, transactions);
+                return ((TransactionType)i, ic);
+            };
 
-                Predicate<IndexedCandle> buyRule = ic
-                    => !isPreviousTrnsactionA(transactions, ic.Context, TransactionType.Buy) && _buyRule(ic);
-
-                Predicate<IndexedCandle> sellRule = ic
-                    => !isPreviousTrnsactionA(transactions, ic.Context, TransactionType.Sell) && _sellRule(ic);
-
-                Func<IndexedCandle, int, (TransactionType, IndexedCandle)> outputFunc = (ic, i) =>
-                {
-                    var type = (TransactionType)i;
-                    if (type.Equals(TransactionType.Buy))
-                        BuyAsset(ic, premium, assetCashMap, transactions);
-                    else
-                        SellAsset(ic, premium, assetCashMap, transactions);
-                    return ((TransactionType)i, ic);
-                };
-
-                return new BuySellRuleExecutor(outputFunc, context, buyRule, sellRule);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-                throw;
-            }
+            return new BuySellRuleExecutor(outputFunc, context, buyRule, sellRule);
         }
 
         private void BuyAsset(IndexedCandle indexedCandle, decimal premium, IDictionary<IEnumerable<Candle>, decimal> assetCashMap, IList<Transaction> transactions)

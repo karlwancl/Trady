@@ -9,14 +9,14 @@ namespace Trady.Analysis.Indicator
     public class AverageTrueRange<TInput, TOutput> : NumericAnalyzableBase<TInput, (decimal High, decimal Low, decimal Close), TOutput>
     {
         private readonly TrueRangeByTuple _tr;
-        private readonly GenericExponentialMovingAverage _trEma;
+        private readonly GenericMovingAverage _trEma;
 
         public AverageTrueRange(IEnumerable<TInput> inputs, Func<TInput, (decimal High, decimal Low, decimal Close)> inputMapper, int periodCount)
             : base(inputs, inputMapper)
         {
             _tr = new TrueRangeByTuple(inputs.Select(inputMapper));
 
-            _trEma = new GenericExponentialMovingAverage(
+            _trEma = new GenericMovingAverage(
                 periodCount - 1,
                 i => Enumerable.Range(i - periodCount + 1, periodCount).Average(j => _tr[j]),
                 i => _tr[i],

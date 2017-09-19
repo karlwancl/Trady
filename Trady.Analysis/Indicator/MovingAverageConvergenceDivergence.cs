@@ -9,21 +9,16 @@ namespace Trady.Analysis.Indicator
     public class MovingAverageConvergenceDivergence<TInput, TOutput> 
         : AnalyzableBase<TInput, decimal, (decimal? MacdLine, decimal? SignalLine, decimal? MacdHistogram), TOutput>
     {
-        private ExponentialMovingAverageByTuple _ema1, _ema2;
-        private readonly GenericExponentialMovingAverage _signal;
-        private readonly Func<int, decimal?> _macd;
+        private ExponentialMovingAverageOscillatorByTuple _macd;
+        private readonly GenericMovingAverage _signal;
 
         public MovingAverageConvergenceDivergence(IEnumerable<TInput> inputs, Func<TInput, decimal> inputMapper, int emaPeriodCount1, int emaPeriodCount2, int demPeriodCount) : base(inputs, inputMapper)
         {
-            _ema1 = new ExponentialMovingAverageByTuple(inputs.Select(inputMapper), emaPeriodCount1);
-            _ema2 = new ExponentialMovingAverageByTuple(inputs.Select(inputMapper), emaPeriodCount2);
-            _macd = i => _ema1[i] - _ema2[i];
+            _macd = new ExponentialMovingAverageOscillatorByTuple(inputs.Select(inputMapper), emaPeriodCount1, emaPeriodCount2);
 
-            _signal = new GenericExponentialMovingAverage(
-                0,
-                i => _macd(i),
-                i => _macd(i),
-                i => 2.0m / (demPeriodCount + 1),
+            _signal = new GenericMovingAverage(
+                i => _macd[i],
+                2.0m / (demPeriodCount + 1),
                 inputs.Count());
 
             EmaPeriodCount1 = emaPeriodCount1;
@@ -39,7 +34,7 @@ namespace Trady.Analysis.Indicator
 
         protected override (decimal? MacdLine, decimal? SignalLine, decimal? MacdHistogram) ComputeByIndexImpl(IReadOnlyList<decimal> mappedInputs, int index)
         {
-            decimal? macd = _macd(index);
+            decimal? macd = _macd[index];
             decimal? signal = _signal[index];
             return (macd, signal, macd - signal);
         }
