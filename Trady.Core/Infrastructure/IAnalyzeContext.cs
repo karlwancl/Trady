@@ -8,11 +8,16 @@ namespace Trady.Core.Infrastructure
     {
         TAnalyzable Get<TAnalyzable>(params object[] parameters) where TAnalyzable : IAnalyzable;
 
-        IEnumerable BackingList { get; }
+        IFuncAnalyzable GetFunc(string name, params object[] parameters);
+
+		IEnumerable BackingList { get; }
     }
 
     public interface IAnalyzeContext<TInput> : IAnalyzeContext
     {
-        new IEnumerable<TInput> BackingList { get; }
-    }
+        // Either IFuncAnalyzable<decimal?> or IFuncAnalyzable<AnalyzableTick<decimal?>>
+		new IFuncAnalyzable<dynamic> GetFunc(string name, params object[] parameters);
+
+		new IEnumerable<TInput> BackingList { get; }
+	}
 }

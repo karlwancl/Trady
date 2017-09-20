@@ -24,7 +24,8 @@ namespace Trady.Analysis.Infrastructure
 
             var @params = new List<object>();
             @params.Add(inputs);
-            @params.AddRange(parameters);
+            for (int i = 1; i < ctor.GetParameters().Count(); i++)
+                @params.Add(Convert.ChangeType(parameters[i - 1], ctor.GetParameters()[i].ParameterType));
 
             return (TAnalyzable)ctor.Invoke(@params.ToArray());
         }

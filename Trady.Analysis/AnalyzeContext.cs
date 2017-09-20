@@ -1,6 +1,8 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using Trady.Analysis.Infrastructure;
 using Trady.Core;
 using Trady.Core.Infrastructure;
@@ -19,7 +21,13 @@ namespace Trady.Analysis
 
         public TAnalyzable Get<TAnalyzable>(params object[] parameters) where TAnalyzable : IAnalyzable
             => (TAnalyzable)_cache.GetOrAdd($"{typeof(TAnalyzable).Name}#{string.Join("|", parameters)}", 
-                                            _ => AnalyzableFactory.CreateAnalyzable<TAnalyzable, TInput>(BackingList, parameters));
+                                            AnalyzableFactory.CreateAnalyzable<TAnalyzable, TInput>(BackingList, parameters));
+
+		IFuncAnalyzable IAnalyzeContext.GetFunc(string name, params object[] parameters) => GetFunc(name, parameters);
+
+		public IFuncAnalyzable<dynamic> GetFunc(string name, params object[] parameters)
+            => (IFuncAnalyzable<dynamic>)_cache.GetOrAdd($"_Func_{name}#{string.Join("|", parameters)}", 
+                                                         FuncAnalyzableFactory.CreateAnalyzable<TInput, dynamic>(name, BackingList, parameters));
 
         public IEnumerable<TInput> BackingList { get; }
 
@@ -58,6 +66,7 @@ namespace Trady.Analysis
             // TODO: uncomment the following line if the finalizer is overridden above.
             // GC.SuppressFinalize(this);
         }
+
         #endregion
     }
 

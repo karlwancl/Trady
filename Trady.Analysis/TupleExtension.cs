@@ -1,11 +1,37 @@
 ﻿using System;
 using System.Collections.Generic;
 using Trady.Analysis.Indicator;
+using Trady.Analysis.Infrastructure;
+using Trady.Core.Infrastructure;
 
 namespace Trady.Analysis
 {
     public static class TupleExtension
     {
+        public static IReadOnlyList<decimal?> Func<TInput>(this IEnumerable<TInput> inputs, Func<IReadOnlyList<TInput>, int, IAnalyzeContext<TInput>, decimal?> func, int? startIndex = null, int? endIndex = null)
+	        => func.AsAnalyzable(inputs).Compute(startIndex, endIndex);
+
+        public static IReadOnlyList<decimal?> Func<TInput>(this IEnumerable<TInput> inputs, Func<IReadOnlyList<TInput>, int, decimal, IAnalyzeContext<TInput>, decimal?> func, decimal parameter, int? startIndex = null, int? endIndex = null)
+			=> func.AsAnalyzable(inputs, parameter).Compute(startIndex, endIndex);
+
+        public static IReadOnlyList<decimal?> Func<TInput>(this IEnumerable<TInput> inputs, Func<IReadOnlyList<TInput>, int, decimal, decimal, IAnalyzeContext<TInput>, decimal?> func, decimal parameter0, decimal parameter1, int? startIndex = null, int? endIndex = null)
+			=> func.AsAnalyzable(inputs, parameter0, parameter1).Compute(startIndex, endIndex);
+
+        public static IReadOnlyList<decimal?> Func<TInput>(this IEnumerable<TInput> inputs, Func<IReadOnlyList<TInput>, int, decimal, decimal, decimal, IAnalyzeContext<TInput>, decimal?> func, decimal parameter0, decimal parameter1, decimal parameter2, int? startIndex = null, int? endIndex = null)
+			=> func.AsAnalyzable(inputs, parameter0, parameter1, parameter2).Compute(startIndex, endIndex);
+
+        public static IReadOnlyList<decimal?> Func<TInput>(this IEnumerable<TInput> inputs, string name, int? startIndex = null, int? endIndex = null)
+			=> FuncAnalyzableFactory.CreateAnalyzable<TInput, decimal?>(name, inputs).Compute(startIndex, endIndex);
+
+		public static IReadOnlyList<decimal?> Func<TInput>(this IEnumerable<TInput> inputs, string name, decimal parameter, int? startIndex = null, int? endIndex = null)
+            => FuncAnalyzableFactory.CreateAnalyzable<TInput, decimal?>(name, inputs, new object[]{parameter}).Compute(startIndex, endIndex);
+
+		public static IReadOnlyList<decimal?> Func<TInput>(this IEnumerable<TInput> inputs, string name, decimal parameter0, decimal parameter1, int? startIndex = null, int? endIndex = null)
+            => FuncAnalyzableFactory.CreateAnalyzable<TInput, decimal?>(name, inputs, new object[]{parameter0, parameter1}).Compute(startIndex, endIndex);
+
+		public static IReadOnlyList<decimal?> Func<TInput>(this IEnumerable<TInput> inputs, string name, decimal parameter0, decimal parameter1, decimal parameter2, int? startIndex = null, int? endIndex = null)
+            => FuncAnalyzableFactory.CreateAnalyzable<TInput, decimal?>(name, inputs, new object[]{parameter0, parameter1, parameter2}).Compute(startIndex, endIndex);
+
         public static IReadOnlyList<decimal?> AccumDist(this IEnumerable<(decimal High, decimal Low, decimal Close, decimal Volume)> inputs, int? startIndex = null, int? endIndex = null)
              => new AccumulationDistributionLineByTuple(inputs).Compute(startIndex, endIndex);
 

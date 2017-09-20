@@ -320,9 +320,11 @@ Nuget package is available in modules, please install the package according to t
 ### Backlog
 * (High priority) Dynamically create indicator & rule patterns from text file, allows internal call to dynamic generated stuffs
 * Complete other indicators (e.g. Keltner Channels, MA Envelopes, etc.)
-* (Low priority) Complete candlestick patterns
+* Complete candlestick patterns
 * Add more rule patterns
-* Integrate with machine learning for creating prediction model?
+* Graphing: Generate stock chart by indicator values
+* Pipelining: Provide simple programming interface for pipeline the trading process
+* Study machine learning algorithm to see if it can be applied?
 * Add broker adaptor for real-time trade (e.g. interactive broker, etc.)
 * MORE, MORE AND MORE!!!!
 
