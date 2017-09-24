@@ -48,5 +48,6 @@
   <ItemGroup>
     <Folder Include="Backtest\" />
     <Folder Include="Candlestick\" />
+    <Folder Include="Extension\" />
   </ItemGroup>
 </Project>

@@ -119,6 +119,9 @@ namespace Trady.Analysis.Infrastructure
         public static bool Register(string name, string expression)
             => Register<Candle>(name, expression);
 
+        public static bool Register(string name, IFuncAnalyzable analyzable)
+            => _funcDict.TryAdd(name, analyzable.Func);
+
         public static bool Unregister(string name) => _funcDict.TryRemove(name, out var _);
 
         internal static object Get(string name) => _funcDict[name];

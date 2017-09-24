@@ -6,7 +6,7 @@ using Trady.Core.Infrastructure;
 
 namespace Trady.Analysis
 {
-    public static class TupleExtension
+    public static class TuplesExtension
     {
         public static IReadOnlyList<decimal?> Func<TInput>(this IEnumerable<TInput> inputs, Func<IReadOnlyList<TInput>, int, IAnalyzeContext<TInput>, decimal?> func, int? startIndex = null, int? endIndex = null)
 	        => func.AsAnalyzable(inputs).Compute(startIndex, endIndex);

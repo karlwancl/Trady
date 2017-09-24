@@ -7,7 +7,7 @@ using Trady.Core.Infrastructure;
 
 namespace Trady.Analysis
 {
-    public static class CandleExtension
+    public static class CandlesExtension
     {
         public static IReadOnlyList<AnalyzableTick<decimal?>> Func(this IEnumerable<Candle> candles, Func<IReadOnlyList<Candle>, int, IAnalyzeContext<Candle>, decimal?> func, int? startIndex = null, int? endIndex = null)
             => func.AsAnalyzable(candles).Compute(startIndex, endIndex);

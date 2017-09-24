@@ -11,6 +11,8 @@ namespace Trady.Analysis.Indicator
         private readonly Func<IReadOnlyList<TInput>, int, IAnalyzeContext<TInput>, decimal?> _func;
         private readonly IAnalyzeContext<TInput> _ctx;
 
+        public object Func => _func;
+
         public Func0Analyzable(IEnumerable<TInput> inputs) : base(inputs, i => i)
         {
         }
@@ -54,7 +56,9 @@ namespace Trady.Analysis.Indicator
 
 		public decimal Parameter { get; }
 
-		public Func1Analyzable(IEnumerable<TInput> inputs, decimal parameter) : base(inputs, i => i)
+        public object Func => _func;
+
+        public Func1Analyzable(IEnumerable<TInput> inputs, decimal parameter) : base(inputs, i => i)
 		{
 			Parameter = parameter;
 		}
@@ -99,7 +103,9 @@ namespace Trady.Analysis.Indicator
 
 		public decimal Parameter1 { get; }
 
-		public Func2Analyzable(IEnumerable<TInput> inputs, decimal parameter0, decimal parameter1) : base(inputs, i => i)
+        public object Func => _func;
+
+        public Func2Analyzable(IEnumerable<TInput> inputs, decimal parameter0, decimal parameter1) : base(inputs, i => i)
 		{
 			Parameter0 = parameter0;
 			Parameter1 = parameter1;
@@ -147,7 +153,9 @@ namespace Trady.Analysis.Indicator
 
 		public decimal Parameter2 { get; }
 
-		public Func3Analyzable(IEnumerable<TInput> inputs, decimal parameter0, decimal parameter1, decimal parameter2) : base(inputs, i => i)
+        public object Func => _func;
+
+        public Func3Analyzable(IEnumerable<TInput> inputs, decimal parameter0, decimal parameter1, decimal parameter2) : base(inputs, i => i)
 		{
 			Parameter0 = parameter0;
 			Parameter1 = parameter1;

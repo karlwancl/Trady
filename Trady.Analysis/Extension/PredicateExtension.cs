@@ -5,7 +5,7 @@ using AnTp3Tick = Trady.Analysis.AnalyzableTick<(decimal?, decimal?, decimal?)>;
 
 namespace Trady.Analysis
 {
-    public static class DecisionExtension
+    public static class PredicateExtension
     {
         public static bool IsTrue<T>(this T? obj, Predicate<T> predicate) where T : struct
             => obj.HasValue && predicate(obj.Value);
