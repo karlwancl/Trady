@@ -3,9 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Trady.Analysis.Helper
+namespace Trady.Analysis
 {
-    internal static class GenericHelper
+    internal static class TypeExtension
     {
         public static int? FindIndexOrDefault<T>(this IEnumerable<T> list, Predicate<T> predicate, int? defaultValue = null)
         {

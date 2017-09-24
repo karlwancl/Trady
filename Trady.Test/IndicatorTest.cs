@@ -267,7 +267,7 @@ namespace Trady.Test
         {
             var candles = await ImportCandlesAsync();
             int middlePeriodCount = 26;
-            var results = candles.Ichimoku(0, middlePeriodCount, 52);
+            var results = candles.Ichimoku(9, middlePeriodCount, 52);
 
             var currResult = results.ElementAt(results.Count() - middlePeriodCount - 1);
             Assert.IsTrue(171.67m.IsApproximatelyEquals(currResult.Tick.ConversionLine.Value));

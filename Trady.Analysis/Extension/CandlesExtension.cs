@@ -42,7 +42,7 @@ namespace Trady.Analysis
         public static IReadOnlyList<AnalyzableTick<decimal?>> AroonOsc(this IEnumerable<Candle> candles, int periodCount, int? startIndex = null, int? endIndex = null)
             => new AroonOscillator(candles, periodCount).Compute(startIndex, endIndex);
 
-        public static IReadOnlyList<AnalyzableTick<decimal?>> Adx(IEnumerable<Candle> candles, int periodCount, int? startIndex = null, int? endIndex = null)
+        public static IReadOnlyList<AnalyzableTick<decimal?>> Adx(this IEnumerable<Candle> candles, int periodCount, int? startIndex = null, int? endIndex = null)
             => new AverageDirectionalIndex(candles, periodCount).Compute(startIndex, endIndex);
 
         public static IReadOnlyList<AnalyzableTick<decimal?>> Adxr(this IEnumerable<Candle> candles, int periodCount, int adxrPeriodCount, int? startIndex = null, int? endIndex = null)
