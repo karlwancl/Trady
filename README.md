@@ -1,7 +1,7 @@
 # Trady
 [![Build status](https://ci.appveyor.com/api/projects/status/kqwo74gn5ms3h0n2?svg=true)](https://ci.appveyor.com/project/lppkarl/trady)
-[![NuGet Pre Release](https://img.shields.io/nuget/vpre/Trady.Analysis.svg)](https://www.nuget.org/packages/Trady.Analysis/3.0.0-beta0)
-[![NuGet](https://img.shields.io/nuget/dt/Trady.Analysis.svg)](https://www.nuget.org/packages/Trady.Analysis/3.0.0-beta0)
+[![NuGet Pre Release](https://img.shields.io/nuget/vpre/Trady.Analysis.svg)](https://www.nuget.org/packages/Trady.Analysis/3.0.0)
+[![NuGet](https://img.shields.io/nuget/dt/Trady.Analysis.svg)](https://www.nuget.org/packages/Trady.Analysis/3.0.0)
 [![license](https://img.shields.io/github/license/lppkarl/Trady.svg)](LICENSE)
 
 Trady is a handy library for computing technical indicators, and targets to be an automated trading system that provides stock data feeding, indicator computing, strategy building and automatic trading. It is built based on .NET Standard 2.0.
@@ -15,7 +15,7 @@ This library is a hobby project, and would probably making breaking changes, use
 * Signal capturing by rules
 * Strategy backtesting by buy/sell rule
 
-### Updates from 2.0.x to 3.0.0 (Currently 3.0.0-beta0)
+### Updates from 2.0.x to 3.0.0 (Currently 3.0.0)
 Please refer to another markdown document [here](update_from_2.0.x.md)
 
 ### Supported Platforms
