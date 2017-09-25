@@ -151,7 +151,7 @@ Nuget package is available in modules, please install the package according to t
     FuncRegistry.Register("modified_sma", (c, i, p, ctx) => ctx.Get<SimpleMovingAverage>(p[0])[i].Tick);
 
     // You can use your func globally using the extension
-    var lastModifiedSmaValue = candles.Func("modified_sma", new decimal[]{ 10 })[candles.Count() - 1];
+    var lastModifiedSmaValue = candles.Func("modified_sma", 10)[candles.Count() - 1];
 
     // The library also support register by plain text expression, you can dynamically create an analyzable as follows:
     // Please notice that you must follow the naming convention: c, i, p, ctx when using this approach
