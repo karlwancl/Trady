@@ -1,6 +1,6 @@
 # Trady
 [![Build status](https://ci.appveyor.com/api/projects/status/kqwo74gn5ms3h0n2?svg=true)](https://ci.appveyor.com/project/lppkarl/trady)
-[![NuGet Pre Release](https://img.shields.io/nuget/vpre/Trady.Analysis.svg)](https://www.nuget.org/packages/Trady.Analysis/3.0.0)
+[![NuGet Pre Release](https://img.shields.io/nuget/v/Trady.Analysis.svg)](https://www.nuget.org/packages/Trady.Analysis/3.0.0)
 [![NuGet](https://img.shields.io/nuget/dt/Trady.Analysis.svg)](https://www.nuget.org/packages/Trady.Analysis/3.0.0)
 [![license](https://img.shields.io/github/license/lppkarl/Trady.svg)](LICENSE)
 
