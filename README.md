@@ -1,6 +1,7 @@
 # Trady
 [![Build status](https://ci.appveyor.com/api/projects/status/kqwo74gn5ms3h0n2?svg=true)](https://ci.appveyor.com/project/lppkarl/trady)
 [![NuGet Pre Release](https://img.shields.io/nuget/vpre/Trady.Analysis.svg)](https://www.nuget.org/packages/Trady.Analysis/3.0.0-beta0)
+[![NuGet](https://img.shields.io/nuget/dt/Trady.Analysis.svg)](https://www.nuget.org/packages/Trady.Analysis/3.0.0-beta0)
 [![license](https://img.shields.io/github/license/lppkarl/Trady.svg)](LICENSE)
 
 Trady is a handy library for computing technical indicators, and targets to be an automated trading system that provides stock data feeding, indicator computing, strategy building and automatic trading. It is built based on .NET Standard 2.0.
@@ -117,10 +118,12 @@ Nuget package is available in modules, please install the package according to t
 
 <a name="ComputeIndicatorsOperation"></a>
 #### Compute simple operation on an indicator
-    // Simple operation on indicator is supported, now supports only diff & sma
+    // Simple operation on indicator is supported, now supports only diff, pcDiff, sma, sd
     var closes = new List<decimal>{ ... };
-    var smaDiff = closes.Sma(30).Diff(index);
-    var smaSma = closes.Sma(30).Sma(10, index);
+    var smaDiff = closes.Sma(30).Diff(index);   // i-th term - (i-1)-th term
+    var smaSma = closes.Sma(30).Sma(10, index); // average(n items)
+    var smaPcDiff = closes.Sma(30).PcDiff(index); // (i-th term - (i-1)-th term) / (i-1)-th term * 100
+    var smaSd = closes.Sma(30).Sd(10, 2, index);
 
     // This also applies to candles
 [Back to content](#Content)
