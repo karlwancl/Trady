@@ -28,11 +28,14 @@ namespace Trady.Test
 			var candles = await ImportCandlesAsync();
 
             FuncRegistry.Register("msma", "var sma = ctx.Get<SimpleMovingAverage>(10); return sma[i].Tick;");
+            FuncRegistry.Register("msma2", (c, i, p0, ctx) => ctx.Get<SimpleMovingAverage>(p0)[i].Tick);
 
             var result = candles.Func("msma", 10m)[candles.Count() - 1];
+            var result2 = candles.Func("msma2", 10m)[candles.Count() - 1];
             var actual = candles.Sma(10)[candles.Count() - 1];
 
             Assert.AreEqual(result.Tick, actual.Tick);
+            Assert.AreEqual(result2.Tick, actual.Tick);
 		}
 
         [TestMethod]

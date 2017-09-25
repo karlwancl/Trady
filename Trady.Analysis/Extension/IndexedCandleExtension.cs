@@ -5,10 +5,10 @@ namespace Trady.Analysis
     public static class IndexedCandleExtension
     {
         public static decimal? ClosePriceChange(this IndexedCandle ic)
-            => ic.Get<ClosePriceChange>()[ic.Index].Tick;
+            => ic.Get<ClosePriceChange>(1)[ic.Index].Tick;
 
         public static decimal? ClosePricePercentageChange(this IndexedCandle ic)
-            => ic.Get<ClosePricePercentageChange>()[ic.Index].Tick;
+            => ic.Get<ClosePricePercentageChange>(1)[ic.Index].Tick;
 
         public static bool IsBullish(this IndexedCandle ic)
             => ic.Get<ClosePriceChange>()[ic.Index].Tick.IsPositive();

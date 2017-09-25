@@ -1,7 +1,8 @@
-# Update from 2.0.x to 2.1.0
+# Update from 2.0.x to 3.0.0
 
 ## Trady.Analysis module
 * Change: 
+    * The library is re-targeted to .NET Standard 2.0
     * The indicator now intakes IEnumerable<T> instance instead of IList<T>
     * The indicator now outputs IReadOnlyList<T> instance instead of IList<T>
     * Computes from different input now have different output 
@@ -39,6 +40,7 @@
     * Removed AnalyzableLocator. AnalyzeContext is in replacement for sharing indicator within a scope
 
 ## Trady.Importer module
+* The library is re-targeted to .NET Standard 2.0
 * The candles are exported as IReadOnlyList<Candle> instead of IList<Candle>
 * Added GoogleFinanceImporter (adapter to [Nuba.Google.Finance](https://github.com/nubasoftware/Nuba.Finance.Google), thanks to [@fernaramburu](https://github.com/fernaramburu))
 * Separated importers are also available for modular installation:

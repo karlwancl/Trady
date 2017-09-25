@@ -251,6 +251,7 @@ paket-files/
 .idea/
 *.sln.iml
 
-# Ignore non-public code
-Trady.App.Pad/
-Trady.Vic/
+# Hide private code
+Trady.Analysis.Stat/
+Trady.Test.Stat/
+Trady_Full.sln

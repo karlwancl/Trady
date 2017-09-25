@@ -12,7 +12,7 @@ using Trady.Analysis;
 namespace Trady.Test
 {
     [TestClass]
-    public class Tests
+    public class MiscallaneousTest
     {
         public async Task<IEnumerable<Candle>> ImportCandlesAsync()
         {

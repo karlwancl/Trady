@@ -38,7 +38,7 @@ namespace Trady.Importer
 
             var corrStartTime = (startTime < UnixMinDateTime ? UnixMinDateTime : startTime) ?? UnixMinDateTime;
             var corrEndTime = AddPeriod((endTime > UnixMaxDateTime ? UnixMaxDateTime : endTime) ?? UnixMaxDateTime, period);
-            var candles = await Yahoo.GetHistoricalAsync(symbol, corrStartTime, corrEndTime, PeriodMap[period], false, token);
+            var candles = await Yahoo.GetHistoricalAsync(symbol, corrStartTime, corrEndTime, PeriodMap[period], false, false, token);
 
             return candles.Select(c => new Core.Candle(c.DateTime, c.Open, c.High, c.Low, c.Close, c.Volume)).OrderBy(c => c.DateTime).ToList();
         }

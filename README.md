@@ -1,12 +1,12 @@
 # Trady
 [![Build status](https://ci.appveyor.com/api/projects/status/kqwo74gn5ms3h0n2?svg=true)](https://ci.appveyor.com/project/lppkarl/trady)
-[![NuGet Pre Release](https://img.shields.io/nuget/vpre/Trady.Analysis.svg)](https://www.nuget.org/packages/Trady.Analysis/2.1.0-beta6)
+[![NuGet Pre Release](https://img.shields.io/nuget/vpre/Trady.Analysis.svg)](https://www.nuget.org/packages/Trady.Analysis/3.0.0-beta0)
 [![license](https://img.shields.io/github/license/lppkarl/Trady.svg)](LICENSE)
 
-Trady is a handy library for computing technical indicators, and targets to be an automated trading system that provides stock data feeding, indicator computing, strategy building and automatic trading. It is built based on .NET Standard 1.6.1.
+Trady is a handy library for computing technical indicators, and targets to be an automated trading system that provides stock data feeding, indicator computing, strategy building and automatic trading. It is built based on .NET Standard 2.0.
 
 ### Read Before You Use
-This library is intended for personal use, use with care for production environment.
+This library is a hobby project, and would probably making breaking changes, use with care when in production.
 
 ### Currently Available Features
 * Stock data feeding (via CSV File, [Quandl.NET](https://github.com/lppkarl/Quandl.NET), [YahooFinanceApi](https://github.com/lppkarl/YahooFinanceApi), [StooqApi](https://github.com/lppkarl/StooqApi), [Nuba.Finance.Google](https://github.com/nubasoftware/Nuba.Finance.Google))
@@ -14,16 +14,16 @@ This library is intended for personal use, use with care for production environm
 * Signal capturing by rules
 * Strategy backtesting by buy/sell rule
 
-### Updates from 2.0.x to 2.1.0 (Currently 2.1.0-alpha6)
+### Updates from 2.0.x to 3.0.0 (Currently 3.0.0-beta0)
 Please refer to another markdown document [here](update_from_2.0.x.md)
 
 ### Supported Platforms
-* .NET Core 1.0 or above
+* .NET Core 2.0 or above
 * .NET Framework 4.6.1 or above
-* Mono 4.6 or above
-* Xamarin.iOS 10.0 or above
-* Xamarin.Android 7.0 or above
-* Xamarin.Mac 3.0 or above
+* Mono 5.4 or above
+* Xamarin.iOS 10.4 or above
+* Xamarin.Android 7.5 or above
+* Xamarin.Mac 3.8 or above
 
 ### Currently Supported Indicators
 Please refer to another markdown document [here](supported_indicators.md)
@@ -204,8 +204,8 @@ Nuget package is available in modules, please install the package according to t
     }
 
     // Use case
-    var buyRule = Rule.Create(c => c.IsEma10BullishCrossEma30()).And(c.IsEma10Rising());
-    var sellRule = Rule.Create(c => c.IsEma10BearishCrossEma30()).Or(c.IsEma10Dropping());
+    var buyRule = Rule.Create(c => c.IsEma10BullishCrossEma30()).And(c => c.IsEma10Rising());
+    var sellRule = Rule.Create(c => c.IsEma10BearishCrossEma30()).Or(c => c.IsEma10Dropping());
     var runner = new Builder().Add(candles, 10).Buy(buyRule).Sell(sellRule).Build();
     var result = await runner.RunAsync(10000, 1);
 [Back to content](#Content)
@@ -303,16 +303,14 @@ Nuget package is available in modules, please install the package according to t
         {
             // parameters: initialValueIndex, initialValueFunction, indexValueFunction, smoothingFactorFunction
 			_gma = new GenericMovingAverage(
-				0,
 				i => inputs.Select(ip => ip.Close).ElementAt(i),
-				i => inputs.Select(ip => ip.Close).ElementAt(i),
-				i => 2.0m / (periodCount + 1),
+				2.0m / (periodCount + 1),
 				inputs.Count());
         }
 
         protected override AnalyzableTick<decimal?> ComputeByIndexImpl(IReadOnlyList<Candle> mappedInputs, int index)
         {
-            return new AnalyzableTick<decimal?>(mappedInputs[index].DateTime, _gema[index]);
+            return new AnalyzableTick<decimal?>(mappedInputs[index].DateTime, _gma[index]);
         }
     }
 [Back to content](#Content)

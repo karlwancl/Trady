@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Reflection;
 using Microsoft.CodeAnalysis.CSharp.Scripting;
 using Microsoft.CodeAnalysis.Scripting;
@@ -80,8 +81,11 @@ namespace Trady.Analysis.Infrastructure
 
 		#endregion
 
-        public static bool Register<TInput>(string name, string expression)
+        public static bool Register<TInput>(string name, string expression, bool @override = false)
 		{
+            if (@override)
+                _funcDict.TryRemove(name, out _);
+
 			if (expression.Contains("p2"))
 				return _funcDict.TryAdd(name, CreateFunc3<TInput>(expression));
 			else if (expression.Contains("p1"))
@@ -92,37 +96,41 @@ namespace Trady.Analysis.Infrastructure
 				return _funcDict.TryAdd(name, CreateFunc0<TInput>(expression));
 		}
 
-        public static bool Register<TInput>(string name, Func<IReadOnlyList<TInput>, int, IAnalyzeContext<TInput>, decimal?> expr)
-            => _funcDict.TryAdd(name, expr);
+        public static bool Register<TInput>(string name, Expression<Func<IReadOnlyList<TInput>, int, IAnalyzeContext<TInput>, decimal?>> expr, bool @override = false)
+            => Register<TInput>(name, expr.Body.ToString(), @override);
 
-		public static bool Register<TInput>(string name, Func<IReadOnlyList<TInput>, int, decimal, IAnalyzeContext<TInput>, decimal?> expr)
-	        => _funcDict.TryAdd(name, expr);
+		public static bool Register<TInput>(string name, Expression<Func<IReadOnlyList<TInput>, int, decimal, IAnalyzeContext<TInput>, decimal?>> expr, bool @override = false)
+			=> Register<TInput>(name, expr.Body.ToString(), @override);
 
-		public static bool Register<TInput>(string name, Func<IReadOnlyList<TInput>, int, decimal, decimal, IAnalyzeContext<TInput>, decimal?> expr)
-	        => _funcDict.TryAdd(name, expr);
+		public static bool Register<TInput>(string name, Expression<Func<IReadOnlyList<TInput>, int, decimal, decimal, IAnalyzeContext<TInput>, decimal?>> expr, bool @override = false)
+			=> Register<TInput>(name, expr.Body.ToString(), @override);
 
-		public static bool Register<TInput>(string name, Func<IReadOnlyList<TInput>, int, decimal, decimal, decimal, IAnalyzeContext<TInput>, decimal?> expr)
-	        => _funcDict.TryAdd(name, expr);
+		public static bool Register<TInput>(string name, Expression<Func<IReadOnlyList<TInput>, int, decimal, decimal, decimal, IAnalyzeContext<TInput>, decimal?>> expr, bool @override = false)
+			=> Register<TInput>(name, expr.Body.ToString(), @override);
 
-        public static bool Register(string name, Func<IReadOnlyList<Candle>, int, IAnalyzeContext<Candle>, decimal?> expr)
-            => Register<Candle>(name, expr);
+		public static bool Register(string name, Expression<Func<IReadOnlyList<Candle>, int, IAnalyzeContext<Candle>, decimal?>> expr, bool @override = false)
+			=> Register<Candle>(name, expr, @override);
 
-		public static bool Register(string name, Func<IReadOnlyList<Candle>, int, decimal, IAnalyzeContext<Candle>, decimal?> expr)
-			=> Register<Candle>(name, expr);
+		public static bool Register(string name, Expression<Func<IReadOnlyList<Candle>, int, decimal, IAnalyzeContext<Candle>, decimal?>> expr, bool @override = false)
+	        => Register<Candle>(name, expr, @override);
 
-		public static bool Register(string name, Func<IReadOnlyList<Candle>, int, decimal, decimal, IAnalyzeContext<Candle>, decimal?> expr)
-			=> Register<Candle>(name, expr);
+		public static bool Register(string name, Expression<Func<IReadOnlyList<Candle>, int, decimal, decimal, IAnalyzeContext<Candle>, decimal?>> expr, bool @override = false)
+			=> Register<Candle>(name, expr, @override);
 
-		public static bool Register(string name, Func<IReadOnlyList<Candle>, int, decimal, decimal, decimal, IAnalyzeContext<Candle>, decimal?> expr)
-			=> Register<Candle>(name, expr);
+		public static bool Register(string name, Expression<Func<IReadOnlyList<Candle>, int, decimal, decimal, decimal, IAnalyzeContext<Candle>, decimal?>> expr, bool @override = false)
+	        => Register<Candle>(name, expr, @override);
 
-        public static bool Register(string name, string expression)
-            => Register<Candle>(name, expression);
+		public static bool Register(string name, string expression, bool @override = false)
+            => Register<Candle>(name, expression, @override);
 
-        public static bool Register(string name, IFuncAnalyzable analyzable)
-            => _funcDict.TryAdd(name, analyzable.Func);
+        public static bool Register(string name, IFuncAnalyzable analyzable, bool @override = false)
+        {
+            if (@override)
+                _funcDict.TryRemove(name, out _);
+            return _funcDict.TryAdd(name, analyzable.Func);
+		}
 
-        public static bool Unregister(string name) => _funcDict.TryRemove(name, out var _);
+        public static bool Unregister(string name) => _funcDict.TryRemove(name, out _);
 
         internal static object Get(string name) => _funcDict[name];
 	}
