@@ -50,11 +50,13 @@ Nuget package is available in modules, please install the package according to t
     * [Compute Indicator](#ComputeIndicators)
     * [Compute Simple Operations on Indicator](#ComputeIndicatorsOperation)
     * [Convert Func to Indicator](#ConvertFunctionToAnalyzable)
+    * [Register Func for Global Use](#RegisterFuncForGlobalUse)
     
 * Backtesting
     * [Capture Signals by Rules](#CaptureSignalByRules)
     * [Strategy Building and Backtesting](#StrategyBuildingAndBacktesting)
     * [Implement Rule Pattern](#ImplementYourOwnPattern)
+    * [Register Rule for Global Use](#RegisterRuleForGlobalUse)
 
 * Advanced
     * [Implement Your Own Importer](#ImplementYourOwnImporter)
@@ -103,7 +105,7 @@ Nuget package is available in modules, please install the package according to t
 #### Compute indicator
     // This library supports computing from tuples or candles, extensions are recommended for computing
     var closes = new List<decimal>{ ... };
-    var smaTs = closes.Sma(30, startIndex, endIndex);
+    var smaTs = closes.Sma(30);
     var sma = closes.Sma(30)[index];
 
     // or, traditional call
@@ -128,16 +130,32 @@ Nuget package is available in modules, please install the package according to t
     // Sometimes, we want to utilize the Analyzable infra for some simple indicators but doesn't want to implement a new class, we are adding AsAnalyzable for conversion from Func
 
     // Before conversion, on the very top of your file, you should add
-    using AFunc = System.Func<System.Collections.Generic.IReadOnlyList<Trady.Core.Candle>, int, decimal?>;
+    using AFunc = System.Func<System.Collections.Generic.IReadOnlyList<Trady.Core.Candle>, int, System.Collections.Generic.IReadOnlyList<decimal>, Trady.Core.Infrastructure.IAnalyzeContext<Trady.Core.Candle>, decimal?>;
 
     // And use it in your code
-    AFunc aFunc = (c, i) => c[i].High - c[i].Low;
+    AFunc aFunc = (c, i, p, ctx) => c[i].High - c[i].Low;   // The four parameters: candles, index, parameters, context
     var aFuncInstance = aFunc.AsAnalyzable(candles);
     var a = aFuncInstance[index];
 
     // You may also combine with simple operation computation
-    var aSma = aFuncInstance.Sma(index);
+    var aSma = aFuncInstance.Sma(30, index);
 [Back to content](#Content)
+
+<a name="RegisterFuncForGlobalUse"></a>
+#### Register function for global use
+    // To use your func globally for analysis, you can register you func by using FuncRegistry.Register method
+    // The four parameters is the same as the above section, namely: candles, index, parameters, context
+    FuncRegistry.Register("modified_sma", (c, i, p, ctx) => ctx.Get<SimpleMovingAverage>(p[0])[i].Tick);
+
+    // You can use your func globally using the extension
+    var lastModifiedSmaValue = candles.Func("modified_sma", new decimal[]{ 10 })[candles.Count() - 1];
+
+    // The library also support register by plain text expression, you can dynamically create an analyzable as follows:
+    // Please notice that you must follow the naming convention: c, i, p, ctx when using this approach
+    FuncRegistry.Register("dy_sma", "var sma = ctx.Get<SimpleMovingAverage>(10); return sma[i].Tick;");
+
+    // And the use case is similar:
+    var lastModifiedSmaValue = candles.Func("modified_sma")[candles.Count() - 1];
 
 <a name="CaptureSignalByRules"></a>
 #### Capture signals by rules
@@ -209,6 +227,23 @@ Nuget package is available in modules, please install the package according to t
     var runner = new Builder().Add(candles, 10).Buy(buyRule).Sell(sellRule).Build();
     var result = await runner.RunAsync(10000, 1);
 [Back to content](#Content)
+
+<a name="RegisterRuleForGlobalUse"></a>
+#### Register rule for global use
+    // To use your rule in global, you may register it by using RuleRegistry.Register method
+    RuleRegistry.Register("IsBelowSmaX", (ic, p) => ic.Get<SimpleMovingAverage>(p[0])[ic.Index].Tick.IsTrue(t => t > ic.Close));
+
+    // Or, using plain text
+    RuleRegistry.Register("IsBelowSma30", "ic.Get<SimpleMovingAverage>(30)[ic.Index].Tick.IsTrue(t => t > ic.Close)");
+
+    // Call it using GetRule method from AnalyzeContext
+    using (var ctx = new AnalyzeContext(candles))
+    {
+        var ruleX = ctx.GetRule("IsBelowSmaX", 30); // Substitute parameter to the rule
+        var rule30 = ctx.GetRule("IsBelowSma30");
+
+        var isAboveSma30Candles = new SimpleRuleExecutor(ctx, ruleX).Execute();
+    }
 
 <a name="ImplementYourOwnImporter"></a>
 #### Implement your own importer
@@ -316,14 +351,15 @@ Nuget package is available in modules, please install the package according to t
 [Back to content](#Content)
 
 ### Backlog
-* (High priority) Dynamically create indicator & rule patterns from text file, allows internal call to dynamic generated stuffs
-* Complete other indicators (e.g. Keltner Channels, MA Envelopes, etc.)
-* Complete candlestick patterns
-* Add more rule patterns
-* Graphing: Generate stock chart by indicator values
-* Pipelining: Provide simple programming interface for pipeline the trading process
-* Study machine learning algorithm to see if it can be applied?
-* Add broker adaptor for real-time trade (e.g. interactive broker, etc.)
+* (✔) Dynamically create indicator & rule patterns from text, allows internal call to dynamic generated stuffs
+* () Complete other indicators (e.g. Keltner Channels, MA Envelopes, etc.)
+* () Complete candlestick patterns
+* (-) Add more rule patterns
+* () Data-feeding: Add broker adaptor for real-time trade (e.g. interactive broker, etc.)
+* () Graphing: Generate stock chart by indicator values
+* () Pipelining: Provide simple programming interface for pipelining the real-time process, i.e. Data-feeding -> decision making by auto rule evaluation -> call to broker for trade -> auto adjust trading strategy based on prev decisions made -> (loop)
+* () REPL for dynamic indicator creation, rule creation, strategy making, backtesting, etc.
+    * State saver & loader
 * MORE, MORE AND MORE!!!!
 
 ### Powered by

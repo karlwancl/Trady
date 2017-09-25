@@ -22,6 +22,7 @@
     * Introduce NumericAnalyzable for extending simple operations on an indicator, i.e. you can now use .Diff(index) to get the diff value of an indicator on a particular index directly
     * Decision helper for pattern construction (IsTrue, IsPositive, IsNegative)
     * AsAnalyzable extension for converting a Func to Analyzable, Func can now benefits from the Analyzable infrastructure
+    * Introduce FuncRegistry & RuleRegistry for global access to dynamically generated indicator/rule, it will be extending to provide flexibility on loading indicator/rule from external files (in plain text)
 * Added new indicator: 
     * (Highest/Lowest)Close
     * HistoricalHighest(High/Close)

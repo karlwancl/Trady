@@ -9,7 +9,7 @@ using Trady.Analysis.Indicator;
 using Trady.Analysis.Infrastructure;
 using Trady.Core;
 using Trady.Importer;
-using AFunc = System.Func<System.Collections.Generic.IReadOnlyList<Trady.Core.Candle>, int, Trady.Core.Infrastructure.IAnalyzeContext<Trady.Core.Candle>, decimal?>;
+using AFunc = System.Func<System.Collections.Generic.IReadOnlyList<Trady.Core.Candle>, int, System.Collections.Generic.IReadOnlyList<decimal>, Trady.Core.Infrastructure.IAnalyzeContext<Trady.Core.Candle>, decimal?>;
 
 namespace Trady.Test
 {
@@ -21,6 +21,25 @@ namespace Trady.Test
 			var csvImporter = new CsvImporter("fb.csv", new CultureInfo("en-US"));
 			return await csvImporter.ImportAsync("fb");
 		}
+
+        [TestMethod]
+        public async Task TestGetRuleAsync()
+        {
+			var candles = await ImportCandlesAsync();
+
+            RuleRegistry.Register("isbelowsma30_2", "ic.Get<SimpleMovingAverage>(30)[ic.Index].Tick.IsTrue(t => t > ic.Close)");
+            RuleRegistry.Register("isbelowsma30", (ic, p) => ic.Get<SimpleMovingAverage>(p[0])[ic.Index].Tick.IsTrue(t => t > ic.Close));
+
+            using (var ctx = new AnalyzeContext(candles))
+            {
+                var result = new SimpleRuleExecutor(ctx, ctx.GetRule("isbelowsma30_2")).Execute();
+                var result2 = new SimpleRuleExecutor(ctx, ctx.GetRule("isbelowsma30", 30)).Execute();
+                var result3 = new SimpleRuleExecutor(ctx, ic => ic.IsBelowSma(30)).Execute();
+
+                Assert.AreEqual(result.Count(), result3.Count());
+                Assert.AreEqual(result2.Count(), result3.Count());
+            }
+        }
          
         [TestMethod]
         public async Task TestGetFuncFromContextAsync()
@@ -28,10 +47,10 @@ namespace Trady.Test
 			var candles = await ImportCandlesAsync();
 
             FuncRegistry.Register("msma", "var sma = ctx.Get<SimpleMovingAverage>(10); return sma[i].Tick;");
-            FuncRegistry.Register("msma2", (c, i, p0, ctx) => ctx.Get<SimpleMovingAverage>(p0)[i].Tick);
+            FuncRegistry.Register("msma2", (c, i, p, ctx) => ctx.Get<SimpleMovingAverage>(p[0])[i].Tick);
 
-            var result = candles.Func("msma", 10m)[candles.Count() - 1];
-            var result2 = candles.Func("msma2", 10m)[candles.Count() - 1];
+            var result = candles.Func("msma")[candles.Count() - 1];
+            var result2 = candles.Func("msma2", 10)[candles.Count() - 1];
             var actual = candles.Sma(10)[candles.Count() - 1];
 
             Assert.AreEqual(result.Tick, actual.Tick);
@@ -42,13 +61,7 @@ namespace Trady.Test
         public async Task TestGetFromContextAsync()
         {
 			var candles = await ImportCandlesAsync();
-
-            var result = candles.Func((c, i, ctx) =>
-            {
-                var ema = ctx.Get<ExponentialMovingAverage>(30);
-                return ema[i].Tick;
-            })[candles.Count() - 1];
-
+            var result = candles.Func((c, i, _, ctx) => ctx.Get<ExponentialMovingAverage>(30)[i].Tick)[candles.Count() - 1];
             var emaResult = candles.Ema(30)[candles.Count() - 1];
 
             Assert.AreEqual(result.Tick, emaResult.Tick);
@@ -59,12 +72,13 @@ namespace Trady.Test
 		{
 			var candles = await ImportCandlesAsync();
 
-			AFunc aFunc = (c, i, _) => c[i].Close;
+			AFunc aFunc = (c, i, _, __) => c[i].Close;
 			var a = aFunc.AsAnalyzable(candles);
 			var aResult = a.Sma(30, candles.Count() - 1);
 
 			var results = candles.Sma(30);
 			var result = results[candles.Count() - 1];
+
 			Assert.AreEqual(aResult.Tick.Value, result.Tick.Value);
 		}
     }

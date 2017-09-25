@@ -68,7 +68,7 @@ namespace Trady.Analysis
             return Context.Get<TAnalyzable>(@params);
         }
 
-        public IFuncAnalyzable<AnalyzableTick<decimal?>> GetFunc(string name, params object[] @params)
+        public IFuncAnalyzable<AnalyzableTick<decimal?>> GetFunc(string name, params decimal[] @params)
         {
             if (Context == null)
                 return FuncAnalyzableFactory.CreateAnalyzable(name, BackingList, @params);

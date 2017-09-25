@@ -9,29 +9,11 @@ namespace Trady.Analysis
 {
     public static class CandlesExtension
     {
-        public static IReadOnlyList<AnalyzableTick<decimal?>> Func(this IEnumerable<Candle> candles, Func<IReadOnlyList<Candle>, int, IAnalyzeContext<Candle>, decimal?> func, int? startIndex = null, int? endIndex = null)
-            => func.AsAnalyzable(candles).Compute(startIndex, endIndex);
+        public static IReadOnlyList<AnalyzableTick<decimal?>> Func(this IEnumerable<Candle> candles, Func<IReadOnlyList<Candle>, int, IReadOnlyList<decimal>, IAnalyzeContext<Candle>, decimal?> func, params decimal[] parameters)
+            => func.AsAnalyzable(candles, parameters).Compute();
 
-		public static IReadOnlyList<AnalyzableTick<decimal?>> Func(this IEnumerable<Candle> candles, Func<IReadOnlyList<Candle>, int, decimal, IAnalyzeContext<Candle>, decimal?> func, decimal parameter, int? startIndex = null, int? endIndex = null)
-	        => func.AsAnalyzable(candles, parameter).Compute(startIndex, endIndex);
-
-		public static IReadOnlyList<AnalyzableTick<decimal?>> Func(this IEnumerable<Candle> candles, Func<IReadOnlyList<Candle>, int, decimal ,decimal, IAnalyzeContext<Candle>, decimal?> func, decimal parameter0, decimal parameter1, int? startIndex = null, int? endIndex = null)
-	        => func.AsAnalyzable(candles, parameter0, parameter1).Compute(startIndex, endIndex);
-
-		public static IReadOnlyList<AnalyzableTick<decimal?>> Func(this IEnumerable<Candle> candles, Func<IReadOnlyList<Candle>, int, decimal, decimal, decimal, IAnalyzeContext<Candle>, decimal?> func, decimal parameter0, decimal parameter1, decimal parameter2, int? startIndex = null, int? endIndex = null)
-	        => func.AsAnalyzable(candles, parameter0, parameter1, parameter2).Compute(startIndex, endIndex);
-
-        public static IReadOnlyList<AnalyzableTick<decimal?>> Func(this IEnumerable<Candle> candles, string name, int? startIndex = null, int? endIndex = null)
-            => FuncAnalyzableFactory.CreateAnalyzable(name, candles).Compute(startIndex, endIndex);
-
-		public static IReadOnlyList<AnalyzableTick<decimal?>> Func(this IEnumerable<Candle> inputs, string name, decimal parameter, int? startIndex = null, int? endIndex = null)
-			=> FuncAnalyzableFactory.CreateAnalyzable(name, inputs, new object[] { parameter }).Compute(startIndex, endIndex);
-
-		public static IReadOnlyList<AnalyzableTick<decimal?>> Func(this IEnumerable<Candle> inputs, string name, decimal parameter0, decimal parameter1, int? startIndex = null, int? endIndex = null)
-			=> FuncAnalyzableFactory.CreateAnalyzable(name, inputs, new object[] { parameter0, parameter1 }).Compute(startIndex, endIndex);
-
-		public static IReadOnlyList<AnalyzableTick<decimal?>> Func(this IEnumerable<Candle> inputs, string name, decimal parameter0, decimal parameter1, decimal parameter2, int? startIndex = null, int? endIndex = null)
-			=> FuncAnalyzableFactory.CreateAnalyzable(name, inputs, new object[] { parameter0, parameter1, parameter2 }).Compute(startIndex, endIndex);
+        public static IReadOnlyList<AnalyzableTick<decimal?>> Func(this IEnumerable<Candle> candles, string name, params decimal[] parameters)
+            => FuncAnalyzableFactory.CreateAnalyzable(name, candles, parameters).Compute();
 
         public static IReadOnlyList<AnalyzableTick<decimal?>> AccumDist(this IEnumerable<Candle> candles, int? startIndex = null, int? endIndex = null)
             => new AccumulationDistributionLine(candles).Compute(startIndex, endIndex);

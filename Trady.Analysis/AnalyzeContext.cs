@@ -23,11 +23,17 @@ namespace Trady.Analysis
             => (TAnalyzable)_cache.GetOrAdd($"{typeof(TAnalyzable).Name}#{string.Join("|", parameters)}", 
                                             AnalyzableFactory.CreateAnalyzable<TAnalyzable, TInput>(BackingList, parameters));
 
-		IFuncAnalyzable IAnalyzeContext.GetFunc(string name, params object[] parameters) => GetFunc(name, parameters);
+		IFuncAnalyzable IAnalyzeContext.GetFunc(string name, params decimal[] parameters) => GetFunc(name, parameters);
 
-		public IFuncAnalyzable<dynamic> GetFunc(string name, params object[] parameters)
+		public IFuncAnalyzable<dynamic> GetFunc(string name, params decimal[] parameters)
             => (IFuncAnalyzable<dynamic>)_cache.GetOrAdd($"_Func_{name}#{string.Join("|", parameters)}", 
                                                          FuncAnalyzableFactory.CreateAnalyzable<TInput, dynamic>(name, BackingList, parameters));
+
+		public Predicate<T> GetRule<T>(string name, params decimal[] parameters) where T : IIndexedObject<TInput>
+		{
+			var func = (Func<T, IReadOnlyList<decimal>, bool>)RuleRegistry.Get(name);
+			return ic => func(ic, parameters);
+		}
 
         public IEnumerable<TInput> BackingList { get; }
 
@@ -75,5 +81,8 @@ namespace Trady.Analysis
         public AnalyzeContext(IEnumerable<Candle> backingList) : base(backingList)
         {
         }
+
+        public Predicate<IndexedCandle> GetRule(string name, params decimal[] parameters)
+            => GetRule<IndexedCandle>(name, parameters);
     }
 }
