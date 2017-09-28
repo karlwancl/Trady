@@ -68,8 +68,10 @@ namespace Trady.Analysis.Backtest
             Func<IEnumerable<Transaction>, IAnalyzeContext<Candle>, TransactionType, bool> isPreviousTransactionA = (ts, ctx, tt)
                 => ts.LastOrDefault(_t => _t.Candles.Equals(ctx.BackingList))?.Type == tt;
 
+            Predicate<IndexedCandle> isLastCandle = ic => ic.Next == null;
+
             Predicate<IndexedCandle> buyRule = ic
-                => !isPreviousTransactionA(transactions, ic.Context, TransactionType.Buy) && _buyRule(ic);
+                => !isLastCandle(ic) && !isPreviousTransactionA(transactions, ic.Context, TransactionType.Buy) && _buyRule(ic);
 
             Predicate<IndexedCandle> sellRule = ic
                 => transactions.Any() && !isPreviousTransactionA(transactions, ic.Context, TransactionType.Sell) && _sellRule(ic);
@@ -110,6 +112,7 @@ namespace Trady.Analysis.Backtest
             if (assetCashMap.TryGetValue(indexedCandle.BackingList, out _))
             {
                 var nextCandle = indexedCandle.Next;
+
                 var lastTransaction = transactions.LastOrDefault(t => t.Candles.Equals(indexedCandle.BackingList));
 
                 decimal cashIn = nextCandle.Open * lastTransaction.Quantity - premium;
