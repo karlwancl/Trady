@@ -245,6 +245,8 @@ Nuget package is available in modules, please install the package according to t
         var ruleX = ctx.GetRule("IsBelowSmaX", 30); // Substitute parameter to the rule
         var rule30 = ctx.GetRule("IsBelowSma30");
 
+        var ruleXByRuleCreateEval = Rule.Create(ic => ic.Eval("IsBelowSmaX", 30));  // Create rule with indexedCandle Eval
+
         var isAboveSma30Candles = new SimpleRuleExecutor(ctx, ruleX).Execute();
     }
 

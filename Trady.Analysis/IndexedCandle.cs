@@ -76,7 +76,7 @@ namespace Trady.Analysis
             return (IFuncAnalyzable<AnalyzableTick<decimal?>>)Context.GetFunc(name, @params);
         }
 
-        public bool Execute(string name, params decimal[] @params)
+        public bool Eval(string name, params decimal[] @params)
         {
             var func = (Func<IndexedCandle, IReadOnlyList<decimal>, bool>)RuleRegistry.Get(name);
             return func(this, @params);

@@ -31,8 +31,8 @@ namespace Trady.Test
 			RuleRegistry.Register("isabovesmax", (ic, p) => ic.Get<SimpleMovingAverage>(p[0])[ic.Index].Tick.IsTrue(t => t < ic.Close));
 			RuleRegistry.Register("isbelowsmax", (ic, p) => ic.Get<SimpleMovingAverage>(p[0])[ic.Index].Tick.IsTrue(t => t > ic.Close));
 
-            var buyRule = Rule.Create(ic => ic.Execute("isabovesmax", 30));
-            var sellRule = Rule.Create(ic => ic.Execute("isbelowsmax", 30));
+            var buyRule = Rule.Create(ic => ic.Eval("isabovesmax", 30));
+            var sellRule = Rule.Create(ic => ic.Eval("isbelowsmax", 30));
 
             var runner = new Builder()
                 .Add(candles)
