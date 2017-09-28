@@ -4,6 +4,7 @@ using System.Linq;
 using Trady.Analysis.Infrastructure;
 using Trady.Core;
 using Trady.Core.Infrastructure;
+using System;
 
 namespace Trady.Analysis
 {
@@ -73,6 +74,12 @@ namespace Trady.Analysis
             if (Context == null)
                 return FuncAnalyzableFactory.CreateAnalyzable(name, BackingList, @params);
             return (IFuncAnalyzable<AnalyzableTick<decimal?>>)Context.GetFunc(name, @params);
+        }
+
+        public bool Execute(string name, params decimal[] @params)
+        {
+            var func = (Func<IndexedCandle, IReadOnlyList<decimal>, bool>)RuleRegistry.Get(name);
+            return func(this, @params);
         }
     }
 }

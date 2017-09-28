@@ -9,6 +9,7 @@ using Trady.Analysis.Indicator;
 using Trady.Analysis.Infrastructure;
 using Trady.Core;
 using Trady.Importer;
+using Trady.Analysis.Backtest;
 using AFunc = System.Func<System.Collections.Generic.IReadOnlyList<Trady.Core.Candle>, int, System.Collections.Generic.IReadOnlyList<decimal>, Trady.Core.Infrastructure.IAnalyzeContext<Trady.Core.Candle>, decimal?>;
 
 namespace Trady.Test
@@ -20,6 +21,27 @@ namespace Trady.Test
 		{
 			var csvImporter = new CsvImporter("fb.csv", new CultureInfo("en-US"));
 			return await csvImporter.ImportAsync("fb");
+		}
+
+        [TestMethod]
+        public async Task TestGetRuleByRuleCreateAsync()
+        {
+            var candles = await ImportCandlesAsync();
+
+			RuleRegistry.Register("isabovesmax", (ic, p) => ic.Get<SimpleMovingAverage>(p[0])[ic.Index].Tick.IsTrue(t => t < ic.Close));
+			RuleRegistry.Register("isbelowsmax", (ic, p) => ic.Get<SimpleMovingAverage>(p[0])[ic.Index].Tick.IsTrue(t => t > ic.Close));
+
+            var buyRule = Rule.Create(ic => ic.Execute("isabovesmax", 30));
+            var sellRule = Rule.Create(ic => ic.Execute("isbelowsmax", 30));
+
+            var runner = new Builder()
+                .Add(candles)
+                .Buy(buyRule)
+                .Sell(sellRule)
+                .Build();
+
+            var result = runner.Run(10000);
+            Assert.IsTrue(true);
 		}
 
         [TestMethod]
