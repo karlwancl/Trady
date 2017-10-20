@@ -92,6 +92,9 @@ namespace Trady.Analysis.Backtest
             if (assetCashMap.TryGetValue(indexedCandle.BackingList, out decimal cash))
             {
                 var nextCandle = indexedCandle.Next;
+                if (nextCandle == null)
+                    return;
+
                 int quantity = Convert.ToInt32(Math.Floor((cash - premium) / nextCandle.Open));
 
                 decimal cashOut = nextCandle.Open * quantity + premium;
@@ -107,8 +110,11 @@ namespace Trady.Analysis.Backtest
             if (assetCashMap.TryGetValue(indexedCandle.BackingList, out _))
             {
                 var nextCandle = indexedCandle.Next;
+                if (nextCandle == null)
+                    return; 
+
                 var lastTransaction = transactions.LastOrDefault(t => t.Candles.Equals(indexedCandle.BackingList));
-                if (lastTransaction.Type == TransactionType.Sell)
+                if (lastTransaction == null || lastTransaction.Type == TransactionType.Sell)
                     return;
 
                 decimal cashIn = nextCandle.Open * lastTransaction.Quantity - premium;

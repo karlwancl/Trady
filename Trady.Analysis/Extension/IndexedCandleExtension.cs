@@ -11,10 +11,10 @@ namespace Trady.Analysis
             => ic.Get<ClosePricePercentageChange>(1)[ic.Index].Tick;
 
         public static bool IsBullish(this IndexedCandle ic)
-            => ic.Get<ClosePriceChange>()[ic.Index].Tick.IsPositive();
+            => ic.Get<ClosePriceChange>(1)[ic.Index].Tick.IsPositive();
 
         public static bool IsBearish(this IndexedCandle ic)
-            => ic.Get<ClosePriceChange>()[ic.Index].Tick.IsNegative();
+            => ic.Get<ClosePriceChange>(1)[ic.Index].Tick.IsNegative();
 
         public static bool IsAccumDistBullish(this IndexedCandle ic)
             => ic.Get<AccumulationDistributionLine>().Diff(ic.Index).Tick.IsPositive();
