@@ -42,17 +42,17 @@ namespace Trady.Analysis
         public static IReadOnlyList<AnalyzableTick<(decimal? Long, decimal? Short)>> Chandlr(this IEnumerable<Candle> candles, int periodCount, decimal atrCount, int? startIndex = null, int? endIndex = null)
             => new ChandelierExit(candles, periodCount, atrCount).Compute(startIndex, endIndex);
 
-        public static IReadOnlyList<AnalyzableTick<decimal?>> CloseDiff(this IEnumerable<Candle> candles, int? startIndex = null, int? endIndex = null)
-            => new ClosePriceChange(candles).Compute(startIndex, endIndex);
+        public static IReadOnlyList<AnalyzableTick<decimal?>> Mtm(this IEnumerable<Candle> candles, int? startIndex = null, int? endIndex = null)
+            => new Momentum(candles).Compute(startIndex, endIndex);
 
-        public static IReadOnlyList<AnalyzableTick<decimal?>> CloseDiff(this IEnumerable<Candle> candles, int numberOfDays, int? startIndex = null, int? endIndex = null)
-            => new ClosePriceChange(candles, numberOfDays).Compute(startIndex, endIndex);
+        public static IReadOnlyList<AnalyzableTick<decimal?>> Mtm(this IEnumerable<Candle> candles, int numberOfDays, int? startIndex = null, int? endIndex = null)
+            => new Momentum(candles, numberOfDays).Compute(startIndex, endIndex);
 
-        public static IReadOnlyList<AnalyzableTick<decimal?>> ClosePcDiff(this IEnumerable<Candle> candles, int? startIndex = null, int? endIndex = null)
-            => new ClosePricePercentageChange(candles).Compute(startIndex, endIndex);
+        public static IReadOnlyList<AnalyzableTick<decimal?>> Roc(this IEnumerable<Candle> candles, int? startIndex = null, int? endIndex = null)
+            => new RateOfChange(candles).Compute(startIndex, endIndex);
 
-        public static IReadOnlyList<AnalyzableTick<decimal?>> ClosePcDiff(this IEnumerable<Candle> candles, int numberOfDays, int? startIndex = null, int? endIndex = null)
-            => new ClosePricePercentageChange(candles, numberOfDays).Compute(startIndex, endIndex);
+        public static IReadOnlyList<AnalyzableTick<decimal?>> Roc(this IEnumerable<Candle> candles, int numberOfDays, int? startIndex = null, int? endIndex = null)
+            => new RateOfChange(candles, numberOfDays).Compute(startIndex, endIndex);
 
         public static IReadOnlyList<AnalyzableTick<decimal?>> Dmi(this IEnumerable<Candle> candles, int periodCount, int? startIndex = null, int? endIndex = null)
             => new DirectionalMovementIndex(candles, periodCount).Compute(startIndex, endIndex);

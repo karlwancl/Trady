@@ -121,24 +121,24 @@ namespace Trady.Test
 		}
 
         [TestMethod]
-        public async Task TestClosePriceChangeAsync()
+        public async Task TestMomentumAsync()
         {
             var candles = await ImportCandlesAsync();
-            var result = candles.CloseDiff()[candles.Count() - 1];
+            var result = candles.Mtm()[candles.Count() - 1];
             Assert.IsTrue((-1.63m).IsApproximatelyEquals(result.Tick.Value));
 
-            result = candles.CloseDiff(20)[candles.Count() - 1];
+            result = candles.Mtm(20)[candles.Count() - 1];
             Assert.IsTrue(2.599991m.IsApproximatelyEquals(result.Tick.Value));
         }
 
         [TestMethod]
-        public async Task TestClosePricePercentageChangeAsync()
+        public async Task TestRateOfChangeAsync()
         {
             var candles = await ImportCandlesAsync();
-            var result = candles.ClosePcDiff()[candles.Count() - 1];
+            var result = candles.Roc()[candles.Count() - 1];
             Assert.IsTrue((-0.949664419m).IsApproximatelyEquals(result.Tick.Value));
 
-            result = candles.ClosePcDiff(20)[candles.Count() - 1];
+            result = candles.Roc(20)[candles.Count() - 1];
             Assert.IsTrue(1.55306788m.IsApproximatelyEquals(result.Tick.Value));
         }
 

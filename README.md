@@ -6,19 +6,27 @@
 
 Trady is a handy library for computing technical indicators, and targets to be an automated trading system that provides stock data feeding, indicator computing, strategy building and automatic trading. It is built based on .NET Standard 2.0.
 
-### Read Before You Use
+## Read Before You Use
 This library is a hobby project, and would probably making breaking changes, use with care when in production.
 
-### Currently Available Features
+## Currently Available Features
 * Stock data feeding (via CSV File, [Quandl.NET](https://github.com/lppkarl/Quandl.NET), [YahooFinanceApi](https://github.com/lppkarl/YahooFinanceApi), [StooqApi](https://github.com/lppkarl/StooqApi), [Nuba.Finance.Google](https://github.com/nubasoftware/Nuba.Finance.Google))
 * Indicator computing (including SMA, EMA, RSI, MACD, BB, etc.)
 * Signal capturing by rules
 * Strategy backtesting by buy/sell rule
 
-### Updates from 2.0.x to 3.0.0 (Currently 3.0.0)
+## Recent update
+<!-- ### v3.1
+* Added ParabolicStopAndReverse (Sar)
+* Renamed ClosePriceChange to Momentum (Mtm), ClosePricePercentageChange to RateOfChange (Roc) -->
+### v3.0.1
+* Fixed potential crash when doing backtest (Thanks for @LadislavBohm)
+
+## Updates from 2.0.x to 3.0.0
 Please refer to another markdown document [here](update_from_2.0.x.md)
 
-### Supported Platforms
+
+## Supported Platforms
 * .NET Core 2.0 or above
 * .NET Framework 4.6.1 or above
 * Mono 5.4 or above
@@ -26,10 +34,10 @@ Please refer to another markdown document [here](update_from_2.0.x.md)
 * Xamarin.Android 7.5 or above
 * Xamarin.Mac 3.8 or above
 
-### Currently Supported Indicators
+## Currently Supported Indicators
 Please refer to another markdown document [here](supported_indicators.md)
 
-### How To Install
+## How To Install
 Nuget package is available in modules, please install the package according to the needs
 
     // For importing
@@ -38,7 +46,7 @@ Nuget package is available in modules, please install the package according to t
     // For computing & backtesting
     PM > Install-Package Trady.Analysis
 
-### How To Use
+## How To Use
 <a name="Content"></a>
 * Tldr
     * [Tldr](#tldr)
@@ -74,7 +82,7 @@ Nuget package is available in modules, please install the package according to t
 [Back to content](#Content)
 
 <a name="ImportStockData"></a>
-#### Import stock data
+### Import stock data
     // From Quandl wiki database
     var importer = new QuandlWikiImporter(apiKey);
 
@@ -95,7 +103,7 @@ Nuget package is available in modules, please install the package according to t
 [Back to content](#Content)
 
 <a name="TransformStockData"></a>
-#### Transform stock data to specified period before computation
+### Transform stock data to specified period before computation
     // Transform the series for computation, downcast is forbidden
     // Supported period: PerSecond, PerMinute, Per15Minutes, Per30Minutes, Hourly, BiHourly, Daily, Weekly, Monthly
 
@@ -103,7 +111,7 @@ Nuget package is available in modules, please install the package according to t
 [Back to content](#Content)
 
 <a name="ComputeIndicators"></a>
-#### Compute indicator
+### Compute indicator
     // This library supports computing from tuples or candles, extensions are recommended for computing
     var closes = new List<decimal>{ ... };
     var smaTs = closes.Sma(30);
@@ -117,7 +125,7 @@ Nuget package is available in modules, please install the package according to t
 [Back to content](#Content)
 
 <a name="ComputeIndicatorsOperation"></a>
-#### Compute simple operation on an indicator
+### Compute simple operation on an indicator
     // Simple operation on indicator is supported, now supports only diff, pcDiff, sma, sd
     var closes = new List<decimal>{ ... };
     var smaDiff = closes.Sma(30).Diff(index);   // i-th term - (i-1)-th term
@@ -129,7 +137,7 @@ Nuget package is available in modules, please install the package according to t
 [Back to content](#Content)
 
 <a name="ConvertFunctionToAnalyzable"></a>
-#### Convert function to indicator
+### Convert function to indicator
     // Sometimes, we want to utilize the Analyzable infra for some simple indicators but doesn't want to implement a new class, we are adding AsAnalyzable for conversion from Func
 
     // Before conversion, on the very top of your file, you should add
@@ -145,7 +153,7 @@ Nuget package is available in modules, please install the package according to t
 [Back to content](#Content)
 
 <a name="RegisterFuncForGlobalUse"></a>
-#### Register function for global use
+### Register function for global use
     // To use your func globally for analysis, you can register you func by using FuncRegistry.Register method
     // The four parameters is the same as the above section, namely: candles, index, parameters, context
     FuncRegistry.Register("modified_sma", (c, i, p, ctx) => ctx.Get<SimpleMovingAverage>(p[0])[i].Tick);
@@ -161,7 +169,7 @@ Nuget package is available in modules, please install the package according to t
     var lastModifiedSmaValue = candles.Func("modified_sma")[candles.Count() - 1];
 
 <a name="CaptureSignalByRules"></a>
-#### Capture signals by rules
+### Capture signals by rules
     // The following shows the number of candles that fulfill both the IsAboveSma(30) & IsAboveSma(10) rule
     var rule = Rule.Create(c => c.IsAboveSma(30))
         .And(c => c.IsAboveSma(10));
@@ -174,7 +182,7 @@ Nuget package is available in modules, please install the package according to t
     }
 
 <a name="StrategyBuildingAndBacktesting"></a>
-#### Strategy building & backtesting
+### Strategy building & backtesting
     // Build buy rule & sell rule based on various patterns
     var buyRule = Rule.Create(c => c.IsFullStoBullishCross(14, 3, 3))
         .And(c => c.IsMacdOscBullish(12, 26, 9))
@@ -205,7 +213,7 @@ Nuget package is available in modules, please install the package according to t
 [Back to content](#Content)
 
 <a name="ImplementYourOwnPattern"></a>
-#### Implement your own pattern through Extension
+### Implement your own pattern through Extension
     // Implement your pattern by creating a static class for extending IndexedCandle class
     public static class IndexedCandleExtension
     {
@@ -232,7 +240,7 @@ Nuget package is available in modules, please install the package according to t
 [Back to content](#Content)
 
 <a name="RegisterRuleForGlobalUse"></a>
-#### Register rule for global use
+### Register rule for global use
     // To use your rule in global, you may register it by using RuleRegistry.Register method
     RuleRegistry.Register("IsBelowSmaX", (ic, p) => ic.Get<SimpleMovingAverage>(p[0])[ic.Index].Tick.IsTrue(t => t > ic.Close));
 
@@ -251,7 +259,7 @@ Nuget package is available in modules, please install the package according to t
     }
 
 <a name="ImplementYourOwnImporter"></a>
-#### Implement your own importer
+### Implement your own importer
     // You can also implement your own importer by implementing the IImporter interface
     public class MyImporter : IImporter
     {
@@ -267,7 +275,7 @@ Nuget package is available in modules, please install the package according to t
 [Back to content](#Content)
 
 <a name="ImplementYourOwnIndicatorSimpleType"></a>
-#### Implement your own indicator - Simple Type
+### Implement your own indicator - Simple Type
     // You can also implement your own indicator by extending the AnalyzableBase<TInput, TOutput> class
     public class MyIndicator : AnalyzableBase<Candle, AnalyzableTick<decimal?>>
     {
@@ -296,7 +304,7 @@ Nuget package is available in modules, please install the package according to t
 [Back to content](#Content)
 
 <a name="ImplementYourOwnIndicatorCummulativeType"></a>
-#### Implement your own indicator - Cummulative Type
+### Implement your own indicator - Cummulative Type
     // You can implement your own indicator by extending the CummulativeAnalyzableBase<TInput, TOutput> class
     public class MyCumulativeIndicator : CumulativeAnalyzableBase<Candle, AnalyzableTick<decimal?>>
     {
@@ -333,7 +341,7 @@ Nuget package is available in modules, please install the package according to t
 [Back to content](#Content)
 
 <a name="ImplementYourOwnIndicatorMovingAverageType"></a>
-#### Implement your own indicator - Moving-Average Type
+### Implement your own indicator - Moving-Average Type
     // You can make use of the GenericMovingAverage class to get rid of implementing MA-related indicator on your own
      public class MyGmaIndicator : AnalyzableBase<Candle, AnalyzableTick<decimal?>>
     {
@@ -355,7 +363,7 @@ Nuget package is available in modules, please install the package according to t
     }
 [Back to content](#Content)
 
-### Backlog
+## Backlog
 * (✔) Dynamically create indicator & rule patterns from text, allows internal call to dynamic generated stuffs
 * () Complete other indicators (e.g. Keltner Channels, MA Envelopes, etc.)
 * () Complete candlestick patterns
@@ -367,8 +375,5 @@ Nuget package is available in modules, please install the package according to t
     * State saver & loader
 * MORE, MORE AND MORE!!!!
 
-### Powered by
+## Powered by
 * [CsvHelper](https://github.com/JoshClose/CsvHelper) ([@JoshClose](https://github.com/JoshClose)) : Great library for reading/ writing CSV file
-
-### License
-This library is under [Apache-2.0 License](https://github.com/lppkarl/Trady/blob/master/LICENSE)

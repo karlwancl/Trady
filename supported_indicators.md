@@ -17,8 +17,8 @@ The following shows supporting indicators (test code covered)
 | BollingerBands | BollingerBandsByTuple | Bb |
 | BollingerBandWidth | BollingerBandWidthByTuple | BbWidth |
 | ChandelierExit | ChandelierExitByTuple | Chandlr |
-| ClosePriceChange | N/A | CloseDiff |
-| ClosePricePercentageChange | N/A | ClosePcDiff |
+| Momentum | N/A | Mtm |
+| RateOfChange | N/A | Roc |
 | N/A | DifferenceByTuple | Diff |
 | DirectionalMovementIndex | DirectionalMovementIndexByTuple | Dmi |
 | EfficiencyRatio | EfficiencyRatioByTuple | Er |
@@ -45,6 +45,7 @@ The following shows supporting indicators (test code covered)
 | MovingAverageConvergenceDivergence | MovingAverageConvergenceDivergenceByTuple | Macd |
 | MovingAverageConvergenceDivergenceHistogram | MovingAverageConvergenceDivergenceHistogramByTuple | MacdHist |
 | OnBalanceVolume | OnBalanceVolumeByTuple | Obv |
+| ParabolicStopAndReverse | ParabolicStopAndReverseByTuple | Sar |
 | N/A | PercentageDifferenceByTuple | PcDiff |
 | Percentile | Percentile | Percentile |
 | PlusDirectionalIndicator | PlusDirectionalIndicatorByTuple | Pdi |
