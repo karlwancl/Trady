@@ -6,10 +6,10 @@ using Trady.Core.Infrastructure;
 
 namespace Trady.Analysis.Backtest
 {
-    public class BuySellRuleExecutor : RuleExecutorBase<Candle, IndexedCandle, (TransactionType, IndexedCandle)>
+    public class BuySellRuleExecutor : RuleExecutorBase<Candle, IndexedCandle, (TransactionType, IndexedCandle)?>
     {
         public BuySellRuleExecutor(
-            Func<IndexedCandle, int, (TransactionType, IndexedCandle)> outputFunc, 
+            Func<IndexedCandle, int, (TransactionType, IndexedCandle)?> outputFunc, 
             IAnalyzeContext<Candle> context, 
             Predicate<IndexedCandle> buyRule, 
             Predicate<IndexedCandle> sellRule)

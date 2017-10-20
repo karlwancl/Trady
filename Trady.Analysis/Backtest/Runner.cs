@@ -50,10 +50,10 @@ namespace Trady.Analysis.Backtest
             // Loop with each asset
             for (int i = 0; i < _weightings.Count; i++)
             {
-                var asset = assetCashMap.ElementAt(i).Key;
-                var startIndex = asset.FindIndexOrDefault(c => c.DateTime >= (startTime ?? DateTime.MinValue), 0).Value;
-                var endIndex = asset.FindLastIndexOrDefault(c => c.DateTime <= (endTime ?? DateTime.MaxValue), asset.Count() - 1).Value;
-                using (var context = new AnalyzeContext(asset))
+                var candles = assetCashMap.ElementAt(i).Key;
+                var startIndex = candles.FindIndexOrDefault(c => c.DateTime >= (startTime ?? DateTime.MinValue), 0).Value;
+                var endIndex = candles.FindLastIndexOrDefault(c => c.DateTime <= (endTime ?? DateTime.MaxValue), candles.Count() - 1).Value;
+                using (var context = new AnalyzeContext(candles))
                 {
                     var executor = CreateBuySellRuleExecutor(context, premium, assetCashMap, transactions);
                     executor.Execute(startIndex, endIndex);
@@ -72,10 +72,13 @@ namespace Trady.Analysis.Backtest
                 => !isPreviousTransactionA(transactions, ic.Context, TransactionType.Buy) && _buyRule(ic);
 
             Predicate<IndexedCandle> sellRule = ic
-                => !isPreviousTransactionA(transactions, ic.Context, TransactionType.Sell) && _sellRule(ic);
+                => transactions.Any() && !isPreviousTransactionA(transactions, ic.Context, TransactionType.Sell) && _sellRule(ic);
 
-            Func<IndexedCandle, int, (TransactionType, IndexedCandle)> outputFunc = (ic, i) =>
+            Func<IndexedCandle, int, (TransactionType, IndexedCandle)?> outputFunc = (ic, i) =>
             {
+                if (ic.Next == null)
+                    return null;
+
                 var type = (TransactionType)i;
                 if (type.Equals(TransactionType.Buy))
                     BuyAsset(ic, premium, assetCashMap, transactions);
@@ -92,9 +95,6 @@ namespace Trady.Analysis.Backtest
             if (assetCashMap.TryGetValue(indexedCandle.BackingList, out decimal cash))
             {
                 var nextCandle = indexedCandle.Next;
-                if (nextCandle == null)
-                    return;
-
                 int quantity = Convert.ToInt32(Math.Floor((cash - premium) / nextCandle.Open));
 
                 decimal cashOut = nextCandle.Open * quantity + premium;
@@ -110,12 +110,7 @@ namespace Trady.Analysis.Backtest
             if (assetCashMap.TryGetValue(indexedCandle.BackingList, out _))
             {
                 var nextCandle = indexedCandle.Next;
-                if (nextCandle == null)
-                    return; 
-
                 var lastTransaction = transactions.LastOrDefault(t => t.Candles.Equals(indexedCandle.BackingList));
-                if (lastTransaction == null || lastTransaction.Type == TransactionType.Sell)
-                    return;
 
                 decimal cashIn = nextCandle.Open * lastTransaction.Quantity - premium;
                 decimal plRatio = (cashIn - lastTransaction.AbsoluteCashFlow) / lastTransaction.AbsoluteCashFlow;

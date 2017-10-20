@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using Trady.Core.Infrastructure;
 
 namespace Trady.Analysis.Infrastructure
@@ -37,7 +36,9 @@ namespace Trady.Analysis.Infrastructure
                 {
                     if (Rules[j](indexedObject))
                     {
-                        output.Add(OutputFunc(indexedObject, j));
+                        var result = OutputFunc(indexedObject, j);
+                        if (typeof(TOutput).IsValueType || !result.Equals(default(TOutput)))   // Ignore all null objects
+                            output.Add(result);
                         break;
                     }
                 }
