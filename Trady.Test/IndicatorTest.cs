@@ -10,6 +10,7 @@ using Trady.Analysis;
 using Trady.Analysis.Extension;
 using Trady.Core.Infrastructure;
 using Trady.Importer.Csv;
+using System;
 
 namespace Trady.Test
 {
@@ -24,6 +25,16 @@ namespace Trady.Test
             //var candles = await yahooImporter.ImportAsync("FB");
             //File.WriteAllLines("fb.csv", candles.Select(c => $"{c.DateTime.ToString("d")},{c.Open},{c.High},{c.Low},{c.Close},{c.Volume}"));
             //return candles;
+        }
+
+        [TestMethod]
+        public async Task TestParabolicSarAsync()
+        {
+            var candles = await ImportIOhlcvDatasAsync();
+            var results = candles.Sar(0.02m, 0.2m);
+            Assert.IsTrue(173.93m.IsApproximatelyEquals(results[candles.Count() - 1].Tick.Value));
+            Assert.IsTrue(169.92m.IsApproximatelyEquals(results[candles.Count() - 3].Tick.Value));
+            Assert.IsTrue(157.36m.IsApproximatelyEquals(results.First(r => r.DateTime == new DateTime(2017, 7, 24)).Tick.Value));
         }
 
 		[TestMethod]

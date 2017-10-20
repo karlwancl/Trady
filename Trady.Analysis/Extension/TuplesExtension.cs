@@ -170,5 +170,8 @@ namespace Trady.Analysis.Extension
 
 		public static IReadOnlyList<decimal?> Percentile(this IEnumerable<decimal?> inputs, int periodCount, decimal percent, int? startIndex = null, int? endIndex = null)
 	        => new PercentileByTuple(inputs, periodCount, percent).Compute(startIndex, endIndex);
+
+        public static IReadOnlyList<decimal?> Sar(this IEnumerable<(decimal High, decimal Low)> inputs, decimal step, decimal maximumStep, int? startIndex = null, int? endIndex = null)
+            => new ParabolicStopAndReverseByTuple(inputs, step, maximumStep).Compute(startIndex, endIndex);
     }
 }

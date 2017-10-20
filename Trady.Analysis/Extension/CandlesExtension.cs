@@ -164,5 +164,8 @@ namespace Trady.Analysis.Extension
 
 		public static IReadOnlyList<AnalyzableTick<decimal?>> Percentile(this IEnumerable<IOhlcvData> candles, int periodCount, decimal percent, int? startIndex = null, int? endIndex = null)
 	        => new Percentile(candles, periodCount, percent).Compute(startIndex, endIndex);
+
+        public static IReadOnlyList<AnalyzableTick<decimal?>> Sar(this IEnumerable<IOhlcvData> candles, decimal step, decimal maximumStep, int? startIndex = null, int? endIndex = null)
+            => new ParabolicStopAndReverse(candles, step, maximumStep).Compute(startIndex, endIndex);
     }
 }
