@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Trady.Analysis.Infrastructure;
 using Trady.Core;
+using Trady.Core.Infrastructure;
 
 namespace Trady.Analysis.Indicator
 {
@@ -36,9 +37,9 @@ namespace Trady.Analysis.Indicator
             }
         }
 
-        public class Slow : Slow<Candle, AnalyzableTick<(decimal? K, decimal? D, decimal? J)>>
+        public class Slow : Slow<IOhlcvData, AnalyzableTick<(decimal? K, decimal? D, decimal? J)>>
         {
-            public Slow(IEnumerable<Candle> inputs, int periodCount, int smaPeriodCountD)
+            public Slow(IEnumerable<IOhlcvData> inputs, int periodCount, int smaPeriodCountD)
                 : base(inputs, i => (i.High, i.Low, i.Close), periodCount, smaPeriodCountD)
             {
             }

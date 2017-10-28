@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+
 using Trady.Analysis.Infrastructure;
 using Trady.Core;
 using System.Linq;
+using Trady.Core.Infrastructure;
 
 namespace Trady.Analysis.Candlestick
 {
@@ -52,9 +54,9 @@ namespace Trady.Analysis.Candlestick
         }
     }
 
-    public class Harami : Harami<Candle, AnalyzableTick<bool?>>
+    public class Harami : Harami<IOhlcvData, AnalyzableTick<bool?>>
     {
-        public Harami(IEnumerable<Candle> inputs, bool containedShadows = false)
+        public Harami(IEnumerable<IOhlcvData> inputs, bool containedShadows = false)
             : base(inputs, i => (i.Open, i.High, i.Low, i.Close), containedShadows)
         {
         }

@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+
 using Trady.Analysis.Infrastructure;
-using Trady.Core;
+using Trady.Core.Infrastructure;
 
 namespace Trady.Analysis.Candlestick
 {
@@ -39,9 +40,9 @@ namespace Trady.Analysis.Candlestick
         }
     }
 
-    public class UpTrend : UpTrend<Candle, AnalyzableTick<bool?>>
+    public class UpTrend : UpTrend<IOhlcvData, AnalyzableTick<bool?>>
     {
-        public UpTrend(IEnumerable<Candle> inputs, int periodCount = 3)
+        public UpTrend(IEnumerable<IOhlcvData> inputs, int periodCount = 3)
             : base(inputs, i => (i.High, i.Low), periodCount)
         {
         }

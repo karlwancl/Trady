@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Trady.Analysis.Infrastructure;
 using Trady.Core;
+using Trady.Core.Infrastructure;
 
 namespace Trady.Analysis.Indicator
 {
@@ -35,9 +36,9 @@ namespace Trady.Analysis.Indicator
             }
         }
 
-        public class Fast : Fast<Candle, AnalyzableTick<decimal?>>
+        public class Fast : Fast<IOhlcvData, AnalyzableTick<decimal?>>
         {
-            public Fast(IEnumerable<Candle> inputs, int periodCount, int smaPeriodCount) 
+            public Fast(IEnumerable<IOhlcvData> inputs, int periodCount, int smaPeriodCount) 
                 : base(inputs, i => (i.High, i.Low, i.Close), periodCount, smaPeriodCount)
             {
             }

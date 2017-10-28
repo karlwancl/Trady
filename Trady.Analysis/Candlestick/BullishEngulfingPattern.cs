@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+
 using Trady.Analysis.Infrastructure;
-using Trady.Core;
+using Trady.Core.Infrastructure;
 
 namespace Trady.Analysis.Candlestick
 {
@@ -45,9 +46,9 @@ namespace Trady.Analysis.Candlestick
         }
     }
 
-    public class BullishEngulfingPattern : BullishEngulfingPattern<Candle, AnalyzableTick<bool?>>
+    public class BullishEngulfingPattern : BullishEngulfingPattern<IOhlcvData, AnalyzableTick<bool?>>
     {
-        public BullishEngulfingPattern(IEnumerable<Candle> inputs, int downTrendPeriodCount = 3)
+        public BullishEngulfingPattern(IEnumerable<IOhlcvData> inputs, int downTrendPeriodCount = 3)
             : base(inputs, i => (i.Open, i.High, i.Low, i.Close), downTrendPeriodCount)
         {
         }

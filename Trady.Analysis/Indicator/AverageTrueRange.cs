@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Trady.Analysis.Infrastructure;
 using Trady.Core;
+using Trady.Core.Infrastructure;
 
 namespace Trady.Analysis.Indicator
 {
@@ -39,9 +40,9 @@ namespace Trady.Analysis.Indicator
         }
     }
 
-    public class AverageTrueRange : AverageTrueRange<Candle, AnalyzableTick<decimal?>>
+    public class AverageTrueRange : AverageTrueRange<IOhlcvData, AnalyzableTick<decimal?>>
     {
-        public AverageTrueRange(IEnumerable<Candle> inputs, int periodCount)
+        public AverageTrueRange(IEnumerable<IOhlcvData> inputs, int periodCount)
             : base(inputs, i => (i.High, i.Low, i.Close), periodCount)
         {
         }

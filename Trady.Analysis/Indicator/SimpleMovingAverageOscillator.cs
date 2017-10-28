@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Trady.Analysis.Infrastructure;
 using Trady.Core;
+using Trady.Core.Infrastructure;
 
 namespace Trady.Analysis.Indicator
 {
@@ -35,9 +36,9 @@ namespace Trady.Analysis.Indicator
         }
     }
 
-    public class SimpleMovingAverageOscillator : SimpleMovingAverageOscillator<Candle, AnalyzableTick<decimal?>>
+    public class SimpleMovingAverageOscillator : SimpleMovingAverageOscillator<IOhlcvData, AnalyzableTick<decimal?>>
     {
-        public SimpleMovingAverageOscillator(IEnumerable<Candle> inputs, int periodCount1, int periodCount2)
+        public SimpleMovingAverageOscillator(IEnumerable<IOhlcvData> inputs, int periodCount1, int periodCount2)
             : base(inputs, i => i.Close, periodCount1, periodCount2)
         {
         }

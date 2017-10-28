@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Trady.Analysis.Infrastructure;
 using Trady.Core;
+using Trady.Core.Infrastructure;
 
 namespace Trady.Analysis.Indicator
 {
@@ -34,9 +35,9 @@ namespace Trady.Analysis.Indicator
 		}
     }
 
-	public class Median : Median<Candle, AnalyzableTick<decimal?>>
+	public class Median : Median<IOhlcvData, AnalyzableTick<decimal?>>
 	{
-		public Median(IEnumerable<Candle> inputs, int periodCount)
+		public Median(IEnumerable<IOhlcvData> inputs, int periodCount)
 			: base(inputs, i => i.Close, periodCount)
 		{
 		}

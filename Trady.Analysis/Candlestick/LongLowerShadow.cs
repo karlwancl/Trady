@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Trady.Analysis.Indicator;
+
+using Trady.Analysis.Extension;
 using Trady.Analysis.Infrastructure;
-using Trady.Core;
+using Trady.Core.Infrastructure;
 
 namespace Trady.Analysis.Candlestick
 {
@@ -33,9 +34,9 @@ namespace Trady.Analysis.Candlestick
         }
     }
 
-    public class LongLowerShadow : LongLowerShadow<Candle, AnalyzableTick<bool?>>
+    public class LongLowerShadow : LongLowerShadow<IOhlcvData, AnalyzableTick<bool?>>
     {
-        public LongLowerShadow(IEnumerable<Candle> inputs, int periodCount = 20, decimal threshold = 0.25M)
+        public LongLowerShadow(IEnumerable<IOhlcvData> inputs, int periodCount = 20, decimal threshold = 0.25M)
             : base(inputs, i => (i.Open, i.Low, i.Close), periodCount, threshold)
         {
         }

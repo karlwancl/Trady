@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+
 using Trady.Analysis.Infrastructure;
-using Trady.Core;
+using Trady.Core.Infrastructure;
 
 namespace Trady.Analysis.Candlestick
 {
@@ -28,9 +29,9 @@ namespace Trady.Analysis.Candlestick
         }
     }
 
-    public class ThreeBlackCrows : ThreeBlackCrows<Candle, AnalyzableTick<bool?>>
+    public class ThreeBlackCrows : ThreeBlackCrows<IOhlcvData, AnalyzableTick<bool?>>
     {
-        public ThreeBlackCrows(IEnumerable<Candle> inputs)
+        public ThreeBlackCrows(IEnumerable<IOhlcvData> inputs)
             : base(inputs, i => (i.Open, i.High, i.Low, i.Close))
         {
         }

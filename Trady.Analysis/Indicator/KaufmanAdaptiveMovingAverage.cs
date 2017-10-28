@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Trady.Analysis.Infrastructure;
 using Trady.Core;
+using Trady.Core.Infrastructure;
 
 namespace Trady.Analysis.Indicator
 {
@@ -50,9 +51,9 @@ namespace Trady.Analysis.Indicator
         }
     }
 
-    public class KaufmanAdaptiveMovingAverage : KaufmanAdaptiveMovingAverage<Candle, AnalyzableTick<decimal?>>
+    public class KaufmanAdaptiveMovingAverage : KaufmanAdaptiveMovingAverage<IOhlcvData, AnalyzableTick<decimal?>>
     {
-        public KaufmanAdaptiveMovingAverage(IEnumerable<Candle> inputs, int periodCount, int emaFastPeriodCount, int emaSlowPeriodCount)
+        public KaufmanAdaptiveMovingAverage(IEnumerable<IOhlcvData> inputs, int periodCount, int emaFastPeriodCount, int emaSlowPeriodCount)
             : base(inputs, i => i.Close, periodCount, emaFastPeriodCount, emaSlowPeriodCount)
         {
         }

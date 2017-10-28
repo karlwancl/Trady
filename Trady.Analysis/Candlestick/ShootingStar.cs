@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+
 using Trady.Analysis.Infrastructure;
-using Trady.Core;
+using Trady.Core.Infrastructure;
 
 namespace Trady.Analysis.Candlestick
 {
@@ -28,9 +29,9 @@ namespace Trady.Analysis.Candlestick
         }
     }
 
-    public class ShootingStar : ShootingStar<Candle, AnalyzableTick<bool?>>
+    public class ShootingStar : ShootingStar<IOhlcvData, AnalyzableTick<bool?>>
     {
-        public ShootingStar(IEnumerable<Candle> inputs)
+        public ShootingStar(IEnumerable<IOhlcvData> inputs)
             : base(inputs, i => (i.Open, i.High, i.Low, i.Close))
         {
         }

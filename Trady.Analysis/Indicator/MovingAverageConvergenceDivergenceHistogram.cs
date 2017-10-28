@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Trady.Analysis.Infrastructure;
 using Trady.Core;
+using Trady.Core.Infrastructure;
 
 namespace Trady.Analysis.Indicator
 {
@@ -37,9 +38,9 @@ namespace Trady.Analysis.Indicator
         }
     }
 
-    public class MovingAverageConvergenceDivergenceHistogram : MovingAverageConvergenceDivergenceHistogram<Candle, AnalyzableTick<decimal?>>
+    public class MovingAverageConvergenceDivergenceHistogram : MovingAverageConvergenceDivergenceHistogram<IOhlcvData, AnalyzableTick<decimal?>>
     {
-        public MovingAverageConvergenceDivergenceHistogram(IEnumerable<Candle> inputs, int emaPeriodCount1, int emaPeriodCount2, int demPeriodCount)
+        public MovingAverageConvergenceDivergenceHistogram(IEnumerable<IOhlcvData> inputs, int emaPeriodCount1, int emaPeriodCount2, int demPeriodCount)
             : base(inputs, i => i.Close, emaPeriodCount1, emaPeriodCount2, demPeriodCount)
         {
         }

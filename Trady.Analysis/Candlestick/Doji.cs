@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+
 using Trady.Analysis.Infrastructure;
-using Trady.Core;
+using Trady.Core.Infrastructure;
 
 namespace Trady.Analysis.Candlestick
 {
@@ -26,9 +27,9 @@ namespace Trady.Analysis.Candlestick
         }
     }
 
-    public class Doji : Doji<Candle, AnalyzableTick<bool>>
+    public class Doji : Doji<IOhlcvData, AnalyzableTick<bool>>
     {
-        public Doji(IEnumerable<Candle> inputs, decimal threshold = 0.1M)
+        public Doji(IEnumerable<IOhlcvData> inputs, decimal threshold = 0.1M)
             : base(inputs, i => (i.Open, i.High, i.Low, i.Close), threshold)
         {
         }

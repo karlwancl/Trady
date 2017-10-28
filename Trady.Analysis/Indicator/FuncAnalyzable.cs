@@ -45,9 +45,9 @@ namespace Trady.Analysis.Indicator
 		}
     }
 
-    public class FuncAnalyzable : FuncAnalyzable<Candle, AnalyzableTick<decimal?>>
+    public class FuncAnalyzable : FuncAnalyzable<IOhlcvData, AnalyzableTick<decimal?>>
     {
-        public FuncAnalyzable(IEnumerable<Candle> inputs, params decimal[] parameters) : base(inputs, parameters)
+        public FuncAnalyzable(IEnumerable<IOhlcvData> inputs, params decimal[] parameters) : base(inputs, parameters)
         {
         }
     }

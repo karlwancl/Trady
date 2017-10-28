@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+
 using Trady.Analysis.Infrastructure;
-using Trady.Core;
+using Trady.Core.Infrastructure;
 
 namespace Trady.Analysis.Candlestick
 {
@@ -35,7 +36,7 @@ namespace Trady.Analysis.Candlestick
         protected override bool? ComputeByIndexImpl(IReadOnlyList<(decimal Open, decimal High, decimal Low, decimal Close)> mappedInputs, int index)
         {
             if (index < 2) return null;
-            bool isBlackCandleWithinGap = (mappedInputs[index].Open > mappedInputs[index - 1].Open) &&
+            bool isBlackIOhlcvDataWithinGap = (mappedInputs[index].Open > mappedInputs[index - 1].Open) &&
                 (mappedInputs[index].Open < mappedInputs[index - 1].Close) &&
                 (mappedInputs[index].Close < mappedInputs[index - 1].Open);
             return (_upTrend[index - 1] ?? false) &&
@@ -43,7 +44,7 @@ namespace Trady.Analysis.Candlestick
                 mappedInputs[index - 2].High < mappedInputs[index - 1].Low &&
                 _bullish[index - 1] &&
                 _bearish[index] &&
-                isBlackCandleWithinGap;
+                isBlackIOhlcvDataWithinGap;
         }
     }
 
@@ -55,9 +56,9 @@ namespace Trady.Analysis.Candlestick
         }
     }
 
-    public class UpsideTasukiGap : UpsideTasukiGap<Candle, AnalyzableTick<bool?>>
+    public class UpsideTasukiGap : UpsideTasukiGap<IOhlcvData, AnalyzableTick<bool?>>
     {
-        public UpsideTasukiGap(IEnumerable<Candle> inputs, int upTrendPeriodCount = 3, decimal sizeThreshold = 0.1M)
+        public UpsideTasukiGap(IEnumerable<IOhlcvData> inputs, int upTrendPeriodCount = 3, decimal sizeThreshold = 0.1M)
             : base(inputs, i => (i.Open, i.High, i.Low, i.Close), upTrendPeriodCount, sizeThreshold)
         {
         }

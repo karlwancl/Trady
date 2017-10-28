@@ -9,6 +9,6 @@ namespace Trady.Core.Infrastructure
     public interface IImporter
     {
         // startTime & endTime should be inclusive
-        Task<IReadOnlyList<Candle>> ImportAsync(string symbol, DateTime? startTime = null, DateTime? endTime = null, PeriodOption period = PeriodOption.Daily, CancellationToken token = default(CancellationToken));
+        Task<IReadOnlyList<IOhlcvData>> ImportAsync(string symbol, DateTime? startTime = null, DateTime? endTime = null, PeriodOption period = PeriodOption.Daily, CancellationToken token = default(CancellationToken));
     }
 }

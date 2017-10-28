@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+
 using Trady.Analysis.Infrastructure;
-using Trady.Core;
+using Trady.Core.Infrastructure;
 
 namespace Trady.Analysis.Candlestick
 {
@@ -28,9 +29,9 @@ namespace Trady.Analysis.Candlestick
         }
     }
 
-    public class SpinningTop : SpinningTop<Candle, AnalyzableTick<bool?>>
+    public class SpinningTop : SpinningTop<IOhlcvData, AnalyzableTick<bool?>>
     {
-        public SpinningTop(IEnumerable<Candle> inputs)
+        public SpinningTop(IEnumerable<IOhlcvData> inputs)
             : base(inputs, i => (i.Open, i.High, i.Low, i.Close))
         {
         }

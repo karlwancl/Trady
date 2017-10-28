@@ -8,11 +8,11 @@ using System;
 
 namespace Trady.Analysis
 {
-    public class IndexedCandle : Candle, IIndexedObject<Candle>
+    public class IndexedCandle : Candle, IIndexedOhlcvData
     {
         private IAnalyzeContext _context;
 
-        public IndexedCandle(IEnumerable<Candle> candles, int index)
+        public IndexedCandle(IEnumerable<IOhlcvData> candles, int index)
             : base(candles.ElementAt(index).DateTime,
                    candles.ElementAt(index).Open,
                    candles.ElementAt(index).High,
@@ -24,42 +24,44 @@ namespace Trady.Analysis
             Index = index;
         }
 
-        public IEnumerable<Candle> BackingList { get; }
+        public IEnumerable<IOhlcvData> BackingList { get; }
+
+        IIndexedOhlcvData IIndexedOhlcvData.Prev => Prev;
+
+        IIndexedOhlcvData IIndexedOhlcvData.Next => Next;
+
+        IOhlcvData IIndexedOhlcvData.Underlying => Underlying;
 
         public int Index { get; }
 
-        public IndexedCandle Prev => Index - 1 >= 0 ? new IndexedCandle(BackingList, Index - 1) : null;
+        public IIndexedOhlcvData Prev => Index - 1 >= 0 ? new IndexedCandle(BackingList, Index - 1) : null;
 
-        public IndexedCandle Next => Index + 1 < BackingList.Count() ? new IndexedCandle(BackingList, Index + 1) : null;
+        public IIndexedOhlcvData Next => Index + 1 < BackingList.Count() ? new IndexedCandle(BackingList, Index + 1) : null;
 
-        public Candle Underlying => BackingList.ElementAt(Index);
+        public IOhlcvData Underlying => BackingList.ElementAt(Index);
 
-        public IAnalyzeContext<Candle> Context
+        public IAnalyzeContext<IOhlcvData> Context
         {
-            get => (IAnalyzeContext<Candle>)_context;
-            set {
-                _context = value;
-            }
+            get => (IAnalyzeContext<IOhlcvData>)_context;
+            set => _context = value;
         }
 
         IEnumerable IIndexedObject.BackingList => BackingList;
 
         IIndexedObject IIndexedObject.Prev => Prev;
 
-        IIndexedObject<Candle> IIndexedObject<Candle>.Prev => Prev;
+        IIndexedObject<IOhlcvData> IIndexedObject<IOhlcvData>.Prev => Prev;
 
         IIndexedObject IIndexedObject.Next => Next;
 
-        IIndexedObject<Candle> IIndexedObject<Candle>.Next => Next;
+        IIndexedObject<IOhlcvData> IIndexedObject<IOhlcvData>.Next => Next;
 
         object IIndexedObject.Underlying => Underlying;
 
         IAnalyzeContext IIndexedObject.Context
         {
             get => _context;
-            set {
-                _context = value;
-            }
+            set => _context = value;
         }
 
         public TAnalyzable Get<TAnalyzable>(params object[] @params) where TAnalyzable : IAnalyzable
@@ -69,11 +71,11 @@ namespace Trady.Analysis
             return Context.Get<TAnalyzable>(@params);
         }
 
-        public IFuncAnalyzable<AnalyzableTick<decimal?>> GetFunc(string name, params decimal[] @params)
+        public IFuncAnalyzable<IAnalyzableTick<decimal?>> GetFunc(string name, params decimal[] @params)
         {
             if (Context == null)
                 return FuncAnalyzableFactory.CreateAnalyzable(name, BackingList, @params);
-            return (IFuncAnalyzable<AnalyzableTick<decimal?>>)Context.GetFunc(name, @params);
+            return (IFuncAnalyzable<IAnalyzableTick<decimal?>>)Context.GetFunc(name, @params);
         }
 
         public bool Eval(string name, params decimal[] @params)

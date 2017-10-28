@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Trady.Analysis.Infrastructure;
 using Trady.Core;
+using Trady.Core.Infrastructure;
 
 namespace Trady.Analysis.Indicator
 {
@@ -38,9 +39,9 @@ namespace Trady.Analysis.Indicator
 		}
     }
 
-    public class ExponentialMovingAverage : ExponentialMovingAverage<Candle, AnalyzableTick<decimal?>>
+    public class ExponentialMovingAverage : ExponentialMovingAverage<IOhlcvData, AnalyzableTick<decimal?>>
     {
-        public ExponentialMovingAverage(IEnumerable<Candle> inputs, int periodCount)
+        public ExponentialMovingAverage(IEnumerable<IOhlcvData> inputs, int periodCount)
             : base(inputs, i => i.Close, periodCount)
         {
         }

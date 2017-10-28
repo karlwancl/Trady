@@ -19,7 +19,7 @@ namespace Trady.Analysis.Infrastructure
                 .FirstOrDefault(c => typeof(IEnumerable<TInput>).IsAssignableFrom(c.GetParameters().First().ParameterType));
 
             if (ctor == null)
-                throw new TargetInvocationException("Can't find default constructor for instantiation, please make sure that the analyzable has a constructor with IEnumerable<Candle> as the first parameter",
+                throw new TargetInvocationException("Can't find default constructor for instantiation, please make sure that the analyzable has a constructor with IEnumerable<IOhlcvData> as the first parameter",
                     new ArgumentNullException(nameof(ctor)));
 
             var @params = new List<object>();
@@ -30,8 +30,8 @@ namespace Trady.Analysis.Infrastructure
             return (TAnalyzable)ctor.Invoke(@params.ToArray());
         }
 
-        public static TAnalyzable CreateAnalyzable<TAnalyzable>(IEnumerable<Candle> candles, params object[] parameters)
+        public static TAnalyzable CreateAnalyzable<TAnalyzable>(IEnumerable<IOhlcvData> candles, params object[] parameters)
             where TAnalyzable : IAnalyzable
-            => CreateAnalyzable<TAnalyzable, Candle>(candles, parameters);
+            => CreateAnalyzable<TAnalyzable, IOhlcvData>(candles, parameters);
     }
 }

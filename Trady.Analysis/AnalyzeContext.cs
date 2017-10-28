@@ -76,13 +76,13 @@ namespace Trady.Analysis
         #endregion
     }
 
-    public class AnalyzeContext : AnalyzeContext<Candle>
+    public class AnalyzeContext : AnalyzeContext<IOhlcvData>
     {
-        public AnalyzeContext(IEnumerable<Candle> backingList) : base(backingList)
+        public AnalyzeContext(IEnumerable<IOhlcvData> backingList) : base(backingList)
         {
         }
 
-        public Predicate<IndexedCandle> GetRule(string name, params decimal[] parameters)
-            => GetRule<IndexedCandle>(name, parameters);
+        public Predicate<IIndexedOhlcvData> GetRule(string name, params decimal[] parameters)
+            => GetRule<IIndexedOhlcvData>(name, parameters);
     }
 }

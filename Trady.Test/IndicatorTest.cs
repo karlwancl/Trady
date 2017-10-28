@@ -7,13 +7,16 @@ using Trady.Core;
 using Trady.Importer;
 using System.Globalization;
 using Trady.Analysis;
+using Trady.Analysis.Extension;
+using Trady.Core.Infrastructure;
+using Trady.Importer.Csv;
 
 namespace Trady.Test
 {
     [TestClass]
     public class IndicatorTest
     {
-        protected async Task<IEnumerable<Candle>> ImportCandlesAsync()
+        protected async Task<IEnumerable<IOhlcvData>> ImportIOhlcvDatasAsync()
         {
             var csvImporter = new CsvImporter("fb.csv", new CultureInfo("en-US"));
             return await csvImporter.ImportAsync("fb");
@@ -26,7 +29,7 @@ namespace Trady.Test
 		[TestMethod]
 		public async Task TestMedianAsync()
 		{
-			var candles = await ImportCandlesAsync();
+			var candles = await ImportIOhlcvDatasAsync();
             var result = candles.Median(10)[candles.Count() - 1];
 			Assert.IsTrue(171.8649975m.IsApproximatelyEquals(result.Tick.Value));
 		}
@@ -34,7 +37,7 @@ namespace Trady.Test
 		[TestMethod]
 		public async Task TestPercentileAsync()
 		{
-			var candles = await ImportCandlesAsync();
+			var candles = await ImportIOhlcvDatasAsync();
 			var result = candles.Percentile(30, 0.7m)[candles.Count() - 1];
 			Assert.IsTrue(171.3529969m.IsApproximatelyEquals(result.Tick.Value));
 
@@ -45,7 +48,7 @@ namespace Trady.Test
         [TestMethod]
         public async Task TestSmaAsync()
         {
-            var candles = await ImportCandlesAsync();
+            var candles = await ImportIOhlcvDatasAsync();
             var result = candles.Sma(30)[candles.Count() - 1];
             Assert.IsTrue(170.15m.IsApproximatelyEquals(result.Tick.Value));
         }
@@ -53,7 +56,7 @@ namespace Trady.Test
         [TestMethod]
         public async Task TestEmaAsync()
         {
-            var candles = await ImportCandlesAsync();
+            var candles = await ImportIOhlcvDatasAsync();
             var result = candles.Ema(30)[candles.Count() - 1];
             Assert.IsTrue(169.55m.IsApproximatelyEquals(result.Tick.Value));
         }
@@ -61,7 +64,7 @@ namespace Trady.Test
         [TestMethod]
         public async Task TestAccumDistAsync()
         {
-            var candles = await ImportCandlesAsync();
+            var candles = await ImportIOhlcvDatasAsync();
             var result0 = candles.AccumDist()[candles.Count() - 1];
             var result1 = candles.AccumDist()[candles.Count() - 2];
             var result2 = candles.AccumDist()[candles.Count() - 3];
@@ -71,7 +74,7 @@ namespace Trady.Test
         [TestMethod]
         public async Task TestAroonAsync()
         {
-            var candles = await ImportCandlesAsync();
+            var candles = await ImportIOhlcvDatasAsync();
             var result = candles.Aroon(25)[candles.Count() - 1];
             Assert.IsTrue(84.0m.IsApproximatelyEquals(result.Tick.Up.Value));
             Assert.IsTrue(48.0m.IsApproximatelyEquals(result.Tick.Down.Value));
@@ -80,7 +83,7 @@ namespace Trady.Test
         [TestMethod]
         public async Task TestAroonOscAsync()
         {
-            var candles = await ImportCandlesAsync();
+            var candles = await ImportIOhlcvDatasAsync();
             var result = candles.AroonOsc(25)[candles.Count() - 1];
             Assert.IsTrue(36.0m.IsApproximatelyEquals(result.Tick.Value));
         }
@@ -88,7 +91,7 @@ namespace Trady.Test
         [TestMethod]
         public async Task TestAtrAsync()
         {
-            var candles = await ImportCandlesAsync();
+            var candles = await ImportIOhlcvDatasAsync();
             var result = candles.Atr(14)[candles.Count() - 1];
             Assert.IsTrue(2.461m.IsApproximatelyEquals(result.Tick.Value));
         }
@@ -96,7 +99,7 @@ namespace Trady.Test
         [TestMethod]
         public async Task TestBbAsync()
         {
-            var candles = await ImportCandlesAsync();
+            var candles = await ImportIOhlcvDatasAsync();
             var result = candles.Bb(20, 2)[candles.Count() - 1];
             Assert.IsTrue(166.15m.IsApproximatelyEquals(result.Tick.LowerBand.Value));
             Assert.IsTrue(170.42m.IsApproximatelyEquals(result.Tick.MiddleBand.Value));
@@ -106,7 +109,7 @@ namespace Trady.Test
         [TestMethod]
         public async Task TestBbWidthAsync()
         {
-            var candles = await ImportCandlesAsync();
+            var candles = await ImportIOhlcvDatasAsync();
             var result = candles.BbWidth(20, 2)[candles.Count() - 1];
             Assert.IsTrue(5.013m.IsApproximatelyEquals(result.Tick.Value));
         }
@@ -114,7 +117,7 @@ namespace Trady.Test
 		[TestMethod]
 		public async Task TestChandlrAsync()
 		{
-			var candles = await ImportCandlesAsync();
+			var candles = await ImportIOhlcvDatasAsync();
 			var result = candles.Chandlr(22, 3)[candles.Count() - 1];
 			Assert.IsTrue(166.47m.IsApproximatelyEquals(result.Tick.Long.Value));
 			Assert.IsTrue(172.53m.IsApproximatelyEquals(result.Tick.Short.Value));
@@ -123,29 +126,31 @@ namespace Trady.Test
         [TestMethod]
         public async Task TestMomentumAsync()
         {
-            var candles = await ImportCandlesAsync();
+            var candles = await ImportIOhlcvDatasAsync();
             var result = candles.Mtm()[candles.Count() - 1];
             Assert.IsTrue((-1.63m).IsApproximatelyEquals(result.Tick.Value));
 
             result = candles.Mtm(20)[candles.Count() - 1];
+
             Assert.IsTrue(2.599991m.IsApproximatelyEquals(result.Tick.Value));
         }
 
         [TestMethod]
         public async Task TestRateOfChangeAsync()
         {
-            var candles = await ImportCandlesAsync();
+            var candles = await ImportIOhlcvDatasAsync();
             var result = candles.Roc()[candles.Count() - 1];
             Assert.IsTrue((-0.949664419m).IsApproximatelyEquals(result.Tick.Value));
 
             result = candles.Roc(20)[candles.Count() - 1];
+
             Assert.IsTrue(1.55306788m.IsApproximatelyEquals(result.Tick.Value));
         }
 
         [TestMethod]
         public async Task TestPdiAsync()
         {
-            var candles = await ImportCandlesAsync();
+            var candles = await ImportIOhlcvDatasAsync();
             var result = candles.Pdi(14)[candles.Count() - 1];
             Assert.IsTrue(16.36m.IsApproximatelyEquals(result.Tick.Value));
         }
@@ -153,7 +158,7 @@ namespace Trady.Test
         [TestMethod]
         public async Task TestMdiAsync()
         {
-            var candles = await ImportCandlesAsync();
+            var candles = await ImportIOhlcvDatasAsync();
             var result = candles.Mdi(14)[candles.Count() - 1];
             Assert.IsTrue(19.77m.IsApproximatelyEquals(result.Tick.Value));
         }
@@ -161,7 +166,7 @@ namespace Trady.Test
         [TestMethod]
         public async Task TestAdxAsync()
         {
-            var candles = await ImportCandlesAsync();
+            var candles = await ImportIOhlcvDatasAsync();
             var result = candles.Adx(14)[candles.Count() - 1];
             Assert.IsTrue(15.45m.IsApproximatelyEquals(result.Tick.Value));
         }
@@ -169,7 +174,7 @@ namespace Trady.Test
         [TestMethod]
         public async Task TestAdxrAsync()
         {
-            var candles = await ImportCandlesAsync();
+            var candles = await ImportIOhlcvDatasAsync();
             var result = candles.Adxr(14, 3)[candles.Count() - 1];
             Assert.IsTrue(16.21m.IsApproximatelyEquals(result.Tick.Value));
         }
@@ -177,7 +182,7 @@ namespace Trady.Test
         [TestMethod]
         public async Task TestEfficiencyRatioAsync()
         {
-            var candles = await ImportCandlesAsync();
+            var candles = await ImportIOhlcvDatasAsync();
             var result = candles.Er(10)[candles.Count() - 1];
             Assert.IsTrue(0.147253482m.IsApproximatelyEquals(result.Tick.Value));
         }
@@ -185,7 +190,7 @@ namespace Trady.Test
         [TestMethod]
         public async Task TestKamaAsync()
         {
-            var candles = await ImportCandlesAsync();
+            var candles = await ImportIOhlcvDatasAsync();
             var result = candles.Kama(10, 2, 30)[candles.Count() - 1];
             Assert.IsTrue(164.88m.IsApproximatelyEquals(result.Tick.Value));
         }
@@ -193,7 +198,7 @@ namespace Trady.Test
         [TestMethod]
         public async Task TestEmaOscAsync()
         {
-            var candles = await ImportCandlesAsync();
+            var candles = await ImportIOhlcvDatasAsync();
             var result = candles.EmaOsc(10, 30)[candles.Count() - 1];
             Assert.IsTrue(1.83m.IsApproximatelyEquals(result.Tick.Value));
         }
@@ -201,7 +206,7 @@ namespace Trady.Test
         [TestMethod]
         public async Task TestHighestHighAsync()
         {
-            var candles = await ImportCandlesAsync();
+            var candles = await ImportIOhlcvDatasAsync();
             var result = candles.HighHigh(10)[candles.Count() - 1];
             Assert.IsTrue(174m.IsApproximatelyEquals(result.Tick.Value));
         }
@@ -209,7 +214,7 @@ namespace Trady.Test
         [TestMethod]
         public async Task TestHighestCloseAsync()
         {
-            var candles = await ImportCandlesAsync();
+            var candles = await ImportIOhlcvDatasAsync();
             var result = candles.HighClose(10)[candles.Count() - 1];
             Assert.IsTrue(173.509995m.IsApproximatelyEquals(result.Tick.Value));
         }
@@ -217,7 +222,7 @@ namespace Trady.Test
         [TestMethod]
         public async Task TestHistoricalHighestHighAsync()
         {
-            var candles = await ImportCandlesAsync();
+            var candles = await ImportIOhlcvDatasAsync();
             var result = candles.HistHighHigh()[candles.Count() - 1];   
             Assert.IsTrue(175.490005m.IsApproximatelyEquals(result.Tick.Value));
         }
@@ -225,7 +230,7 @@ namespace Trady.Test
         [TestMethod]
         public async Task TestHistoricalHighestCloseAsync()
         {
-            var candles = await ImportCandlesAsync();
+            var candles = await ImportIOhlcvDatasAsync();
             var result = candles.HistHighClose()[candles.Count() - 1];
             Assert.IsTrue(173.509995m.IsApproximatelyEquals(result.Tick.Value));
         }
@@ -233,7 +238,7 @@ namespace Trady.Test
         [TestMethod]
         public async Task TestLowestLowAsync()
         {
-            var candles = await ImportCandlesAsync();
+            var candles = await ImportIOhlcvDatasAsync();
             var result = candles.LowLow(10)[candles.Count() - 1];
             Assert.IsTrue(169.339996m.IsApproximatelyEquals(result.Tick.Value));
         }
@@ -241,7 +246,7 @@ namespace Trady.Test
         [TestMethod]
         public async Task TestLowestCloseAsync()
         {
-            var candles = await ImportCandlesAsync();
+            var candles = await ImportIOhlcvDatasAsync();
             var result = candles.LowClose(10)[candles.Count() - 1];
             Assert.IsTrue(170.009995m.IsApproximatelyEquals(result.Tick.Value));
         }
@@ -249,7 +254,7 @@ namespace Trady.Test
         [TestMethod]
         public async Task TestHistoricalLowestLowAsync()
         {
-            var candles = await ImportCandlesAsync();
+            var candles = await ImportIOhlcvDatasAsync();
             var result = candles.HistLowLow()[candles.Count() - 1];
             Assert.IsTrue(17.549999m.IsApproximatelyEquals(result.Tick.Value));
         }
@@ -257,7 +262,7 @@ namespace Trady.Test
         [TestMethod]
         public async Task TestHistoricalLowestCloseAsync()
         {
-            var candles = await ImportCandlesAsync();
+            var candles = await ImportIOhlcvDatasAsync();
             var result = candles.HistLowClose()[candles.Count() - 1];
             Assert.IsTrue(17.73m.IsApproximatelyEquals(result.Tick.Value));
         }
@@ -265,7 +270,7 @@ namespace Trady.Test
         [TestMethod]
         public async Task TestIchimokuCloudAsync()
         {
-            var candles = await ImportCandlesAsync();
+            var candles = await ImportIOhlcvDatasAsync();
             int middlePeriodCount = 26;
             var results = candles.Ichimoku(9, middlePeriodCount, 52);
 
@@ -284,7 +289,7 @@ namespace Trady.Test
         [TestMethod]
         public async Task TestMmaAsync()
         {
-            var candles = await ImportCandlesAsync();
+            var candles = await ImportIOhlcvDatasAsync();
             var result = candles.Mma(30)[candles.Count() - 1];
             Assert.IsTrue(169.9556615m.IsApproximatelyEquals(result.Tick.Value));
         }
@@ -292,7 +297,7 @@ namespace Trady.Test
         [TestMethod]
         public async Task TestMacdAsync()
         {
-            var candles = await ImportCandlesAsync();
+            var candles = await ImportIOhlcvDatasAsync();
             var result = candles.Macd(12, 26, 9)[candles.Count() - 1];
             Assert.IsTrue(1.25m.IsApproximatelyEquals(result.Tick.MacdLine.Value));
             Assert.IsTrue(1.541m.IsApproximatelyEquals(result.Tick.SignalLine.Value));
@@ -302,7 +307,7 @@ namespace Trady.Test
 		[TestMethod]
 		public async Task TestMacdHistogramAsync()
 		{
-			var candles = await ImportCandlesAsync();
+			var candles = await ImportIOhlcvDatasAsync();
 			var result = candles.MacdHist(12, 26, 9)[candles.Count() - 1];
             Assert.IsTrue((-0.291m).IsApproximatelyEquals(result.Tick.Value));
 		}
@@ -310,7 +315,7 @@ namespace Trady.Test
         [TestMethod]
         public async Task TestObvAsync()
         {
-            var candles = await ImportCandlesAsync();
+            var candles = await ImportIOhlcvDatasAsync();
             var result0 = candles.Obv()[candles.Count() - 1];
             var result1 = candles.Obv()[candles.Count() - 2];
             var result2 = candles.Obv()[candles.Count() - 3];
@@ -320,7 +325,7 @@ namespace Trady.Test
         [TestMethod]
         public async Task TestRsvAsync()
         {
-            var candles = await ImportCandlesAsync();
+            var candles = await ImportIOhlcvDatasAsync();
             var result = candles.Rsv(14)[candles.Count() - 1];
             Assert.IsTrue(55.66661111m.IsApproximatelyEquals(result.Tick.Value));
         }
@@ -328,7 +333,7 @@ namespace Trady.Test
         [TestMethod]
         public async Task TestRsAsync()
         {
-            var candles = await ImportCandlesAsync();
+            var candles = await ImportIOhlcvDatasAsync();
             var result = candles.Rs(14)[candles.Count() - 1];
             Assert.IsTrue(1.011667673m.IsApproximatelyEquals(result.Tick.Value));
         }
@@ -336,7 +341,7 @@ namespace Trady.Test
         [TestMethod]
         public async Task TestRsiAsync()
         {
-            var candles = await ImportCandlesAsync();
+            var candles = await ImportIOhlcvDatasAsync();
             var result = candles.Rsi(14)[candles.Count() - 1];
             Assert.IsTrue(50.29m.IsApproximatelyEquals(result.Tick.Value));
         }
@@ -344,7 +349,7 @@ namespace Trady.Test
         [TestMethod]
         public async Task TestSmaOscAsync()
         {
-            var candles = await ImportCandlesAsync();
+            var candles = await ImportIOhlcvDatasAsync();
             var result = candles.SmaOsc(10, 30)[candles.Count() - 1];
             Assert.IsTrue(1.76m.IsApproximatelyEquals(result.Tick.Value));
         }
@@ -352,7 +357,7 @@ namespace Trady.Test
         [TestMethod]
         public async Task TestSdAsync()
         {
-            var candles = await ImportCandlesAsync();
+            var candles = await ImportIOhlcvDatasAsync();
             var result = candles.Sd(10)[candles.Count() - 1];
             Assert.IsTrue(1.17m.IsApproximatelyEquals(result.Tick.Value));
         }
@@ -360,7 +365,7 @@ namespace Trady.Test
         [TestMethod]
         public async Task TestFastStoAsync()
         {
-            var candles = await ImportCandlesAsync();
+            var candles = await ImportIOhlcvDatasAsync();
             var result = candles.FastSto(14, 3)[candles.Count() - 1];
             Assert.IsTrue(55.67m.IsApproximatelyEquals(result.Tick.K.Value));
             Assert.IsTrue(65.22m.IsApproximatelyEquals(result.Tick.D.Value));
@@ -370,7 +375,7 @@ namespace Trady.Test
         [TestMethod]
         public async Task TestSlowStoAsync()
         {
-            var candles = await ImportCandlesAsync();
+            var candles = await ImportIOhlcvDatasAsync();
             var result = candles.SlowSto(14, 3)[candles.Count() - 1];
 			Assert.IsTrue(65.22m.IsApproximatelyEquals(result.Tick.K.Value));
 			Assert.IsTrue(74.36m.IsApproximatelyEquals(result.Tick.D.Value));
@@ -380,7 +385,7 @@ namespace Trady.Test
         [TestMethod]
         public async Task TestFullStoAsync()
         {
-            var candles = await ImportCandlesAsync();
+            var candles = await ImportIOhlcvDatasAsync();
             var result = candles.FullSto(14, 3, 3)[candles.Count() - 1];
             Assert.IsTrue(65.22m.IsApproximatelyEquals(result.Tick.K.Value));
             Assert.IsTrue(74.36m.IsApproximatelyEquals(result.Tick.D.Value));
@@ -390,7 +395,7 @@ namespace Trady.Test
 		[TestMethod]
 		public async Task TestFastStoOscAsync()
 		{
-			var candles = await ImportCandlesAsync();
+			var candles = await ImportIOhlcvDatasAsync();
 			var result = candles.FastStoOsc(14, 3)[candles.Count() - 1];
             Assert.IsTrue((-9.55m).IsApproximatelyEquals(result.Tick.Value));
 		}
@@ -398,7 +403,7 @@ namespace Trady.Test
 		[TestMethod]
 		public async Task TestSlowStoOscAsync()
 		{
-			var candles = await ImportCandlesAsync();
+			var candles = await ImportIOhlcvDatasAsync();
 			var result = candles.SlowStoOsc(14, 3)[candles.Count() - 1];
 			Assert.IsTrue((-9.14m).IsApproximatelyEquals(result.Tick.Value));
 		}
@@ -406,7 +411,7 @@ namespace Trady.Test
 		[TestMethod]
 		public async Task TestFullStoOscAsync()
 		{
-			var candles = await ImportCandlesAsync();
+			var candles = await ImportIOhlcvDatasAsync();
 			var result = candles.FullStoOsc(14, 3, 3)[candles.Count() - 1];
 			Assert.IsTrue((-9.14m).IsApproximatelyEquals(result.Tick.Value));
 		}

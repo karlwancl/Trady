@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Trady.Analysis.Infrastructure;
 using Trady.Core;
+using Trady.Core.Infrastructure;
 
 namespace Trady.Analysis.Indicator
 {
@@ -40,9 +41,9 @@ namespace Trady.Analysis.Indicator
         }
     }
 
-    public class AccumulationDistributionLine : AccumulationDistributionLine<Candle, AnalyzableTick<decimal?>>
+    public class AccumulationDistributionLine : AccumulationDistributionLine<IOhlcvData, AnalyzableTick<decimal?>>
     {
-        public AccumulationDistributionLine(IEnumerable<Candle> inputs)
+        public AccumulationDistributionLine(IEnumerable<IOhlcvData> inputs)
             : base(inputs, c => (c.High, c.Low, c.Close, c.Volume))
         {
         }

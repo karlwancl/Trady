@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+
 using Trady.Analysis.Infrastructure;
-using Trady.Core;
+using Trady.Core.Infrastructure;
 
 namespace Trady.Analysis.Candlestick
 {
@@ -28,9 +29,9 @@ namespace Trady.Analysis.Candlestick
         }
     }
 
-    public class PiercingLine : PiercingLine<Candle, AnalyzableTick<bool?>>
+    public class PiercingLine : PiercingLine<IOhlcvData, AnalyzableTick<bool?>>
     {
-        public PiercingLine(IEnumerable<Candle> inputs)
+        public PiercingLine(IEnumerable<IOhlcvData> inputs)
             : base(inputs, i => (i.Open, i.High, i.Low, i.Close))
         {
         }

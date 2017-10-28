@@ -7,15 +7,18 @@ using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Trady.Analysis;
 using Trady.Analysis.Backtest;
+using Trady.Analysis.Extension;
 using Trady.Core;
+using Trady.Core.Infrastructure;
 using Trady.Importer;
+using Trady.Importer.Csv;
 
 namespace Trady.Test
 {
     [TestClass]
     public class BacktestTest
     {
-		public async Task<IEnumerable<Candle>> ImportCandlesAsync()
+		public async Task<IEnumerable<IOhlcvData>> ImportIOhlcvDatasAsync()
 		{
 			var csvImporter = new CsvImporter("fb.csv", new CultureInfo("en-US"));
 			return await csvImporter.ImportAsync("fb");
@@ -26,8 +29,8 @@ namespace Trady.Test
 		[TestMethod]
 		public async Task TestBacktestAsync()
 		{
-			var fullCandles = await ImportCandlesAsync();
-			var candles = fullCandles.Where(c => c.DateTime < new DateTime(2013, 1, 1));
+			var fullIOhlcvDatas = await ImportIOhlcvDatasAsync();
+			var candles = fullIOhlcvDatas.Where(c => c.DateTime < new DateTime(2013, 1, 1));
 
 			var buyRule = Rule.Create(ic => ic.IsMacdBullishCross(12, 26, 9));
 			var sellRule = Rule.Create(ic => ic.IsMacdBearishCross(12, 26, 9));
@@ -65,12 +68,12 @@ namespace Trady.Test
 			Assert.IsTrue(result.TotalCorrectedProfitLossRatio == 0.022744817m);
 		}
 
-		private void Backtest_Onsold(IEnumerable<Candle> candles, int index, DateTime dateTime, decimal sellPrice, int quantity, decimal absCashFlow, decimal currentCashAmount, decimal plRatio)
+		private void Backtest_Onsold(IEnumerable<IOhlcvData> candles, int index, DateTime dateTime, decimal sellPrice, int quantity, decimal absCashFlow, decimal currentCashAmount, decimal plRatio)
 		{
 			File.AppendAllLines(logPath, new string[] { $"{index}({dateTime:yyyyMMdd}), Sell {candles.GetHashCode()}@{sellPrice} * {quantity}: {absCashFlow}, plRatio: {plRatio * 100:0.##}%, currentCashAmount: {currentCashAmount}" });
 		}
 
-		private void Backtest_OnBought(IEnumerable<Candle> candles, int index, DateTime dateTime, decimal buyPrice, int quantity, decimal absCashFlow, decimal currentCashAmount)
+		private void Backtest_OnBought(IEnumerable<IOhlcvData> candles, int index, DateTime dateTime, decimal buyPrice, int quantity, decimal absCashFlow, decimal currentCashAmount)
 		{
 			File.AppendAllLines(logPath, new string[] { $"{index}({dateTime:yyyyMMdd}), Buy {candles.GetHashCode()}@{buyPrice} * {quantity}: {absCashFlow}, currentCashAmount: {currentCashAmount}" });
 		}

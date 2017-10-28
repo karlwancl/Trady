@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Trady.Analysis.Infrastructure;
 using Trady.Core;
+using Trady.Core.Infrastructure;
 
 namespace Trady.Analysis.Indicator
 {
@@ -23,9 +24,9 @@ namespace Trady.Analysis.Indicator
         }
     }
 
-    public class MinusDirectionalMovement : MinusDirectionalMovement<Candle, AnalyzableTick<decimal?>>
+    public class MinusDirectionalMovement : MinusDirectionalMovement<IOhlcvData, AnalyzableTick<decimal?>>
     {
-        public MinusDirectionalMovement(IEnumerable<Candle> inputs)
+        public MinusDirectionalMovement(IEnumerable<IOhlcvData> inputs)
             : base(inputs, i => i.Low)
         {
         }

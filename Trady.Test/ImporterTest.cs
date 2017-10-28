@@ -3,6 +3,11 @@ using System;
 using System.Globalization;
 using System.Linq;
 using Trady.Importer;
+using Trady.Importer.Csv;
+using Trady.Importer.Google;
+using Trady.Importer.Quandl;
+using Trady.Importer.Stooq;
+using Trady.Importer.Yahoo;
 
 namespace Trady.Test
 {
@@ -72,8 +77,8 @@ namespace Trady.Test
             var importer = new CsvImporter("fb.csv", new CultureInfo("en-US"));
             var candles = importer.ImportAsync("FB").Result;
             Assert.AreEqual(candles.Count(), 1342);
-            var firstCandle = candles.First();
-            Assert.AreEqual(firstCandle.DateTime, new DateTime(2012, 5, 18));
+            var firstIOhlcvData = candles.First();
+            Assert.AreEqual(firstIOhlcvData.DateTime, new DateTime(2012, 5, 18));
         }
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Trady.Analysis.Infrastructure;
 using Trady.Core;
+using Trady.Core.Infrastructure;
 
 namespace Trady.Analysis.Indicator
 {
@@ -38,9 +39,9 @@ namespace Trady.Analysis.Indicator
 		}
     }
 
-    public class ModifiedMovingAverage : ModifiedMovingAverage<Candle, AnalyzableTick<decimal?>>
+    public class ModifiedMovingAverage : ModifiedMovingAverage<IOhlcvData, AnalyzableTick<decimal?>>
     {
-        public ModifiedMovingAverage(IEnumerable<Candle> inputs, int periodCount)
+        public ModifiedMovingAverage(IEnumerable<IOhlcvData> inputs, int periodCount)
             : base(inputs, i => i.Close, periodCount)
         {
         }

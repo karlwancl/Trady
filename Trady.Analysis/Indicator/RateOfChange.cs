@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
 using Trady.Core;
+using Trady.Core.Infrastructure;
 
 namespace Trady.Analysis.Indicator
 {
-    public class RateOfChange : PercentageDifference<Candle, AnalyzableTick<decimal?>>
+    public class RateOfChange : PercentageDifference<IOhlcvData, AnalyzableTick<decimal?>>
     {
-        public RateOfChange(IEnumerable<Candle> inputs, int numberOfDays = 1)
+        public RateOfChange(IEnumerable<IOhlcvData> inputs, int numberOfDays = 1)
             : base(inputs, i => i.Close, numberOfDays)
         {
         }

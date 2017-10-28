@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+
 using Trady.Analysis.Infrastructure;
-using Trady.Core;
+using Trady.Core.Infrastructure;
 
 namespace Trady.Analysis.Candlestick
 {
@@ -28,9 +29,9 @@ namespace Trady.Analysis.Candlestick
         }
     }
 
-    public class LongLeggedDoji : LongLeggedDoji<Candle, AnalyzableTick<bool?>>
+    public class LongLeggedDoji : LongLeggedDoji<IOhlcvData, AnalyzableTick<bool?>>
     {
-        public LongLeggedDoji(IEnumerable<Candle> inputs)
+        public LongLeggedDoji(IEnumerable<IOhlcvData> inputs)
             : base(inputs, i => (i.Open, i.High, i.Low, i.Close))
         {
         }

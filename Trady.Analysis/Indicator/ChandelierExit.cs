@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Trady.Analysis.Infrastructure;
 using Trady.Core;
+using Trady.Core.Infrastructure;
 
 namespace Trady.Analysis.Indicator
 {
@@ -44,9 +45,9 @@ namespace Trady.Analysis.Indicator
         }
     }
 
-    public class ChandelierExit : ChandelierExit<Candle, AnalyzableTick<(decimal? Long, decimal? Short)>>
+    public class ChandelierExit : ChandelierExit<IOhlcvData, AnalyzableTick<(decimal? Long, decimal? Short)>>
     {
-        public ChandelierExit(IEnumerable<Candle> inputs, int periodCount, decimal atrCount)
+        public ChandelierExit(IEnumerable<IOhlcvData> inputs, int periodCount, decimal atrCount)
             : base(inputs, i => (i.High, i.Low, i.Close), periodCount, atrCount)
         {
         }

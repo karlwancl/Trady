@@ -15,7 +15,7 @@ namespace Trady.Analysis.Infrastructure
             return new FuncAnalyzable<TInput, TOutput>(inputs, parameters).Init(func);
         }
 
-        public static IFuncAnalyzable<AnalyzableTick<decimal?>> CreateAnalyzable(string name, IEnumerable<Candle> candles, params decimal[] parameters)
-            => CreateAnalyzable<Candle, AnalyzableTick<decimal?>>(name, candles, parameters);
+        public static IFuncAnalyzable<IAnalyzableTick<decimal?>> CreateAnalyzable(string name, IEnumerable<IOhlcvData> candles, params decimal[] parameters)
+            => CreateAnalyzable<IOhlcvData, IAnalyzableTick<decimal?>>(name, candles, parameters);
 	}
 }

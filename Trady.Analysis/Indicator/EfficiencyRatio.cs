@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Trady.Analysis.Infrastructure;
 using Trady.Core;
+using Trady.Core.Infrastructure;
 
 namespace Trady.Analysis.Indicator
 {
@@ -22,11 +23,7 @@ namespace Trady.Analysis.Indicator
 
             decimal? change = Math.Abs(mappedInputs[index] - mappedInputs[index - PeriodCount]);
             decimal? volatility = Enumerable.Range(index - PeriodCount + 1, PeriodCount).Select(i => Math.Abs(mappedInputs[i] - mappedInputs[i - 1])).Sum();
-            if (volatility > 0)
-            {
-                return change / volatility;
-            }
-            return null;
+            return volatility > 0 ? change / volatility : null;
         }
     }
 
@@ -38,9 +35,9 @@ namespace Trady.Analysis.Indicator
         }
     }
 
-    public class EfficiencyRatio : EfficiencyRatio<Candle, AnalyzableTick<decimal?>>
+    public class EfficiencyRatio : EfficiencyRatio<IOhlcvData, AnalyzableTick<decimal?>>
     {
-        public EfficiencyRatio(IEnumerable<Candle> inputs, int periodCount)
+        public EfficiencyRatio(IEnumerable<IOhlcvData> inputs, int periodCount)
             : base(inputs, i => i.Close, periodCount)
         {
         }

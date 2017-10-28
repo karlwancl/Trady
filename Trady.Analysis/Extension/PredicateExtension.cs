@@ -1,9 +1,10 @@
 ﻿using System;
+
 using AnTick = Trady.Analysis.AnalyzableTick<decimal?>;
 using AnTp2Tick = Trady.Analysis.AnalyzableTick<(decimal?, decimal?)>;
 using AnTp3Tick = Trady.Analysis.AnalyzableTick<(decimal?, decimal?, decimal?)>;
 
-namespace Trady.Analysis
+namespace Trady.Analysis.Extension
 {
     public static class PredicateExtension
     {

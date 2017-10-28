@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+
 using Trady.Analysis.Infrastructure;
-using Trady.Core;
+using Trady.Core.Infrastructure;
 
 namespace Trady.Analysis.Candlestick
 {
@@ -60,9 +61,9 @@ namespace Trady.Analysis.Candlestick
         }
     }
 
-    public class DarkCloudCover : DarkCloudCover<Candle, AnalyzableTick<bool?>>
+    public class DarkCloudCover : DarkCloudCover<IOhlcvData, AnalyzableTick<bool?>>
     {
-        public DarkCloudCover(IEnumerable<Candle> inputs, int upTrendPeriodCount = 3, int downTrendPeriodCount = 3, int longPeriodCount = 20, decimal longThreshold = 0.75M)
+        public DarkCloudCover(IEnumerable<IOhlcvData> inputs, int upTrendPeriodCount = 3, int downTrendPeriodCount = 3, int longPeriodCount = 20, decimal longThreshold = 0.75M)
             : base(inputs, i => (i.Open, i.High, i.Low, i.Close), upTrendPeriodCount, downTrendPeriodCount, longPeriodCount, longThreshold)
         {
         }

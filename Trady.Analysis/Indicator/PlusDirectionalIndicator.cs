@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Trady.Analysis.Infrastructure;
 using Trady.Core;
+using Trady.Core.Infrastructure;
 
 namespace Trady.Analysis.Indicator
 {
@@ -46,9 +47,9 @@ namespace Trady.Analysis.Indicator
         }
     }
 
-    public class PlusDirectionalIndicator : PlusDirectionalIndicator<Candle, AnalyzableTick<decimal?>>
+    public class PlusDirectionalIndicator : PlusDirectionalIndicator<IOhlcvData, AnalyzableTick<decimal?>>
     {
-        public PlusDirectionalIndicator(IEnumerable<Candle> inputs, int periodCount)
+        public PlusDirectionalIndicator(IEnumerable<IOhlcvData> inputs, int periodCount)
             : base(inputs, i => (i.High, i.Low, i.Close), periodCount)
         {
         }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Trady.Analysis.Infrastructure;
 using Trady.Core;
+using Trady.Core.Infrastructure;
 
 namespace Trady.Analysis.Indicator
 {
@@ -35,9 +36,9 @@ namespace Trady.Analysis.Indicator
         }
     }
 
-    public class AverageDirectionalIndexRating : AverageDirectionalIndexRating<Candle, AnalyzableTick<decimal?>>
+    public class AverageDirectionalIndexRating : AverageDirectionalIndexRating<IOhlcvData, AnalyzableTick<decimal?>>
     {
-        public AverageDirectionalIndexRating(IEnumerable<Candle> inputs, int periodCount, int adxrPeriodCount)
+        public AverageDirectionalIndexRating(IEnumerable<IOhlcvData> inputs, int periodCount, int adxrPeriodCount)
             : base(inputs, i => (i.High, i.Low, i.Close), periodCount, adxrPeriodCount)
         {
         }

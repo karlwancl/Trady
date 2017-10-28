@@ -1,14 +1,15 @@
 using System;
 using System.Collections.Generic;
 using Trady.Core;
+using Trady.Core.Infrastructure;
 
 namespace Trady.Analysis.Backtest
 {
     public class Transaction : IEquatable<Transaction>
     {
-        public Transaction(IEnumerable<Candle> candles, int index, DateTime dateTime, TransactionType type, int quantity, decimal absCashFlow)
+        public Transaction(IEnumerable<IOhlcvData> candles, int index, DateTime dateTime, TransactionType type, int quantity, decimal absCashFlow)
         {
-            Candles = candles;
+            IOhlcvDatas = candles;
             Index = index;
             DateTime = dateTime;
             Type = type;
@@ -16,7 +17,7 @@ namespace Trady.Analysis.Backtest
             AbsoluteCashFlow = absCashFlow;
         }
 
-        public IEnumerable<Candle> Candles { get; }
+        public IEnumerable<IOhlcvData> IOhlcvDatas { get; }
 
         public DateTime DateTime { get; }
 
@@ -29,6 +30,6 @@ namespace Trady.Analysis.Backtest
         public decimal AbsoluteCashFlow { get; }
 
         public bool Equals(Transaction other)
-            => Candles.Equals(other.Candles) && Index == other.Index && Type == other.Type && Quantity == other.Quantity && AbsoluteCashFlow == other.AbsoluteCashFlow;
+            => IOhlcvDatas.Equals(other.IOhlcvDatas) && Index == other.Index && Type == other.Type && Quantity == other.Quantity && AbsoluteCashFlow == other.AbsoluteCashFlow;
     }
 }

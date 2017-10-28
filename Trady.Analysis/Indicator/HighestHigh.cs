@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using Trady.Analysis.Infrastructure;
 using Trady.Core;
+using Trady.Core.Infrastructure;
 
 namespace Trady.Analysis.Indicator
 {
-    public class HighestHigh : Highest<Candle, AnalyzableTick<decimal?>>
+    public class HighestHigh : Highest<IOhlcvData, AnalyzableTick<decimal?>>
     {
-        public HighestHigh(IEnumerable<Candle> inputs, int periodCount)
+        public HighestHigh(IEnumerable<IOhlcvData> inputs, int periodCount)
             : base(inputs, i => i.High, periodCount)
         {
         }

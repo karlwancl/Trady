@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+
 using Trady.Analysis.Infrastructure;
-using Trady.Core;
+using Trady.Core.Infrastructure;
 
 namespace Trady.Analysis.Candlestick
 {
@@ -33,9 +34,9 @@ namespace Trady.Analysis.Candlestick
         }
     }
 
-    public class Hammer : Hammer<Candle, AnalyzableTick<bool?>>
+    public class Hammer : Hammer<IOhlcvData, AnalyzableTick<bool?>>
     {
-        public Hammer(IEnumerable<Candle> inputs, int shortPeriodCount = 20, decimal shortThreshold = 0.25M)
+        public Hammer(IEnumerable<IOhlcvData> inputs, int shortPeriodCount = 20, decimal shortThreshold = 0.25M)
             : base(inputs, i => (i.Open, i.High, i.Low, i.Close), shortPeriodCount, shortThreshold)
         {
         }

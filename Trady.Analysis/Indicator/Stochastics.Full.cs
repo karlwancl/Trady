@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Trady.Analysis.Infrastructure;
 using Trady.Core;
+using Trady.Core.Infrastructure;
 
 namespace Trady.Analysis.Indicator
 {
@@ -43,9 +44,9 @@ namespace Trady.Analysis.Indicator
             }
         }
 
-        public class Full : Full<Candle, AnalyzableTick<(decimal? K, decimal? D, decimal? J)>>
+        public class Full : Full<IOhlcvData, AnalyzableTick<(decimal? K, decimal? D, decimal? J)>>
         {
-            public Full(IEnumerable<Candle> inputs, int periodCount, int smaPeriodCountK, int smaPeriodCountD)
+            public Full(IEnumerable<IOhlcvData> inputs, int periodCount, int smaPeriodCountK, int smaPeriodCountD)
                 : base(inputs, i => (i.High, i.Low, i.Close), periodCount, smaPeriodCountK, smaPeriodCountD)
             {
             }

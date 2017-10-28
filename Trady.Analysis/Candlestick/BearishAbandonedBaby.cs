@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+
 using Trady.Analysis.Infrastructure;
-using Trady.Core;
+using Trady.Core.Infrastructure;
 
 namespace Trady.Analysis.Candlestick
 {
@@ -57,9 +58,9 @@ namespace Trady.Analysis.Candlestick
         }
     }
 
-    public class BearishAbandonedBaby : BearishAbandonedBaby<Candle, AnalyzableTick<bool?>>
+    public class BearishAbandonedBaby : BearishAbandonedBaby<IOhlcvData, AnalyzableTick<bool?>>
     {
-        public BearishAbandonedBaby(IEnumerable<Candle> inputs, int upTrendPeriodCount = 3, int longPeriodCount = 20, decimal longThreshold = 0.75M, decimal dojiThreshold = 0.1M)
+        public BearishAbandonedBaby(IEnumerable<IOhlcvData> inputs, int upTrendPeriodCount = 3, int longPeriodCount = 20, decimal longThreshold = 0.75M, decimal dojiThreshold = 0.1M)
             : base(inputs, i => (i.Open, i.High, i.Low, i.Close), upTrendPeriodCount, longPeriodCount, longThreshold, dojiThreshold)
         {
         }

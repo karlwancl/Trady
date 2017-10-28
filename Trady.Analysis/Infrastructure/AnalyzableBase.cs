@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using Trady.Core;
@@ -18,21 +19,21 @@ namespace Trady.Analysis.Infrastructure
     /// </summary>
     public abstract class AnalyzableBase<TInput, TMappedInput, TOutputToMap, TOutput> : IAnalyzable<TOutput>
     {
-        private readonly bool _isTInputCandle, _isTOutputAnalyzableTick;
+        private readonly bool _isTInputIOhlcvData, _isTOutputAnalyzableTick;
 
         internal protected readonly IReadOnlyList<TMappedInput> _mappedInputs;
         readonly IReadOnlyList<DateTime> _mappedDateTimes;
 
         protected AnalyzableBase(IEnumerable<TInput> inputs, Func<TInput, TMappedInput> inputMapper)
         {
-            _isTInputCandle = typeof(TInput).Equals(typeof(Candle));
-            _isTOutputAnalyzableTick = typeof(TOutput).Equals(typeof(AnalyzableTick<TOutputToMap>));
-            if (_isTInputCandle != _isTOutputAnalyzableTick)
+            _isTInputIOhlcvData = typeof(IOhlcvData).IsAssignableFrom(typeof(TInput));
+            _isTOutputAnalyzableTick = typeof(IAnalyzableTick<TOutputToMap>).IsAssignableFrom(typeof(TOutput));
+            if (_isTInputIOhlcvData != _isTOutputAnalyzableTick)
                 throw new ArgumentException("TInput, TOutput not matched!");
 
             _mappedInputs = inputs.Select(inputMapper).ToList();
-            if (_isTInputCandle)
-                _mappedDateTimes = inputs.Select(c => (c as Candle).DateTime).ToList();
+            if (_isTInputIOhlcvData)
+                _mappedDateTimes = inputs.Select(c => (c as IOhlcvData).DateTime).ToList();
 
             Cache = new ConcurrentDictionary<int, TOutputToMap>();
         }
@@ -71,7 +72,7 @@ namespace Trady.Analysis.Infrastructure
 		{
 			int computedStartIndex = GetComputeStartIndex(startIndex);
 			int computedEndIndex = GetComputeEndIndex(endIndex);
-			return Enumerable.Range(computedStartIndex, computedEndIndex - computedStartIndex + 1).Select(outputFunc).ToList();
+            return Enumerable.Range(computedStartIndex, computedEndIndex - computedStartIndex + 1).Select(outputFunc).ToList();
 		}
 
 		internal protected IReadOnlyList<TOutput> Compute(Func<int, TOutput> outputFunc, IEnumerable<int> indexes) => indexes.Select(outputFunc).ToList();
@@ -93,7 +94,10 @@ namespace Trady.Analysis.Infrastructure
 			return _isTOutputAnalyzableTick ? AnalyzableTickMapper(datetime, outputToMap) : outputToMap;
 
 			TOutput AnalyzableTickMapper(DateTime? d, TOutputToMap otm)
-				=> (TOutput)typeof(TOutput).GetConstructors().First().Invoke(new object[] { d, otm });
+            {
+                Type concreteType = _isTOutputAnalyzableTick ? typeof(AnalyzableTick<TOutputToMap>) : typeof(TOutput);
+                return (TOutput)concreteType.GetConstructors().First().Invoke(new object[] { d, otm });
+            }
 		}
 
 		internal protected TOutputToMap ComputeByIndex(int index) => Cache.GetOrAdd(index, i => ComputeByIndexImpl(_mappedInputs, i));

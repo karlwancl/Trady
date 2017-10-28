@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+
 using Trady.Analysis.Infrastructure;
-using Trady.Core;
+using Trady.Core.Infrastructure;
 
 namespace Trady.Analysis.Candlestick
 {
@@ -23,9 +24,9 @@ namespace Trady.Analysis.Candlestick
         }
     }
 
-    public class Bullish : Bullish<Candle, AnalyzableTick<bool>>
+    public class Bullish : Bullish<IOhlcvData, AnalyzableTick<bool>>
     {
-        public Bullish(IEnumerable<Candle> inputs)
+        public Bullish(IEnumerable<IOhlcvData> inputs)
             : base(inputs, i => (i.Open, i.Close))
         {
         }

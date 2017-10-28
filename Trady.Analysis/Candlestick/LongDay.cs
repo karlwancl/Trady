@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+
+using Trady.Analysis.Extension;
 using Trady.Analysis.Infrastructure;
-using Trady.Core;
+using Trady.Core.Infrastructure;
 
 namespace Trady.Analysis.Candlestick
 {
@@ -33,9 +35,9 @@ namespace Trady.Analysis.Candlestick
         }
     }
 
-    public class LongDay : LongDay<Candle, AnalyzableTick<bool>>
+    public class LongDay : LongDay<IOhlcvData, AnalyzableTick<bool>>
     {
-        public LongDay(IEnumerable<Candle> inputs, int periodCount = 20, decimal threshold = 0.75M)
+        public LongDay(IEnumerable<IOhlcvData> inputs, int periodCount = 20, decimal threshold = 0.75M)
             : base(inputs, i => (i.Open, i.Close), periodCount, threshold)
         {
         }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Trady.Analysis.Infrastructure;
 using Trady.Core;
+using Trady.Core.Infrastructure;
 
 namespace Trady.Analysis.Indicator
 {
@@ -27,9 +28,9 @@ namespace Trady.Analysis.Indicator
         }
     }
 
-    public class TrueRange : TrueRange<Candle, AnalyzableTick<decimal?>>
+    public class TrueRange : TrueRange<IOhlcvData, AnalyzableTick<decimal?>>
     {
-        public TrueRange(IEnumerable<Candle> inputs)
+        public TrueRange(IEnumerable<IOhlcvData> inputs)
             : base(inputs, i => (i.High, i.Low, i.Close))
         {
         }

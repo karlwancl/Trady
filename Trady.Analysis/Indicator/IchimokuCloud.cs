@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Trady.Analysis.Infrastructure;
 using Trady.Core;
+using Trady.Core.Infrastructure;
 
 namespace Trady.Analysis.Indicator
 {
@@ -75,9 +76,9 @@ namespace Trady.Analysis.Indicator
         }
     }
 
-    public class IchimokuCloud : IchimokuCloud<Candle, AnalyzableTick<(decimal? ConversionLine, decimal? BaseLine, decimal? LeadingSpanA, decimal? LeadingSpanB, decimal? LaggingSpan)>>
+    public class IchimokuCloud : IchimokuCloud<IOhlcvData, AnalyzableTick<(decimal? ConversionLine, decimal? BaseLine, decimal? LeadingSpanA, decimal? LeadingSpanB, decimal? LaggingSpan)>>
     {
-        public IchimokuCloud(IEnumerable<Candle> inputs, int shortPeriodCount, int middlePeriodCount, int longPeriodCount)
+        public IchimokuCloud(IEnumerable<IOhlcvData> inputs, int shortPeriodCount, int middlePeriodCount, int longPeriodCount)
             : base(inputs, i => (i.High, i.Low, i.Close), shortPeriodCount, middlePeriodCount, longPeriodCount)
         {
         }

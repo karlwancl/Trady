@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Trady.Analysis.Infrastructure;
 using Trady.Core;
+using Trady.Core.Infrastructure;
 
 namespace Trady.Analysis.Indicator
 {
@@ -50,9 +51,9 @@ namespace Trady.Analysis.Indicator
         }
     }
 
-    public class RelativeStrength : RelativeStrength<Candle, AnalyzableTick<decimal?>>
+    public class RelativeStrength : RelativeStrength<IOhlcvData, AnalyzableTick<decimal?>>
     {
-        public RelativeStrength(IEnumerable<Candle> inputs, int periodCount)
+        public RelativeStrength(IEnumerable<IOhlcvData> inputs, int periodCount)
             : base(inputs, i => i.Close, periodCount)
         {
         }

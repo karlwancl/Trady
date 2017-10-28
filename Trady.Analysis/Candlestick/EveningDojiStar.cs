@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+
 using Trady.Analysis.Infrastructure;
-using Trady.Core;
+using Trady.Core.Infrastructure;
 
 namespace Trady.Analysis.Candlestick
 {
@@ -60,9 +61,9 @@ namespace Trady.Analysis.Candlestick
         }
     }
 
-    public class EveningDojiStar : EveningDojiStar<Candle, AnalyzableTick<bool?>>
+    public class EveningDojiStar : EveningDojiStar<IOhlcvData, AnalyzableTick<bool?>>
     {
-        public EveningDojiStar(IEnumerable<Candle> inputs, int upTrendPeriodCount = 3, int periodCount = 20, decimal longThreshold = 0.75M, decimal dojiThreshold = 0.25M, decimal threshold = 0.1M)
+        public EveningDojiStar(IEnumerable<IOhlcvData> inputs, int upTrendPeriodCount = 3, int periodCount = 20, decimal longThreshold = 0.75M, decimal dojiThreshold = 0.25M, decimal threshold = 0.1M)
             : base(inputs, i => (i.Open, i.High, i.Low, i.Close), upTrendPeriodCount, periodCount, longThreshold, dojiThreshold, threshold)
         {
         }

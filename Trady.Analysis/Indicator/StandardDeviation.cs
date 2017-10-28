@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Trady.Analysis.Infrastructure;
 using Trady.Core;
+using Trady.Core.Infrastructure;
 
 namespace Trady.Analysis.Indicator
 {
@@ -44,9 +45,9 @@ namespace Trady.Analysis.Indicator
 		}
     }
 
-    public class StandardDeviation : StandardDeviation<Candle, AnalyzableTick<decimal?>>
+    public class StandardDeviation : StandardDeviation<IOhlcvData, AnalyzableTick<decimal?>>
     {
-        public StandardDeviation(IEnumerable<Candle> inputs, int periodCount)
+        public StandardDeviation(IEnumerable<IOhlcvData> inputs, int periodCount)
             : base(inputs, i => i.Close, periodCount)
         {
         }

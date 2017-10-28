@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+
 using Trady.Analysis.Infrastructure;
-using Trady.Core;
+using Trady.Core.Infrastructure;
 
 namespace Trady.Analysis.Candlestick
 {
@@ -41,9 +42,9 @@ namespace Trady.Analysis.Candlestick
         }
     }
 
-    public class GravestoneDoji : GravestoneDoji<Candle, AnalyzableTick<bool>>
+    public class GravestoneDoji : GravestoneDoji<IOhlcvData, AnalyzableTick<bool>>
     {
-        public GravestoneDoji(IEnumerable<Candle> inputs, decimal dojiThreshold = 0.1M, decimal shadowThreshold = 0.1M)
+        public GravestoneDoji(IEnumerable<IOhlcvData> inputs, decimal dojiThreshold = 0.1M, decimal shadowThreshold = 0.1M)
             : base(inputs, i => (i.Open, i.High, i.Low, i.Close), dojiThreshold, shadowThreshold)
         {
         }

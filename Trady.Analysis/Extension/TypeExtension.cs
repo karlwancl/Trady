@@ -1,9 +1,8 @@
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Trady.Analysis
+namespace Trady.Analysis.Extension
 {
     internal static class TypeExtension
     {

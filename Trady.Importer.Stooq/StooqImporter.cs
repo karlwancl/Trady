@@ -1,14 +1,15 @@
-using StooqApi;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Trady.Core;
-using Trady.Core.Period;
-using Trady.Core.Infrastructure;
 
-namespace Trady.Importer
+using StooqApi;
+
+using Trady.Core.Infrastructure;
+using Trady.Core.Period;
+
+namespace Trady.Importer.Stooq
 {
     public class StooqImporter : IImporter
     {
@@ -28,12 +29,12 @@ namespace Trady.Importer
         /// <param name="endTime">End time.</param>
         /// <param name="period">Period.</param>
         /// <param name="token">Token.</param>
-        public async Task<IReadOnlyList<Core.Candle>> ImportAsync(string symbol, DateTime? startTime = default(DateTime?), DateTime? endTime = default(DateTime?), PeriodOption period = PeriodOption.Daily, CancellationToken token = default(CancellationToken))
+        public async Task<IReadOnlyList<IOhlcvData>> ImportAsync(string symbol, DateTime? startTime = default(DateTime?), DateTime? endTime = default(DateTime?), PeriodOption period = PeriodOption.Daily, CancellationToken token = default(CancellationToken))
         {
             if (period != PeriodOption.Daily && period != PeriodOption.Monthly && period != PeriodOption.Weekly)
                 throw new ArgumentException("This importer only supports daily, weekly & monthly data");
 
-            var candles = await Stooq.GetHistoricalAsync(symbol, PeriodMap[period], startTime, endTime, SkipOption.None, false, token);
+            var candles = await StooqApi.Stooq.GetHistoricalAsync(symbol, PeriodMap[period], startTime, endTime, SkipOption.None, false, token);
             return candles.Select(c => new Core.Candle(c.DateTime, c.Open, c.High, c.Low, c.Close, c.Volume)).OrderBy(c => c.DateTime).ToList();
         }
     }

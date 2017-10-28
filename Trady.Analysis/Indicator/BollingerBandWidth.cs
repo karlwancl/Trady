@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Trady.Analysis.Infrastructure;
 using Trady.Core;
+using Trady.Core.Infrastructure;
 
 namespace Trady.Analysis.Indicator
 {
@@ -38,9 +39,9 @@ namespace Trady.Analysis.Indicator
         }
     }
 
-    public class BollingerBandWidth : BollingerBandWidth<Candle, AnalyzableTick<decimal?>>
+    public class BollingerBandWidth : BollingerBandWidth<IOhlcvData, AnalyzableTick<decimal?>>
     {
-        public BollingerBandWidth(IEnumerable<Candle> inputs, int periodCount, decimal sdCount)
+        public BollingerBandWidth(IEnumerable<IOhlcvData> inputs, int periodCount, decimal sdCount)
             : base(inputs, i => i.Close, periodCount, sdCount)
         {
         }

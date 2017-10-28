@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+
 using Trady.Analysis.Infrastructure;
-using Trady.Core;
+using Trady.Core.Infrastructure;
 
 namespace Trady.Analysis.Candlestick
 {
@@ -67,9 +68,9 @@ namespace Trady.Analysis.Candlestick
         }
     }
 
-    public class FallingThreeMethods : FallingThreeMethods<Candle, AnalyzableTick<bool?>>
+    public class FallingThreeMethods : FallingThreeMethods<IOhlcvData, AnalyzableTick<bool?>>
     {
-        public FallingThreeMethods(IEnumerable<Candle> inputs, int downTrendPeriodCount = 3, int periodCount = 20, decimal shortThreshold = 0.25M, decimal longThreshold = 0.75M)
+        public FallingThreeMethods(IEnumerable<IOhlcvData> inputs, int downTrendPeriodCount = 3, int periodCount = 20, decimal shortThreshold = 0.25M, decimal longThreshold = 0.75M)
             : base(inputs, i => (i.Open, i.High, i.Low, i.Close), downTrendPeriodCount, periodCount, shortThreshold, longThreshold)
         {
         }

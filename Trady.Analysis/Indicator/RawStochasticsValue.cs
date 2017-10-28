@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Trady.Analysis.Infrastructure;
 using Trady.Core;
+using Trady.Core.Infrastructure;
 
 namespace Trady.Analysis.Indicator
 {
@@ -37,9 +38,9 @@ namespace Trady.Analysis.Indicator
         }
     }
 
-    public class RawStochasticsValue : RawStochasticsValue<Candle, AnalyzableTick<decimal?>>
+    public class RawStochasticsValue : RawStochasticsValue<IOhlcvData, AnalyzableTick<decimal?>>
     {
-        public RawStochasticsValue(IEnumerable<Candle> inputs, int periodCount)
+        public RawStochasticsValue(IEnumerable<IOhlcvData> inputs, int periodCount)
             : base(inputs, i => (i.High, i.Low, i.Close), periodCount)
         {
         }

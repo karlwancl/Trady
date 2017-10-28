@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using Trady.Analysis.Extension;
 using Trady.Core;
 using Trady.Core.Infrastructure;
 
@@ -10,13 +11,13 @@ namespace Trady.Analysis.Backtest
 {
     public class Runner
     {
-        private IDictionary<IEnumerable<Candle>, int> _weightings;
-        private Predicate<IndexedCandle> _buyRule, _sellRule;
+        private IDictionary<IEnumerable<IOhlcvData>, int> _weightings;
+        private Predicate<IIndexedOhlcvData> _buyRule, _sellRule;
 
         internal Runner(
-            IDictionary<IEnumerable<Candle>, int> weightings, 
-            Predicate<IndexedCandle> buyRule, 
-            Predicate<IndexedCandle> sellRule)
+            IDictionary<IEnumerable<IOhlcvData>, int> weightings, 
+            Predicate<IIndexedOhlcvData> buyRule, 
+            Predicate<IIndexedOhlcvData> sellRule)
         {
             _weightings = weightings;
             _buyRule = buyRule;
@@ -25,11 +26,11 @@ namespace Trady.Analysis.Backtest
 
         public event BuyHandler OnBought;
 
-        public delegate void BuyHandler(IEnumerable<Candle> candles, int index, DateTime dateTime, decimal buyPrice, int quantity, decimal absCashFlow, decimal currentCashAmount);
+        public delegate void BuyHandler(IEnumerable<IOhlcvData> candles, int index, DateTime dateTime, decimal buyPrice, int quantity, decimal absCashFlow, decimal currentCashAmount);
 
         public event SellHandler OnSold;
 
-        public delegate void SellHandler(IEnumerable<Candle> candles, int index, DateTime dateTime, decimal sellPrice, int quantity, decimal absCashFlow, decimal currentCashAmount, decimal plRatio);
+        public delegate void SellHandler(IEnumerable<IOhlcvData> candles, int index, DateTime dateTime, decimal sellPrice, int quantity, decimal absCashFlow, decimal currentCashAmount, decimal plRatio);
 
         public Task<Result> RunAsync(decimal principal, decimal premium = 1.0m, DateTime? startTime = null, DateTime? endTime = null)
             => Task.Factory.StartNew(() => Run(principal, premium, startTime, endTime));
@@ -41,7 +42,7 @@ namespace Trady.Analysis.Backtest
 
             // Distribute principal to each candle set
             decimal totalWeight = _weightings.Sum(w => w.Value);
-            IReadOnlyDictionary<IEnumerable<Candle>, decimal> preAssetCashMap = _weightings.ToDictionary(w => w.Key, w => principal * w.Value / totalWeight);
+            IReadOnlyDictionary<IEnumerable<IOhlcvData>, decimal> preAssetCashMap = _weightings.ToDictionary(w => w.Key, w => principal * w.Value / totalWeight);
             var assetCashMap = preAssetCashMap.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
 
             // Init transaction history
@@ -50,10 +51,10 @@ namespace Trady.Analysis.Backtest
             // Loop with each asset
             for (int i = 0; i < _weightings.Count; i++)
             {
-                var candles = assetCashMap.ElementAt(i).Key;
-                var startIndex = candles.FindIndexOrDefault(c => c.DateTime >= (startTime ?? DateTime.MinValue), 0).Value;
-                var endIndex = candles.FindLastIndexOrDefault(c => c.DateTime <= (endTime ?? DateTime.MaxValue), candles.Count() - 1).Value;
-                using (var context = new AnalyzeContext(candles))
+                var asset = assetCashMap.ElementAt(i).Key;
+                var startIndex = asset.FindIndexOrDefault(c => c.DateTime >= (startTime ?? DateTime.MinValue), 0).Value;
+                var endIndex = asset.FindLastIndexOrDefault(c => c.DateTime <= (endTime ?? DateTime.MaxValue), asset.Count() - 1).Value;
+                using (var context = new AnalyzeContext(asset))
                 {
                     var executor = CreateBuySellRuleExecutor(context, premium, assetCashMap, transactions);
                     executor.Execute(startIndex, endIndex);
@@ -63,18 +64,18 @@ namespace Trady.Analysis.Backtest
             return new Result(preAssetCashMap, assetCashMap, transactions);
         }
 
-        private BuySellRuleExecutor CreateBuySellRuleExecutor(IAnalyzeContext<Candle> context, decimal premium, IDictionary<IEnumerable<Candle>, decimal> assetCashMap, List<Transaction> transactions)
+        private BuySellRuleExecutor CreateBuySellRuleExecutor(IAnalyzeContext<IOhlcvData> context, decimal premium, IDictionary<IEnumerable<IOhlcvData>, decimal> assetCashMap, List<Transaction> transactions)
         {
-            Func<IEnumerable<Transaction>, IAnalyzeContext<Candle>, TransactionType, bool> isPreviousTransactionA = (ts, ctx, tt)
-                => ts.LastOrDefault(_t => _t.Candles.Equals(ctx.BackingList))?.Type == tt;
+            Func<IEnumerable<Transaction>, IAnalyzeContext<IOhlcvData>, TransactionType, bool> isPreviousTransactionA = (ts, ctx, tt)
+                => ts.LastOrDefault(_t => _t.IOhlcvDatas.Equals(ctx.BackingList))?.Type == tt;
 
-            Predicate<IndexedCandle> buyRule = ic
+            Predicate<IIndexedOhlcvData> buyRule = ic
                 => !isPreviousTransactionA(transactions, ic.Context, TransactionType.Buy) && _buyRule(ic);
 
-            Predicate<IndexedCandle> sellRule = ic
+            Predicate<IIndexedOhlcvData> sellRule = ic
                 => transactions.Any() && !isPreviousTransactionA(transactions, ic.Context, TransactionType.Sell) && _sellRule(ic);
 
-            Func<IndexedCandle, int, (TransactionType, IndexedCandle)?> outputFunc = (ic, i) =>
+            Func<IIndexedOhlcvData, int, (TransactionType, IIndexedOhlcvData)?> outputFunc = (ic, i) =>
             {
                 if (ic.Next == null)
                     return null;
@@ -90,34 +91,34 @@ namespace Trady.Analysis.Backtest
             return new BuySellRuleExecutor(outputFunc, context, buyRule, sellRule);
         }
 
-        private void BuyAsset(IndexedCandle indexedCandle, decimal premium, IDictionary<IEnumerable<Candle>, decimal> assetCashMap, IList<Transaction> transactions)
+        private void BuyAsset(IIndexedOhlcvData indexedCandle, decimal premium, IDictionary<IEnumerable<IOhlcvData>, decimal> assetCashMap, IList<Transaction> transactions)
         {
             if (assetCashMap.TryGetValue(indexedCandle.BackingList, out decimal cash))
             {
-                var nextCandle = indexedCandle.Next;
-                int quantity = Convert.ToInt32(Math.Floor((cash - premium) / nextCandle.Open));
-
-                decimal cashOut = nextCandle.Open * quantity + premium;
+                var nextIOhlcvData = indexedCandle.Next;
+                int quantity = Convert.ToInt32(Math.Floor((cash - premium) / nextIOhlcvData.Open));
+                
+                decimal cashOut = nextIOhlcvData.Open * quantity + premium;
                 assetCashMap[indexedCandle.BackingList] -= cashOut;
 
-                transactions.Add(new Transaction(indexedCandle.BackingList, nextCandle.Index, nextCandle.DateTime, TransactionType.Buy, quantity, cashOut));
-                OnBought?.Invoke(indexedCandle.BackingList, nextCandle.Index, nextCandle.DateTime, nextCandle.Open, quantity, cashOut, assetCashMap[indexedCandle.BackingList]);
+                transactions.Add(new Transaction(indexedCandle.BackingList, nextIOhlcvData.Index, nextIOhlcvData.DateTime, TransactionType.Buy, quantity, cashOut));
+                OnBought?.Invoke(indexedCandle.BackingList, nextIOhlcvData.Index, nextIOhlcvData.DateTime, nextIOhlcvData.Open, quantity, cashOut, assetCashMap[indexedCandle.BackingList]);
             }
         }
 
-        private void SellAsset(IndexedCandle indexedCandle, decimal premium, IDictionary<IEnumerable<Candle>, decimal> assetCashMap, IList<Transaction> transactions)
+        private void SellAsset(IIndexedOhlcvData indexedCandle, decimal premium, IDictionary<IEnumerable<IOhlcvData>, decimal> assetCashMap, IList<Transaction> transactions)
         {
             if (assetCashMap.TryGetValue(indexedCandle.BackingList, out _))
             {
-                var nextCandle = indexedCandle.Next;
-                var lastTransaction = transactions.LastOrDefault(t => t.Candles.Equals(indexedCandle.BackingList));
+                var nextIOhlcvData = indexedCandle.Next;
+                var lastTransaction = transactions.LastOrDefault(t => t.IOhlcvDatas.Equals(indexedCandle.BackingList));
 
-                decimal cashIn = nextCandle.Open * lastTransaction.Quantity - premium;
+                decimal cashIn = nextIOhlcvData.Open * lastTransaction.Quantity - premium;
                 decimal plRatio = (cashIn - lastTransaction.AbsoluteCashFlow) / lastTransaction.AbsoluteCashFlow;
                 assetCashMap[indexedCandle.BackingList] += cashIn;
 
-                transactions.Add(new Transaction(indexedCandle.BackingList, nextCandle.Index, nextCandle.DateTime, TransactionType.Sell, lastTransaction.Quantity, cashIn));
-                OnSold?.Invoke(indexedCandle.BackingList, nextCandle.Index, nextCandle.DateTime, nextCandle.Open, lastTransaction.Quantity, cashIn, assetCashMap[indexedCandle.BackingList], plRatio);
+                transactions.Add(new Transaction(indexedCandle.BackingList, nextIOhlcvData.Index, nextIOhlcvData.DateTime, TransactionType.Sell, lastTransaction.Quantity, cashIn));
+                OnSold?.Invoke(indexedCandle.BackingList, nextIOhlcvData.Index, nextIOhlcvData.DateTime, nextIOhlcvData.Open, lastTransaction.Quantity, cashIn, assetCashMap[indexedCandle.BackingList], plRatio);
             }
         }
     }

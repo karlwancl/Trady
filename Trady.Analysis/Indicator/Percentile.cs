@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Trady.Analysis.Infrastructure;
 using Trady.Core;
+using Trady.Core.Infrastructure;
 
 namespace Trady.Analysis.Indicator
 {
@@ -48,9 +49,9 @@ namespace Trady.Analysis.Indicator
 		}
     }
 
-	public class Percentile : Percentile<Candle, AnalyzableTick<decimal?>>
+	public class Percentile : Percentile<IOhlcvData, AnalyzableTick<decimal?>>
 	{
-		public Percentile(IEnumerable<Candle> inputs, int periodCount, decimal percent)
+		public Percentile(IEnumerable<IOhlcvData> inputs, int periodCount, decimal percent)
 			: base(inputs, i => i.Close, periodCount, percent)
 		{
 		}

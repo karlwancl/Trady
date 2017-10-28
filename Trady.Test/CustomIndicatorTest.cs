@@ -7,22 +7,24 @@ using System.Threading.Tasks;
 using Trady.Analysis.Infrastructure;
 using Trady.Core;
 using Trady.Analysis;
+using Trady.Core.Infrastructure;
+using Trady.Importer.Csv;
 
 namespace Trady.Test
 {
     [TestClass]
     public class CustomIndicatorTest
     {
-        private async Task<IEnumerable<Candle>> ImportCandlesAsync()
+        private async Task<IEnumerable<IOhlcvData>> ImportIOhlcvDatasAsync()
         {
-            var csvImporter = new Importer.CsvImporter("fb.csv", new CultureInfo("en-US"));
+            var csvImporter = new CsvImporter("fb.csv", new CultureInfo("en-US"));
             return await csvImporter.ImportAsync("fb");
         }
 
         [TestMethod]
         public async Task ASimpleTest()
         {
-            var candles = await ImportCandlesAsync();
+            var candles = await ImportIOhlcvDatasAsync();
 
             var customIndicator = new ClosePricePercentageChangeSinceMondayOpen(candles);
 
@@ -38,9 +40,9 @@ namespace Trady.Test
             Assert.IsTrue(customIndicator[14].Tick.Value.IsApproximatelyEquals(-0.36764m));
         }
 
-        public class ClosePricePercentageChangeSinceMondayOpen : AnalyzableBase<Candle, Candle, decimal?, AnalyzableTick<decimal?>>
+        public class ClosePricePercentageChangeSinceMondayOpen : AnalyzableBase<IOhlcvData, IOhlcvData, decimal?, AnalyzableTick<decimal?>>
         {
-            public ClosePricePercentageChangeSinceMondayOpen(IEnumerable<Candle> inputs)
+            public ClosePricePercentageChangeSinceMondayOpen(IEnumerable<IOhlcvData> inputs)
                 : base(inputs, i => i)
             {
             }
@@ -55,10 +57,10 @@ namespace Trady.Test
                 return aDate.AddDays(-daysToSubstract);
             }
 
-            protected override decimal? ComputeByIndexImpl(IReadOnlyList<Candle> mappedInputs, int index)
+            protected override decimal? ComputeByIndexImpl(IReadOnlyList<IOhlcvData> mappedInputs, int index)
             {
-                var currentCandle = mappedInputs[index];
-                var mondayOfThatWeek = GetMondayFor(currentCandle.DateTime);
+                var currentIOhlcvData = mappedInputs[index];
+                var mondayOfThatWeek = GetMondayFor(currentIOhlcvData.DateTime);
                 var candleForThatMonday = mappedInputs.FirstOrDefault(c => c.DateTime.Date.Equals(mondayOfThatWeek));
 
                 if (candleForThatMonday == null)
@@ -66,7 +68,7 @@ namespace Trady.Test
 
                 var openValue = candleForThatMonday.Open;
 
-                return (currentCandle.Close - openValue) / openValue * 100;
+                return (currentIOhlcvData.Close - openValue) / openValue * 100;
             }
         }
     }

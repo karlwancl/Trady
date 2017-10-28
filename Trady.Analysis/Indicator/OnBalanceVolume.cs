@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Trady.Analysis.Infrastructure;
 using Trady.Core;
+using Trady.Core.Infrastructure;
 
 namespace Trady.Analysis.Indicator
 {
@@ -31,9 +32,9 @@ namespace Trady.Analysis.Indicator
         }
     }
 
-    public class OnBalanceVolume : OnBalanceVolume<Candle, AnalyzableTick<decimal?>>
+    public class OnBalanceVolume : OnBalanceVolume<IOhlcvData, AnalyzableTick<decimal?>>
     {
-        public OnBalanceVolume(IEnumerable<Candle> inputs)
+        public OnBalanceVolume(IEnumerable<IOhlcvData> inputs)
             : base(inputs, i => (i.Close, i.Volume))
         {
         }

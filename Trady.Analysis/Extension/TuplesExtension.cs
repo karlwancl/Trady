@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+
 using Trady.Analysis.Indicator;
 using Trady.Analysis.Infrastructure;
 using Trady.Core.Infrastructure;
 
-namespace Trady.Analysis
+namespace Trady.Analysis.Extension
 {
     public static class TuplesExtension
     {

@@ -6,6 +6,7 @@ namespace Trady.Analysis
     public class AnalyzableTick<T> : IAnalyzableTick<T>
     {
         public DateTime? DateTime { get; }
+
         public T Tick { get; }
 
         object IAnalyzableTick.Tick => Tick;

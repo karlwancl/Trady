@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Globalization;
-using Trady.Core;
 
-namespace Trady.Importer.Helper
+using Trady.Core;
+using Trady.Core.Infrastructure;
+
+namespace Trady.Importer.Quandl
 {
     internal static class Helper
     {
@@ -16,7 +18,7 @@ namespace Trady.Importer.Helper
             return false;
         }
 
-        public static Candle CreateCandle(this object[] row)
+        public static IOhlcvData CreateIOhlcvData(this object[] row)
         {
             return new Candle(
                 Convert.ToDateTime(row[0], CultureInfo.InvariantCulture),
