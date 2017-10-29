@@ -6,7 +6,7 @@ using Trady.Core;
 
 namespace Trady.Analysis.Indicator
 {
-	public class EfficiencyRatio<TInput, TOutput> : NumericAnalyzableBase<TInput, decimal, TOutput>
+    public class EfficiencyRatio<TInput, TOutput> : NumericAnalyzableBase<TInput, decimal, TOutput>
     {
         public EfficiencyRatio(IEnumerable<TInput> inputs, Func<TInput, decimal> inputMapper, int periodCount) : base(inputs, inputMapper)
         {
@@ -22,11 +22,11 @@ namespace Trady.Analysis.Indicator
 
             decimal? change = Math.Abs(mappedInputs[index] - mappedInputs[index - PeriodCount]);
             decimal? volatility = Enumerable.Range(index - PeriodCount + 1, PeriodCount).Select(i => Math.Abs(mappedInputs[i] - mappedInputs[i - 1])).Sum();
-	        if (volatility > 0)
-	        {
-				return change / volatility;
-			}
-	        return null;
+            if (volatility > 0)
+            {
+                return change / volatility;
+            }
+            return null;
         }
     }
 
