@@ -22,7 +22,11 @@ namespace Trady.Analysis.Indicator
 
             decimal? change = Math.Abs(mappedInputs[index] - mappedInputs[index - PeriodCount]);
             decimal? volatility = Enumerable.Range(index - PeriodCount + 1, PeriodCount).Select(i => Math.Abs(mappedInputs[i] - mappedInputs[i - 1])).Sum();
-            return change / volatility;
+            if (volatility > 0)
+            {
+                return change / volatility;
+            }
+            return null;
         }
     }
 
