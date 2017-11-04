@@ -28,6 +28,14 @@ namespace Trady.Test
         }
 
         [TestMethod]
+        public async Task TestDynamicMomentumIndexAsync()
+        {
+            var candles = await ImportIOhlcvDatasAsync();
+            var result = candles.Dymoi(5, 10, 14, 30, 5)[candles.Count() - 1];
+            Assert.IsTrue(48.805m.IsApproximatelyEquals(result.Tick.Value));
+        }
+
+        [TestMethod]
         public async Task TestParabolicSarAsync()
         {
             var candles = await ImportIOhlcvDatasAsync();

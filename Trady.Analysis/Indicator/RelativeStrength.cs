@@ -7,18 +7,18 @@ using Trady.Core.Infrastructure;
 
 namespace Trady.Analysis.Indicator
 {
-    public class RelativeStrength<TInput, TOutput> : NumericAnalyzableBase<TInput, decimal, TOutput>
+    public class RelativeStrength<TInput, TOutput> : NumericAnalyzableBase<TInput, decimal?, TOutput>
     {
         private DifferenceByTuple _mtm;
         private readonly GenericMovingAverage _dEma;
         private readonly GenericMovingAverage _uEma;
 
-        public RelativeStrength(IEnumerable<TInput> inputs, Func<TInput, decimal> inputMapper, int periodCount) : base(inputs, inputMapper)
+        public RelativeStrength(IEnumerable<TInput> inputs, Func<TInput, decimal?> inputMapper, int periodCount) : base(inputs, inputMapper)
         {
             _mtm = new DifferenceByTuple(inputs.Select(inputMapper));
 
-            Func<int, decimal?> u = i => i > 0 ? Math.Max(_mtm[i].Value, 0) : (decimal?)null;
-            Func<int, decimal?> l = i => i > 0 ? Math.Abs(Math.Min(_mtm[i].Value, 0)) : (decimal?)null;
+            Func<int, decimal?> u = i => i > 0 && _mtm[i].HasValue ? Math.Max(_mtm[i].Value, 0) : (decimal?)null;
+            Func<int, decimal?> l = i => i > 0 && _mtm[i].HasValue ? Math.Abs(Math.Min(_mtm[i].Value, 0)) : (decimal?)null;
 
             _uEma = new GenericMovingAverage(
                 periodCount,
@@ -39,13 +39,13 @@ namespace Trady.Analysis.Indicator
 
         public int PeriodCount { get; }
 
-        protected override decimal? ComputeByIndexImpl(IReadOnlyList<decimal> mappedInputs, int index)
+        protected override decimal? ComputeByIndexImpl(IReadOnlyList<decimal?> mappedInputs, int index)
             => _uEma[index] / _dEma[index];
     }
 
-    public class RelativeStrengthByTuple : RelativeStrength<decimal, decimal?>
+    public class RelativeStrengthByTuple : RelativeStrength<decimal?, decimal?>
     {
-        public RelativeStrengthByTuple(IEnumerable<decimal> inputs, int periodCount)
+        public RelativeStrengthByTuple(IEnumerable<decimal?> inputs, int periodCount)
             : base(inputs, i => i, periodCount)
         {
         }

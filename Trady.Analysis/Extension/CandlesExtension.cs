@@ -57,6 +57,9 @@ namespace Trady.Analysis.Extension
         public static IReadOnlyList<AnalyzableTick<decimal?>> Dmi(this IEnumerable<IOhlcvData> candles, int periodCount, int? startIndex = null, int? endIndex = null)
             => new DirectionalMovementIndex(candles, periodCount).Compute(startIndex, endIndex);
 
+        public static IReadOnlyList<AnalyzableTick<decimal?>> Dymoi(this IEnumerable<IOhlcvData> candles, int sdPeriod, int smoothedSdPeriod, int rsiPeriod, int upLimit, int lowLimit, int? startIndex = null, int? endIndex = null)
+            => new DynamicMomentumIndex(candles, sdPeriod, smoothedSdPeriod, rsiPeriod, upLimit, lowLimit).Compute(startIndex, endIndex);
+
         public static IReadOnlyList<AnalyzableTick<decimal?>> Er(this IEnumerable<IOhlcvData> candles, int periodCount, int? startIndex = null, int? endIndex = null)
             => new EfficiencyRatio(candles, periodCount).Compute(startIndex, endIndex);
 

@@ -57,6 +57,9 @@ namespace Trady.Analysis.Extension
         public static IReadOnlyList<decimal?> Dmi(this IEnumerable<(decimal High, decimal Low, decimal Close)> inputs, int periodCount, int? startIndex = null, int? endIndex = null)
             => new DirectionalMovementIndexByTuple(inputs, periodCount).Compute(startIndex, endIndex);
 
+        public static IReadOnlyList<decimal?> Dymoi(this IEnumerable<decimal?> inputs, int sdPeriod, int smoothedSdPeriod, int rsiPeriod, int upLimit, int lowLimit, int? startIndex = null, int? endIndex = null)
+            => new DynamicMomentumIndexByTuple(inputs, sdPeriod, smoothedSdPeriod, rsiPeriod, upLimit, lowLimit).Compute(startIndex, endIndex);
+
         public static IReadOnlyList<decimal?> Er(this IEnumerable<decimal> inputs, int periodCount, int? startIndex = null, int? endIndex = null)
             => new EfficiencyRatioByTuple(inputs, periodCount).Compute(startIndex, endIndex);
 
@@ -117,10 +120,10 @@ namespace Trady.Analysis.Extension
         public static IReadOnlyList<decimal?> Rsv(this IEnumerable<(decimal High, decimal Low, decimal Close)> inputs, int periodCount, int? startIndex = null, int? endIndex = null)
             => new RawStochasticsValueByTuple(inputs, periodCount).Compute(startIndex, endIndex);
 
-        public static IReadOnlyList<decimal?> Rs(this IEnumerable<decimal> inputs, int periodCount, int? startIndex = null, int? endIndex = null)
+        public static IReadOnlyList<decimal?> Rs(this IEnumerable<decimal?> inputs, int periodCount, int? startIndex = null, int? endIndex = null)
             => new RelativeStrengthByTuple(inputs, periodCount).Compute(startIndex, endIndex);
 
-        public static IReadOnlyList<decimal?> Rsi(this IEnumerable<decimal> inputs, int periodCount, int? startIndex = null, int? endIndex = null)
+        public static IReadOnlyList<decimal?> Rsi(this IEnumerable<decimal?> inputs, int periodCount, int? startIndex = null, int? endIndex = null)
             => new RelativeStrengthIndexByTuple(inputs, periodCount).Compute(startIndex, endIndex);
 
 		public static IReadOnlyList<decimal?> Sma(this IEnumerable<decimal> inputs, int periodCount, int? startIndex = null, int? endIndex = null)

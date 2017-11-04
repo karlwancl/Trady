@@ -5,6 +5,7 @@ using System.Linq;
 using Trady.Analysis.Candlestick;
 using Trady.Analysis.Infrastructure;
 using Trady.Core;
+using Trady.Core.Infrastructure;
 
 namespace Trady.Analysis.Indicator
 {
@@ -133,9 +134,9 @@ namespace Trady.Analysis.Indicator
         }
     }
 
-    public class ParabolicStopAndReverse : ParabolicStopAndReverse<Candle, AnalyzableTick<decimal?>>
+    public class ParabolicStopAndReverse : ParabolicStopAndReverse<IOhlcvData, AnalyzableTick<decimal?>>
     {
-        public ParabolicStopAndReverse(IEnumerable<Candle> inputs, decimal step = 0.02M, decimal maximumStep = 0.2M) 
+        public ParabolicStopAndReverse(IEnumerable<IOhlcvData> inputs, decimal step = 0.02M, decimal maximumStep = 0.2M) 
             : base(inputs, i => (i.High, i.Low), step, maximumStep)
         {
         }
