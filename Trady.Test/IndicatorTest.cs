@@ -29,6 +29,17 @@ namespace Trady.Test
         }
 
         [TestMethod]
+        public async Task TestStochRsiAsync()
+        {
+            var candles = await ImportIOhlcvDatasAsync();
+            var result = candles.StochRsi(14)[candles.Count() - 1];  
+            Assert.IsTrue(0m.IsApproximatelyEquals(result.Tick.Value));
+
+            var result2 = candles.StochRsi(14).Single(v => v.DateTime == new DateTime(2017, 9, 15));
+            Assert.IsTrue(0.317m.IsApproximatelyEquals(result2.Tick.Value));
+        }
+
+        [TestMethod]
         public async Task TestNmoAsync()
         {
             var candles = await ImportIOhlcvDatasAsync();

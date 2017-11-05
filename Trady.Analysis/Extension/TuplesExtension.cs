@@ -168,6 +168,9 @@ namespace Trady.Analysis.Extension
         public static IReadOnlyList<decimal?> SlowStoOsc(this IEnumerable<(decimal High, decimal Low, decimal Close)> inputs, int periodCount, int smaPeriodCountD, int? startIndex = null, int? endIndex = null)
             => new StochasticsOscillator.SlowByTuple(inputs, periodCount, smaPeriodCountD).Compute(startIndex, endIndex);
 
+        public static IReadOnlyList<decimal?> StochRsi(this IEnumerable<decimal?> inputs, int periodCount, int? startIndex = null, int? endIndex = null)
+            => new StochasticsRsiOscillatorByTuple(inputs, periodCount).Compute(startIndex, endIndex);
+
         public static IReadOnlyList<decimal?> Tr(this IEnumerable<(decimal High, decimal Low, decimal Close)> inputs, int? startIndex = null, int? endIndex = null)
             => new TrueRangeByTuple(inputs).Compute(startIndex, endIndex);
 

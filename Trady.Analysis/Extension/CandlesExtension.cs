@@ -168,6 +168,9 @@ namespace Trady.Analysis.Extension
 		public static IReadOnlyList<AnalyzableTick<decimal?>> SlowStoOsc(this IEnumerable<IOhlcvData> candles, int periodCount, int smaPeriodCountD, int? startIndex = null, int? endIndex = null)
 			=> new StochasticsOscillator.Slow(candles, periodCount, smaPeriodCountD).Compute(startIndex, endIndex);
 
+        public static IReadOnlyList<AnalyzableTick<decimal?>> StochRsi(this IEnumerable<IOhlcvData> candles, int periodCount, int? startIndex = null, int? endIndex = null)
+            => new StochasticsRsiOscillator(candles, periodCount).Compute(startIndex, endIndex);
+
         public static IReadOnlyList<AnalyzableTick<decimal?>> Tr(this IEnumerable<IOhlcvData> candles, int? startIndex = null, int? endIndex = null)
             => new TrueRange(candles).Compute(startIndex, endIndex);
 
