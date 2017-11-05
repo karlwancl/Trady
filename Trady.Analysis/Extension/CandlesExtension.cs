@@ -114,6 +114,9 @@ namespace Trady.Analysis.Extension
         public static IReadOnlyList<AnalyzableTick<decimal?>> MacdHist(this IEnumerable<IOhlcvData> candles, int emaPeriodCount1, int emaPeriodCount2, int demPeriodCount, int? startIndex = null, int? endIndex = null)
 	        => new MovingAverageConvergenceDivergenceHistogram(candles, emaPeriodCount1, emaPeriodCount2, demPeriodCount).Compute(startIndex, endIndex);
 
+        public static IReadOnlyList<AnalyzableTick<decimal?>> Nmo(this IEnumerable<IOhlcvData> candles, int periodCount, int? startIndex = null, int? endIndex = null)
+            => new NetMomentumOscillator(candles, periodCount).Compute(startIndex, endIndex);
+
         public static IReadOnlyList<AnalyzableTick<decimal?>> Obv(this IEnumerable<IOhlcvData> candles, int? startIndex = null, int? endIndex = null)
             => new OnBalanceVolume(candles).Compute(startIndex, endIndex);
 

@@ -29,6 +29,14 @@ namespace Trady.Test
         }
 
         [TestMethod]
+        public async Task TestNmoAsync()
+        {
+            var candles = await ImportIOhlcvDatasAsync();
+            var result = candles.Nmo(14)[candles.Count() - 1];
+            Assert.IsTrue(0.58m.IsApproximatelyEquals(result.Tick.Value));
+        }
+
+        [TestMethod]
         public async Task TestDownMomentumAsync()
         {
             var candles = await ImportIOhlcvDatasAsync();

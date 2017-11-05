@@ -15,10 +15,10 @@ namespace Trady.Analysis.Indicator
 
         public RelativeMomentumIndex(IEnumerable<TInput> inputs, Func<TInput, decimal?> inputMapper, int rmiPeriod, int mtmPeriod) : base(inputs, inputMapper)
         {
+            _rm = new RelativeMomentumByTuple(inputs.Select(inputMapper), rmiPeriod, mtmPeriod);
+
             MtmPeriod = mtmPeriod;
             RmiPeriod = rmiPeriod;
-
-            _rm = new RelativeMomentumByTuple(inputs.Select(inputMapper), rmiPeriod, mtmPeriod);
         }
 
         protected override decimal? ComputeByIndexImpl(IReadOnlyList<decimal?> mappedInputs, int index)

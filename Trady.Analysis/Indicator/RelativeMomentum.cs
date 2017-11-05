@@ -17,25 +17,25 @@ namespace Trady.Analysis.Indicator
 
         public RelativeMomentum(IEnumerable<TInput> inputs, Func<TInput, decimal?> inputMapper, int rmiPeriod, int mtmPeriod) : base(inputs, inputMapper)
         {
-            MtmPeriod = mtmPeriod;
-            RmiPeriod = rmiPeriod;
-
-            _u = new PositiveDifferenceByTuple(inputs.Select(inputMapper), MtmPeriod);
-            _d = new NegativeDifferenceByTuple(inputs.Select(inputMapper), MtmPeriod);
+            _u = new PositiveDifferenceByTuple(inputs.Select(inputMapper), mtmPeriod);
+            _d = new NegativeDifferenceByTuple(inputs.Select(inputMapper), mtmPeriod);
 
             _uEma = new GenericMovingAverage(
-                RmiPeriod + MtmPeriod - 1,
-                i => Enumerable.Range(i - RmiPeriod + 1, RmiPeriod).Average(j => _u[j]),
+                rmiPeriod + mtmPeriod - 1,
+                i => Enumerable.Range(i - rmiPeriod + 1, rmiPeriod).Average(j => _u[j]),
                 i => _u[i],
-                i => 2.0m / (RmiPeriod + 1),
+                i => 2.0m / (rmiPeriod + 1),
                 inputs.Count());
 
             _dEma = new GenericMovingAverage(
-                RmiPeriod + MtmPeriod - 1,
-                i => Enumerable.Range(i - RmiPeriod + 1, RmiPeriod).Average(j => _d[j]),
+                rmiPeriod + mtmPeriod - 1,
+                i => Enumerable.Range(i - rmiPeriod + 1, rmiPeriod).Average(j => _d[j]),
                 i => _d[i],
-                i => 2.0m / (RmiPeriod + 1),
+                i => 2.0m / (rmiPeriod + 1),
                 inputs.Count());
+
+            MtmPeriod = mtmPeriod;
+            RmiPeriod = rmiPeriod;
         }
 
         public int RmiPeriod { get; }

@@ -108,6 +108,9 @@ namespace Trady.Analysis.Extension
         public static IReadOnlyList<decimal?> MacdHist(this IEnumerable<decimal> inputs, int emaPeriodCount1, int emaPeriodCount2, int demPeriodCount, int? startIndex = null, int? endIndex = null)
             => new MovingAverageConvergenceDivergenceHistogramByTuple(inputs, emaPeriodCount1, emaPeriodCount2, demPeriodCount).Compute(startIndex, endIndex);
 
+        public static IReadOnlyList<decimal?> Nmo(this IEnumerable<decimal?> inputs, int periodCount, int? startIndex = null, int? endIndex = null)
+            => new NetMomentumOscillatorByTuple(inputs, periodCount).Compute(startIndex, endIndex);
+
         public static IReadOnlyList<decimal?> Obv(this IEnumerable<(decimal Close, decimal Volume)> inputs, int? startIndex = null, int? endIndex = null)
             => new OnBalanceVolumeByTuple(inputs).Compute(startIndex, endIndex);
 

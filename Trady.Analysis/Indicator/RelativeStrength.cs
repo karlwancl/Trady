@@ -24,15 +24,15 @@ namespace Trady.Analysis.Indicator
 
             _uEma = new GenericMovingAverage(
                 periodCount,
-                i => Enumerable.Range(i - PeriodCount + 1, PeriodCount).Average(u),
-                u,
+                i => Enumerable.Range(i - PeriodCount + 1, PeriodCount).Average(j => _u[j]),
+                i => _u[i],
                 Smoothing.Mma(periodCount),
                 inputs.Count());
 
             _dEma = new GenericMovingAverage(
                 periodCount,
-                i => Enumerable.Range(i - PeriodCount + 1, PeriodCount).Average(l),
-                l,
+                i => Enumerable.Range(i - PeriodCount + 1, PeriodCount).Average(j => _d[j]),
+                i => _d[i],
                 Smoothing.Mma(periodCount),
                 inputs.Count());
         }
