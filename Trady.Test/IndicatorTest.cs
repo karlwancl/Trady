@@ -19,6 +19,7 @@ namespace Trady.Test
     {
         protected async Task<IEnumerable<IOhlcvData>> ImportIOhlcvDatasAsync()
         {
+            // Last record: 09/18/2017
             var csvImporter = new CsvImporter("fb.csv", new CultureInfo("en-US"));
             return await csvImporter.ImportAsync("fb");
             //var yahooImporter = new YahooFinanceImporter();
@@ -28,7 +29,45 @@ namespace Trady.Test
         }
 
         [TestMethod]
-        public async Task TestDynamicMomentumIndexAsync()
+        public async Task TestDownMomentumAsync()
+        {
+            var candles = await ImportIOhlcvDatasAsync();
+            var results = new DownMomentum(candles, 20);
+            Assert.IsTrue(0m.IsApproximatelyEquals(results[candles.Count() - 1].Tick.Value));
+
+            var results2 = new DownMomentum(candles, 3);
+            Assert.IsTrue(3.04m.IsApproximatelyEquals(results2[candles.Count() - 1].Tick.Value));
+        }
+
+        [TestMethod]
+        public async Task TestUpMomentumAsync()
+        {
+            var candles = await ImportIOhlcvDatasAsync();
+            var results = new UpMomentum(candles, 20);
+            Assert.IsTrue(2.6m.IsApproximatelyEquals(results[candles.Count() - 1].Tick.Value));
+
+            var results2 = new UpMomentum(candles, 3);
+            Assert.IsTrue(0m.IsApproximatelyEquals(results2[candles.Count() - 1].Tick.Value));
+        }
+
+        [TestMethod]
+        public async Task TestRmAsync()
+        {
+            var candles = await ImportIOhlcvDatasAsync();
+            var result = candles.Rm(20, 4)[candles.Count() - 1];
+            Assert.IsTrue(1.4016m.IsApproximatelyEquals(result.Tick.Value));
+        }
+
+        [TestMethod]
+        public async Task TestRmiAsync()
+        {
+            var candles = await ImportIOhlcvDatasAsync();
+            var result = candles.Rmi(20, 4)[candles.Count() - 1];
+            Assert.IsTrue(58.3607m.IsApproximatelyEquals(result.Tick.Value));
+        }
+
+        [TestMethod]
+        public async Task TestDymoiAsync()
         {
             var candles = await ImportIOhlcvDatasAsync();
             var result = candles.Dymoi(5, 10, 14, 30, 5)[candles.Count() - 1];

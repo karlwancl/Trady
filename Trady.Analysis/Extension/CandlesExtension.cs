@@ -123,6 +123,12 @@ namespace Trady.Analysis.Extension
         public static IReadOnlyList<AnalyzableTick<decimal?>> Pdm(this IEnumerable<IOhlcvData> candles, int? startIndex = null, int? endIndex = null)
             => new PlusDirectionalMovement(candles).Compute(startIndex, endIndex);
 
+        public static IReadOnlyList<AnalyzableTick<decimal?>> Rm(this IEnumerable<IOhlcvData> candles, int rmiPeriod, int mtmPeriod, int? startIndex = null, int? endIndex = null)
+            => new RelativeMomentum(candles, rmiPeriod, mtmPeriod).Compute(startIndex, endIndex);
+
+        public static IReadOnlyList<AnalyzableTick<decimal?>> Rmi(this IEnumerable<IOhlcvData> candles, int rmiPeriod, int mtmPeriod, int? startIndex = null, int? endIndex = null)
+            => new RelativeMomentumIndex(candles, rmiPeriod, mtmPeriod).Compute(startIndex, endIndex);
+
         public static IReadOnlyList<AnalyzableTick<decimal?>> Rsv(this IEnumerable<IOhlcvData> candles, int periodCount, int? startIndex = null, int? endIndex = null)
             => new RawStochasticsValue(candles, periodCount).Compute(startIndex, endIndex);
 

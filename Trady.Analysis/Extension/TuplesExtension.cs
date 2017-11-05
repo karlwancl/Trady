@@ -117,6 +117,12 @@ namespace Trady.Analysis.Extension
         public static IReadOnlyList<decimal?> Pdm(this IEnumerable<decimal> inputs, int? startIndex = null, int? endIndex = null)
             => new PlusDirectionalMovementByTuple(inputs).Compute(startIndex, endIndex);
 
+        public static IReadOnlyList<decimal?> Rm(this IEnumerable<decimal?> inputs, int rmiPeriod, int mtmPeriod, int? startIndex = null, int? endIndex = null)
+            => new RelativeMomentumByTuple(inputs, rmiPeriod, mtmPeriod).Compute(startIndex, endIndex);
+
+        public static IReadOnlyList<decimal?> Rmi(this IEnumerable<decimal?> inputs, int rmiPeriod, int mtmPeriod, int? startIndex = null, int? endIndex = null)
+            => new RelativeMomentumIndexByTuple(inputs, rmiPeriod, mtmPeriod).Compute(startIndex, endIndex);
+
         public static IReadOnlyList<decimal?> Rsv(this IEnumerable<(decimal High, decimal Low, decimal Close)> inputs, int periodCount, int? startIndex = null, int? endIndex = null)
             => new RawStochasticsValueByTuple(inputs, periodCount).Compute(startIndex, endIndex);
 

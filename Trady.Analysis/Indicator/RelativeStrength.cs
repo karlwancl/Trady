@@ -9,16 +9,18 @@ namespace Trady.Analysis.Indicator
 {
     public class RelativeStrength<TInput, TOutput> : NumericAnalyzableBase<TInput, decimal?, TOutput>
     {
-        private DifferenceByTuple _mtm;
+        private readonly PositiveDifferenceByTuple _u;
+        private readonly NegativeDifferenceByTuple _d;
+
         private readonly GenericMovingAverage _dEma;
         private readonly GenericMovingAverage _uEma;
 
         public RelativeStrength(IEnumerable<TInput> inputs, Func<TInput, decimal?> inputMapper, int periodCount) : base(inputs, inputMapper)
         {
-            _mtm = new DifferenceByTuple(inputs.Select(inputMapper));
+            PeriodCount = periodCount;
 
-            Func<int, decimal?> u = i => i > 0 && _mtm[i].HasValue ? Math.Max(_mtm[i].Value, 0) : (decimal?)null;
-            Func<int, decimal?> l = i => i > 0 && _mtm[i].HasValue ? Math.Abs(Math.Min(_mtm[i].Value, 0)) : (decimal?)null;
+            _u = new PositiveDifferenceByTuple(inputs.Select(inputMapper), 1);
+            _d = new NegativeDifferenceByTuple(inputs.Select(inputMapper), 1);
 
             _uEma = new GenericMovingAverage(
                 periodCount,
@@ -33,14 +35,15 @@ namespace Trady.Analysis.Indicator
                 l,
                 Smoothing.Mma(periodCount),
                 inputs.Count());
-
-            PeriodCount = periodCount;
         }
 
         public int PeriodCount { get; }
 
         protected override decimal? ComputeByIndexImpl(IReadOnlyList<decimal?> mappedInputs, int index)
-            => _uEma[index] / _dEma[index];
+        {
+            var dEma = _dEma[index];
+            return dEma.HasValue && dEma != 0 ? _uEma[index] / dEma : null;
+        }
     }
 
     public class RelativeStrengthByTuple : RelativeStrength<decimal?, decimal?>
