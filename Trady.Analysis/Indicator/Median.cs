@@ -15,8 +15,8 @@ namespace Trady.Analysis.Indicator
 
         public Median(IEnumerable<TInput> inputs, Func<TInput, decimal?> inputMapper, int periodCount) : base(inputs, inputMapper)
         {
-            PeriodCount = periodCount;
             _percentile = new PercentileByTuple(inputs.Select(inputMapper), periodCount, 0.5m);
+            PeriodCount = periodCount;
         }
 
         protected override decimal? ComputeByIndexImpl(IReadOnlyList<decimal?> mappedInputs, int index) => _percentile[index];

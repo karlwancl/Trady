@@ -15,7 +15,7 @@ namespace Trady.Analysis.Indicator
         {
             _ema = new GenericMovingAverage(
                 i => inputs.Select(inputMapper).ElementAt(i),
-                2.0m / (periodCount + 1),
+                Smoothing.Ema(periodCount),
                 inputs.Count());
 
             PeriodCount = periodCount;

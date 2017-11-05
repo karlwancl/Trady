@@ -9,29 +9,29 @@ namespace Trady.Analysis.Indicator
 {
     public class RelativeStrength<TInput, TOutput> : NumericAnalyzableBase<TInput, decimal, TOutput>
     {
-        private DifferenceByTuple _closePriceChange;
+        private DifferenceByTuple _mtm;
         private readonly GenericMovingAverage _dEma;
         private readonly GenericMovingAverage _uEma;
 
         public RelativeStrength(IEnumerable<TInput> inputs, Func<TInput, decimal> inputMapper, int periodCount) : base(inputs, inputMapper)
         {
-            _closePriceChange = new DifferenceByTuple(inputs.Select(inputMapper));
+            _mtm = new DifferenceByTuple(inputs.Select(inputMapper));
 
-            Func<int, decimal?> u = i => i > 0 ? Math.Max(_closePriceChange[i].Value, 0) : (decimal?)null;
-            Func<int, decimal?> l = i => i > 0 ? Math.Abs(Math.Min(_closePriceChange[i].Value, 0)) : (decimal?)null;
+            Func<int, decimal?> u = i => i > 0 ? Math.Max(_mtm[i].Value, 0) : (decimal?)null;
+            Func<int, decimal?> l = i => i > 0 ? Math.Abs(Math.Min(_mtm[i].Value, 0)) : (decimal?)null;
 
             _uEma = new GenericMovingAverage(
                 periodCount,
-                i => i > 0 ? Enumerable.Range(i - PeriodCount + 1, PeriodCount).Average(u) : null,
+                i => Enumerable.Range(i - PeriodCount + 1, PeriodCount).Average(u),
                 u,
-                i => 1.0m / periodCount,
+                Smoothing.Mma(periodCount),
                 inputs.Count());
 
             _dEma = new GenericMovingAverage(
                 periodCount,
-                i => i > 0 ? Enumerable.Range(i - PeriodCount + 1, PeriodCount).Average(l) : null,
+                i => Enumerable.Range(i - PeriodCount + 1, PeriodCount).Average(l),
                 l,
-                i => 1.0m / periodCount,
+                Smoothing.Mma(periodCount),
                 inputs.Count());
 
             PeriodCount = periodCount;

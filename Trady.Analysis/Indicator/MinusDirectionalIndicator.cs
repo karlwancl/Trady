@@ -23,9 +23,9 @@ namespace Trady.Analysis.Indicator
 
             _tmdmEma = new GenericMovingAverage(
                 periodCount,
-                i => Enumerable.Range(i - periodCount + 1, periodCount).Select(tmdm).Average(),
+                i => Enumerable.Range(i - periodCount + 1, periodCount).Average(tmdm),
                 tmdm,
-                i => 1.0m / periodCount,
+                Smoothing.Mma(periodCount),
                 inputs.Count());
 
             _atr = new AverageTrueRangeByTuple(inputs.Select(inputMapper), periodCount);

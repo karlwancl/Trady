@@ -20,7 +20,7 @@ namespace Trady.Analysis.Indicator
                 periodCount,
                 i => Enumerable.Range(i - periodCount + 1, periodCount).Select(j => _dx[j]).Average(),
                 i => _dx[i],
-                i => 1.0m / periodCount,
+                Smoothing.Mma(periodCount),
                 inputs.Count());
 
             PeriodCount = periodCount;

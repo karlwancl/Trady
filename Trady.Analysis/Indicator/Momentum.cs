@@ -7,8 +7,8 @@ namespace Trady.Analysis.Indicator
 {
 	public class Momentum : Difference<IOhlcvData, AnalyzableTick<decimal?>>
 	{
-        public Momentum(IEnumerable<IOhlcvData> inputs, int numberOfDays = 1)
-			: base(inputs, i => i.Close, numberOfDays)
+        public Momentum(IEnumerable<IOhlcvData> inputs, int periodCount = 1)
+			: base(inputs, i => i.Close, periodCount)
 		{
 		}
 	}

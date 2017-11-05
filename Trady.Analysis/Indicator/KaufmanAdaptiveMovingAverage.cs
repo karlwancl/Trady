@@ -10,23 +10,23 @@ namespace Trady.Analysis.Indicator
     public class KaufmanAdaptiveMovingAverage<TInput, TOutput> : NumericAnalyzableBase<TInput, decimal, TOutput>
     {
         private EfficiencyRatioByTuple _er;
-        private GenericMovingAverage _gema;
+        private GenericMovingAverage _gma;
 
         public KaufmanAdaptiveMovingAverage(IEnumerable<TInput> inputs, Func<TInput, decimal> inputMapper, int periodCount, int emaFastPeriodCount, int emaSlowPeriodCount) : base(inputs, inputMapper)
         {
             _er = new EfficiencyRatioByTuple(inputs.Select(inputMapper), periodCount);
 
-            Func<int, decimal> sc = i =>
+            Func<int, decimal> smoothingFactor = i =>
             {
-                double erValue = Convert.ToDouble(_er[i]);
-                return Convert.ToDecimal(Math.Pow(erValue * (2.0 / (emaFastPeriodCount + 1) - 2.0 / (emaSlowPeriodCount + 1)) + 2.0 / (emaSlowPeriodCount + 1), 2));
+                var s = Smoothing.Ema(emaSlowPeriodCount)(i) + _er[i].Value * (Smoothing.Ema(emaFastPeriodCount)(i) - Smoothing.Ema(emaSlowPeriodCount)(i)) ;
+                return s * s;
             };
 
-            _gema = new GenericMovingAverage(
+            _gma = new GenericMovingAverage(
                 periodCount - 1,
                 i => inputs.Select(inputMapper).ElementAt(i),
                 i => inputs.Select(inputMapper).ElementAt(i),
-                sc,
+                smoothingFactor,
                 inputs.Count());
 
             PeriodCount = periodCount;
@@ -40,7 +40,7 @@ namespace Trady.Analysis.Indicator
 
         public int EmaSlowPeriodCount { get; }
 
-        protected override decimal? ComputeByIndexImpl(IReadOnlyList<decimal> mappedInputs, int index) => _gema[index];
+        protected override decimal? ComputeByIndexImpl(IReadOnlyList<decimal> mappedInputs, int index) => _gma[index];
     }
 
     public class KaufmanAdaptiveMovingAverageByTuple : KaufmanAdaptiveMovingAverage<decimal, decimal?>

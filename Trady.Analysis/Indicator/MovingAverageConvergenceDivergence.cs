@@ -19,7 +19,7 @@ namespace Trady.Analysis.Indicator
 
             _signal = new GenericMovingAverage(
                 i => _macd[i],
-                2.0m / (demPeriodCount + 1),
+                Smoothing.Ema(demPeriodCount),
                 inputs.Count());
 
             EmaPeriodCount1 = emaPeriodCount1;

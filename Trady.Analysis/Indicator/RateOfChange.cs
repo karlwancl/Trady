@@ -6,8 +6,8 @@ namespace Trady.Analysis.Indicator
 {
     public class RateOfChange : PercentageDifference<IOhlcvData, AnalyzableTick<decimal?>>
     {
-        public RateOfChange(IEnumerable<IOhlcvData> inputs, int numberOfDays = 1)
-            : base(inputs, i => i.Close, numberOfDays)
+        public RateOfChange(IEnumerable<IOhlcvData> inputs, int periodCount = 1)
+            : base(inputs, i => i.Close, periodCount)
         {
         }
     }

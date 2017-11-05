@@ -31,7 +31,7 @@ namespace Trady.Analysis.Indicator
             protected override (decimal? K, decimal? D, decimal? J) ComputeByIndexImpl(IReadOnlyList<(decimal High, decimal Low, decimal Close)> mappedInputs, int index)
             {
                 Func<int, decimal?> dFunc = i => _fastSto[i].D;
-                decimal? dAvg = index >= SmaPeriodCountD - 1 ? Enumerable.Range(index - SmaPeriodCountD + 1, SmaPeriodCountD).Select(dFunc).Average() : null;
+                decimal? dAvg = index >= SmaPeriodCountD - 1 ? Enumerable.Range(index - SmaPeriodCountD + 1, SmaPeriodCountD).Average(dFunc) : null;
 				return (dFunc(index), dAvg, 3 * dFunc(index) - 2 * dAvg);
             }
         }

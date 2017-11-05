@@ -18,10 +18,10 @@ namespace Trady.Analysis.Indicator
             _tr = new TrueRangeByTuple(inputs.Select(inputMapper));
 
             _trEma = new GenericMovingAverage(
-                periodCount - 1,
+                periodCount,
                 i => Enumerable.Range(i - periodCount + 1, periodCount).Average(j => _tr[j]),
                 i => _tr[i],
-                i => 1.0m / periodCount,
+                Smoothing.Mma(periodCount),
                 inputs.Count());
 
             PeriodCount = periodCount;
