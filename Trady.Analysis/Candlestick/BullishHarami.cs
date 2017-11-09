@@ -41,9 +41,9 @@ namespace Trady.Analysis.Candlestick
         }
     }
 
-    public class BullishHarami : BullishHarami<Candle, AnalyzableTick<bool?>>
+    public class BullishHarami : BullishHarami<IOhlcvData, AnalyzableTick<bool?>>
     {
-        public BullishHarami(IEnumerable<Candle> inputs, bool containedShadows = false, int downTrendPeriodCount = 3)
+        public BullishHarami(IEnumerable<IOhlcvData> inputs, bool containedShadows = false, int downTrendPeriodCount = 3)
             : base(inputs, i => (i.Open, i.High, i.Low, i.Close), containedShadows, downTrendPeriodCount)
         {
         }
