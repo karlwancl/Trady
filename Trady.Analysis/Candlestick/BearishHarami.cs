@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using Trady.Analysis.Infrastructure;
-using Trady.Core;
 using System.Linq;
 using Trady.Core.Infrastructure;
 
