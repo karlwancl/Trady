@@ -4,7 +4,7 @@ namespace Trady.Core.Infrastructure
 {
     public interface IAnalyzableTick : ITick
     {
-        new DateTime? DateTime { get; }
+        new DateTimeOffset? DateTime { get; }
 
         object Tick { get; }
     }

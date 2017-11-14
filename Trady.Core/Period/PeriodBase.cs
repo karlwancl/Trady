@@ -4,13 +4,13 @@ namespace Trady.Core.Period
 {
     public abstract class PeriodBase : IPeriod
     {
-        public abstract bool IsTimestamp(DateTime dateTime);
+        public abstract bool IsTimestamp(DateTimeOffset dateTime);
 
-        public DateTime NextTimestamp(DateTime dateTime) => TimestampAt(dateTime, 1);
+        public DateTimeOffset NextTimestamp(DateTimeOffset dateTime) => TimestampAt(dateTime, 1);
 
-        public DateTime PrevTimestamp(DateTime dateTime) => TimestampAt(dateTime, -1);
+        public DateTimeOffset PrevTimestamp(DateTimeOffset dateTime) => TimestampAt(dateTime, -1);
 
-        public DateTime TimestampAt(DateTime dateTime, int periodCount)
+        public DateTimeOffset TimestampAt(DateTimeOffset dateTime, int periodCount)
         {
             if (periodCount == 0)
                 throw new ArgumentException("Timestamp at 0 is undefined, you should use non-zero periodCount");
@@ -20,6 +20,6 @@ namespace Trady.Core.Period
             return ComputeTimestampByCorrectedPeriodCount(dateTime, correctedPeriodCount);
         }
 
-        protected abstract DateTime ComputeTimestampByCorrectedPeriodCount(DateTime dateTime, int correctedPeriodCount);
+        protected abstract DateTimeOffset ComputeTimestampByCorrectedPeriodCount(DateTimeOffset dateTime, int correctedPeriodCount);
     }
 }

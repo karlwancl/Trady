@@ -37,7 +37,7 @@ namespace Trady.Core
             var outIOhlcvDatas = new List<IOhlcvData>();
             var periodInstance = Activator.CreateInstance<TTargetPeriod>();
 
-            DateTime startTime = candles.First().DateTime;
+            var startTime = candles.First().DateTime;
             while (startTime <= candles.Last().DateTime)
             {
                 var nextStartTime = periodInstance.NextTimestamp(startTime);
@@ -91,7 +91,7 @@ namespace Trady.Core
             return true;
         }
 
-        private static IOhlcvData ComputeIOhlcvData(IEnumerable<IOhlcvData> candles, DateTime startTime, DateTime endTime)
+        private static IOhlcvData ComputeIOhlcvData(IEnumerable<IOhlcvData> candles, DateTimeOffset startTime, DateTimeOffset endTime)
         {
             var candle = candles.Where(c => c.DateTime >= startTime && c.DateTime < endTime);
             if (candle.Any())

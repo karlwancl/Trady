@@ -68,12 +68,12 @@ namespace Trady.Test
 			Assert.IsTrue(result.TotalCorrectedProfitLossRatio == 0.022744817m);
 		}
 
-		private void Backtest_Onsold(IEnumerable<IOhlcvData> candles, int index, DateTime dateTime, decimal sellPrice, int quantity, decimal absCashFlow, decimal currentCashAmount, decimal plRatio)
+		private void Backtest_Onsold(IEnumerable<IOhlcvData> candles, int index, DateTimeOffset dateTime, decimal sellPrice, int quantity, decimal absCashFlow, decimal currentCashAmount, decimal plRatio)
 		{
 			File.AppendAllLines(logPath, new string[] { $"{index}({dateTime:yyyyMMdd}), Sell {candles.GetHashCode()}@{sellPrice} * {quantity}: {absCashFlow}, plRatio: {plRatio * 100:0.##}%, currentCashAmount: {currentCashAmount}" });
 		}
 
-		private void Backtest_OnBought(IEnumerable<IOhlcvData> candles, int index, DateTime dateTime, decimal buyPrice, int quantity, decimal absCashFlow, decimal currentCashAmount)
+		private void Backtest_OnBought(IEnumerable<IOhlcvData> candles, int index, DateTimeOffset dateTime, decimal buyPrice, int quantity, decimal absCashFlow, decimal currentCashAmount)
 		{
 			File.AppendAllLines(logPath, new string[] { $"{index}({dateTime:yyyyMMdd}), Buy {candles.GetHashCode()}@{buyPrice} * {quantity}: {absCashFlow}, currentCashAmount: {currentCashAmount}" });
 		}

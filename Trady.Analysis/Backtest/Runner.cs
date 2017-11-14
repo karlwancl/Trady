@@ -26,11 +26,11 @@ namespace Trady.Analysis.Backtest
 
         public event BuyHandler OnBought;
 
-        public delegate void BuyHandler(IEnumerable<IOhlcvData> candles, int index, DateTime dateTime, decimal buyPrice, int quantity, decimal absCashFlow, decimal currentCashAmount);
+        public delegate void BuyHandler(IEnumerable<IOhlcvData> candles, int index, DateTimeOffset dateTime, decimal buyPrice, int quantity, decimal absCashFlow, decimal currentCashAmount);
 
         public event SellHandler OnSold;
 
-        public delegate void SellHandler(IEnumerable<IOhlcvData> candles, int index, DateTime dateTime, decimal sellPrice, int quantity, decimal absCashFlow, decimal currentCashAmount, decimal plRatio);
+        public delegate void SellHandler(IEnumerable<IOhlcvData> candles, int index, DateTimeOffset dateTime, decimal sellPrice, int quantity, decimal absCashFlow, decimal currentCashAmount, decimal plRatio);
 
         public Task<Result> RunAsync(decimal principal, decimal premium = 1.0m, DateTime? startTime = null, DateTime? endTime = null)
             => Task.Factory.StartNew(() => Run(principal, premium, startTime, endTime));
@@ -52,8 +52,8 @@ namespace Trady.Analysis.Backtest
             for (int i = 0; i < _weightings.Count; i++)
             {
                 var asset = assetCashMap.ElementAt(i).Key;
-                var startIndex = asset.FindIndexOrDefault(c => c.DateTime >= (startTime ?? DateTime.MinValue), 0).Value;
-                var endIndex = asset.FindLastIndexOrDefault(c => c.DateTime <= (endTime ?? DateTime.MaxValue), asset.Count() - 1).Value;
+                var startIndex = asset.FindIndexOrDefault(c => c.DateTime >= (startTime ?? DateTimeOffset.MinValue), 0).Value;
+                var endIndex = asset.FindLastIndexOrDefault(c => c.DateTime <= (endTime ?? DateTimeOffset.MaxValue), asset.Count() - 1).Value;
                 using (var context = new AnalyzeContext(asset))
                 {
                     var executor = CreateBuySellRuleExecutor(context, premium, assetCashMap, transactions);

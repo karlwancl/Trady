@@ -47,14 +47,14 @@ namespace Trady.Test
             {
             }
 
-            private DateTime GetMondayFor(DateTime aDate)
+            private DateTime GetMondayFor(DateTimeOffset aDate)
             {
                 int currentDay = (int)aDate.DayOfWeek;
                 if (currentDay == 0)
                     currentDay = 7;
 
                 int daysToSubstract = currentDay - 1;
-                return aDate.AddDays(-daysToSubstract);
+                return aDate.DateTime.AddDays(-daysToSubstract);
             }
 
             protected override decimal? ComputeByIndexImpl(IReadOnlyList<IOhlcvData> mappedInputs, int index)

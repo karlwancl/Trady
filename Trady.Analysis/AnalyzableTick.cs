@@ -5,15 +5,15 @@ namespace Trady.Analysis
 {
     public class AnalyzableTick<T> : IAnalyzableTick<T>
     {
-        public DateTime? DateTime { get; }
+        public DateTimeOffset? DateTime { get; }
 
         public T Tick { get; }
 
         object IAnalyzableTick.Tick => Tick;
 
-        DateTime ITick.DateTime => DateTime.GetValueOrDefault();
+        DateTimeOffset ITick.DateTime => DateTime.GetValueOrDefault();
 
-        public AnalyzableTick(DateTime? dateTime, T tick)
+        public AnalyzableTick(DateTimeOffset? dateTime, T tick)
         {
             Tick = tick;
             DateTime = dateTime;
