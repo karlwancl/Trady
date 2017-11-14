@@ -29,7 +29,7 @@ namespace Trady.Importer.Stooq
         /// <param name="endTime">End time.</param>
         /// <param name="period">Period.</param>
         /// <param name="token">Token.</param>
-        public async Task<IReadOnlyList<IOhlcvData>> ImportAsync(string symbol, DateTime? startTime = default(DateTime?), DateTime? endTime = default(DateTime?), PeriodOption period = PeriodOption.Daily, CancellationToken token = default(CancellationToken))
+        public async Task<IReadOnlyList<IOhlcv>> ImportAsync(string symbol, DateTime? startTime = default(DateTime?), DateTime? endTime = default(DateTime?), PeriodOption period = PeriodOption.Daily, CancellationToken token = default(CancellationToken))
         {
             if (period != PeriodOption.Daily && period != PeriodOption.Monthly && period != PeriodOption.Weekly)
                 throw new ArgumentException("This importer only supports daily, weekly & monthly data");

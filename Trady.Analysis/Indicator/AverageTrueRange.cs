@@ -40,9 +40,9 @@ namespace Trady.Analysis.Indicator
         }
     }
 
-    public class AverageTrueRange : AverageTrueRange<IOhlcvData, AnalyzableTick<decimal?>>
+    public class AverageTrueRange : AverageTrueRange<IOhlcv, AnalyzableTick<decimal?>>
     {
-        public AverageTrueRange(IEnumerable<IOhlcvData> inputs, int periodCount)
+        public AverageTrueRange(IEnumerable<IOhlcv> inputs, int periodCount)
             : base(inputs, i => (i.High, i.Low, i.Close), periodCount)
         {
         }

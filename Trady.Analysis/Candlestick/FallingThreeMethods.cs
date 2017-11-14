@@ -68,9 +68,9 @@ namespace Trady.Analysis.Candlestick
         }
     }
 
-    public class FallingThreeMethods : FallingThreeMethods<IOhlcvData, AnalyzableTick<bool?>>
+    public class FallingThreeMethods : FallingThreeMethods<IOhlcv, AnalyzableTick<bool?>>
     {
-        public FallingThreeMethods(IEnumerable<IOhlcvData> inputs, int downTrendPeriodCount = 3, int periodCount = 20, decimal shortThreshold = 0.25M, decimal longThreshold = 0.75M)
+        public FallingThreeMethods(IEnumerable<IOhlcv> inputs, int downTrendPeriodCount = 3, int periodCount = 20, decimal shortThreshold = 0.25M, decimal longThreshold = 0.75M)
             : base(inputs, i => (i.Open, i.High, i.Low, i.Close), downTrendPeriodCount, periodCount, shortThreshold, longThreshold)
         {
         }

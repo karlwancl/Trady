@@ -36,9 +36,9 @@ namespace Trady.Analysis.Indicator
         }
     }
 
-    public class ExponentialMovingAverageOscillator : ExponentialMovingAverageOscillator<IOhlcvData, AnalyzableTick<decimal?>>
+    public class ExponentialMovingAverageOscillator : ExponentialMovingAverageOscillator<IOhlcv, AnalyzableTick<decimal?>>
     {
-        public ExponentialMovingAverageOscillator(IEnumerable<IOhlcvData> inputs, int periodCount1, int periodCount2)
+        public ExponentialMovingAverageOscillator(IEnumerable<IOhlcv> inputs, int periodCount1, int periodCount2)
             : base(inputs, i => i.Close, periodCount1, periodCount2)
         {
         }

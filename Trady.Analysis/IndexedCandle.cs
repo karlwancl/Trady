@@ -8,11 +8,11 @@ using System;
 
 namespace Trady.Analysis
 {
-    public class IndexedCandle : Candle, IIndexedOhlcvData
+    public class IndexedCandle : Candle, IIndexedOhlcv
     {
         private IAnalyzeContext _context;
 
-        public IndexedCandle(IEnumerable<IOhlcvData> candles, int index)
+        public IndexedCandle(IEnumerable<IOhlcv> candles, int index)
             : base(candles.ElementAt(index).DateTime,
                    candles.ElementAt(index).Open,
                    candles.ElementAt(index).High,
@@ -24,25 +24,25 @@ namespace Trady.Analysis
             Index = index;
         }
 
-        public IEnumerable<IOhlcvData> BackingList { get; }
+        public IEnumerable<IOhlcv> BackingList { get; }
 
-        IIndexedOhlcvData IIndexedOhlcvData.Prev => Prev;
+        IIndexedOhlcv IIndexedOhlcv.Prev => Prev;
 
-        IIndexedOhlcvData IIndexedOhlcvData.Next => Next;
+        IIndexedOhlcv IIndexedOhlcv.Next => Next;
 
-        IOhlcvData IIndexedOhlcvData.Underlying => Underlying;
+        IOhlcv IIndexedOhlcv.Underlying => Underlying;
 
         public int Index { get; }
 
-        public IIndexedOhlcvData Prev => Index - 1 >= 0 ? new IndexedCandle(BackingList, Index - 1) : null;
+        public IIndexedOhlcv Prev => Index - 1 >= 0 ? new IndexedCandle(BackingList, Index - 1) : null;
 
-        public IIndexedOhlcvData Next => Index + 1 < BackingList.Count() ? new IndexedCandle(BackingList, Index + 1) : null;
+        public IIndexedOhlcv Next => Index + 1 < BackingList.Count() ? new IndexedCandle(BackingList, Index + 1) : null;
 
-        public IOhlcvData Underlying => BackingList.ElementAt(Index);
+        public IOhlcv Underlying => BackingList.ElementAt(Index);
 
-        public IAnalyzeContext<IOhlcvData> Context
+        public IAnalyzeContext<IOhlcv> Context
         {
-            get => (IAnalyzeContext<IOhlcvData>)_context;
+            get => (IAnalyzeContext<IOhlcv>)_context;
             set => _context = value;
         }
 
@@ -50,11 +50,11 @@ namespace Trady.Analysis
 
         IIndexedObject IIndexedObject.Prev => Prev;
 
-        IIndexedObject<IOhlcvData> IIndexedObject<IOhlcvData>.Prev => Prev;
+        IIndexedObject<IOhlcv> IIndexedObject<IOhlcv>.Prev => Prev;
 
         IIndexedObject IIndexedObject.Next => Next;
 
-        IIndexedObject<IOhlcvData> IIndexedObject<IOhlcvData>.Next => Next;
+        IIndexedObject<IOhlcv> IIndexedObject<IOhlcv>.Next => Next;
 
         object IIndexedObject.Underlying => Underlying;
 

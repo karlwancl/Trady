@@ -54,9 +54,9 @@ namespace Trady.Analysis.Candlestick
         }
     }
 
-    public class Harami : Harami<IOhlcvData, AnalyzableTick<bool?>>
+    public class Harami : Harami<IOhlcv, AnalyzableTick<bool?>>
     {
-        public Harami(IEnumerable<IOhlcvData> inputs, bool containedShadows = false)
+        public Harami(IEnumerable<IOhlcv> inputs, bool containedShadows = false)
             : base(inputs, i => (i.Open, i.High, i.Low, i.Close), containedShadows)
         {
         }

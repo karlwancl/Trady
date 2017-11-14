@@ -49,9 +49,9 @@ namespace Trady.Analysis.Indicator
 		}
     }
 
-	public class Percentile : Percentile<IOhlcvData, AnalyzableTick<decimal?>>
+	public class Percentile : Percentile<IOhlcv, AnalyzableTick<decimal?>>
 	{
-		public Percentile(IEnumerable<IOhlcvData> inputs, int periodCount, decimal percent)
+		public Percentile(IEnumerable<IOhlcv> inputs, int periodCount, decimal percent)
 			: base(inputs, i => i.Close, periodCount, percent)
 		{
 		}

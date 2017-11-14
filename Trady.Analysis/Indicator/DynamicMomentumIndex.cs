@@ -48,9 +48,9 @@ namespace Trady.Analysis.Indicator
         }
     }
 
-    public class DynamicMomentumIndex : DynamicMomentumIndex<IOhlcvData, AnalyzableTick<decimal?>>
+    public class DynamicMomentumIndex : DynamicMomentumIndex<IOhlcv, AnalyzableTick<decimal?>>
     {
-        public DynamicMomentumIndex(IEnumerable<IOhlcvData> inputs, int sdPeriod, int smoothedSdPeriod, int rsiPeriod, int upLimit, int lowLimit) 
+        public DynamicMomentumIndex(IEnumerable<IOhlcv> inputs, int sdPeriod, int smoothedSdPeriod, int rsiPeriod, int upLimit, int lowLimit) 
             : base(inputs, i => i.Close, sdPeriod, smoothedSdPeriod, rsiPeriod, upLimit, lowLimit)
         {
         }

@@ -7,9 +7,9 @@ using Trady.Core.Infrastructure;
 
 namespace Trady.Analysis.Indicator
 {
-    public class HighestClose : Highest<IOhlcvData, AnalyzableTick<decimal?>>
+    public class HighestClose : Highest<IOhlcv, AnalyzableTick<decimal?>>
     {
-        public HighestClose(IEnumerable<IOhlcvData> inputs, int periodCount)
+        public HighestClose(IEnumerable<IOhlcv> inputs, int periodCount)
             : base(inputs, i => i.Close, periodCount)
         {
         }

@@ -29,9 +29,9 @@ namespace Trady.Analysis.Candlestick
         }
     }
 
-    public class SpinningTop : SpinningTop<IOhlcvData, AnalyzableTick<bool?>>
+    public class SpinningTop : SpinningTop<IOhlcv, AnalyzableTick<bool?>>
     {
-        public SpinningTop(IEnumerable<IOhlcvData> inputs)
+        public SpinningTop(IEnumerable<IOhlcv> inputs)
             : base(inputs, i => (i.Open, i.High, i.Low, i.Close))
         {
         }

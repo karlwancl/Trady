@@ -16,7 +16,7 @@ namespace Trady.Test
     [TestClass]
     public class IndexedCandleTest
     {
-        protected async Task<IEnumerable<IOhlcvData>> ImportCandlesAsync()
+        protected async Task<IEnumerable<IOhlcv>> ImportCandlesAsync()
         {
             var csvImporter = new CsvImporter("fb.csv", new CultureInfo("en-US"));
             return await csvImporter.ImportAsync("fb");

@@ -29,9 +29,9 @@ namespace Trady.Analysis.Candlestick
         }
     }
 
-    public class ThreeWhiteSoldiers : ThreeWhiteSoldiers<IOhlcvData, AnalyzableTick<bool?>>
+    public class ThreeWhiteSoldiers : ThreeWhiteSoldiers<IOhlcv, AnalyzableTick<bool?>>
     {
-        public ThreeWhiteSoldiers(IEnumerable<IOhlcvData> inputs)
+        public ThreeWhiteSoldiers(IEnumerable<IOhlcv> inputs)
             : base(inputs, i => (i.Open, i.High, i.Low, i.Close))
         {
         }

@@ -22,11 +22,11 @@ namespace Trady.Analysis.Infrastructure
 
         public class RuleGlobals
         {
-            public IIndexedOhlcvData ic;
+            public IIndexedOhlcv ic;
             public IReadOnlyList<decimal> p;
         }
 
-        private static Func<IIndexedOhlcvData, IReadOnlyList<decimal>, bool> CreateRule(string expression)
+        private static Func<IIndexedOhlcv, IReadOnlyList<decimal>, bool> CreateRule(string expression)
         {
             var @delegate = CSharpScript.Create<bool>(expression, options, typeof(RuleGlobals)).CreateDelegate();
             return (_ic, _p) => @delegate(new RuleGlobals { ic = _ic, p = _p }).Result;
@@ -42,7 +42,7 @@ namespace Trady.Analysis.Infrastructure
         public static bool Register(string name, string expression, bool @override = false)
             => _Register(name, CreateRule(expression), @override);
 
-        public static bool Register(string name, Expression<Func<IIndexedOhlcvData, IReadOnlyList<decimal> ,bool>> expr, bool @override = false)
+        public static bool Register(string name, Expression<Func<IIndexedOhlcv, IReadOnlyList<decimal> ,bool>> expr, bool @override = false)
             => _Register(name, expr.Compile(), @override);
 
         public static bool Unregister(string name) => _ruleDict.TryRemove(name, out _);

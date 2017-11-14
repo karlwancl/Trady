@@ -33,9 +33,9 @@ namespace Trady.Analysis.Indicator
         }
     }
 
-    public class StochasticsMomentum : StochasticsMomentum<IOhlcvData, AnalyzableTick<decimal?>>
+    public class StochasticsMomentum : StochasticsMomentum<IOhlcv, AnalyzableTick<decimal?>>
     {
-        public StochasticsMomentum(IEnumerable<IOhlcvData> inputs, int periodCount) 
+        public StochasticsMomentum(IEnumerable<IOhlcv> inputs, int periodCount) 
             : base(inputs, i => (i.High, i.Low, i.Close), periodCount)
         {
         }

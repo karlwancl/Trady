@@ -39,9 +39,9 @@ namespace Trady.Analysis.Indicator
         }
     }
 
-    public class AverageDirectionalIndex : AverageDirectionalIndex<IOhlcvData, AnalyzableTick<decimal?>>
+    public class AverageDirectionalIndex : AverageDirectionalIndex<IOhlcv, AnalyzableTick<decimal?>>
     {
-        public AverageDirectionalIndex(IEnumerable<IOhlcvData> inputs, int periodCount)
+        public AverageDirectionalIndex(IEnumerable<IOhlcv> inputs, int periodCount)
             : base(inputs, i => (i.High, i.Low, i.Close), periodCount)
         {
         }

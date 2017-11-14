@@ -5,9 +5,9 @@ using Trady.Core.Infrastructure;
 
 namespace Trady.Analysis.Indicator
 {
-	public class Momentum : Difference<IOhlcvData, AnalyzableTick<decimal?>>
+	public class Momentum : Difference<IOhlcv, AnalyzableTick<decimal?>>
 	{
-        public Momentum(IEnumerable<IOhlcvData> inputs, int periodCount = 1)
+        public Momentum(IEnumerable<IOhlcv> inputs, int periodCount = 1)
 			: base(inputs, i => i.Close, periodCount)
 		{
 		}

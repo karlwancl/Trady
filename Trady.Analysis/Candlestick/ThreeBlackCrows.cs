@@ -29,9 +29,9 @@ namespace Trady.Analysis.Candlestick
         }
     }
 
-    public class ThreeBlackCrows : ThreeBlackCrows<IOhlcvData, AnalyzableTick<bool?>>
+    public class ThreeBlackCrows : ThreeBlackCrows<IOhlcv, AnalyzableTick<bool?>>
     {
-        public ThreeBlackCrows(IEnumerable<IOhlcvData> inputs)
+        public ThreeBlackCrows(IEnumerable<IOhlcv> inputs)
             : base(inputs, i => (i.Open, i.High, i.Low, i.Close))
         {
         }

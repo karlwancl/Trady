@@ -41,9 +41,9 @@ namespace Trady.Analysis.Indicator
         }
     }
 
-    public class AccumulationDistributionLine : AccumulationDistributionLine<IOhlcvData, AnalyzableTick<decimal?>>
+    public class AccumulationDistributionLine : AccumulationDistributionLine<IOhlcv, AnalyzableTick<decimal?>>
     {
-        public AccumulationDistributionLine(IEnumerable<IOhlcvData> inputs)
+        public AccumulationDistributionLine(IEnumerable<IOhlcv> inputs)
             : base(inputs, c => (c.High, c.Low, c.Close, c.Volume))
         {
         }

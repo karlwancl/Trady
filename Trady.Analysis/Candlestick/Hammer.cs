@@ -34,9 +34,9 @@ namespace Trady.Analysis.Candlestick
         }
     }
 
-    public class Hammer : Hammer<IOhlcvData, AnalyzableTick<bool?>>
+    public class Hammer : Hammer<IOhlcv, AnalyzableTick<bool?>>
     {
-        public Hammer(IEnumerable<IOhlcvData> inputs, int shortPeriodCount = 20, decimal shortThreshold = 0.25M)
+        public Hammer(IEnumerable<IOhlcv> inputs, int shortPeriodCount = 20, decimal shortThreshold = 0.25M)
             : base(inputs, i => (i.Open, i.High, i.Low, i.Close), shortPeriodCount, shortThreshold)
         {
         }

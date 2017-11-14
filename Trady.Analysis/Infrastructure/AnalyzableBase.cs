@@ -26,14 +26,14 @@ namespace Trady.Analysis.Infrastructure
 
         protected AnalyzableBase(IEnumerable<TInput> inputs, Func<TInput, TMappedInput> inputMapper)
         {
-            _isTInputIOhlcvData = typeof(IOhlcvData).IsAssignableFrom(typeof(TInput));
+            _isTInputIOhlcvData = typeof(IOhlcv).IsAssignableFrom(typeof(TInput));
             _isTOutputAnalyzableTick = typeof(IAnalyzableTick<TOutputToMap>).IsAssignableFrom(typeof(TOutput));
             if (_isTInputIOhlcvData != _isTOutputAnalyzableTick)
                 throw new ArgumentException("TInput, TOutput not matched!");
 
             _mappedInputs = inputs.Select(inputMapper).ToList();
             if (_isTInputIOhlcvData)
-                _mappedDateTimes = inputs.Select(c => (c as IOhlcvData).DateTime).ToList();
+                _mappedDateTimes = inputs.Select(c => (c as IOhlcv).DateTime).ToList();
 
             Cache = new ConcurrentDictionary<int, TOutputToMap>();
         }

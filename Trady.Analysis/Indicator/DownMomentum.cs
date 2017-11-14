@@ -3,9 +3,9 @@ using Trady.Core.Infrastructure;
 
 namespace Trady.Analysis.Indicator
 {
-    public class DownMomentum : NegativeDifference<IOhlcvData, AnalyzableTick<decimal?>>
+    public class DownMomentum : NegativeDifference<IOhlcv, AnalyzableTick<decimal?>>
     {
-        public DownMomentum(IEnumerable<IOhlcvData> inputs, int periodCount = 1)
+        public DownMomentum(IEnumerable<IOhlcv> inputs, int periodCount = 1)
             : base(inputs, i => i.Close, periodCount)
         {
         }

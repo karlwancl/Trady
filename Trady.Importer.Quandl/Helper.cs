@@ -18,7 +18,7 @@ namespace Trady.Importer.Quandl
             return false;
         }
 
-        public static IOhlcvData CreateIOhlcvData(this object[] row)
+        public static IOhlcv CreateIOhlcvData(this object[] row)
         {
             return new Candle(
                 Convert.ToDateTime(row[0], CultureInfo.InvariantCulture),

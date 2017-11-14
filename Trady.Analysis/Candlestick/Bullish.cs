@@ -24,9 +24,9 @@ namespace Trady.Analysis.Candlestick
         }
     }
 
-    public class Bullish : Bullish<IOhlcvData, AnalyzableTick<bool>>
+    public class Bullish : Bullish<IOhlcv, AnalyzableTick<bool>>
     {
-        public Bullish(IEnumerable<IOhlcvData> inputs)
+        public Bullish(IEnumerable<IOhlcv> inputs)
             : base(inputs, i => (i.Open, i.Close))
         {
         }

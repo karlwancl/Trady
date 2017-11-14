@@ -54,9 +54,9 @@ namespace Trady.Analysis.Indicator
         }
     }
 
-    public class RelativeStrength : RelativeStrength<IOhlcvData, AnalyzableTick<decimal?>>
+    public class RelativeStrength : RelativeStrength<IOhlcv, AnalyzableTick<decimal?>>
     {
-        public RelativeStrength(IEnumerable<IOhlcvData> inputs, int periodCount)
+        public RelativeStrength(IEnumerable<IOhlcv> inputs, int periodCount)
             : base(inputs, i => i.Close, periodCount)
         {
         }

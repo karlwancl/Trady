@@ -47,9 +47,9 @@ namespace Trady.Analysis.Indicator
         }
     }
 
-    public class PlusDirectionalIndicator : PlusDirectionalIndicator<IOhlcvData, AnalyzableTick<decimal?>>
+    public class PlusDirectionalIndicator : PlusDirectionalIndicator<IOhlcv, AnalyzableTick<decimal?>>
     {
-        public PlusDirectionalIndicator(IEnumerable<IOhlcvData> inputs, int periodCount)
+        public PlusDirectionalIndicator(IEnumerable<IOhlcv> inputs, int periodCount)
             : base(inputs, i => (i.High, i.Low, i.Close), periodCount)
         {
         }

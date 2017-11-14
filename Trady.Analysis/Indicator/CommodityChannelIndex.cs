@@ -36,9 +36,9 @@ namespace Trady.Analysis.Indicator
         }
     }
 
-    public class CommodityChannelIndex : CommodityChannelIndex<IOhlcvData, AnalyzableTick<decimal?>>
+    public class CommodityChannelIndex : CommodityChannelIndex<IOhlcv, AnalyzableTick<decimal?>>
     {
-        public CommodityChannelIndex(IEnumerable<IOhlcvData> inputs, int periodCount) 
+        public CommodityChannelIndex(IEnumerable<IOhlcv> inputs, int periodCount) 
             : base(inputs, i => (i.High, i.Low, i.Close), periodCount)
         {
         }

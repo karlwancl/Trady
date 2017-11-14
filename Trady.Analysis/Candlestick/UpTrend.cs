@@ -40,9 +40,9 @@ namespace Trady.Analysis.Candlestick
         }
     }
 
-    public class UpTrend : UpTrend<IOhlcvData, AnalyzableTick<bool?>>
+    public class UpTrend : UpTrend<IOhlcv, AnalyzableTick<bool?>>
     {
-        public UpTrend(IEnumerable<IOhlcvData> inputs, int periodCount = 3)
+        public UpTrend(IEnumerable<IOhlcv> inputs, int periodCount = 3)
             : base(inputs, i => (i.High, i.Low), periodCount)
         {
         }

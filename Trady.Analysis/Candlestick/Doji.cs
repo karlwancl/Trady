@@ -27,9 +27,9 @@ namespace Trady.Analysis.Candlestick
         }
     }
 
-    public class Doji : Doji<IOhlcvData, AnalyzableTick<bool>>
+    public class Doji : Doji<IOhlcv, AnalyzableTick<bool>>
     {
-        public Doji(IEnumerable<IOhlcvData> inputs, decimal threshold = 0.1M)
+        public Doji(IEnumerable<IOhlcv> inputs, decimal threshold = 0.1M)
             : base(inputs, i => (i.Open, i.High, i.Low, i.Close), threshold)
         {
         }

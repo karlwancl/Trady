@@ -7,9 +7,9 @@ using Trady.Core.Infrastructure;
 
 namespace Trady.Analysis.Indicator
 {
-    public class LowestLow : Lowest<IOhlcvData, AnalyzableTick<decimal?>>
+    public class LowestLow : Lowest<IOhlcv, AnalyzableTick<decimal?>>
     {
-        public LowestLow(IEnumerable<IOhlcvData> inputs, int periodCount)
+        public LowestLow(IEnumerable<IOhlcv> inputs, int periodCount)
             : base(inputs, i => i.Low, periodCount)
         {
         }

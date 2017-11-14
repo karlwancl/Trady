@@ -31,9 +31,9 @@ namespace Trady.Analysis.Indicator
         }
     }
 
-    public class NetMomentumOscillator : NetMomentumOscillator<IOhlcvData, AnalyzableTick<decimal?>>
+    public class NetMomentumOscillator : NetMomentumOscillator<IOhlcv, AnalyzableTick<decimal?>>
     {
-        public NetMomentumOscillator(IEnumerable<IOhlcvData> inputs, int periodCount) 
+        public NetMomentumOscillator(IEnumerable<IOhlcv> inputs, int periodCount) 
             : base(inputs, i => i.Close, periodCount)
         {
         }

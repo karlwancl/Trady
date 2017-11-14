@@ -134,9 +134,9 @@ namespace Trady.Analysis.Indicator
         }
     }
 
-    public class ParabolicStopAndReverse : ParabolicStopAndReverse<IOhlcvData, AnalyzableTick<decimal?>>
+    public class ParabolicStopAndReverse : ParabolicStopAndReverse<IOhlcv, AnalyzableTick<decimal?>>
     {
-        public ParabolicStopAndReverse(IEnumerable<IOhlcvData> inputs, decimal step = 0.02M, decimal maximumStep = 0.2M) 
+        public ParabolicStopAndReverse(IEnumerable<IOhlcv> inputs, decimal step = 0.02M, decimal maximumStep = 0.2M) 
             : base(inputs, i => (i.High, i.Low), step, maximumStep)
         {
         }

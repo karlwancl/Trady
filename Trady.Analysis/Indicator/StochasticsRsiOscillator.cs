@@ -43,9 +43,9 @@ namespace Trady.Analysis.Indicator
         }
     }
 
-    public class StochasticsRsiOscillator : StochasticsRsiOscillator<IOhlcvData, AnalyzableTick<decimal?>>
+    public class StochasticsRsiOscillator : StochasticsRsiOscillator<IOhlcv, AnalyzableTick<decimal?>>
     {
-        public StochasticsRsiOscillator(IEnumerable<IOhlcvData> inputs, int periodCount) 
+        public StochasticsRsiOscillator(IEnumerable<IOhlcv> inputs, int periodCount) 
             : base(inputs, i => i.Close, periodCount)
         {
         }

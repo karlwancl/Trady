@@ -33,9 +33,9 @@ namespace Trady.Analysis.Indicator
         }
     }
 
-    public class HighestHighLowestLowDifference : HighestHighLowestLowDifference<IOhlcvData, AnalyzableTick<decimal?>>
+    public class HighestHighLowestLowDifference : HighestHighLowestLowDifference<IOhlcv, AnalyzableTick<decimal?>>
     {
-        public HighestHighLowestLowDifference(IEnumerable<IOhlcvData> inputs, int periodCount) 
+        public HighestHighLowestLowDifference(IEnumerable<IOhlcv> inputs, int periodCount) 
             : base(inputs, i => (i.High, i.Low), periodCount)
         {
         }

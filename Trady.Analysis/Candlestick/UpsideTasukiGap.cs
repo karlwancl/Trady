@@ -56,9 +56,9 @@ namespace Trady.Analysis.Candlestick
         }
     }
 
-    public class UpsideTasukiGap : UpsideTasukiGap<IOhlcvData, AnalyzableTick<bool?>>
+    public class UpsideTasukiGap : UpsideTasukiGap<IOhlcv, AnalyzableTick<bool?>>
     {
-        public UpsideTasukiGap(IEnumerable<IOhlcvData> inputs, int upTrendPeriodCount = 3, decimal sizeThreshold = 0.1M)
+        public UpsideTasukiGap(IEnumerable<IOhlcv> inputs, int upTrendPeriodCount = 3, decimal sizeThreshold = 0.1M)
             : base(inputs, i => (i.Open, i.High, i.Low, i.Close), upTrendPeriodCount, sizeThreshold)
         {
         }

@@ -35,9 +35,9 @@ namespace Trady.Analysis.Indicator
 		}
     }
 
-	public class Median : Median<IOhlcvData, AnalyzableTick<decimal?>>
+	public class Median : Median<IOhlcv, AnalyzableTick<decimal?>>
 	{
-		public Median(IEnumerable<IOhlcvData> inputs, int periodCount)
+		public Median(IEnumerable<IOhlcv> inputs, int periodCount)
 			: base(inputs, i => i.Close, periodCount)
 		{
 		}

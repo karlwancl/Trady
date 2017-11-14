@@ -39,9 +39,9 @@ namespace Trady.Analysis.Indicator
         }
     }
 
-    public class BollingerBandWidth : BollingerBandWidth<IOhlcvData, AnalyzableTick<decimal?>>
+    public class BollingerBandWidth : BollingerBandWidth<IOhlcv, AnalyzableTick<decimal?>>
     {
-        public BollingerBandWidth(IEnumerable<IOhlcvData> inputs, int periodCount, decimal sdCount)
+        public BollingerBandWidth(IEnumerable<IOhlcv> inputs, int periodCount, decimal sdCount)
             : base(inputs, i => i.Close, periodCount, sdCount)
         {
         }

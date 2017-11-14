@@ -29,9 +29,9 @@ namespace Trady.Analysis.Candlestick
         }
     }
 
-    public class ShortShadow : ShortShadow<IOhlcvData, AnalyzableTick<bool?>>
+    public class ShortShadow : ShortShadow<IOhlcv, AnalyzableTick<bool?>>
     {
-        public ShortShadow(IEnumerable<IOhlcvData> inputs)
+        public ShortShadow(IEnumerable<IOhlcv> inputs)
             : base(inputs, i => (i.Open, i.High, i.Low, i.Close))
         {
         }

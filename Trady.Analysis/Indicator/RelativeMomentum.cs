@@ -56,9 +56,9 @@ namespace Trady.Analysis.Indicator
         }
     }
 
-    public class RelativeMomentum : RelativeMomentum<IOhlcvData, AnalyzableTick<decimal?>>
+    public class RelativeMomentum : RelativeMomentum<IOhlcv, AnalyzableTick<decimal?>>
     {
-        public RelativeMomentum(IEnumerable<IOhlcvData> inputs, int rmiPeriod, int mtmPeriod) 
+        public RelativeMomentum(IEnumerable<IOhlcv> inputs, int rmiPeriod, int mtmPeriod) 
             : base(inputs, i => i.Close, rmiPeriod, mtmPeriod)
         {
         }

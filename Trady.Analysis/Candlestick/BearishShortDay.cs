@@ -38,9 +38,9 @@ namespace Trady.Analysis.Candlestick
         }
     }
 
-    public class BearishShortDay : BearishShortDay<IOhlcvData, AnalyzableTick<bool>>
+    public class BearishShortDay : BearishShortDay<IOhlcv, AnalyzableTick<bool>>
     {
-        public BearishShortDay(IEnumerable<IOhlcvData> inputs, int periodCount = 20, decimal threshold = 0.25M)
+        public BearishShortDay(IEnumerable<IOhlcv> inputs, int periodCount = 20, decimal threshold = 0.25M)
             : base(inputs, i => (i.Open, i.Close), periodCount, threshold)
         {
         }

@@ -7,9 +7,9 @@ using Trady.Core.Infrastructure;
 
 namespace Trady.Analysis.Indicator
 {
-    public class HistoricalLowestClose : HistoricalLowest<IOhlcvData, AnalyzableTick<decimal?>>
+    public class HistoricalLowestClose : HistoricalLowest<IOhlcv, AnalyzableTick<decimal?>>
     {
-        public HistoricalLowestClose(IEnumerable<IOhlcvData> inputs)
+        public HistoricalLowestClose(IEnumerable<IOhlcv> inputs)
             : base(inputs, i => i.Close)
         {
         }

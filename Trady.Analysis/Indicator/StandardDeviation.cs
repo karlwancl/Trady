@@ -45,9 +45,9 @@ namespace Trady.Analysis.Indicator
 		}
     }
 
-    public class StandardDeviation : StandardDeviation<IOhlcvData, AnalyzableTick<decimal?>>
+    public class StandardDeviation : StandardDeviation<IOhlcv, AnalyzableTick<decimal?>>
     {
-        public StandardDeviation(IEnumerable<IOhlcvData> inputs, int periodCount)
+        public StandardDeviation(IEnumerable<IOhlcv> inputs, int periodCount)
             : base(inputs, i => i.Close, periodCount)
         {
         }

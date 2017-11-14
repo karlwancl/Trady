@@ -29,9 +29,9 @@ namespace Trady.Analysis.Candlestick
         }
     }
 
-    public class Marubozu : Marubozu<IOhlcvData, AnalyzableTick<bool?>>
+    public class Marubozu : Marubozu<IOhlcv, AnalyzableTick<bool?>>
     {
-        public Marubozu(IEnumerable<IOhlcvData> inputs)
+        public Marubozu(IEnumerable<IOhlcv> inputs)
             : base(inputs, i => (i.Open, i.High, i.Low, i.Close))
         {
         }

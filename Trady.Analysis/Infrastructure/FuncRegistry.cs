@@ -46,11 +46,11 @@ namespace Trady.Analysis.Infrastructure
         public static bool Register<TInput>(string name, Expression<Func<IReadOnlyList<TInput>, int, IReadOnlyList<decimal>, IAnalyzeContext<TInput>, decimal?>> expr, bool @override = false)
             => _Register(name, expr.Compile(), @override);
 
-		public static bool Register(string name, Expression<Func<IReadOnlyList<IOhlcvData>, int, IReadOnlyList<decimal>, IAnalyzeContext<IOhlcvData>, decimal?>> expr, bool @override = false)
-			=> Register<IOhlcvData>(name, expr, @override);
+		public static bool Register(string name, Expression<Func<IReadOnlyList<IOhlcv>, int, IReadOnlyList<decimal>, IAnalyzeContext<IOhlcv>, decimal?>> expr, bool @override = false)
+			=> Register<IOhlcv>(name, expr, @override);
 
 		public static bool Register(string name, string expression, bool @override = false)
-            => Register<IOhlcvData>(name, expression, @override);
+            => Register<IOhlcv>(name, expression, @override);
 
         public static bool Register(string name, IFuncAnalyzable analyzable, bool @override = false)
             => _Register(name, analyzable.Func, @override);

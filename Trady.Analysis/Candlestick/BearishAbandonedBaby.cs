@@ -58,9 +58,9 @@ namespace Trady.Analysis.Candlestick
         }
     }
 
-    public class BearishAbandonedBaby : BearishAbandonedBaby<IOhlcvData, AnalyzableTick<bool?>>
+    public class BearishAbandonedBaby : BearishAbandonedBaby<IOhlcv, AnalyzableTick<bool?>>
     {
-        public BearishAbandonedBaby(IEnumerable<IOhlcvData> inputs, int upTrendPeriodCount = 3, int longPeriodCount = 20, decimal longThreshold = 0.75M, decimal dojiThreshold = 0.1M)
+        public BearishAbandonedBaby(IEnumerable<IOhlcv> inputs, int upTrendPeriodCount = 3, int longPeriodCount = 20, decimal longThreshold = 0.75M, decimal dojiThreshold = 0.1M)
             : base(inputs, i => (i.Open, i.High, i.Low, i.Close), upTrendPeriodCount, longPeriodCount, longThreshold, dojiThreshold)
         {
         }

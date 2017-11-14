@@ -54,9 +54,9 @@ namespace Trady.Analysis.Indicator
         }
     }
 
-    public class Aroon : Aroon<IOhlcvData, AnalyzableTick<(decimal? Up, decimal? Down)>>
+    public class Aroon : Aroon<IOhlcv, AnalyzableTick<(decimal? Up, decimal? Down)>>
     {
-        public Aroon(IEnumerable<IOhlcvData> inputs, int periodCount)
+        public Aroon(IEnumerable<IOhlcv> inputs, int periodCount)
             : base(inputs, i => (i.High, i.Low), periodCount)
         {
         }

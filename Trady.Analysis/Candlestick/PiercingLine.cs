@@ -29,9 +29,9 @@ namespace Trady.Analysis.Candlestick
         }
     }
 
-    public class PiercingLine : PiercingLine<IOhlcvData, AnalyzableTick<bool?>>
+    public class PiercingLine : PiercingLine<IOhlcv, AnalyzableTick<bool?>>
     {
-        public PiercingLine(IEnumerable<IOhlcvData> inputs)
+        public PiercingLine(IEnumerable<IOhlcv> inputs)
             : base(inputs, i => (i.Open, i.High, i.Low, i.Close))
         {
         }

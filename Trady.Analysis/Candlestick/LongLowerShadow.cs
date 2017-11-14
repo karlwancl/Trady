@@ -34,9 +34,9 @@ namespace Trady.Analysis.Candlestick
         }
     }
 
-    public class LongLowerShadow : LongLowerShadow<IOhlcvData, AnalyzableTick<bool?>>
+    public class LongLowerShadow : LongLowerShadow<IOhlcv, AnalyzableTick<bool?>>
     {
-        public LongLowerShadow(IEnumerable<IOhlcvData> inputs, int periodCount = 20, decimal threshold = 0.25M)
+        public LongLowerShadow(IEnumerable<IOhlcv> inputs, int periodCount = 20, decimal threshold = 0.25M)
             : base(inputs, i => (i.Open, i.Low, i.Close), periodCount, threshold)
         {
         }

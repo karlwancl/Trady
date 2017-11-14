@@ -61,9 +61,9 @@ namespace Trady.Analysis.Candlestick
         }
     }
 
-    public class DarkCloudCover : DarkCloudCover<IOhlcvData, AnalyzableTick<bool?>>
+    public class DarkCloudCover : DarkCloudCover<IOhlcv, AnalyzableTick<bool?>>
     {
-        public DarkCloudCover(IEnumerable<IOhlcvData> inputs, int upTrendPeriodCount = 3, int downTrendPeriodCount = 3, int longPeriodCount = 20, decimal longThreshold = 0.75M)
+        public DarkCloudCover(IEnumerable<IOhlcv> inputs, int upTrendPeriodCount = 3, int downTrendPeriodCount = 3, int longPeriodCount = 20, decimal longThreshold = 0.75M)
             : base(inputs, i => (i.Open, i.High, i.Low, i.Close), upTrendPeriodCount, downTrendPeriodCount, longPeriodCount, longThreshold)
         {
         }

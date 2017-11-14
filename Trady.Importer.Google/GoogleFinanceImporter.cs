@@ -30,7 +30,7 @@ namespace Trady.Importer.Google
             {PeriodOption.Daily, Frequency.EveryDay}
         };
 
-        public async Task<IReadOnlyList<IOhlcvData>> ImportAsync(string symbol, DateTime? startTime = default(DateTime?), DateTime? endTime = default(DateTime?), PeriodOption period = PeriodOption.Daily, CancellationToken token = default(CancellationToken))
+        public async Task<IReadOnlyList<IOhlcv>> ImportAsync(string symbol, DateTime? startTime = default(DateTime?), DateTime? endTime = default(DateTime?), PeriodOption period = PeriodOption.Daily, CancellationToken token = default(CancellationToken))
         {
             if (!PeriodMap.TryGetValue(period, out int frequency))
                 throw new ArgumentException("This importer only supports second, minute, hourly & daily data");

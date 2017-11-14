@@ -17,7 +17,7 @@ namespace Trady.Test
     [TestClass]
     public class IndicatorTest
     {
-        protected async Task<IEnumerable<IOhlcvData>> ImportIOhlcvDatasAsync()
+        protected async Task<IEnumerable<IOhlcv>> ImportIOhlcvDatasAsync()
         {
             // Last record: 09/18/2017
             var csvImporter = new CsvImporter("fb.csv", new CultureInfo("en-US"));

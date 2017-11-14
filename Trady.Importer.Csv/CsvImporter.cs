@@ -30,14 +30,14 @@ namespace Trady.Importer.Csv
             _culture = culture;
         }
 
-        public async Task<IReadOnlyList<IOhlcvData>> ImportAsync(string symbol, DateTime? startTime = null, DateTime? endTime = null, PeriodOption period = PeriodOption.Daily, CancellationToken token = default(CancellationToken))
+        public async Task<IReadOnlyList<IOhlcv>> ImportAsync(string symbol, DateTime? startTime = null, DateTime? endTime = null, PeriodOption period = PeriodOption.Daily, CancellationToken token = default(CancellationToken))
             => await Task.Factory.StartNew(() =>
             {
                 using (var fs = File.OpenRead(_path))
                 using (var sr = new StreamReader(fs))
                 using (var csvReader = new CsvReader(sr, new CsvConfiguration() { CultureInfo = _culture }))
                 {
-                    var candles = new List<IOhlcvData>();
+                    var candles = new List<IOhlcv>();
                     while (csvReader.Read())
                     {
                         var date = csvReader.GetField<DateTime>(0);
@@ -48,7 +48,7 @@ namespace Trady.Importer.Csv
                 }
             });
 
-        public IOhlcvData GetRecord(CsvReader csv)
+        public IOhlcv GetRecord(CsvReader csv)
         {
             // By using GetField Methodo of the CSV Reader Culture Info set in the configuration is used
             return new Candle(

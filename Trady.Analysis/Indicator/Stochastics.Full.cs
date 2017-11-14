@@ -44,9 +44,9 @@ namespace Trady.Analysis.Indicator
             }
         }
 
-        public class Full : Full<IOhlcvData, AnalyzableTick<(decimal? K, decimal? D, decimal? J)>>
+        public class Full : Full<IOhlcv, AnalyzableTick<(decimal? K, decimal? D, decimal? J)>>
         {
-            public Full(IEnumerable<IOhlcvData> inputs, int periodCount, int smaPeriodCountK, int smaPeriodCountD)
+            public Full(IEnumerable<IOhlcv> inputs, int periodCount, int smaPeriodCountK, int smaPeriodCountD)
                 : base(inputs, i => (i.High, i.Low, i.Close), periodCount, smaPeriodCountK, smaPeriodCountD)
             {
             }
