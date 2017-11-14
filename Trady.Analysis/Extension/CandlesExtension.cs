@@ -182,5 +182,8 @@ namespace Trady.Analysis.Extension
 
         public static IReadOnlyList<AnalyzableTick<decimal?>> Sar(this IEnumerable<IOhlcvData> candles, decimal step, decimal maximumStep, int? startIndex = null, int? endIndex = null)
             => new ParabolicStopAndReverse(candles, step, maximumStep).Compute(startIndex, endIndex);
+
+        public static IReadOnlyList<AnalyzableTick<decimal?>> Smi(this IEnumerable<IOhlcvData> candles, int periodCount, int smoothingPeriodA, int smoothingPeriodB, int? startIndex = null, int? endIndex = null)
+            => new StochasticsMomentumIndex(candles, periodCount, smoothingPeriodA, smoothingPeriodB).Compute(startIndex, endIndex);
     }
 }

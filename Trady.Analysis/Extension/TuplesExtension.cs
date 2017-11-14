@@ -188,5 +188,8 @@ namespace Trady.Analysis.Extension
 
         public static IReadOnlyList<decimal?> Sar(this IEnumerable<(decimal High, decimal Low)> inputs, decimal step, decimal maximumStep, int? startIndex = null, int? endIndex = null)
             => new ParabolicStopAndReverseByTuple(inputs, step, maximumStep).Compute(startIndex, endIndex);
+
+        public static IReadOnlyList<decimal?> Smi(this IEnumerable<(decimal High, decimal Low, decimal Close)> inputs, int periodCount, int smoothingPeriodA, int smoothingPeriodB, int? startIndex = null, int? endIndex = null)
+            => new StochasticsMomentumIndexByTuple(inputs, periodCount, smoothingPeriodA, smoothingPeriodB).Compute(startIndex, endIndex);
     }
 }
