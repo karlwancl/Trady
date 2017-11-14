@@ -16,15 +16,22 @@ This library is a hobby project, and would probably making breaking changes, use
 * Strategy backtesting by buy/sell rule
 
 ## Recent update
-<!-- ### v3.1
-* Added ParabolicStopAndReverse (Sar)
-* Renamed ClosePriceChange to Momentum (Mtm), ClosePricePercentageChange to RateOfChange (Roc) -->
+### v3.1.0-beta0
+* Added Harami (thanks to @richardsjoberg)
+* Added indicators: ParabolicStopAndReverse (Sar), DynamicMomentumIndex(Dymoi), RelativeMomentumIndex (Rmi), NetMomentumOscillator (Nmo), StochasticsRsiOscillator (StochRsi), StochasticsMomentumIndex (Smi), CommodityChannelIndex (Cci)
+* IOhlcv interface is extracted, any class that implements IOhlcv interface can be used to calculate indicators (thanks to @LadislavBohm)
+* DateTimeOffset is used as default instead of DateTime
+
+* Renamed IndexedCandle.Execute to IndexedCandle.Eval
+* Renamed ClosePriceChange to Momentum (Mtm), ClosePricePercentageChange to RateOfChange (Roc)
+
+* Fix potential crash when computing EfficiencyRatio (thanks to @Mike-EEE)
+
 ### v3.0.1
 * Fixed potential crash when doing backtest (Thanks for @LadislavBohm)
 
 ## Updates from 2.0.x to 3.0.0
 Please refer to another markdown document [here](update_from_2.0.x.md)
-
 
 ## Supported Platforms
 * .NET Core 2.0 or above
