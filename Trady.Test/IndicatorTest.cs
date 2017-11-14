@@ -29,6 +29,14 @@ namespace Trady.Test
         }
 
         [TestMethod]
+        public async Task TestCciAsync()
+        {
+            var candles = await ImportIOhlcvDatasAsync();
+            var result = candles.Cci(20)[candles.Count() - 1];
+            Assert.IsTrue(result.Tick.Value.IsApproximatelyEquals(8.17m));
+        }
+
+        [TestMethod]
         public async Task TestSmiAsync()
         {
             var candles = await ImportIOhlcvDatasAsync();

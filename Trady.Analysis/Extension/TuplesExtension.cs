@@ -39,6 +39,9 @@ namespace Trady.Analysis.Extension
         public static IReadOnlyList<decimal?> BbWidth(this IEnumerable<decimal> inputs, int periodCount, decimal sdCount, int? startIndex = null, int? endIndex = null)
             => new BollingerBandWidthByTuple(inputs, periodCount, sdCount).Compute(startIndex, endIndex);
 
+        public static IReadOnlyList<decimal?> Cci(this IEnumerable<(decimal High, decimal Low, decimal Close)> inputs, int periodCount, int? startIndex = null, int? endIndex = null)
+            => new CommodityChannelIndexByTuple(inputs, periodCount).Compute(startIndex, endIndex);
+
         public static IReadOnlyList<(decimal? Long, decimal? Short)> Chandlr(this IEnumerable<(decimal High, decimal Low, decimal Close)> inputs, int periodCount, decimal atrCount, int? startIndex = null, int? endIndex = null)
             => new ChandelierExitByTuple(inputs, periodCount, atrCount).Compute(startIndex, endIndex);
 
