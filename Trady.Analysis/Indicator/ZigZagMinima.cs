@@ -16,7 +16,6 @@ namespace Trady.Analysis.Indicator
         {
             _threshold = threshold;
         }
-
         
         protected override (decimal? Close, int CalculationIndex)? ComputeByIndexImpl(IReadOnlyList<decimal> mappedInputs, int index)
         {
