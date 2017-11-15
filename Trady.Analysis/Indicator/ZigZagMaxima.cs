@@ -41,7 +41,7 @@ namespace Trady.Analysis.Indicator
             var previousLow = historicalCloses.LastOrDefault(c => currentClose > c && (currentClose - c) / currentClose > _threshold);
             if (futureLow.HasValue && previousLow.HasValue)
             {
-                return (currentClose, futureCloses.IndexOf(futureLow));
+                return (currentClose, index + futureCloses.FindIndex(c => (currentClose - c) / currentClose > _threshold) + 1);
             }
             return null;
         }
