@@ -8,6 +8,7 @@ using Trady.Importer.Google;
 using Trady.Importer.Quandl;
 using Trady.Importer.Stooq;
 using Trady.Importer.Yahoo;
+using CsvHelper.TypeConversion;
 
 namespace Trady.Test
 {
@@ -79,6 +80,55 @@ namespace Trady.Test
             Assert.AreEqual(candles.Count(), 1342);
             var firstIOhlcvData = candles.First();
             Assert.AreEqual(firstIOhlcvData.DateTime, new DateTime(2012, 5, 18));
+        }
+
+        [TestMethod]
+        public void ImportFromCsvWithTime()
+        {
+            var config = new CsvImportConfiguration()
+            {
+                Culture = new CultureInfo("en-US"),
+                Delimiter = ";",
+                DateFormat = "yyyyMMdd HHmmss",
+                HasHeaderRecord = false
+            };
+            var importer = new CsvImporter("EURUSD.csv", config);
+            var converter = new CustomDateConverter();
+            var candles = importer.ImportAsync("EURUSD").Result;
+            Assert.AreEqual(744, candles.Count());
+            var firstIOhlcvData = candles.First();
+            Assert.AreEqual(new DateTime(2000, 5, 30, 17, 27, 00), firstIOhlcvData.DateTime);
+        }
+    }
+
+    public class CustomDateConverter : CsvHelper.TypeConversion.DefaultTypeConverter
+    {
+
+        private const String dateFormat = @"yyyyMMdd HHmmss";
+
+        public override bool CanConvertFrom(Type type)
+        {
+            bool ret = typeof(String) == type;
+            return ret;
+        }
+
+        public override bool CanConvertTo(Type type)
+        {
+            bool ret = typeof(System.DateTime) == type;
+            return ret;
+        }
+        //ConvertFromString(CultureInfo culture, string text)
+        public override object ConvertFromString(TypeConverterOptions options, string text)        
+        {
+            DateTime newDate = default(System.DateTime);
+            newDate = DateTime.ParseExact(text, dateFormat, CultureInfo.InvariantCulture);
+            return newDate;
+        }
+
+        public override string ConvertToString(TypeConverterOptions options, object value)
+        {
+            DateTime oldDate = (System.DateTime)value;
+            return oldDate.ToString(dateFormat);
         }
     }
 }
