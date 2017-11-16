@@ -92,7 +92,6 @@ namespace Trady.Test
                 HasHeaderRecord = false
             };
             var importer = new CsvImporter("EURUSD.csv", config);
-            var converter = new CustomDateConverter();
             var candles = importer.ImportAsync("EURUSD").Result;
             Assert.AreEqual(744, candles.Count());
             var firstIOhlcvData = candles.First();
