@@ -42,9 +42,9 @@ namespace Trady.Analysis.Indicator
         }
     }
 
-    public class BollingerBands : BollingerBands<IOhlcvData, AnalyzableTick<(decimal? LowerBand, decimal? MiddleBand, decimal? UpperBand)>>
+    public class BollingerBands : BollingerBands<IOhlcv, AnalyzableTick<(decimal? LowerBand, decimal? MiddleBand, decimal? UpperBand)>>
     {
-        public BollingerBands(IEnumerable<IOhlcvData> inputs, int periodCount, decimal sdCount)
+        public BollingerBands(IEnumerable<IOhlcv> inputs, int periodCount, decimal sdCount)
             : base(inputs, i => i.Close, periodCount, sdCount)
         {
         }

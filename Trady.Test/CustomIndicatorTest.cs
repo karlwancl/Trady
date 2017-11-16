@@ -15,7 +15,7 @@ namespace Trady.Test
     [TestClass]
     public class CustomIndicatorTest
     {
-        private async Task<IEnumerable<IOhlcvData>> ImportIOhlcvDatasAsync()
+        private async Task<IEnumerable<IOhlcv>> ImportIOhlcvDatasAsync()
         {
             var csvImporter = new CsvImporter("fb.csv", new CultureInfo("en-US"));
             return await csvImporter.ImportAsync("fb");
@@ -40,24 +40,24 @@ namespace Trady.Test
             Assert.IsTrue(customIndicator[14].Tick.Value.IsApproximatelyEquals(-0.36764m));
         }
 
-        public class ClosePricePercentageChangeSinceMondayOpen : AnalyzableBase<IOhlcvData, IOhlcvData, decimal?, AnalyzableTick<decimal?>>
+        public class ClosePricePercentageChangeSinceMondayOpen : AnalyzableBase<IOhlcv, IOhlcv, decimal?, AnalyzableTick<decimal?>>
         {
-            public ClosePricePercentageChangeSinceMondayOpen(IEnumerable<IOhlcvData> inputs)
+            public ClosePricePercentageChangeSinceMondayOpen(IEnumerable<IOhlcv> inputs)
                 : base(inputs, i => i)
             {
             }
 
-            private DateTime GetMondayFor(DateTime aDate)
+            private DateTime GetMondayFor(DateTimeOffset aDate)
             {
                 int currentDay = (int)aDate.DayOfWeek;
                 if (currentDay == 0)
                     currentDay = 7;
 
                 int daysToSubstract = currentDay - 1;
-                return aDate.AddDays(-daysToSubstract);
+                return aDate.DateTime.AddDays(-daysToSubstract);
             }
 
-            protected override decimal? ComputeByIndexImpl(IReadOnlyList<IOhlcvData> mappedInputs, int index)
+            protected override decimal? ComputeByIndexImpl(IReadOnlyList<IOhlcv> mappedInputs, int index)
             {
                 var currentIOhlcvData = mappedInputs[index];
                 var mondayOfThatWeek = GetMondayFor(currentIOhlcvData.DateTime);

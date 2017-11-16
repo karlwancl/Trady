@@ -38,9 +38,9 @@ namespace Trady.Analysis.Indicator
         }
     }
 
-    public class RawStochasticsValue : RawStochasticsValue<IOhlcvData, AnalyzableTick<decimal?>>
+    public class RawStochasticsValue : RawStochasticsValue<IOhlcv, AnalyzableTick<decimal?>>
     {
-        public RawStochasticsValue(IEnumerable<IOhlcvData> inputs, int periodCount)
+        public RawStochasticsValue(IEnumerable<IOhlcv> inputs, int periodCount)
             : base(inputs, i => (i.High, i.Low, i.Close), periodCount)
         {
         }

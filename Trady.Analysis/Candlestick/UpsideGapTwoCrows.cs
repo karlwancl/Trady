@@ -29,9 +29,9 @@ namespace Trady.Analysis.Candlestick
         }
     }
 
-    public class UpsideGapTwoCrows : UpsideGapTwoCrows<IOhlcvData, AnalyzableTick<bool?>>
+    public class UpsideGapTwoCrows : UpsideGapTwoCrows<IOhlcv, AnalyzableTick<bool?>>
     {
-        public UpsideGapTwoCrows(IEnumerable<IOhlcvData> inputs)
+        public UpsideGapTwoCrows(IEnumerable<IOhlcv> inputs)
             : base(inputs, i => (i.Open, i.High, i.Low, i.Close))
         {
         }

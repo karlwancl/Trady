@@ -3,9 +3,9 @@ using Trady.Core.Infrastructure;
 
 namespace Trady.Core
 {
-    public class Candle : IOhlcvData
+    public class Candle : IOhlcv
     {
-        public Candle(DateTime dateTime, decimal open, decimal high, decimal low, decimal close, decimal volume)
+        public Candle(DateTimeOffset dateTime, decimal open, decimal high, decimal low, decimal close, decimal volume)
         {
             DateTime = dateTime;
             Open = open;
@@ -15,7 +15,7 @@ namespace Trady.Core
             Volume = volume;
         }
 
-        public DateTime DateTime { get; }
+        public DateTimeOffset DateTime { get; }
 
         public decimal Open { get; }
 

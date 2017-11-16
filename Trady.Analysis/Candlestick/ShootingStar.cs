@@ -29,9 +29,9 @@ namespace Trady.Analysis.Candlestick
         }
     }
 
-    public class ShootingStar : ShootingStar<IOhlcvData, AnalyzableTick<bool?>>
+    public class ShootingStar : ShootingStar<IOhlcv, AnalyzableTick<bool?>>
     {
-        public ShootingStar(IEnumerable<IOhlcvData> inputs)
+        public ShootingStar(IEnumerable<IOhlcv> inputs)
             : base(inputs, i => (i.Open, i.High, i.Low, i.Close))
         {
         }

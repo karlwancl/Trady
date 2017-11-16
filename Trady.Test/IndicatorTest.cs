@@ -10,20 +10,113 @@ using Trady.Analysis;
 using Trady.Analysis.Extension;
 using Trady.Core.Infrastructure;
 using Trady.Importer.Csv;
+using System;
 
 namespace Trady.Test
 {
     [TestClass]
     public class IndicatorTest
     {
-        protected async Task<IEnumerable<IOhlcvData>> ImportIOhlcvDatasAsync()
+        protected async Task<IEnumerable<IOhlcv>> ImportIOhlcvDatasAsync()
         {
+            // Last record: 09/18/2017
             var csvImporter = new CsvImporter("fb.csv", new CultureInfo("en-US"));
             return await csvImporter.ImportAsync("fb");
             //var yahooImporter = new YahooFinanceImporter();
             //var candles = await yahooImporter.ImportAsync("FB");
             //File.WriteAllLines("fb.csv", candles.Select(c => $"{c.DateTime.ToString("d")},{c.Open},{c.High},{c.Low},{c.Close},{c.Volume}"));
             //return candles;
+        }
+
+        [TestMethod]
+        public async Task TestCciAsync()
+        {
+            var candles = await ImportIOhlcvDatasAsync();
+            var result = candles.Cci(20)[candles.Count() - 1];
+            Assert.IsTrue(result.Tick.Value.IsApproximatelyEquals(8.17m));
+        }
+
+        [TestMethod]
+        public async Task TestSmiAsync()
+        {
+            var candles = await ImportIOhlcvDatasAsync();
+            var result = candles.Smi(15, 6, 6)[candles.Count() - 1]; 
+            Assert.IsTrue(result.Tick.Value.IsApproximatelyEquals(55.1868m));
+        }
+
+        [TestMethod]
+        public async Task TestStochRsiAsync()
+        {
+            var candles = await ImportIOhlcvDatasAsync();
+            var result = candles.StochRsi(14)[candles.Count() - 1];  
+            Assert.IsTrue(0m.IsApproximatelyEquals(result.Tick.Value));
+
+            var result2 = candles.StochRsi(14).Single(v => v.DateTime == new DateTime(2017, 9, 15));
+            Assert.IsTrue(0.317m.IsApproximatelyEquals(result2.Tick.Value));
+        }
+
+        [TestMethod]
+        public async Task TestNmoAsync()
+        {
+            var candles = await ImportIOhlcvDatasAsync();
+            var result = candles.Nmo(14)[candles.Count() - 1];
+            Assert.IsTrue(0.58m.IsApproximatelyEquals(result.Tick.Value));
+        }
+
+        [TestMethod]
+        public async Task TestDownMomentumAsync()
+        {
+            var candles = await ImportIOhlcvDatasAsync();
+            var results = new DownMomentum(candles, 20);
+            Assert.IsTrue(0m.IsApproximatelyEquals(results[candles.Count() - 1].Tick.Value));
+
+            var results2 = new DownMomentum(candles, 3);
+            Assert.IsTrue(3.04m.IsApproximatelyEquals(results2[candles.Count() - 1].Tick.Value));
+        }
+
+        [TestMethod]
+        public async Task TestUpMomentumAsync()
+        {
+            var candles = await ImportIOhlcvDatasAsync();
+            var results = new UpMomentum(candles, 20);
+            Assert.IsTrue(2.6m.IsApproximatelyEquals(results[candles.Count() - 1].Tick.Value));
+
+            var results2 = new UpMomentum(candles, 3);
+            Assert.IsTrue(0m.IsApproximatelyEquals(results2[candles.Count() - 1].Tick.Value));
+        }
+
+        [TestMethod]
+        public async Task TestRmAsync()
+        {
+            var candles = await ImportIOhlcvDatasAsync();
+            var result = candles.Rm(20, 4)[candles.Count() - 1];
+            Assert.IsTrue(1.4016m.IsApproximatelyEquals(result.Tick.Value));
+        }
+
+        [TestMethod]
+        public async Task TestRmiAsync()
+        {
+            var candles = await ImportIOhlcvDatasAsync();
+            var result = candles.Rmi(20, 4)[candles.Count() - 1];
+            Assert.IsTrue(58.3607m.IsApproximatelyEquals(result.Tick.Value));
+        }
+
+        [TestMethod]
+        public async Task TestDymoiAsync()
+        {
+            var candles = await ImportIOhlcvDatasAsync();
+            var result = candles.Dymoi(5, 10, 14, 30, 5)[candles.Count() - 1];
+            Assert.IsTrue(48.805m.IsApproximatelyEquals(result.Tick.Value));
+        }
+
+        [TestMethod]
+        public async Task TestParabolicSarAsync()
+        {
+            var candles = await ImportIOhlcvDatasAsync();
+            var results = candles.Sar(0.02m, 0.2m);
+            Assert.IsTrue(173.93m.IsApproximatelyEquals(results[candles.Count() - 1].Tick.Value));
+            Assert.IsTrue(169.92m.IsApproximatelyEquals(results[candles.Count() - 3].Tick.Value));
+            Assert.IsTrue(157.36m.IsApproximatelyEquals(results.First(r => r.DateTime == new DateTime(2017, 7, 24)).Tick.Value));
         }
 
 		[TestMethod]

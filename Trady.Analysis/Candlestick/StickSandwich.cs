@@ -29,9 +29,9 @@ namespace Trady.Analysis.Candlestick
         }
     }
 
-    public class StickSandwich : StickSandwich<IOhlcvData, AnalyzableTick<bool?>>
+    public class StickSandwich : StickSandwich<IOhlcv, AnalyzableTick<bool?>>
     {
-        public StickSandwich(IEnumerable<IOhlcvData> inputs)
+        public StickSandwich(IEnumerable<IOhlcv> inputs)
             : base(inputs, i => (i.Open, i.High, i.Low, i.Close))
         {
         }

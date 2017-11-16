@@ -7,7 +7,7 @@ namespace Trady.Analysis.Backtest
 {
     public class Transaction : IEquatable<Transaction>
     {
-        public Transaction(IEnumerable<IOhlcvData> candles, int index, DateTime dateTime, TransactionType type, int quantity, decimal absCashFlow)
+        public Transaction(IEnumerable<IOhlcv> candles, int index, DateTimeOffset dateTime, TransactionType type, int quantity, decimal absCashFlow)
         {
             IOhlcvDatas = candles;
             Index = index;
@@ -17,9 +17,9 @@ namespace Trady.Analysis.Backtest
             AbsoluteCashFlow = absCashFlow;
         }
 
-        public IEnumerable<IOhlcvData> IOhlcvDatas { get; }
+        public IEnumerable<IOhlcv> IOhlcvDatas { get; }
 
-        public DateTime DateTime { get; }
+        public DateTimeOffset DateTime { get; }
 
         public int Index { get; }
 

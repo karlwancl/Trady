@@ -24,9 +24,9 @@ namespace Trady.Analysis.Indicator
         }
     }
 
-    public class PlusDirectionalMovement : PlusDirectionalMovement<IOhlcvData, AnalyzableTick<decimal?>>
+    public class PlusDirectionalMovement : PlusDirectionalMovement<IOhlcv, AnalyzableTick<decimal?>>
     {
-        public PlusDirectionalMovement(IEnumerable<IOhlcvData> inputs)
+        public PlusDirectionalMovement(IEnumerable<IOhlcv> inputs)
             : base(inputs, i => i.High)
         {
         }

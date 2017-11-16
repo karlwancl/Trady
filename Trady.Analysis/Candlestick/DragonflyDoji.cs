@@ -42,9 +42,9 @@ namespace Trady.Analysis.Candlestick
         }
     }
 
-    public class DragonifyDoji : DragonflyDoji<IOhlcvData, AnalyzableTick<bool>>
+    public class DragonifyDoji : DragonflyDoji<IOhlcv, AnalyzableTick<bool>>
     {
-        public DragonifyDoji(IEnumerable<IOhlcvData> inputs, decimal dojiThreshold = 0.1M, decimal shadowThreshold = 0.1M)
+        public DragonifyDoji(IEnumerable<IOhlcv> inputs, decimal dojiThreshold = 0.1M, decimal shadowThreshold = 0.1M)
             : base(inputs, i => (i.Open, i.High, i.Low, i.Close), dojiThreshold, shadowThreshold)
         {
         }

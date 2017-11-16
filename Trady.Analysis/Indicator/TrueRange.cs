@@ -28,9 +28,9 @@ namespace Trady.Analysis.Indicator
         }
     }
 
-    public class TrueRange : TrueRange<IOhlcvData, AnalyzableTick<decimal?>>
+    public class TrueRange : TrueRange<IOhlcv, AnalyzableTick<decimal?>>
     {
-        public TrueRange(IEnumerable<IOhlcvData> inputs)
+        public TrueRange(IEnumerable<IOhlcv> inputs)
             : base(inputs, i => (i.High, i.Low, i.Close))
         {
         }

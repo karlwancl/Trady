@@ -22,18 +22,18 @@ namespace Trady.Analysis.Infrastructure
         private readonly bool _isTInputIOhlcvData, _isTOutputAnalyzableTick;
 
         internal protected readonly IReadOnlyList<TMappedInput> _mappedInputs;
-        readonly IReadOnlyList<DateTime> _mappedDateTimes;
+        readonly IReadOnlyList<DateTimeOffset> _mappedDateTimes;
 
         protected AnalyzableBase(IEnumerable<TInput> inputs, Func<TInput, TMappedInput> inputMapper)
         {
-            _isTInputIOhlcvData = typeof(IOhlcvData).IsAssignableFrom(typeof(TInput));
+            _isTInputIOhlcvData = typeof(IOhlcv).IsAssignableFrom(typeof(TInput));
             _isTOutputAnalyzableTick = typeof(IAnalyzableTick<TOutputToMap>).IsAssignableFrom(typeof(TOutput));
             if (_isTInputIOhlcvData != _isTOutputAnalyzableTick)
                 throw new ArgumentException("TInput, TOutput not matched!");
 
             _mappedInputs = inputs.Select(inputMapper).ToList();
             if (_isTInputIOhlcvData)
-                _mappedDateTimes = inputs.Select(c => (c as IOhlcvData).DateTime).ToList();
+                _mappedDateTimes = inputs.Select(c => (c as IOhlcv).DateTime).ToList();
 
             Cache = new ConcurrentDictionary<int, TOutputToMap>();
         }
@@ -93,7 +93,7 @@ namespace Trady.Analysis.Infrastructure
             var datetime = index >= 0 && index < _mappedInputs.Count ? (_mappedDateTimes?[index] ?? default(DateTime?)) : default(DateTime?);
 			return _isTOutputAnalyzableTick ? AnalyzableTickMapper(datetime, outputToMap) : outputToMap;
 
-			TOutput AnalyzableTickMapper(DateTime? d, TOutputToMap otm)
+			TOutput AnalyzableTickMapper(DateTimeOffset? d, TOutputToMap otm)
             {
                 Type concreteType = _isTOutputAnalyzableTick ? typeof(AnalyzableTick<TOutputToMap>) : typeof(TOutput);
                 return (TOutput)concreteType.GetConstructors().First().Invoke(new object[] { d, otm });

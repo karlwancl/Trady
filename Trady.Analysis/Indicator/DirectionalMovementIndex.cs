@@ -37,9 +37,9 @@ namespace Trady.Analysis.Indicator
         }
     }
 
-    public class DirectionalMovementIndex : DirectionalMovementIndex<IOhlcvData, AnalyzableTick<decimal?>>
+    public class DirectionalMovementIndex : DirectionalMovementIndex<IOhlcv, AnalyzableTick<decimal?>>
     {
-        public DirectionalMovementIndex(IEnumerable<IOhlcvData> inputs, int periodCount)
+        public DirectionalMovementIndex(IEnumerable<IOhlcv> inputs, int periodCount)
             : base(inputs, i => (i.High, i.Low, i.Close), periodCount)
         {
         }

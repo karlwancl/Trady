@@ -65,9 +65,9 @@ namespace Trady.Analysis.Candlestick
         }
     }
 
-    public class EveningStar : EveningStar<IOhlcvData, AnalyzableTick<bool?>>
+    public class EveningStar : EveningStar<IOhlcv, AnalyzableTick<bool?>>
     {
-        public EveningStar(IEnumerable<IOhlcvData> inputs, int upTrendPeriodCount = 3, int periodCount = 20, decimal shortThreshold = 0.25M, decimal longThreshold = 0.75M, decimal threshold = 0.1M)
+        public EveningStar(IEnumerable<IOhlcv> inputs, int upTrendPeriodCount = 3, int periodCount = 20, decimal shortThreshold = 0.25M, decimal longThreshold = 0.75M, decimal threshold = 0.1M)
             : base(inputs, i => (i.Open, i.High, i.Low, i.Close), upTrendPeriodCount, periodCount, shortThreshold, longThreshold, threshold)
         {
         }

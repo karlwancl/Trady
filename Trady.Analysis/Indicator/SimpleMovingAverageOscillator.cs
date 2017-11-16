@@ -36,9 +36,9 @@ namespace Trady.Analysis.Indicator
         }
     }
 
-    public class SimpleMovingAverageOscillator : SimpleMovingAverageOscillator<IOhlcvData, AnalyzableTick<decimal?>>
+    public class SimpleMovingAverageOscillator : SimpleMovingAverageOscillator<IOhlcv, AnalyzableTick<decimal?>>
     {
-        public SimpleMovingAverageOscillator(IEnumerable<IOhlcvData> inputs, int periodCount1, int periodCount2)
+        public SimpleMovingAverageOscillator(IEnumerable<IOhlcv> inputs, int periodCount1, int periodCount2)
             : base(inputs, i => i.Close, periodCount1, periodCount2)
         {
         }

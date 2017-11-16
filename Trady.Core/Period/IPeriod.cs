@@ -4,12 +4,12 @@ namespace Trady.Core.Period
 {
     public interface IPeriod
     {
-        DateTime TimestampAt(DateTime dateTime, int periodCount);
+        DateTimeOffset TimestampAt(DateTimeOffset dateTime, int periodCount);
 
-        DateTime PrevTimestamp(DateTime dateTime);
+        DateTimeOffset PrevTimestamp(DateTimeOffset dateTime);
 
-        DateTime NextTimestamp(DateTime dateTime);
+        DateTimeOffset NextTimestamp(DateTimeOffset dateTime);
 
-        bool IsTimestamp(DateTime dateTime);
+        bool IsTimestamp(DateTimeOffset dateTime);
     }
 }

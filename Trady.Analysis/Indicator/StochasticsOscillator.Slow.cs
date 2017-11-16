@@ -36,9 +36,9 @@ namespace Trady.Analysis.Indicator
             }
         }
 
-        public class Slow : Slow<IOhlcvData, AnalyzableTick<decimal?>>
+        public class Slow : Slow<IOhlcv, AnalyzableTick<decimal?>>
         {
-            public Slow(IEnumerable<IOhlcvData> inputs, int periodCount, int smaPeriodCountD) 
+            public Slow(IEnumerable<IOhlcv> inputs, int periodCount, int smaPeriodCountD) 
                 : base(inputs, i => (i.High, i.Low, i.Close), periodCount, smaPeriodCountD)
             {
             }

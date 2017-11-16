@@ -29,9 +29,9 @@ namespace Trady.Analysis.Candlestick
         }
     }
 
-    public class InvertedHammer : InvertedHammer<IOhlcvData, AnalyzableTick<bool?>>
+    public class InvertedHammer : InvertedHammer<IOhlcv, AnalyzableTick<bool?>>
     {
-        public InvertedHammer(IEnumerable<IOhlcvData> inputs)
+        public InvertedHammer(IEnumerable<IOhlcv> inputs)
             : base(inputs, i => (i.Open, i.High, i.Low, i.Close))
         {
         }

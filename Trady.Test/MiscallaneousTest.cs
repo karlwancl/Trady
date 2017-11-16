@@ -17,7 +17,7 @@ namespace Trady.Test
     [TestClass]
     public class MiscallaneousTest
     {
-        public async Task<IEnumerable<IOhlcvData>> ImportIOhlcvDatasAsync()
+        public async Task<IEnumerable<IOhlcv>> ImportIOhlcvDatasAsync()
         {
             var csvImporter = new CsvImporter("fb.csv", new CultureInfo("en-US"));
             return await csvImporter.ImportAsync("fb");
@@ -28,7 +28,7 @@ namespace Trady.Test
         {
             var candles = await ImportIOhlcvDatasAsync();
             var rule = Rule.Create(ic => ic.IsAboveSma(30));
-            IReadOnlyList<IOhlcvData> validObjects;
+            IReadOnlyList<IOhlcv> validObjects;
             using (var ctx = new AnalyzeContext(candles))
                 validObjects = new SimpleRuleExecutor(ctx, rule).Execute();
             Assert.IsTrue(validObjects.Count() == 882);

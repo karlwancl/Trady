@@ -42,9 +42,9 @@ namespace Trady.Analysis.Candlestick
         }
     }
 
-    public class GravestoneDoji : GravestoneDoji<IOhlcvData, AnalyzableTick<bool>>
+    public class GravestoneDoji : GravestoneDoji<IOhlcv, AnalyzableTick<bool>>
     {
-        public GravestoneDoji(IEnumerable<IOhlcvData> inputs, decimal dojiThreshold = 0.1M, decimal shadowThreshold = 0.1M)
+        public GravestoneDoji(IEnumerable<IOhlcv> inputs, decimal dojiThreshold = 0.1M, decimal shadowThreshold = 0.1M)
             : base(inputs, i => (i.Open, i.High, i.Low, i.Close), dojiThreshold, shadowThreshold)
         {
         }

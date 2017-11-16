@@ -6,7 +6,7 @@ namespace Trady.Core.Period
     {
         public override uint NumberOfSecond => 60;
 
-        public override bool IsTimestamp(DateTime dateTime)
+        public override bool IsTimestamp(DateTimeOffset dateTime)
             => dateTime.Millisecond == 0 && dateTime.Second == 0;
     }
 }

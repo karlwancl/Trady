@@ -4,9 +4,9 @@ namespace Trady.Core.Exception
 {
     public class InvalidTimeframeException : System.Exception
     {
-        private DateTime _invalidDateTime;
+        private DateTimeOffset _invalidDateTime;
 
-        public InvalidTimeframeException(DateTime invalidDateTime)
+        public InvalidTimeframeException(DateTimeOffset invalidDateTime)
         {
             _invalidDateTime = invalidDateTime;
         }

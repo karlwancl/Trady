@@ -6,7 +6,7 @@ namespace Trady.Core.Period
     {
         public abstract uint NumberOfSecond { get; }
 
-        protected override DateTime ComputeTimestampByCorrectedPeriodCount(DateTime dateTime, int correctedPeriodCount)
-            => dateTime.Truncate(TimeSpan.FromSeconds(NumberOfSecond)).AddSeconds(correctedPeriodCount * NumberOfSecond);
+        protected override DateTimeOffset ComputeTimestampByCorrectedPeriodCount(DateTimeOffset dateTime, int correctedPeriodCount)
+            => dateTime.DateTime.Truncate(TimeSpan.FromSeconds(NumberOfSecond)).AddSeconds(correctedPeriodCount * NumberOfSecond);
     }
 }

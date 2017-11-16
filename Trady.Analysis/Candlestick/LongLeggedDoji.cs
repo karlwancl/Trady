@@ -29,9 +29,9 @@ namespace Trady.Analysis.Candlestick
         }
     }
 
-    public class LongLeggedDoji : LongLeggedDoji<IOhlcvData, AnalyzableTick<bool?>>
+    public class LongLeggedDoji : LongLeggedDoji<IOhlcv, AnalyzableTick<bool?>>
     {
-        public LongLeggedDoji(IEnumerable<IOhlcvData> inputs)
+        public LongLeggedDoji(IEnumerable<IOhlcv> inputs)
             : base(inputs, i => (i.Open, i.High, i.Low, i.Close))
         {
         }

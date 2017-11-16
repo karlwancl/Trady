@@ -49,9 +49,9 @@ namespace Trady.Analysis.Indicator
         }
     }
 
-    public class MovingAverageConvergenceDivergence : MovingAverageConvergenceDivergence<IOhlcvData, AnalyzableTick<(decimal? MacdLine, decimal? SignalLine, decimal? MacdHistogram)>>
+    public class MovingAverageConvergenceDivergence : MovingAverageConvergenceDivergence<IOhlcv, AnalyzableTick<(decimal? MacdLine, decimal? SignalLine, decimal? MacdHistogram)>>
     {
-        public MovingAverageConvergenceDivergence(IEnumerable<IOhlcvData> inputs, int emaPeriodCount1, int emaPeriodCount2, int demPeriodCount)
+        public MovingAverageConvergenceDivergence(IEnumerable<IOhlcv> inputs, int emaPeriodCount1, int emaPeriodCount2, int demPeriodCount)
             : base(inputs, i => i.Close, emaPeriodCount1, emaPeriodCount2, demPeriodCount)
         {
         }

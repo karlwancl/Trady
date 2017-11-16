@@ -35,9 +35,9 @@ namespace Trady.Analysis.Indicator
         }
     }
 
-    public class EfficiencyRatio : EfficiencyRatio<IOhlcvData, AnalyzableTick<decimal?>>
+    public class EfficiencyRatio : EfficiencyRatio<IOhlcv, AnalyzableTick<decimal?>>
     {
-        public EfficiencyRatio(IEnumerable<IOhlcvData> inputs, int periodCount)
+        public EfficiencyRatio(IEnumerable<IOhlcv> inputs, int periodCount)
             : base(inputs, i => i.Close, periodCount)
         {
         }

@@ -4,6 +4,6 @@ namespace Trady.Core.Infrastructure
 {
     public interface ITick
     {
-        DateTime DateTime { get; }
+        DateTimeOffset DateTime { get; }
     }
 }

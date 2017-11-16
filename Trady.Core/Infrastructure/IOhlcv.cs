@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Trady.Core.Infrastructure
 {
-    public interface IOhlcvData : ITick
+    public interface IOhlcv : ITick
     {
         decimal Open { get; }
 

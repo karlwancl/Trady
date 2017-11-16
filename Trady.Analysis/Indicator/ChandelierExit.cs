@@ -45,9 +45,9 @@ namespace Trady.Analysis.Indicator
         }
     }
 
-    public class ChandelierExit : ChandelierExit<IOhlcvData, AnalyzableTick<(decimal? Long, decimal? Short)>>
+    public class ChandelierExit : ChandelierExit<IOhlcv, AnalyzableTick<(decimal? Long, decimal? Short)>>
     {
-        public ChandelierExit(IEnumerable<IOhlcvData> inputs, int periodCount, decimal atrCount)
+        public ChandelierExit(IEnumerable<IOhlcv> inputs, int periodCount, decimal atrCount)
             : base(inputs, i => (i.High, i.Low, i.Close), periodCount, atrCount)
         {
         }

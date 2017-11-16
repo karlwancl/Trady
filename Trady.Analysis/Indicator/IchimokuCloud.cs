@@ -76,9 +76,9 @@ namespace Trady.Analysis.Indicator
         }
     }
 
-    public class IchimokuCloud : IchimokuCloud<IOhlcvData, AnalyzableTick<(decimal? ConversionLine, decimal? BaseLine, decimal? LeadingSpanA, decimal? LeadingSpanB, decimal? LaggingSpan)>>
+    public class IchimokuCloud : IchimokuCloud<IOhlcv, AnalyzableTick<(decimal? ConversionLine, decimal? BaseLine, decimal? LeadingSpanA, decimal? LeadingSpanB, decimal? LaggingSpan)>>
     {
-        public IchimokuCloud(IEnumerable<IOhlcvData> inputs, int shortPeriodCount, int middlePeriodCount, int longPeriodCount)
+        public IchimokuCloud(IEnumerable<IOhlcv> inputs, int shortPeriodCount, int middlePeriodCount, int longPeriodCount)
             : base(inputs, i => (i.High, i.Low, i.Close), shortPeriodCount, middlePeriodCount, longPeriodCount)
         {
         }

@@ -39,6 +39,9 @@ namespace Trady.Analysis.Extension
         public static IReadOnlyList<decimal?> BbWidth(this IEnumerable<decimal> inputs, int periodCount, decimal sdCount, int? startIndex = null, int? endIndex = null)
             => new BollingerBandWidthByTuple(inputs, periodCount, sdCount).Compute(startIndex, endIndex);
 
+        public static IReadOnlyList<decimal?> Cci(this IEnumerable<(decimal High, decimal Low, decimal Close)> inputs, int periodCount, int? startIndex = null, int? endIndex = null)
+            => new CommodityChannelIndexByTuple(inputs, periodCount).Compute(startIndex, endIndex);
+
         public static IReadOnlyList<(decimal? Long, decimal? Short)> Chandlr(this IEnumerable<(decimal High, decimal Low, decimal Close)> inputs, int periodCount, decimal atrCount, int? startIndex = null, int? endIndex = null)
             => new ChandelierExitByTuple(inputs, periodCount, atrCount).Compute(startIndex, endIndex);
 
@@ -56,6 +59,9 @@ namespace Trady.Analysis.Extension
 
         public static IReadOnlyList<decimal?> Dmi(this IEnumerable<(decimal High, decimal Low, decimal Close)> inputs, int periodCount, int? startIndex = null, int? endIndex = null)
             => new DirectionalMovementIndexByTuple(inputs, periodCount).Compute(startIndex, endIndex);
+
+        public static IReadOnlyList<decimal?> Dymoi(this IEnumerable<decimal?> inputs, int sdPeriod, int smoothedSdPeriod, int rsiPeriod, int upLimit, int lowLimit, int? startIndex = null, int? endIndex = null)
+            => new DynamicMomentumIndexByTuple(inputs, sdPeriod, smoothedSdPeriod, rsiPeriod, upLimit, lowLimit).Compute(startIndex, endIndex);
 
         public static IReadOnlyList<decimal?> Er(this IEnumerable<decimal> inputs, int periodCount, int? startIndex = null, int? endIndex = null)
             => new EfficiencyRatioByTuple(inputs, periodCount).Compute(startIndex, endIndex);
@@ -105,6 +111,9 @@ namespace Trady.Analysis.Extension
         public static IReadOnlyList<decimal?> MacdHist(this IEnumerable<decimal> inputs, int emaPeriodCount1, int emaPeriodCount2, int demPeriodCount, int? startIndex = null, int? endIndex = null)
             => new MovingAverageConvergenceDivergenceHistogramByTuple(inputs, emaPeriodCount1, emaPeriodCount2, demPeriodCount).Compute(startIndex, endIndex);
 
+        public static IReadOnlyList<decimal?> Nmo(this IEnumerable<decimal?> inputs, int periodCount, int? startIndex = null, int? endIndex = null)
+            => new NetMomentumOscillatorByTuple(inputs, periodCount).Compute(startIndex, endIndex);
+
         public static IReadOnlyList<decimal?> Obv(this IEnumerable<(decimal Close, decimal Volume)> inputs, int? startIndex = null, int? endIndex = null)
             => new OnBalanceVolumeByTuple(inputs).Compute(startIndex, endIndex);
 
@@ -114,13 +123,19 @@ namespace Trady.Analysis.Extension
         public static IReadOnlyList<decimal?> Pdm(this IEnumerable<decimal> inputs, int? startIndex = null, int? endIndex = null)
             => new PlusDirectionalMovementByTuple(inputs).Compute(startIndex, endIndex);
 
+        public static IReadOnlyList<decimal?> Rm(this IEnumerable<decimal?> inputs, int rmiPeriod, int mtmPeriod, int? startIndex = null, int? endIndex = null)
+            => new RelativeMomentumByTuple(inputs, rmiPeriod, mtmPeriod).Compute(startIndex, endIndex);
+
+        public static IReadOnlyList<decimal?> Rmi(this IEnumerable<decimal?> inputs, int rmiPeriod, int mtmPeriod, int? startIndex = null, int? endIndex = null)
+            => new RelativeMomentumIndexByTuple(inputs, rmiPeriod, mtmPeriod).Compute(startIndex, endIndex);
+
         public static IReadOnlyList<decimal?> Rsv(this IEnumerable<(decimal High, decimal Low, decimal Close)> inputs, int periodCount, int? startIndex = null, int? endIndex = null)
             => new RawStochasticsValueByTuple(inputs, periodCount).Compute(startIndex, endIndex);
 
-        public static IReadOnlyList<decimal?> Rs(this IEnumerable<decimal> inputs, int periodCount, int? startIndex = null, int? endIndex = null)
+        public static IReadOnlyList<decimal?> Rs(this IEnumerable<decimal?> inputs, int periodCount, int? startIndex = null, int? endIndex = null)
             => new RelativeStrengthByTuple(inputs, periodCount).Compute(startIndex, endIndex);
 
-        public static IReadOnlyList<decimal?> Rsi(this IEnumerable<decimal> inputs, int periodCount, int? startIndex = null, int? endIndex = null)
+        public static IReadOnlyList<decimal?> Rsi(this IEnumerable<decimal?> inputs, int periodCount, int? startIndex = null, int? endIndex = null)
             => new RelativeStrengthIndexByTuple(inputs, periodCount).Compute(startIndex, endIndex);
 
 		public static IReadOnlyList<decimal?> Sma(this IEnumerable<decimal> inputs, int periodCount, int? startIndex = null, int? endIndex = null)
@@ -156,6 +171,9 @@ namespace Trady.Analysis.Extension
         public static IReadOnlyList<decimal?> SlowStoOsc(this IEnumerable<(decimal High, decimal Low, decimal Close)> inputs, int periodCount, int smaPeriodCountD, int? startIndex = null, int? endIndex = null)
             => new StochasticsOscillator.SlowByTuple(inputs, periodCount, smaPeriodCountD).Compute(startIndex, endIndex);
 
+        public static IReadOnlyList<decimal?> StochRsi(this IEnumerable<decimal?> inputs, int periodCount, int? startIndex = null, int? endIndex = null)
+            => new StochasticsRsiOscillatorByTuple(inputs, periodCount).Compute(startIndex, endIndex);
+
         public static IReadOnlyList<decimal?> Tr(this IEnumerable<(decimal High, decimal Low, decimal Close)> inputs, int? startIndex = null, int? endIndex = null)
             => new TrueRangeByTuple(inputs).Compute(startIndex, endIndex);
 
@@ -170,5 +188,11 @@ namespace Trady.Analysis.Extension
 
 		public static IReadOnlyList<decimal?> Percentile(this IEnumerable<decimal?> inputs, int periodCount, decimal percent, int? startIndex = null, int? endIndex = null)
 	        => new PercentileByTuple(inputs, periodCount, percent).Compute(startIndex, endIndex);
+
+        public static IReadOnlyList<decimal?> Sar(this IEnumerable<(decimal High, decimal Low)> inputs, decimal step, decimal maximumStep, int? startIndex = null, int? endIndex = null)
+            => new ParabolicStopAndReverseByTuple(inputs, step, maximumStep).Compute(startIndex, endIndex);
+
+        public static IReadOnlyList<decimal?> Smi(this IEnumerable<(decimal High, decimal Low, decimal Close)> inputs, int periodCount, int smoothingPeriodA, int smoothingPeriodB, int? startIndex = null, int? endIndex = null)
+            => new StochasticsMomentumIndexByTuple(inputs, periodCount, smoothingPeriodA, smoothingPeriodB).Compute(startIndex, endIndex);
     }
 }

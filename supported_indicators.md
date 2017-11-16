@@ -17,10 +17,12 @@ The following shows supporting indicators (test code covered)
 | BollingerBands | BollingerBandsByTuple | Bb |
 | BollingerBandWidth | BollingerBandWidthByTuple | BbWidth |
 | ChandelierExit | ChandelierExitByTuple | Chandlr |
+| CommodityChannelIndex | CommodityChannelIndexByTuple | Cci |
 | Momentum | N/A | Mtm |
 | RateOfChange | N/A | Roc |
 | N/A | DifferenceByTuple | Diff |
 | DirectionalMovementIndex | DirectionalMovementIndexByTuple | Dmi |
+| DynamicMomentumIndex | DynamicMomentumIndexByTuple | Dymoi |
 | EfficiencyRatio | EfficiencyRatioByTuple | Er |
 | ExponentialMovingAverage | ExponentialMovingAverageByTuple | Ema |
 | ExponentialMovingAverageOscillator | ExponentialMovingAverageOscillatorByTuple | EmaOsc |
@@ -44,6 +46,7 @@ The following shows supporting indicators (test code covered)
 | ModifiedMovingAverage | ModifiedMovingAverageByTuple | Mma |
 | MovingAverageConvergenceDivergence | MovingAverageConvergenceDivergenceByTuple | Macd |
 | MovingAverageConvergenceDivergenceHistogram | MovingAverageConvergenceDivergenceHistogramByTuple | MacdHist |
+| NetMomentumOscillator | NetMomentumOscillatorByTuple | Nmo |
 | OnBalanceVolume | OnBalanceVolumeByTuple | Obv |
 | ParabolicStopAndReverse | ParabolicStopAndReverseByTuple | Sar |
 | N/A | PercentageDifferenceByTuple | PcDiff |
@@ -51,11 +54,14 @@ The following shows supporting indicators (test code covered)
 | PlusDirectionalIndicator | PlusDirectionalIndicatorByTuple | Pdi |
 | PlusDirectionalMovement | PlusDirectionalMovementByTuple | Pdm |
 | RawStochasticsValue | RawStochasticsValueByTuple | Rsv |
+| RelativeMomentumIndex | RelativeMomentumIndexByTuple | Rmi |
 | RelativeStrength | RelativeStrengthByTuple | Rs |
 | RelativeStrengthIndex | RelativeStrengthIndexByTuple | Rsi |
 | SimpleMovingAverage | SimpleMovingAverageByTuple | Sma |
 | SimpleMovingAverageOscillator | SimpleMovingAverageOscillatorByTuple | SmaOsc |
 | StandardDeviation | StandardDeviationByTuple | Sd |
+| StochasticsMomentumIndex | StochasticsMomentumIndexByTuple | Smi |
+| StochasticsRsiOscillator | StochasticsRsiOscillatorByTuple | StochRsi |
 | Stochastics.Fast | Stochastics.FastByTuple | FastSto |
 | Stochastics.Full | Stochastics.FullByTuple | FullSto |
 | Stochastics.Slow | Stochastics.SlowByTuple | SlowSto |
@@ -91,7 +97,7 @@ The candlestick pattern is under development, some are implemented but not teste
 | GravestoneDoji | Not tested |
 | Hammer | Not implemented |
 | HangingMan | Not implemented |
-| Harami | Not implemented |
+| Harami | Not tested |
 | HaramiCross | Not implemented |
 | InvertedHammer | Not implemented |
 | LongDay | Not tested |

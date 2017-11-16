@@ -10,6 +10,6 @@ namespace Trady.Core.Period
 
         public abstract uint OrderOfTransformation { get; }
 
-        protected abstract DateTime FloorByDay(DateTime dateTime, bool isPositivePeriodCount);
+        protected abstract DateTimeOffset FloorByDay(DateTimeOffset dateTime, bool isPositivePeriodCount);
     }
 }

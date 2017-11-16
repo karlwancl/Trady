@@ -30,8 +30,8 @@ namespace Trady.Analysis.Infrastructure
             return (TAnalyzable)ctor.Invoke(@params.ToArray());
         }
 
-        public static TAnalyzable CreateAnalyzable<TAnalyzable>(IEnumerable<IOhlcvData> candles, params object[] parameters)
+        public static TAnalyzable CreateAnalyzable<TAnalyzable>(IEnumerable<IOhlcv> candles, params object[] parameters)
             where TAnalyzable : IAnalyzable
-            => CreateAnalyzable<TAnalyzable, IOhlcvData>(candles, parameters);
+            => CreateAnalyzable<TAnalyzable, IOhlcv>(candles, parameters);
     }
 }

@@ -41,9 +41,9 @@ namespace Trady.Analysis.Indicator
             }
         }
 
-        public class Fast : Fast<IOhlcvData, AnalyzableTick<(decimal? K, decimal? D, decimal? J)>>
+        public class Fast : Fast<IOhlcv, AnalyzableTick<(decimal? K, decimal? D, decimal? J)>>
         {
-            public Fast(IEnumerable<IOhlcvData> inputs, int periodCount, int smaPeriodCount)
+            public Fast(IEnumerable<IOhlcv> inputs, int periodCount, int smaPeriodCount)
                 : base(inputs, i => (i.High, i.Low, i.Close), periodCount, smaPeriodCount)
             {
             }

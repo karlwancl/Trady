@@ -14,14 +14,14 @@ using Trady.Importer;
 using Trady.Analysis.Backtest;
 using Trady.Importer.Csv;
 
-using AFunc = System.Func<System.Collections.Generic.IReadOnlyList<Trady.Core.Infrastructure.IOhlcvData>, int, System.Collections.Generic.IReadOnlyList<decimal>, Trady.Core.Infrastructure.IAnalyzeContext<Trady.Core.Infrastructure.IOhlcvData>, decimal?>;
+using AFunc = System.Func<System.Collections.Generic.IReadOnlyList<Trady.Core.Infrastructure.IOhlcv>, int, System.Collections.Generic.IReadOnlyList<decimal>, Trady.Core.Infrastructure.IAnalyzeContext<Trady.Core.Infrastructure.IOhlcv>, decimal?>;
 
 namespace Trady.Test
 {
     [TestClass]
     public class FuncTest
     {
-		public async Task<IEnumerable<IOhlcvData>> ImportIOhlcvDatasAsync()
+		public async Task<IEnumerable<IOhlcv>> ImportIOhlcvDatasAsync()
 		{
 			var csvImporter = new CsvImporter("fb.csv", new CultureInfo("en-US"));
 			return await csvImporter.ImportAsync("fb");

@@ -32,9 +32,9 @@ namespace Trady.Analysis.Indicator
         }
     }
 
-    public class OnBalanceVolume : OnBalanceVolume<IOhlcvData, AnalyzableTick<decimal?>>
+    public class OnBalanceVolume : OnBalanceVolume<IOhlcv, AnalyzableTick<decimal?>>
     {
-        public OnBalanceVolume(IEnumerable<IOhlcvData> inputs)
+        public OnBalanceVolume(IEnumerable<IOhlcv> inputs)
             : base(inputs, i => (i.Close, i.Volume))
         {
         }

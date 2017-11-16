@@ -40,9 +40,9 @@ namespace Trady.Analysis.Candlestick
         }
     }
 
-    public class BullishLongDay : BullishLongDay<IOhlcvData, AnalyzableTick<bool>>
+    public class BullishLongDay : BullishLongDay<IOhlcv, AnalyzableTick<bool>>
     {
-        public BullishLongDay(IEnumerable<IOhlcvData> inputs, int periodCount = 20, decimal threshold = 0.75M)
+        public BullishLongDay(IEnumerable<IOhlcv> inputs, int periodCount = 20, decimal threshold = 0.75M)
             : base(inputs, i => (i.Open, i.Close), periodCount, threshold)
         {
         }

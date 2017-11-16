@@ -8,16 +8,16 @@ namespace Trady.Analysis.Backtest
 {
     public class Result
     {
-        internal Result(IReadOnlyDictionary<IEnumerable<IOhlcvData>, decimal> preAssetCashMap, IDictionary<IEnumerable<IOhlcvData>, decimal> postAssetCashMap, IList<Transaction> transactions)
+        internal Result(IReadOnlyDictionary<IEnumerable<IOhlcv>, decimal> preAssetCashMap, IDictionary<IEnumerable<IOhlcv>, decimal> postAssetCashMap, IList<Transaction> transactions)
         {
             PreAssetCashMap = preAssetCashMap;
             PostAssetCashMap = postAssetCashMap;
             Transactions = transactions;
         }
 
-        public IReadOnlyDictionary<IEnumerable<IOhlcvData>, decimal> PreAssetCashMap { get; }
+        public IReadOnlyDictionary<IEnumerable<IOhlcv>, decimal> PreAssetCashMap { get; }
 
-        public IDictionary<IEnumerable<IOhlcvData>, decimal> PostAssetCashMap { get; }
+        public IDictionary<IEnumerable<IOhlcv>, decimal> PostAssetCashMap { get; }
 
         public IEnumerable<Transaction> Transactions { get; }
 
@@ -29,15 +29,15 @@ namespace Trady.Analysis.Backtest
 
         public int TotalSellCount => Transactions.Count(t => t.Type == TransactionType.Sell);
 
-        public int BuyCount(IEnumerable<IOhlcvData> candles) => Transactions.Count(t => t.IOhlcvDatas.Equals(candles) && t.Type == TransactionType.Buy);
+        public int BuyCount(IEnumerable<IOhlcv> candles) => Transactions.Count(t => t.IOhlcvDatas.Equals(candles) && t.Type == TransactionType.Buy);
 
-        public int SellCount(IEnumerable<IOhlcvData> candles) => Transactions.Count(t => t.IOhlcvDatas.Equals(candles) && t.Type == TransactionType.Sell);
+        public int SellCount(IEnumerable<IOhlcv> candles) => Transactions.Count(t => t.IOhlcvDatas.Equals(candles) && t.Type == TransactionType.Sell);
 
         public int TotalCorrectedTransactionCount => TotalCorrectedBuyCount + TotalSellCount;
 
         public int TotalCorrectedBuyCount => PreAssetCashMap.Select(ac => ac.Key).Sum(a => CorrectedBuyCount(a));
 
-        public int CorrectedBuyCount(IEnumerable<IOhlcvData> candles)
+        public int CorrectedBuyCount(IEnumerable<IOhlcv> candles)
         {
             var trans = Transactions.Where(t => t.IOhlcvDatas.Equals(candles));
             if (trans.Any())
@@ -60,11 +60,11 @@ namespace Trady.Analysis.Backtest
 
         public decimal TotalPrincipal => PreAssetCashMap.Select(ac => ac.Key).Sum(a => Principal(a));
 
-        public decimal CorrectedProfitLossRatio(IEnumerable<IOhlcvData> candles) => CorrectedProfitLoss(candles) / Principal(candles);
+        public decimal CorrectedProfitLossRatio(IEnumerable<IOhlcv> candles) => CorrectedProfitLoss(candles) / Principal(candles);
 
-        public decimal CorrectedProfitLoss(IEnumerable<IOhlcvData> candles) => CorrectedBalance(candles) - Principal(candles);
+        public decimal CorrectedProfitLoss(IEnumerable<IOhlcv> candles) => CorrectedBalance(candles) - Principal(candles);
 
-        public decimal CorrectedBalance(IEnumerable<IOhlcvData> candles)
+        public decimal CorrectedBalance(IEnumerable<IOhlcv> candles)
         {
             if (!PostAssetCashMap.TryGetValue(candles, out decimal postCash))
                 throw new ArgumentException("Can't get the final cash amount for the corresponding asset!");
@@ -76,7 +76,7 @@ namespace Trady.Analysis.Backtest
             return postCash;
         }
 
-        public decimal Principal(IEnumerable<IOhlcvData> candles)
+        public decimal Principal(IEnumerable<IOhlcv> candles)
         {
             if (!PreAssetCashMap.TryGetValue(candles, out decimal initial))
                 throw new ArgumentException("Can't get the final cash amount for the corresponding asset!");

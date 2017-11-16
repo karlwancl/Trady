@@ -46,9 +46,9 @@ namespace Trady.Analysis.Candlestick
         }
     }
 
-    public class BullishEngulfingPattern : BullishEngulfingPattern<IOhlcvData, AnalyzableTick<bool?>>
+    public class BullishEngulfingPattern : BullishEngulfingPattern<IOhlcv, AnalyzableTick<bool?>>
     {
-        public BullishEngulfingPattern(IEnumerable<IOhlcvData> inputs, int downTrendPeriodCount = 3)
+        public BullishEngulfingPattern(IEnumerable<IOhlcv> inputs, int downTrendPeriodCount = 3)
             : base(inputs, i => (i.Open, i.High, i.Low, i.Close), downTrendPeriodCount)
         {
         }

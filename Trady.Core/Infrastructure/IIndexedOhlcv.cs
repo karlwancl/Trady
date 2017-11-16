@@ -2,17 +2,17 @@ using System.Collections.Generic;
 
 namespace Trady.Core.Infrastructure
 {
-    public interface IIndexedOhlcvData : IOhlcvData, IIndexedObject<IOhlcvData>
+    public interface IIndexedOhlcv : IOhlcv, IIndexedObject<IOhlcv>
     {
-        new IEnumerable<IOhlcvData> BackingList { get; }
+        new IEnumerable<IOhlcv> BackingList { get; }
 
-        new IIndexedOhlcvData Prev { get; }
+        new IIndexedOhlcv Prev { get; }
 
-        new IIndexedOhlcvData Next { get; }
+        new IIndexedOhlcv Next { get; }
 
-        new IOhlcvData Underlying { get; }
+        new IOhlcv Underlying { get; }
 
-        new IAnalyzeContext<IOhlcvData> Context { get; set; }
+        new IAnalyzeContext<IOhlcv> Context { get; set; }
 
         TAnalyzable Get<TAnalyzable>(params object[] @params)
             where TAnalyzable : IAnalyzable;

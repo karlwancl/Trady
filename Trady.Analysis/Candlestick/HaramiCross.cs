@@ -29,9 +29,9 @@ namespace Trady.Analysis.Candlestick
         }
     }
 
-    public class HaramiCross : HaramiCross<IOhlcvData, AnalyzableTick<bool?>>
+    public class HaramiCross : HaramiCross<IOhlcv, AnalyzableTick<bool?>>
     {
-        public HaramiCross(IEnumerable<IOhlcvData> inputs)
+        public HaramiCross(IEnumerable<IOhlcv> inputs)
             : base(inputs, i => (i.Open, i.High, i.Low, i.Close))
         {
         }

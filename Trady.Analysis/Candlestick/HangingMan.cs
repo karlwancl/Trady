@@ -29,9 +29,9 @@ namespace Trady.Analysis.Candlestick
         }
     }
 
-    public class HangingMan : HangingMan<IOhlcvData, AnalyzableTick<bool?>>
+    public class HangingMan : HangingMan<IOhlcv, AnalyzableTick<bool?>>
     {
-        public HangingMan(IEnumerable<IOhlcvData> inputs)
+        public HangingMan(IEnumerable<IOhlcv> inputs)
             : base(inputs, i => (i.Open, i.High, i.Low, i.Close))
         {
         }

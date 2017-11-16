@@ -39,9 +39,9 @@ namespace Trady.Analysis.Indicator
 		}
     }
 
-    public class ModifiedMovingAverage : ModifiedMovingAverage<IOhlcvData, AnalyzableTick<decimal?>>
+    public class ModifiedMovingAverage : ModifiedMovingAverage<IOhlcv, AnalyzableTick<decimal?>>
     {
-        public ModifiedMovingAverage(IEnumerable<IOhlcvData> inputs, int periodCount)
+        public ModifiedMovingAverage(IEnumerable<IOhlcv> inputs, int periodCount)
             : base(inputs, i => i.Close, periodCount)
         {
         }

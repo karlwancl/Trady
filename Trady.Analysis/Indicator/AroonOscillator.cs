@@ -35,9 +35,9 @@ namespace Trady.Analysis.Indicator
         }
     }
 
-    public class AroonOscillator : AroonOscillator<IOhlcvData, AnalyzableTick<decimal?>>
+    public class AroonOscillator : AroonOscillator<IOhlcv, AnalyzableTick<decimal?>>
     {
-        public AroonOscillator(IEnumerable<IOhlcvData> inputs, int periodCount)
+        public AroonOscillator(IEnumerable<IOhlcv> inputs, int periodCount)
             : base(inputs, i => (i.High, i.Low), periodCount)
         {
         }

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using Trady.Analysis.Infrastructure;
-using Trady.Core;
 using System.Linq;
+using Trady.Core.Infrastructure;
 
 namespace Trady.Analysis.Candlestick
 {
@@ -41,9 +41,9 @@ namespace Trady.Analysis.Candlestick
         }
     }
 
-    public class BearishHarami : BearishHarami<Candle, AnalyzableTick<bool?>>
+    public class BearishHarami : BearishHarami<IOhlcv, AnalyzableTick<bool?>>
     {
-        public BearishHarami(IEnumerable<Candle> inputs, bool containedShadows = false, int uptrendPeriodCount = 3)
+        public BearishHarami(IEnumerable<IOhlcv> inputs, bool containedShadows = false, int uptrendPeriodCount = 3)
             : base(inputs, i => (i.Open, i.High, i.Low, i.Close), containedShadows, uptrendPeriodCount)
         {
         }
