@@ -12,7 +12,6 @@ using CsvHelper.Configuration;
 using Trady.Core;
 using Trady.Core.Infrastructure;
 using Trady.Core.Period;
-using CsvHelper.TypeConversion;
 
 namespace Trady.Importer.Csv
 {
@@ -32,7 +31,6 @@ namespace Trady.Importer.Csv
         {
             _path = path;
             _culture = culture;
-
         }
 
         public CsvImporter(string path, CsvImportConfiguration configuration): this(path, configuration.Culture)
@@ -44,7 +42,7 @@ namespace Trady.Importer.Csv
 
         public async Task<IReadOnlyList<IOhlcv>> ImportAsync(string symbol, DateTime? startTime = null, DateTime? endTime = null, PeriodOption period = PeriodOption.Daily, CancellationToken token = default(CancellationToken))
             => await Task.Factory.StartNew(() =>
-            {               
+            {
                 using (var fs = File.OpenRead(_path))
                 using (var sr = new StreamReader(fs))
                 using (var csvReader = new CsvReader(sr, new CsvConfiguration() { CultureInfo = _culture, Delimiter = string.IsNullOrWhiteSpace(_delimiter) ? "," : _delimiter, HasHeaderRecord = _hasHeader }))

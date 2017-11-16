@@ -8,7 +8,6 @@ using Trady.Importer.Google;
 using Trady.Importer.Quandl;
 using Trady.Importer.Stooq;
 using Trady.Importer.Yahoo;
-using CsvHelper.TypeConversion;
 
 namespace Trady.Test
 {
