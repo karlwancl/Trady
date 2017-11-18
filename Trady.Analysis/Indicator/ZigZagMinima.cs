@@ -36,7 +36,7 @@ namespace Trady.Analysis.Indicator
                 futureCloses = futureCloses.Take(endIndex).ToList();
 
             var historicalCloses = mappedInputs.Take(index).Cast<decimal?>().ToList();
-            var startIndex = historicalCloses.FindLastIndex(c => c < currentClose) + 1;
+            var startIndex = historicalCloses.FindLastIndex(c => c <= currentClose) + 1;
             if (startIndex != -1)
                 historicalCloses = historicalCloses.Skip(startIndex).ToList();
 
