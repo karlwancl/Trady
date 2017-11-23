@@ -80,5 +80,22 @@ namespace Trady.Test
             var firstIOhlcvData = candles.First();
             Assert.AreEqual(firstIOhlcvData.DateTime, new DateTime(2012, 5, 18));
         }
-    }
+
+        [TestMethod]
+        public void ImportFromCsvWithTime()
+        {
+            var config = new CsvImportConfiguration()
+            {
+                Culture = new CultureInfo("en-US"),
+                Delimiter = ";",
+                DateFormat = "yyyyMMdd HHmmss",
+                HasHeaderRecord = false
+            };
+            var importer = new CsvImporter("EURUSD.csv", config);
+            var candles = importer.ImportAsync("EURUSD").Result;
+            Assert.AreEqual(744, candles.Count());
+            var firstIOhlcvData = candles.First();
+            Assert.AreEqual(new DateTime(2000, 5, 30, 17, 27, 00), firstIOhlcvData.DateTime);
+        }
+    }   
 }
