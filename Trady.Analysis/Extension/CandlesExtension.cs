@@ -188,5 +188,8 @@ namespace Trady.Analysis.Extension
 
         public static IReadOnlyList<AnalyzableTick<decimal?>> Smi(this IEnumerable<IOhlcv> candles, int periodCount, int smoothingPeriodA, int smoothingPeriodB, int? startIndex = null, int? endIndex = null)
             => new StochasticsMomentumIndex(candles, periodCount, smoothingPeriodA, smoothingPeriodB).Compute(startIndex, endIndex);
+
+        public static IReadOnlyList<AnalyzableTick<decimal?>> Vwap(this IEnumerable<IOhlcv> candles, int? period = null)
+            => new VolumeWeightedAveragePrice(candles, period).Compute();
     }
 }
