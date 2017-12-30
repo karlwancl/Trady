@@ -4,6 +4,8 @@
     {
         PerSecond,
         PerMinute,
+        Per5Minute,
+        Per10Minute,
         Per15Minute,
         Per30Minute,
         Hourly,
