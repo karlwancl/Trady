@@ -9,6 +9,9 @@ Trady is a handy library for computing technical indicators, and targets to be a
 ## Read Before You Use
 This library is a hobby project, and would probably making breaking changes, use with care when in production.
 
+## About contributions (30/12/2017)
+I've noticed that there's a lot of enthusiasts continually contributing to this project. I have to say thank you to all of you giving your precious time & effort on creating issues/ PRs or making suggestions. I've been busy for these few months, and do not have time on reviewing all the works, and I have to apologize on this. At the same time, I'm looking for collaborators who could help reviewing PRs & maintaining this repo, please let me know if you're interested in it :) Again, thanks to all of you & Happy New Year :D
+
 ## Currently Available Features
 * Stock data feeding (via CSV File, [Quandl.NET](https://github.com/lppkarl/Quandl.NET), [YahooFinanceApi](https://github.com/lppkarl/YahooFinanceApi), [StooqApi](https://github.com/lppkarl/StooqApi), [Nuba.Finance.Google](https://github.com/nubasoftware/Nuba.Finance.Google))
 * Indicator computing (including SMA, EMA, RSI, MACD, BB, etc.)
