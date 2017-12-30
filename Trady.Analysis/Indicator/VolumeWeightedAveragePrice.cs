@@ -11,33 +11,28 @@ namespace Trady.Analysis.Indicator
     public class VolumeWeightedAveragePrice<TInput, TOutput>
         : NumericAnalyzableBase<TInput, (decimal High, decimal Low, decimal Close, decimal Volume), TOutput>
     {
-        private int? _period; 
-        protected VolumeWeightedAveragePrice(IEnumerable<TInput> inputs, Func<TInput, (decimal High, decimal Low, decimal Close, decimal Volume)> inputMapper, int? period) : base(inputs, inputMapper)
+        private readonly int? _period;
+        protected VolumeWeightedAveragePrice(IEnumerable<TInput> inputs, Func<TInput, (decimal High, decimal Low, decimal Close, decimal Volume)> inputMapper, int? period = null) : base(inputs, inputMapper)
         {
             _period = period;
         }
-
         
         protected override decimal? ComputeByIndexImpl(IReadOnlyList<(decimal High, decimal Low, decimal Close, decimal Volume)> mappedInputs, int index)
         {
-            decimal totalVolume;
-            decimal typicalPrice;
-            if(_period.HasValue)
+            IEnumerable<(decimal High, decimal Low, decimal Close, decimal Volume)> subset;
+            if (_period.HasValue)
             {
-                if(index + 1 < _period.Value)
-                {
+                if (index + 1 < _period.Value)
                     return null;
-                }
 
-                totalVolume = mappedInputs.Skip(index + 1 - _period.Value).Take(_period.Value).Sum(mi => mi.Volume);
-                typicalPrice = mappedInputs.Skip(index + 1 - _period.Value).Take(_period.Value).Sum(mi => (mi.High + mi.Low + mi.Close) / 3 * mi.Volume);
+                subset = mappedInputs.Skip(index + 1 - _period.Value).Take(_period.Value);
             }
             else
-            {
-                totalVolume = mappedInputs.Take(index + 1).Sum(mi => mi.Volume);
-                typicalPrice = mappedInputs.Take(index + 1).Sum(mi => (mi.High + mi.Low + mi.Close) / 3 * mi.Volume);
-            }
-            
+                subset = mappedInputs.Take(index + 1);
+
+            decimal typicalPrice = subset.Sum(mi => (mi.High + mi.Low + mi.Close) / 3 * mi.Volume);
+            decimal totalVolume = subset.Sum(mi => mi.Volume);
+
             return typicalPrice / totalVolume;
         }
     }

@@ -508,5 +508,13 @@ namespace Trady.Test
 			var result = candles.FullStoOsc(14, 3, 3)[candles.Count() - 1];
 			Assert.IsTrue((-9.14m).IsApproximatelyEquals(result.Tick.Value));
 		}
+
+        [TestMethod]
+        public async Task TestVwapAsync()
+        {
+            var candles = await ImportIOhlcvDatasAsync();
+            var result = candles.Vwap(14)[candles.Count() - 1];
+            Assert.IsTrue(171.3262179m.IsApproximatelyEquals(result.Tick.Value));
+        }
     }
 }

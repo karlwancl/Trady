@@ -194,5 +194,8 @@ namespace Trady.Analysis.Extension
 
         public static IReadOnlyList<decimal?> Smi(this IEnumerable<(decimal High, decimal Low, decimal Close)> inputs, int periodCount, int smoothingPeriodA, int smoothingPeriodB, int? startIndex = null, int? endIndex = null)
             => new StochasticsMomentumIndexByTuple(inputs, periodCount, smoothingPeriodA, smoothingPeriodB).Compute(startIndex, endIndex);
+
+        public static IReadOnlyList<decimal?> Vwap(this IEnumerable<(decimal High, decimal Low, decimal Close, decimal Volume)> inputs, int? period = null, int? startIndex = null, int? endIndex = null)
+            => new VolumeWeightedAveragePriceByTuple(inputs, period).Compute(startIndex, endIndex);
     }
 }
