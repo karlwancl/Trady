@@ -193,6 +193,11 @@ Nuget package is available in modules, please install the package according to t
 
 <a name="StrategyBuildingAndBacktesting"></a>
 ### Strategy building & backtesting
+    // Import your candles
+    var importer = new YahooFinanceImporter();
+    var fb = await importer.ImportAsync("FB");
+    var aapl = await importer.ImportAsync("AAPL");
+
     // Build buy rule & sell rule based on various patterns
     var buyRule = Rule.Create(c => c.IsFullStoBullishCross(14, 3, 3))
         .And(c => c.IsMacdOscBullish(12, 26, 9))
@@ -205,8 +210,8 @@ Nuget package is available in modules, please install the package according to t
 
     // Create portfolio instance by using PortfolioBuilder
     var runner = new Builder()
-        .Add(equity, 10)
-        .Add(equity2, 30)
+        .Add(fb, 10)
+        .Add(aapl, 30)
         .Buy(buyRule)
         .Sell(sellRule)
         .Build();
