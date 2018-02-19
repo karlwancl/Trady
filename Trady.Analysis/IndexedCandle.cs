@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Trady.Analysis.Infrastructure;
@@ -67,14 +67,20 @@ namespace Trady.Analysis
         public TAnalyzable Get<TAnalyzable>(params object[] @params) where TAnalyzable : IAnalyzable
         {
             if (Context == null)
+            {
                 return AnalyzableFactory.CreateAnalyzable<TAnalyzable>(BackingList, @params);
+            }
+
             return Context.Get<TAnalyzable>(@params);
         }
 
         public IFuncAnalyzable<IAnalyzableTick<decimal?>> GetFunc(string name, params decimal[] @params)
         {
             if (Context == null)
+            {
                 return FuncAnalyzableFactory.CreateAnalyzable(name, BackingList, @params);
+            }
+
             return (IFuncAnalyzable<IAnalyzableTick<decimal?>>)Context.GetFunc(name, @params);
         }
 

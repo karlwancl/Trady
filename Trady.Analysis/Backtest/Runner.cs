@@ -78,13 +78,20 @@ namespace Trady.Analysis.Backtest
             Func<IIndexedOhlcv, int, (TransactionType, IIndexedOhlcv)?> outputFunc = (ic, i) =>
             {
                 if (ic.Next == null)
+                {
                     return null;
+                }
 
                 var type = (TransactionType)i;
                 if (type.Equals(TransactionType.Buy))
+                {
                     BuyAsset(ic, premium, assetCashMap, transactions);
+                }
                 else
+                {
                     SellAsset(ic, premium, assetCashMap, transactions);
+                }
+
                 return ((TransactionType)i, ic);
             };
 

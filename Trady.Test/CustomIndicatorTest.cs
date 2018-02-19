@@ -51,7 +51,9 @@ namespace Trady.Test
             {
                 int currentDay = (int)aDate.DayOfWeek;
                 if (currentDay == 0)
+                {
                     currentDay = 7;
+                }
 
                 int daysToSubstract = currentDay - 1;
                 return aDate.DateTime.AddDays(-daysToSubstract);
@@ -64,7 +66,9 @@ namespace Trady.Test
                 var candleForThatMonday = mappedInputs.FirstOrDefault(c => c.DateTime.Date.Equals(mondayOfThatWeek));
 
                 if (candleForThatMonday == null)
+                {
                     return null;
+                }
 
                 var openValue = candleForThatMonday.Open;
 

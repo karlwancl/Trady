@@ -12,28 +12,32 @@ namespace Trady.Analysis.Infrastructure
 {
     /// <summary>
     /// Generic base class for indicators & pattern matchers with in/out map
+    /// </summary>
     /// <typeparam name="TInput">Source input type</typeparam>
     /// <typeparam name="TMappedInput">Mapped input type</typeparam>
     /// <typeparam name="TOutputToMap">Output type computed by mapped input type</typeparam>
     /// <typeparam name="TOutput">Target (Mapped) output type</typeparam>
-    /// </summary>
     public abstract class AnalyzableBase<TInput, TMappedInput, TOutputToMap, TOutput> : IAnalyzable<TOutput>
     {
         private readonly bool _isTInputIOhlcvData, _isTOutputAnalyzableTick;
 
         internal protected readonly IReadOnlyList<TMappedInput> _mappedInputs;
-        readonly IReadOnlyList<DateTimeOffset> _mappedDateTimes;
+        private readonly IReadOnlyList<DateTimeOffset> _mappedDateTimes;
 
         protected AnalyzableBase(IEnumerable<TInput> inputs, Func<TInput, TMappedInput> inputMapper)
         {
             _isTInputIOhlcvData = typeof(IOhlcv).IsAssignableFrom(typeof(TInput));
             _isTOutputAnalyzableTick = typeof(IAnalyzableTick<TOutputToMap>).IsAssignableFrom(typeof(TOutput));
             if (_isTInputIOhlcvData != _isTOutputAnalyzableTick)
+            {
                 throw new ArgumentException("TInput, TOutput not matched!");
+            }
 
             _mappedInputs = inputs.Select(inputMapper).ToList();
             if (_isTInputIOhlcvData)
+            {
                 _mappedDateTimes = inputs.Select(c => (c as IOhlcv).DateTime).ToList();
+            }
 
             Cache = new ConcurrentDictionary<int, TOutputToMap>();
         }

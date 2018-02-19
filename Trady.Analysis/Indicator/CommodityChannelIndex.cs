@@ -18,7 +18,9 @@ namespace Trady.Analysis.Indicator
         protected override decimal? ComputeByIndexImpl(IReadOnlyList<(decimal High, decimal Low, decimal CLose)> mappedInputs, int index)
         {
             if (index < PeriodCount - 1)
+            {
                 return null;
+            }
 
             var typicalPrices = mappedInputs.Skip(index - PeriodCount + 1).Take(PeriodCount).Select(i => (i.High + i.Low + i.CLose) / 3);
             var average = typicalPrices.Average();
@@ -30,7 +32,7 @@ namespace Trady.Analysis.Indicator
 
     public class CommodityChannelIndexByTuple : CommodityChannelIndex<(decimal High, decimal Low, decimal CLose), decimal?>
     {
-        public CommodityChannelIndexByTuple(IEnumerable<(decimal High, decimal Low, decimal CLose)> inputs, int periodCount) 
+        public CommodityChannelIndexByTuple(IEnumerable<(decimal High, decimal Low, decimal CLose)> inputs, int periodCount)
             : base(inputs, i => i, periodCount)
         {
         }
@@ -38,7 +40,7 @@ namespace Trady.Analysis.Indicator
 
     public class CommodityChannelIndex : CommodityChannelIndex<IOhlcv, AnalyzableTick<decimal?>>
     {
-        public CommodityChannelIndex(IEnumerable<IOhlcv> inputs, int periodCount) 
+        public CommodityChannelIndex(IEnumerable<IOhlcv> inputs, int periodCount)
             : base(inputs, i => (i.High, i.Low, i.Close), periodCount)
         {
         }

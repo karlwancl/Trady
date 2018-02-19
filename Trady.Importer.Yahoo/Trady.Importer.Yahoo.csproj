@@ -7,7 +7,7 @@
     <Description>Yahoo finance importer module of Trady, a handy library for computing technical indicators, based on .NET Standard 2.0</Description>
     <Copyright>Copyright (c) 2016-2017 Karl Wan</Copyright>
     <AssemblyTitle>Trady.Importer.Yahoo</AssemblyTitle>
-    <VersionPrefix>3.1.0-beta0</VersionPrefix>
+    <VersionPrefix>3.1.0-beta1</VersionPrefix>
     <Authors>Karl Wan</Authors>
     <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>Trady.Importer.Yahoo</AssemblyName>

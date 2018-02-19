@@ -18,7 +18,7 @@ namespace Trady.Analysis.Indicator
 
             Func<int, decimal> smoothingFactor = i =>
             {
-                var s = Smoothing.Ema(emaSlowPeriodCount)(i) + _er[i].Value * (Smoothing.Ema(emaFastPeriodCount)(i) - Smoothing.Ema(emaSlowPeriodCount)(i)) ;
+                var s = Smoothing.Ema(emaSlowPeriodCount)(i) + _er[i].Value * (Smoothing.Ema(emaFastPeriodCount)(i) - Smoothing.Ema(emaSlowPeriodCount)(i));
                 return s * s;
             };
 

@@ -61,9 +61,11 @@ namespace Trady.Test
 			};
 
 			foreach (var expected in expecteds)
-				Assert.IsTrue(result.Transactions.Any(t => t.Equals(expected)));
+            {
+                Assert.IsTrue(result.Transactions.Any(t => t.Equals(expected)));
+            }
 
-			Assert.IsTrue(result.TotalPrincipal == 10000m);
+            Assert.IsTrue(result.TotalPrincipal == 10000m);
 			Assert.IsTrue(result.TotalCorrectedBalance == 10227.44817m);
 			Assert.IsTrue(result.TotalCorrectedProfitLossRatio == 0.022744817m);
 		}

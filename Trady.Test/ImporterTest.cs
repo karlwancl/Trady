@@ -20,32 +20,32 @@ namespace Trady.Test
             CultureInfo.CurrentCulture = new CultureInfo("nl-nl");
         }
 
-        [TestMethod]
-        public void ImportByGoogleFinance()
-        {
-            var importer = new GoogleFinanceImporter();
-            var candle = importer.ImportAsync("NASDAQ/AAPL", new DateTime(2017, 1, 3), new DateTime(2017, 1, 3)).Result.First();
-            Assert.AreEqual(candle.Open, 115.8m);
-            Assert.AreEqual(candle.High, 116.33m);
-            Assert.AreEqual(candle.Low, 114.76m);
-            Assert.AreEqual(candle.Close, 116.15m);
-            Assert.AreEqual(candle.Volume, 28_781_865);
-        }
+        //[TestMethod]
+        //public void ImportByGoogleFinance()
+        //{
+        //    var importer = new GoogleFinanceImporter();
+        //    var candle = importer.ImportAsync("NASDAQ/AAPL", new DateTime(2017, 1, 3), new DateTime(2017, 1, 3)).Result.First();
+        //    Assert.AreEqual(candle.Open, 115.8m);
+        //    Assert.AreEqual(candle.High, 116.33m);
+        //    Assert.AreEqual(candle.Low, 114.76m);
+        //    Assert.AreEqual(candle.Close, 116.15m);
+        //    Assert.AreEqual(candle.Volume, 28_781_865);
+        //}
 
-        [TestMethod]
-        public void ImportByQuandlYahoo()
-        {
-            // Test account api key
-            const string ApiKey = "Sys3z7hfYmzjiXPxwfQJ";
+        //[TestMethod]
+        //public void ImportByQuandlYahoo()
+        //{
+        //    // Test account api key
+        //    const string ApiKey = "Sys3z7hfYmzjiXPxwfQJ";
 
-            var importer = new QuandlWikiImporter(ApiKey);
-            var candle = importer.ImportAsync("AAPL", new DateTime(2017, 1, 3), new DateTime(2017, 1, 3)).Result.First();
-            Assert.AreEqual(candle.Open, 115.8m);
-            Assert.AreEqual(candle.High, 116.33m);
-            Assert.AreEqual(candle.Low, 114.76m);
-            Assert.AreEqual(candle.Close, 116.15m);
-            Assert.AreEqual(candle.Volume, 28_781_865);
-        }
+        //    var importer = new QuandlWikiImporter(ApiKey);
+        //    var candle = importer.ImportAsync("AAPL", new DateTime(2017, 1, 3), new DateTime(2017, 1, 3)).Result.First();
+        //    Assert.AreEqual(candle.Open, 115.8m);
+        //    Assert.AreEqual(candle.High, 116.33m);
+        //    Assert.AreEqual(candle.Low, 114.76m);
+        //    Assert.AreEqual(candle.Close, 116.15m);
+        //    Assert.AreEqual(candle.Volume, 28_781_865);
+        //}
 
         [TestMethod]
         public void ImportByYahoo()
@@ -76,7 +76,7 @@ namespace Trady.Test
         {
             var importer = new CsvImporter("fb.csv", new CultureInfo("en-US"));
             var candles = importer.ImportAsync("FB").Result;
-            Assert.AreEqual(candles.Count(), 1342);
+            Assert.AreEqual(candles.Count, 1342);
             var firstIOhlcvData = candles.First();
             Assert.AreEqual(firstIOhlcvData.DateTime, new DateTime(2012, 5, 18));
         }
@@ -93,9 +93,9 @@ namespace Trady.Test
             };
             var importer = new CsvImporter("EURUSD.csv", config);
             var candles = importer.ImportAsync("EURUSD").Result;
-            Assert.AreEqual(744, candles.Count());
+            Assert.AreEqual(744, candles.Count);
             var firstIOhlcvData = candles.First();
             Assert.AreEqual(new DateTime(2000, 5, 30, 17, 27, 00), firstIOhlcvData.DateTime);
         }
-    }   
+    }
 }

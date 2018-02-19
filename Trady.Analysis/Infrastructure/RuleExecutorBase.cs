@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using Trady.Core.Infrastructure;
@@ -10,15 +10,17 @@ namespace Trady.Analysis.Infrastructure
         private IAnalyzeContext<TInput> _context;
 
         protected RuleExecutorBase(
-            Func<TIndexed, int, TOutput> outputFunc, 
-            IAnalyzeContext<TInput> context, 
+            Func<TIndexed, int, TOutput> outputFunc,
+            IAnalyzeContext<TInput> context,
             Predicate<TIndexed>[] rules)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
             OutputFunc = outputFunc ?? throw new ArgumentNullException(nameof(outputFunc));
             Rules = rules ?? throw new ArgumentNullException(nameof(rules));
             if (!rules.Any())
+            {
                 throw new ArgumentException("You must have at least one rule to execute", nameof(rules));
+            }
         }
 
         public Predicate<TIndexed>[] Rules { get; }
@@ -38,7 +40,10 @@ namespace Trady.Analysis.Infrastructure
                     {
                         var result = OutputFunc(indexedObject, j);
                         if (typeof(TOutput).IsValueType || !result.Equals(default(TOutput)))   // Ignore all null objects
+                        {
                             output.Add(result);
+                        }
+
                         break;
                     }
                 }
