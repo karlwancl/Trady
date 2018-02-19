@@ -76,7 +76,7 @@ namespace Trady.Test
         {
             var importer = new CsvImporter("fb.csv", new CultureInfo("en-US"));
             var candles = importer.ImportAsync("FB").Result;
-            Assert.AreEqual(candles.Count(), 1342);
+            Assert.AreEqual(candles.Count, 1342);
             var firstIOhlcvData = candles.First();
             Assert.AreEqual(firstIOhlcvData.DateTime, new DateTime(2012, 5, 18));
         }
@@ -93,9 +93,9 @@ namespace Trady.Test
             };
             var importer = new CsvImporter("EURUSD.csv", config);
             var candles = importer.ImportAsync("EURUSD").Result;
-            Assert.AreEqual(744, candles.Count());
+            Assert.AreEqual(744, candles.Count);
             var firstIOhlcvData = candles.First();
             Assert.AreEqual(new DateTime(2000, 5, 30, 17, 27, 00), firstIOhlcvData.DateTime);
         }
-    }   
+    }
 }

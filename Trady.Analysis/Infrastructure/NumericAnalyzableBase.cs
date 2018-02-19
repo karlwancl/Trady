@@ -66,7 +66,9 @@ namespace Trady.Analysis.Infrastructure
         public TOutput Sd(int periodCount, decimal sdValue, int index)
         {
             if (index < periodCount - 1)
+            {
                 return default(TOutput);
+            }
 
             Func<int, decimal?> sd = i =>
             {

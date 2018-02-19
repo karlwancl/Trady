@@ -10,6 +10,8 @@ namespace Trady.Analysis.Candlestick
     /// <summary>
     /// Reference: http://stockcharts.com/school/doku.php?id=chart_school:chart_analysis:candlestick_bearish_reversal_patterns#bearish_engulfing
     /// </summary>
+    /// <typeparam name="TInput"></typeparam>
+    /// <typeparam name="TOutput"></typeparam>
     public class BearishEngulfingPattern<TInput, TOutput> : AnalyzableBase<TInput, (decimal Open, decimal High, decimal Low, decimal Close), bool?, TOutput>
     {
         private UpTrendByTuple _upTrend;
@@ -32,7 +34,11 @@ namespace Trady.Analysis.Candlestick
 
         protected override bool? ComputeByIndexImpl(IReadOnlyList<(decimal Open, decimal High, decimal Low, decimal Close)> mappedInputs, int index)
         {
-            if (index < 1) return null;
+            if (index < 1)
+            {
+                return null;
+            }
+
             bool isEngulf = mappedInputs[index].Open > mappedInputs[index - 1].Close && mappedInputs[index].Close < mappedInputs[index - 1].Open;
             return (_upTrend[index - 1] ?? false) && _bullish[index - 1] && _bearish[index] && isEngulf;
         }

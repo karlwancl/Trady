@@ -10,6 +10,8 @@ namespace Trady.Analysis.Candlestick
     /// <summary>
     /// Reference: http://stockcharts.com/school/doku.php?id=chart_school:chart_analysis:candlestick_bearish_reversal_patterns#bearish_abandoned_baby
     /// </summary>
+    /// <typeparam name="TInput"></typeparam>
+    /// <typeparam name="TOutput"></typeparam>
     public class BearishAbandonedBaby<TInput, TOutput> : AnalyzableBase<TInput, (decimal Open, decimal High, decimal Low, decimal Close), bool?, TOutput>
     {
         private readonly UpTrendByTuple _upTrend;
@@ -43,8 +45,16 @@ namespace Trady.Analysis.Candlestick
 
         protected override bool? ComputeByIndexImpl(IReadOnlyList<(decimal Open, decimal High, decimal Low, decimal Close)> mappedInputs, int index)
         {
-            if (index < 2) return null;
-            if (!_doji[index - 1]) return false;
+            if (index < 2)
+            {
+                return null;
+            }
+
+            if (!_doji[index - 1])
+            {
+                return false;
+            }
+
             bool isGapped = mappedInputs[index - 1].Low > mappedInputs[index - 2].High && mappedInputs[index - 1].Low > mappedInputs[index].High;
             return (_upTrend[index - 1] ?? false) && _bullishLongDay[index - 2] && isGapped && _bearishLongDay[index];
         }

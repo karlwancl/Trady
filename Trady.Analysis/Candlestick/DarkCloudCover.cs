@@ -10,6 +10,8 @@ namespace Trady.Analysis.Candlestick
     /// <summary>
     /// Reference: http://stockcharts.com/school/doku.php?id=chart_school:chart_analysis:candlestick_bearish_reversal_patterns#dark_cloud_cover
     /// </summary>
+    /// <typeparam name="TInput"></typeparam>
+    /// <typeparam name="TOutput"></typeparam>
     public class DarkCloudCover<TInput, TOutput> : AnalyzableBase<TInput, (decimal Open, decimal High, decimal Low, decimal Close), bool?, TOutput>
     {
         private UpTrendByTuple _upTrend;
@@ -46,7 +48,11 @@ namespace Trady.Analysis.Candlestick
 
         protected override bool? ComputeByIndexImpl(IReadOnlyList<(decimal Open, decimal High, decimal Low, decimal Close)> mappedInputs, int index)
         {
-            if (index < DownTrendPeriodCount) return null;
+            if (index < DownTrendPeriodCount)
+            {
+                return null;
+            }
+
             int i = index - DownTrendPeriodCount;
             bool isPassThrough = mappedInputs[i + 1].Open > mappedInputs[i].Close && mappedInputs[i + 1].Close < (mappedInputs[i].Open + mappedInputs[i].Close) / 2;
             return (_upTrend[i] ?? false) && _bullish[i] && isPassThrough && _bearish[i + 1];

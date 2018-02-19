@@ -64,18 +64,20 @@ namespace Trady.Analysis.Infrastructure
 		public TOutput Sd(int periodCount, decimal sdValue, int index)
 		{
 			if (index < periodCount - 1)
-				return default(TOutput);
+            {
+                return default(TOutput);
+            }
 
-			Func<int, decimal?> sd = i =>
-			{
-				Func<int, IEnumerable<decimal?>> items = j => Enumerable.Range(j - periodCount + 1, periodCount).Select(ComputeByIndex);
-				var count = items(i).Count();
-				var avg = items(i).Average();
-				var diffSum = items(i).Select(item => (item - avg) * (item - avg)).Sum();
-				return Convert.ToDecimal(Math.Sqrt(Convert.ToDouble(diffSum / count)));
-			};
-
-			return Map(sd, index);
+            Func<int, decimal?> sd = i =>
+            {
+                Func<int, IEnumerable<decimal?>> items = j => Enumerable.Range(j - periodCount + 1, periodCount).Select(ComputeByIndex);
+                var count = items(i).Count();
+                var avg = items(i).Average();
+                var diffSum = items(i).Select(item => (item - avg) * (item - avg)).Sum();
+                return Convert.ToDecimal(Math.Sqrt(Convert.ToDouble(diffSum / count)));
+            };
+            
+            return Map(sd, index);
 		}
 
 		#endregion

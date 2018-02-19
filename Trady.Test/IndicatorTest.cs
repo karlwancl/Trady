@@ -1,4 +1,4 @@
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -40,7 +40,7 @@ namespace Trady.Test
         public async Task TestSmiAsync()
         {
             var candles = await ImportIOhlcvDatasAsync();
-            var result = candles.Smi(15, 6, 6)[candles.Count() - 1]; 
+            var result = candles.Smi(15, 6, 6)[candles.Count() - 1];
             Assert.IsTrue(result.Tick.Value.IsApproximatelyEquals(55.1868m));
         }
 
@@ -48,7 +48,7 @@ namespace Trady.Test
         public async Task TestStochRsiAsync()
         {
             var candles = await ImportIOhlcvDatasAsync();
-            var result = candles.StochRsi(14)[candles.Count() - 1];  
+            var result = candles.StochRsi(14)[candles.Count() - 1];
             Assert.IsTrue(0m.IsApproximatelyEquals(result.Tick.Value));
 
             var result2 = candles.StochRsi(14).Single(v => v.DateTime == new DateTime(2017, 9, 15));

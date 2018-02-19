@@ -55,7 +55,7 @@ namespace Trady.Test
 
             RuleRegistry.Register("isbelowsma30_2", "ic.Get<SimpleMovingAverage>(30)[ic.Index].Tick.IsTrue(t => t > ic.Close)");
             RuleRegistry.Register("isbelowsma30", (ic, p) => ic.Get<SimpleMovingAverage>(p[0])[ic.Index].Tick.IsTrue(t => t > ic.Close));
-            
+
             using (var ctx = new AnalyzeContext(candles))
             {
                 var result = new SimpleRuleExecutor(ctx, ctx.GetRule("isbelowsma30_2")).Execute();
@@ -66,7 +66,7 @@ namespace Trady.Test
                 Assert.AreEqual(result2.Count(), result3.Count());
             }
         }
-         
+
         [TestMethod]
         public async Task TestGetFuncFromContextAsync()
         {

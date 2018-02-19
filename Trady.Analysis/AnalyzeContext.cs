@@ -20,13 +20,13 @@ namespace Trady.Analysis
         }
 
         public TAnalyzable Get<TAnalyzable>(params object[] parameters) where TAnalyzable : IAnalyzable
-            => (TAnalyzable)_cache.GetOrAdd($"{typeof(TAnalyzable).Name}#{string.Join("|", parameters)}", 
+            => (TAnalyzable)_cache.GetOrAdd($"{typeof(TAnalyzable).Name}#{string.Join("|", parameters)}",
                                             AnalyzableFactory.CreateAnalyzable<TAnalyzable, TInput>(BackingList, parameters));
 
 		IFuncAnalyzable IAnalyzeContext.GetFunc(string name, params decimal[] parameters) => GetFunc(name, parameters);
 
 		public IFuncAnalyzable<dynamic> GetFunc(string name, params decimal[] parameters)
-            => (IFuncAnalyzable<dynamic>)_cache.GetOrAdd($"_Func_{name}#{string.Join("|", parameters)}", 
+            => (IFuncAnalyzable<dynamic>)_cache.GetOrAdd($"_Func_{name}#{string.Join("|", parameters)}",
                                                          FuncAnalyzableFactory.CreateAnalyzable<TInput, dynamic>(name, BackingList, parameters));
 
 		public Predicate<T> GetRule<T>(string name, params decimal[] parameters) where T : IIndexedObject<TInput>

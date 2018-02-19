@@ -30,8 +30,11 @@ namespace Trady.Test
             var rule = Rule.Create(ic => ic.IsAboveSma(30));
             IReadOnlyList<IOhlcv> validObjects;
             using (var ctx = new AnalyzeContext(candles))
+            {
                 validObjects = new SimpleRuleExecutor(ctx, rule).Execute();
-            Assert.IsTrue(validObjects.Count() == 882);
+            }
+
+            Assert.IsTrue(validObjects.Count == 882);
         }
 
         [TestMethod]
@@ -39,7 +42,7 @@ namespace Trady.Test
         {
             var candles = await ImportIOhlcvDatasAsync();
             var transIOhlcvDatas = candles.Transform<Daily, Weekly>();
-            var selectedIOhlcvData = transIOhlcvDatas.Where(c => c.DateTime.Equals(new DateTime(2017, 3, 13))).First();
+            var selectedIOhlcvData = transIOhlcvDatas.First(c => c.DateTime.Equals(new DateTime(2017, 3, 13)));
             Assert.IsTrue(138.71m.IsApproximatelyEquals(selectedIOhlcvData.Open));
             Assert.IsTrue(140.34m.IsApproximatelyEquals(selectedIOhlcvData.High));
             Assert.IsTrue(138.49m.IsApproximatelyEquals(selectedIOhlcvData.Low));
