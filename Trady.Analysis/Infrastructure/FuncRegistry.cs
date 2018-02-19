@@ -13,11 +13,11 @@ namespace Trady.Analysis.Infrastructure
 {
     public static class FuncRegistry
     {
-        static readonly ScriptOptions options = ScriptOptions.Default
-                                                             .WithReferences(typeof(AnalyzeContext).GetTypeInfo().Assembly)
+        private static readonly ScriptOptions options = ScriptOptions.Default
+                                                    .WithReferences(typeof(AnalyzeContext).GetTypeInfo().Assembly)
                                                     .WithImports(typeof(AnalyzeContext).Namespace, typeof(SimpleMovingAverage).Namespace);
 
-        static readonly ConcurrentDictionary<string, object> _funcDict = new ConcurrentDictionary<string, object>();
+        private static readonly ConcurrentDictionary<string, object> _funcDict = new ConcurrentDictionary<string, object>();
 
 		public class FuncGlobals<TInput>
 		{
@@ -36,8 +36,11 @@ namespace Trady.Analysis.Infrastructure
         private static bool _Register(string name, object obj, bool @override = false)
         {
 			if (@override)
-				_funcDict.TryRemove(name, out _);
-			return _funcDict.TryAdd(name, obj);
+            {
+                _funcDict.TryRemove(name, out _);
+            }
+
+            return _funcDict.TryAdd(name, obj);
         }
 
         public static bool Register<TInput>(string name, string expression, bool @override = false)

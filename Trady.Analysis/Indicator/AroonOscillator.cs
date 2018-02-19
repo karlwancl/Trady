@@ -23,7 +23,7 @@ namespace Trady.Analysis.Indicator
         protected override decimal? ComputeByIndexImpl(IReadOnlyList<(decimal High, decimal Low)> mappedInputs, int index)
         {
             var aroon = _aroon[index];
-            return (aroon.Up - aroon.Down);
+            return aroon.Up - aroon.Down;
         }
     }
 

@@ -19,7 +19,9 @@ namespace Trady.Analysis.Indicator
         protected override decimal? ComputeByIndexImpl(IReadOnlyList<decimal> mappedInputs, int index)
         {
             if (index <= 0 || index < PeriodCount)
+            {
                 return null;
+            }
 
             decimal? change = Math.Abs(mappedInputs[index] - mappedInputs[index - PeriodCount]);
             decimal? volatility = Enumerable.Range(index - PeriodCount + 1, PeriodCount).Select(i => Math.Abs(mappedInputs[i] - mappedInputs[i - 1])).Sum();

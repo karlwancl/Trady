@@ -19,13 +19,19 @@ namespace Trady.Analysis.Infrastructure
                 .FirstOrDefault(c => typeof(IEnumerable<TInput>).IsAssignableFrom(c.GetParameters().First().ParameterType));
 
             if (ctor == null)
+            {
                 throw new TargetInvocationException("Can't find default constructor for instantiation, please make sure that the analyzable has a constructor with IEnumerable<IOhlcvData> as the first parameter",
                     new ArgumentNullException(nameof(ctor)));
+            }
 
-            var @params = new List<object>();
-            @params.Add(inputs);
+            var @params = new List<object>
+            {
+                inputs
+            };
             for (int i = 1; i < ctor.GetParameters().Count(); i++)
-				@params.Add(Convert.ChangeType(parameters[i - 1], ctor.GetParameters()[i].ParameterType));
+            {
+                @params.Add(Convert.ChangeType(parameters[i - 1], ctor.GetParameters()[i].ParameterType));
+            }
 
             return (TAnalyzable)ctor.Invoke(@params.ToArray());
         }

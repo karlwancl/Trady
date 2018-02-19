@@ -14,11 +14,11 @@ namespace Trady.Analysis.Infrastructure
 {
     public static class RuleRegistry
     {
-        static readonly ScriptOptions options = ScriptOptions.Default
+        private static readonly ScriptOptions options = ScriptOptions.Default
                                                     .WithReferences(typeof(AnalyzeContext).GetTypeInfo().Assembly)
-                                                             .WithImports(typeof(AnalyzeContext).Namespace, typeof(SimpleMovingAverage).Namespace, typeof(PredicateExtension).Namespace);
+                                                    .WithImports(typeof(AnalyzeContext).Namespace, typeof(SimpleMovingAverage).Namespace, typeof(PredicateExtension).Namespace);
 
-        static readonly ConcurrentDictionary<string, object> _ruleDict = new ConcurrentDictionary<string, object>();
+        private static readonly ConcurrentDictionary<string, object> _ruleDict = new ConcurrentDictionary<string, object>();
 
         public class RuleGlobals
         {
@@ -35,8 +35,11 @@ namespace Trady.Analysis.Infrastructure
         private static bool _Register(string name, object obj, bool @override = false)
         {
 			if (@override)
-				_ruleDict.TryRemove(name, out _);
-			return _ruleDict.TryAdd(name, obj);
+            {
+                _ruleDict.TryRemove(name, out _);
+            }
+
+            return _ruleDict.TryAdd(name, obj);
         }
 
         public static bool Register(string name, string expression, bool @override = false)

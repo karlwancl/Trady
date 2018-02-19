@@ -1,27 +1,27 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26228.9
+VisualStudioVersion = 15.0.27130.2026
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trady.Analysis", "Trady.Analysis\Trady.Analysis.csproj", "{164C4731-C6A3-41A6-8C32-88F55DB4D5C2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trady.Analysis", "Trady.Analysis\Trady.Analysis.csproj", "{164C4731-C6A3-41A6-8C32-88F55DB4D5C2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trady.Core", "Trady.Core\Trady.Core.csproj", "{4C37B65D-3423-4679-836E-98DB29B0FE07}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trady.Core", "Trady.Core\Trady.Core.csproj", "{4C37B65D-3423-4679-836E-98DB29B0FE07}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trady.Importer", "Trady.Importer\Trady.Importer.csproj", "{5BEE518C-42E4-4221-87C8-1AD18225E87B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trady.Importer", "Trady.Importer\Trady.Importer.csproj", "{5BEE518C-42E4-4221-87C8-1AD18225E87B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trady.Test", "Trady.Test\Trady.Test.csproj", "{2DF202B6-B571-412F-9214-E1C92439FD6B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trady.Test", "Trady.Test\Trady.Test.csproj", "{2DF202B6-B571-412F-9214-E1C92439FD6B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "lib", "lib", "{6FB190D6-4EC1-45DA-BC1F-2DF8E9FA10B6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trady.Importer.Yahoo", "Trady.Importer.Yahoo\Trady.Importer.Yahoo.csproj", "{7053D9A6-8793-4080-AF15-13CC24E2B8FD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trady.Importer.Yahoo", "Trady.Importer.Yahoo\Trady.Importer.Yahoo.csproj", "{7053D9A6-8793-4080-AF15-13CC24E2B8FD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trady.Importer.Google", "Trady.Importer.Google\Trady.Importer.Google.csproj", "{40E46E14-26C2-4B5D-8EA4-D1BE279C6982}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trady.Importer.Google", "Trady.Importer.Google\Trady.Importer.Google.csproj", "{40E46E14-26C2-4B5D-8EA4-D1BE279C6982}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trady.Importer.Quandl", "Trady.Importer.Quandl\Trady.Importer.Quandl.csproj", "{3B1D9B8A-4EDF-41DA-999C-68FA122B1A51}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trady.Importer.Quandl", "Trady.Importer.Quandl\Trady.Importer.Quandl.csproj", "{3B1D9B8A-4EDF-41DA-999C-68FA122B1A51}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trady.Importer.Csv", "Trady.Importer.Csv\Trady.Importer.Csv.csproj", "{68256547-A3CC-43B8-BE34-C8FACCEE20F3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trady.Importer.Csv", "Trady.Importer.Csv\Trady.Importer.Csv.csproj", "{68256547-A3CC-43B8-BE34-C8FACCEE20F3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trady.Importer.Stooq", "Trady.Importer.Stooq\Trady.Importer.Stooq.csproj", "{BE178FE7-DBBC-428A-846F-FF840ABF1DB2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trady.Importer.Stooq", "Trady.Importer.Stooq\Trady.Importer.Stooq.csproj", "{BE178FE7-DBBC-428A-846F-FF840ABF1DB2}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "importer", "importer", "{7F7816A9-8E22-4799-9A61-8E83CE49C3D4}"
 EndProject
@@ -210,11 +210,14 @@ Global
 		{164C4731-C6A3-41A6-8C32-88F55DB4D5C2} = {6FB190D6-4EC1-45DA-BC1F-2DF8E9FA10B6}
 		{4C37B65D-3423-4679-836E-98DB29B0FE07} = {6FB190D6-4EC1-45DA-BC1F-2DF8E9FA10B6}
 		{5BEE518C-42E4-4221-87C8-1AD18225E87B} = {7F7816A9-8E22-4799-9A61-8E83CE49C3D4}
+		{2DF202B6-B571-412F-9214-E1C92439FD6B} = {21745804-92A6-45D7-96EC-F10AAC742B58}
 		{7053D9A6-8793-4080-AF15-13CC24E2B8FD} = {7F7816A9-8E22-4799-9A61-8E83CE49C3D4}
 		{40E46E14-26C2-4B5D-8EA4-D1BE279C6982} = {7F7816A9-8E22-4799-9A61-8E83CE49C3D4}
 		{3B1D9B8A-4EDF-41DA-999C-68FA122B1A51} = {7F7816A9-8E22-4799-9A61-8E83CE49C3D4}
 		{68256547-A3CC-43B8-BE34-C8FACCEE20F3} = {7F7816A9-8E22-4799-9A61-8E83CE49C3D4}
 		{BE178FE7-DBBC-428A-846F-FF840ABF1DB2} = {7F7816A9-8E22-4799-9A61-8E83CE49C3D4}
-		{2DF202B6-B571-412F-9214-E1C92439FD6B} = {21745804-92A6-45D7-96EC-F10AAC742B58}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {FEBAEF97-AF38-45D5-A249-9BEE85518966}
 	EndGlobalSection
 EndGlobal
