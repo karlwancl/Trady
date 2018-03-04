@@ -74,7 +74,7 @@ namespace Trady.Test
         [TestMethod]
         public void ImportFromCsv()
         {
-            var importer = new CsvImporter("fb.csv", new CultureInfo("en-US"));
+            var importer = new CsvImporter("fb.csv", CultureInfo.GetCultureInfo("en-US"));
             var candles = importer.ImportAsync("FB").Result;
             Assert.AreEqual(candles.Count, 1342);
             var firstIOhlcvData = candles.First();
@@ -86,7 +86,7 @@ namespace Trady.Test
         {
             var config = new CsvImportConfiguration()
             {
-                Culture = new CultureInfo("en-US"),
+                Culture = "en-US",
                 Delimiter = ";",
                 DateFormat = "yyyyMMdd HHmmss",
                 HasHeaderRecord = false

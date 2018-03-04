@@ -20,7 +20,8 @@ namespace Trady.Test
         protected async Task<IEnumerable<IOhlcv>> ImportIOhlcvDatasAsync()
         {
             // Last record: 09/18/2017
-            var csvImporter = new CsvImporter("fb.csv", new CultureInfo("en-US"));
+            var csvImporter = new CsvImporter("fb.csv", CultureInfo.GetCultureInfo("en-US"));
+
             return await csvImporter.ImportAsync("fb");
             //var yahooImporter = new YahooFinanceImporter();
             //var candles = await yahooImporter.ImportAsync("FB");
