@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Trady.Analysis.Extension;
-using Trady.Core;
 using Trady.Core.Infrastructure;
 
 namespace Trady.Analysis.Backtest
@@ -13,24 +11,29 @@ namespace Trady.Analysis.Backtest
     {
         private IDictionary<IEnumerable<IOhlcv>, int> _weightings;
         private Predicate<IIndexedOhlcv> _buyRule, _sellRule;
+        private readonly decimal _flatExchangeFee;
+        private readonly bool _buyCompleteBaseCurrencies;
 
-        internal Runner(
-            IDictionary<IEnumerable<IOhlcv>, int> weightings, 
-            Predicate<IIndexedOhlcv> buyRule, 
-            Predicate<IIndexedOhlcv> sellRule)
+        internal Runner(IDictionary<IEnumerable<IOhlcv>, int> weightings,
+            Predicate<IIndexedOhlcv> buyRule,
+            Predicate<IIndexedOhlcv> sellRule,
+            decimal flatExchangeFee,
+            bool buyCompleteBaseCurrencies)
         {
             _weightings = weightings;
             _buyRule = buyRule;
             _sellRule = sellRule;
+            _flatExchangeFee = flatExchangeFee;
+            _buyCompleteBaseCurrencies = buyCompleteBaseCurrencies;
         }
 
         public event BuyHandler OnBought;
 
-        public delegate void BuyHandler(IEnumerable<IOhlcv> candles, int index, DateTimeOffset dateTime, decimal buyPrice, int quantity, decimal absCashFlow, decimal currentCashAmount);
+        public delegate void BuyHandler(IEnumerable<IOhlcv> candles, int index, DateTimeOffset dateTime, decimal buyPrice, decimal quantity, decimal absCashFlow, decimal currentCashAmount);
 
         public event SellHandler OnSold;
 
-        public delegate void SellHandler(IEnumerable<IOhlcv> candles, int index, DateTimeOffset dateTime, decimal sellPrice, int quantity, decimal absCashFlow, decimal currentCashAmount, decimal plRatio);
+        public delegate void SellHandler(IEnumerable<IOhlcv> candles, int index, DateTimeOffset dateTime, decimal sellPrice, decimal quantity, decimal absCashFlow, decimal currentCashAmount, decimal plRatio);
 
         public Task<Result> RunAsync(decimal principal, decimal premium = 1.0m, DateTime? startTime = null, DateTime? endTime = null)
             => Task.Factory.StartNew(() => Run(principal, premium, startTime, endTime));
@@ -100,16 +103,28 @@ namespace Trady.Analysis.Backtest
 
         private void BuyAsset(IIndexedOhlcv indexedCandle, decimal premium, IDictionary<IEnumerable<IOhlcv>, decimal> assetCashMap, IList<Transaction> transactions)
         {
-            if (assetCashMap.TryGetValue(indexedCandle.BackingList, out decimal cash))
+            if (assetCashMap.TryGetValue(indexedCandle.BackingList, out decimal availableQuoteCurrency))
             {
                 var nextIOhlcvData = indexedCandle.Next;
-                int quantity = Convert.ToInt32(Math.Floor((cash - premium) / nextIOhlcvData.Open));
-                
-                decimal cashOut = nextIOhlcvData.Open * quantity + premium;
-                assetCashMap[indexedCandle.BackingList] -= cashOut;
+                decimal baseCurrencyQte = (availableQuoteCurrency - premium) / nextIOhlcvData.Open;
 
-                transactions.Add(new Transaction(indexedCandle.BackingList, nextIOhlcvData.Index, nextIOhlcvData.DateTime, TransactionType.Buy, quantity, cashOut));
-                OnBought?.Invoke(indexedCandle.BackingList, nextIOhlcvData.Index, nextIOhlcvData.DateTime, nextIOhlcvData.Open, quantity, cashOut, assetCashMap[indexedCandle.BackingList]);
+                if (_buyCompleteBaseCurrencies)
+                {
+                    baseCurrencyQte = Math.Floor(baseCurrencyQte);
+                }
+
+                decimal quoteCurrencyQte = nextIOhlcvData.Open * baseCurrencyQte + premium;
+
+                // EUR/USD (1€ = 1000$) ; flat exchange fee ratio percent = 0.1
+                // you buy 2000$
+                // Total 2€, fee = 2 * 0.001 = 0.002, net = 2 - 0.002 = 1.998 €
+                baseCurrencyQte -= _flatExchangeFee * baseCurrencyQte;
+                var quoteCurrencyFee = _flatExchangeFee * nextIOhlcvData.Open;
+
+                assetCashMap[indexedCandle.BackingList] -= quoteCurrencyQte;
+                
+                transactions.Add(new Transaction(indexedCandle.BackingList, nextIOhlcvData.Index, nextIOhlcvData.DateTime, TransactionType.Buy, baseCurrencyQte, quoteCurrencyQte));
+                OnBought?.Invoke(indexedCandle.BackingList, nextIOhlcvData.Index, nextIOhlcvData.DateTime, nextIOhlcvData.Open, baseCurrencyQte, quoteCurrencyQte, assetCashMap[indexedCandle.BackingList]);
             }
         }
 
@@ -120,12 +135,19 @@ namespace Trady.Analysis.Backtest
                 var nextIOhlcvData = indexedCandle.Next;
                 var lastTransaction = transactions.LastOrDefault(t => t.IOhlcvDatas.Equals(indexedCandle.BackingList));
 
-                decimal cashIn = nextIOhlcvData.Open * lastTransaction.Quantity - premium;
-                decimal plRatio = (cashIn - lastTransaction.AbsoluteCashFlow) / lastTransaction.AbsoluteCashFlow;
-                assetCashMap[indexedCandle.BackingList] += cashIn;
+                var baseCurrencyQte = lastTransaction.Quantity;
+                decimal quoteCurrencyQte = nextIOhlcvData.Open * baseCurrencyQte - premium;
+                
+                // EUR/USD (1€ = 1000$) ; flat exchange fee ratio percent = 0.1
+                // you sell 1.999€
+                // Total 1999€, fee = 1.999, net = 1997.001 €
+                quoteCurrencyQte -= _flatExchangeFee * quoteCurrencyQte;
 
-                transactions.Add(new Transaction(indexedCandle.BackingList, nextIOhlcvData.Index, nextIOhlcvData.DateTime, TransactionType.Sell, lastTransaction.Quantity, cashIn));
-                OnSold?.Invoke(indexedCandle.BackingList, nextIOhlcvData.Index, nextIOhlcvData.DateTime, nextIOhlcvData.Open, lastTransaction.Quantity, cashIn, assetCashMap[indexedCandle.BackingList], plRatio);
+                decimal plRatio = (quoteCurrencyQte - lastTransaction.AbsoluteCashFlow) / lastTransaction.AbsoluteCashFlow;
+                assetCashMap[indexedCandle.BackingList] += quoteCurrencyQte;
+
+                transactions.Add(new Transaction(indexedCandle.BackingList, nextIOhlcvData.Index, nextIOhlcvData.DateTime, TransactionType.Sell, baseCurrencyQte, quoteCurrencyQte));
+                OnSold?.Invoke(indexedCandle.BackingList, nextIOhlcvData.Index, nextIOhlcvData.DateTime, nextIOhlcvData.Open, baseCurrencyQte, quoteCurrencyQte, assetCashMap[indexedCandle.BackingList], plRatio);
             }
         }
     }
