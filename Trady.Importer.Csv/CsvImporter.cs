@@ -33,7 +33,7 @@ namespace Trady.Importer.Csv
             _culture = culture;
         }
 
-        public CsvImporter(string path, CsvImportConfiguration configuration): this(path, configuration.Culture)
+        public CsvImporter(string path, CsvImportConfiguration configuration): this(path, configuration.CultureInfo)
         {
             _format = configuration.DateFormat;
             _delimiter = configuration.Delimiter;

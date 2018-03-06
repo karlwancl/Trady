@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using Trady.Core;
 using Trady.Core.Infrastructure;
@@ -7,7 +7,7 @@ namespace Trady.Analysis.Backtest
 {
     public class Transaction : IEquatable<Transaction>
     {
-        public Transaction(IEnumerable<IOhlcv> candles, int index, DateTimeOffset dateTime, TransactionType type, int quantity, decimal absCashFlow)
+        public Transaction(IEnumerable<IOhlcv> candles, int index, DateTimeOffset dateTime, TransactionType type, decimal quantity, decimal absCashFlow)
         {
             IOhlcvDatas = candles;
             Index = index;
@@ -25,11 +25,32 @@ namespace Trady.Analysis.Backtest
 
         public TransactionType Type { get; }
 
-        public int Quantity { get; }
+        public decimal Quantity { get; }
 
         public decimal AbsoluteCashFlow { get; }
 
         public bool Equals(Transaction other)
-            => IOhlcvDatas.Equals(other.IOhlcvDatas) && Index == other.Index && Type == other.Type && Quantity == other.Quantity && AbsoluteCashFlow == other.AbsoluteCashFlow;
+            => other != null
+               && IOhlcvDatas.Equals(other.IOhlcvDatas)
+               && DateTime == other.DateTime
+               && Index == other.Index
+               && Type == other.Type
+               && Quantity == other.Quantity
+               && AbsoluteCashFlow == other.AbsoluteCashFlow;
+
+        public override bool Equals(object obj)
+        {
+            return Equals(obj as Transaction);
+        }
+
+        public override int GetHashCode()
+        {
+            return Index.GetHashCode();
+        }
+
+        public override string ToString()
+        {
+            return $"Idx: {Index}; Date: {DateTime:d} Type: {Type}; Quantity: {Quantity:N3}; AbsoluteCashFlow: {AbsoluteCashFlow:N3}";
+        }
     }
 }
