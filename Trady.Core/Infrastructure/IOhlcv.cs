@@ -1,19 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Trady.Core.Infrastructure
+﻿namespace Trady.Core.Infrastructure
 {
     public interface IOhlcv : ITick
     {
-        decimal Open { get; }
+        decimal Open { get; set; }
 
-        decimal High { get; }
+        decimal High { get; set; }
 
-        decimal Low { get; }
+        decimal Low { get; set; }
 
-        decimal Close { get; }
+        decimal Close { get; set; }
 
-        decimal Volume { get; }
+        decimal Volume { get; set; }
     }
 }
