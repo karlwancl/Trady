@@ -36,7 +36,7 @@ namespace Trady.Analysis.Infrastructure
             _mappedInputs = inputs.Select(inputMapper).ToList();
             if (_isTInputIOhlcvData)
             {
-                _mappedDateTimes = inputs.Select(c => (c as IOhlcv).DateTime).ToList();
+                _mappedDateTimes = inputs.Cast<IOhlcv>().Select(c => c.DateTime).ToList();
             }
 
             Cache = new ConcurrentDictionary<int, TOutputToMap>();

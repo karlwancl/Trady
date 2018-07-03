@@ -22,7 +22,7 @@ namespace Trady.Analysis.Infrastructure
         public (TOutput Prev, TOutput Current, TOutput Next) ComputeNeighbourDiff(int index) => Compute(Diff, index);
 
         public TOutput Diff(int index)
-            => index > 0 ? Map(i => ComputeByIndex(i) - ComputeByIndex(i - 1), index) : default(TOutput);
+            => Map(i => index > 0 ? ComputeByIndex(i) - ComputeByIndex(i - 1) : default(decimal?), index);
 
         #endregion
 
@@ -35,7 +35,7 @@ namespace Trady.Analysis.Infrastructure
         public (TOutput Prev, TOutput Current, TOutput Next) ComputeNeighbourSma(int periodCount, int index) => Compute(i => Sma(periodCount, i), index);
 
         public TOutput Sma(int periodCount, int index)
-            => index >= periodCount - 1 ? Map(i => Enumerable.Range(i - periodCount + 1, periodCount).Select(ComputeByIndex).Average(), index) : default(TOutput);
+            => Map(i => index >= periodCount - 1 ? Enumerable.Range(i - periodCount + 1, periodCount).Select(ComputeByIndex).Average() : default(decimal?), index);
 
         #endregion  
 
@@ -48,7 +48,7 @@ namespace Trady.Analysis.Infrastructure
         public (TOutput Prev, TOutput Current, TOutput Next) ComputeNeighbourPcDiff(int index) => Compute(PcDiff, index);
 
         public TOutput PcDiff(int index)
-            => index > 0 ? Map(i => (ComputeByIndex(i) - ComputeByIndex(i - 1)) / ComputeByIndex(i - 1) * 100, index) : default(TOutput);
+            => Map(i => index > 0 ? (ComputeByIndex(i) - ComputeByIndex(i - 1)) / ComputeByIndex(i - 1) * 100 : default(decimal?), index);
 
         #endregion
 
@@ -65,19 +65,17 @@ namespace Trady.Analysis.Infrastructure
 
         public TOutput Sd(int periodCount, decimal sdValue, int index)
         {
-            if (index < periodCount - 1)
+            decimal? sd(int i)
             {
-                return default(TOutput);
-            }
+                if (index < periodCount - 1)
+                    return default(decimal?);
 
-            Func<int, decimal?> sd = i =>
-            {
-                Func<int, IEnumerable<decimal?>> items = j => Enumerable.Range(j - periodCount + 1, periodCount).Select(ComputeByIndex);
+                IEnumerable<decimal?> items(int j) => Enumerable.Range(j - periodCount + 1, periodCount).Select(ComputeByIndex);
                 var count = items(i).Count();
                 var avg = items(i).Average();
                 var diffSum = items(i).Select(item => (item - avg) * (item - avg)).Sum();
                 return Convert.ToDecimal(Math.Sqrt(Convert.ToDouble(diffSum / count)));
-            };
+            }
 
             return Map(sd, index);
         }
