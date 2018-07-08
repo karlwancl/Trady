@@ -45,11 +45,15 @@ namespace Trady.Importer.Csv
             {
                 using (var fs = File.OpenRead(_path))
                 using (var sr = new StreamReader(fs))
-                using (var csvReader = new CsvReader(sr, new CsvConfiguration() { CultureInfo = _culture, Delimiter = string.IsNullOrWhiteSpace(_delimiter) ? "," : _delimiter, HasHeaderRecord = _hasHeader }))
+                using (var csvReader = new CsvReader(sr, new Configuration() { CultureInfo = _culture, Delimiter = string.IsNullOrWhiteSpace(_delimiter) ? "," : _delimiter, HasHeaderRecord = _hasHeader }))
                 {
                     var candles = new List<IOhlcv>();
                     while (csvReader.Read())
                     {
+                        // HasHeaderRecord is not working for CsvReader 6.0.2
+                        if (!DateTime.TryParse(csvReader.GetField(0), out DateTime parsedDateTime))
+                            continue;
+
                         var date = string.IsNullOrWhiteSpace(_format) ? csvReader.GetField<DateTime>(0) : DateTime.ParseExact(csvReader.GetField<string>(0), _format, _culture);                        
                         if ((!startTime.HasValue || date >= startTime) && (!endTime.HasValue || date <= endTime))
                             candles.Add(GetRecord(csvReader));
