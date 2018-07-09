@@ -3,6 +3,8 @@ image: Visual Studio 2017
 before_build:
 - cmd: dotnet restore
 build:
+  publish_nuget: true
+  publish_nuget_symbols: true
   verbosity: minimal
 after_build:
 - cmd: dotnet pack
