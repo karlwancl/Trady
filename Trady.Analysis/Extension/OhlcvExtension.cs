@@ -7,7 +7,7 @@ using Trady.Core.Infrastructure;
 
 namespace Trady.Analysis.Extension
 {
-    public static class IOhlcvDatasExtension
+    public static class OhlcvExtension
     {
         public static IReadOnlyList<AnalyzableTick<decimal?>> Func(this IEnumerable<IOhlcv> candles, Func<IReadOnlyList<IOhlcv>, int, IReadOnlyList<decimal>, IAnalyzeContext<IOhlcv>, decimal?> func, params decimal[] parameters)
             => func.AsAnalyzable(candles, parameters).Compute();

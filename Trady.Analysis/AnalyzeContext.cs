@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using Trady.Analysis.Extension;
 using Trady.Analysis.Infrastructure;
 using Trady.Core;
 using Trady.Core.Infrastructure;
@@ -11,23 +12,29 @@ namespace Trady.Analysis
 {
     public class AnalyzeContext<TInput> : IAnalyzeContext<TInput>
     {
-        private ConcurrentDictionary<string, IAnalyzable> _cache;
+        private IDictionary<string, IAnalyzable> _cache;
 
         public AnalyzeContext(IEnumerable<TInput> backingList)
         {
             BackingList = backingList;
-            _cache = new ConcurrentDictionary<string, IAnalyzable>();
+            _cache = new Dictionary<string, IAnalyzable>();
         }
 
         public TAnalyzable Get<TAnalyzable>(params object[] parameters) where TAnalyzable : IAnalyzable
-            => (TAnalyzable)_cache.GetOrAdd($"{typeof(TAnalyzable).Name}#{string.Join("|", parameters)}",
-                                            AnalyzableFactory.CreateAnalyzable<TAnalyzable, TInput>(BackingList, parameters));
+        {
+            var cacheKey = $"{typeof(TAnalyzable).Name}#{string.Join("|", parameters)}";
+            IAnalyzable analyzable() => AnalyzableFactory.CreateAnalyzable<TAnalyzable, TInput>(BackingList, parameters);
+            return (TAnalyzable)_cache.GetOrAdd(cacheKey, analyzable);
+        }
 
 		IFuncAnalyzable IAnalyzeContext.GetFunc(string name, params decimal[] parameters) => GetFunc(name, parameters);
 
-		public IFuncAnalyzable<dynamic> GetFunc(string name, params decimal[] parameters)
-            => (IFuncAnalyzable<dynamic>)_cache.GetOrAdd($"_Func_{name}#{string.Join("|", parameters)}",
-                                                         FuncAnalyzableFactory.CreateAnalyzable<TInput, dynamic>(name, BackingList, parameters));
+        public IFuncAnalyzable<dynamic> GetFunc(string name, params decimal[] parameters)
+        {
+            var cacheKey = $"_Func_{name}#{string.Join("|", parameters)}";
+            IFuncAnalyzable<dynamic> analyzable() => FuncAnalyzableFactory.CreateAnalyzable<TInput, dynamic>(name, BackingList, parameters);
+            return (IFuncAnalyzable<dynamic>)_cache.GetOrAdd(cacheKey, analyzable);
+        }
 
 		public Predicate<T> GetRule<T>(string name, params decimal[] parameters) where T : IIndexedObject<TInput>
 		{
