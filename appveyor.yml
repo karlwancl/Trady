@@ -20,12 +20,11 @@ artifacts:
 deploy:
 - provider: NuGet
   api_key:
-    secure: oy2dfgr47mtln2ik2jxqwbd53anldhbupp6nzdhlyrnmp4
+    secure: oy2kcinwtl6qc7mvasnaqdgl4hbajavedpcbcm3mokhfpe
   on:
     branch: master
-
 - provider: NuGet
   api_key:
-    secure: oy2dfgr47mtln2ik2jxqwbd53anldhbupp6nzdhlyrnmp4
+    secure: oy2kcinwtl6qc7mvasnaqdgl4hbajavedpcbcm3mokhfpe
   on:
     branch: v3.1

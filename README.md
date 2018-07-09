@@ -19,6 +19,11 @@ I've noticed that there's a lot of enthusiasts continually contributing to this 
 * Strategy backtesting by buy/sell rule
 
 ## Recent update
+### v3.1.0-beta2
+* Fix YahooFinanceImporter to use local time for query
+* Update dependencies for csvImporter
+* Boost performance for RuleExecutor & Backtesting
+
 ### v3.1.0-beta0
 * Added Harami (thanks to @richardsjoberg)
 * Added indicators: ParabolicStopAndReverse (Sar), DynamicMomentumIndex(Dymoi), RelativeMomentumIndex (Rmi), NetMomentumOscillator (Nmo), StochasticsRsiOscillator (StochRsi), StochasticsMomentumIndex (Smi), CommodityChannelIndex (Cci)
