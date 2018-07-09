@@ -48,11 +48,15 @@ namespace Trady.Importer.Csv
                 using (var csvReader = new CsvReader(sr, new Configuration() { CultureInfo = _culture, Delimiter = string.IsNullOrWhiteSpace(_delimiter) ? "," : _delimiter, HasHeaderRecord = _hasHeader }))
                 {
                     var candles = new List<IOhlcv>();
+                    bool isHeaderBypassed = false;
                     while (csvReader.Read())
                     {
                         // HasHeaderRecord is not working for CsvReader 6.0.2
-                        if (!DateTime.TryParse(csvReader.GetField(0), out DateTime parsedDateTime))
+                        if (_hasHeader && !isHeaderBypassed)
+                        {
+                            isHeaderBypassed = true;
                             continue;
+                        }
 
                         var date = string.IsNullOrWhiteSpace(_format) ? csvReader.GetField<DateTime>(0) : DateTime.ParseExact(csvReader.GetField<string>(0), _format, _culture);                        
                         if ((!startTime.HasValue || date >= startTime) && (!endTime.HasValue || date <= endTime))
