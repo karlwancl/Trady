@@ -4,8 +4,8 @@ using System.Globalization;
 using System.Linq;
 using Trady.Importer;
 using Trady.Importer.Csv;
-using Trady.Importer.Google;
-using Trady.Importer.Quandl;
+//using Trady.Importer.Google;
+//using Trady.Importer.Quandl;
 using Trady.Importer.Stooq;
 using Trady.Importer.Yahoo;
 
