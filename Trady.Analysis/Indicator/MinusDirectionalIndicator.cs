@@ -36,7 +36,10 @@ namespace Trady.Analysis.Indicator
         public int PeriodCount { get; }
 
         protected override decimal? ComputeByIndexImpl(IReadOnlyList<(decimal High, decimal Low, decimal Close)> mappedInputs, int index)
-            => _tmdmEma[index] / _atr[index] * 100;
+        {
+            var currentAtr = _atr[index];
+            return currentAtr == 0 ? default: _tmdmEma[index] / currentAtr * 100;
+        }
     }
 
     public class MinusDirectionalIndicatorByTuple : MinusDirectionalIndicator<(decimal High, decimal Low, decimal Close), decimal?>

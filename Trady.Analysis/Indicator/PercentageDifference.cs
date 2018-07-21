@@ -15,7 +15,15 @@ namespace Trady.Analysis.Indicator
         public int PeriodCount { get; }
 
 		protected override decimal? ComputeByIndexImpl(IReadOnlyList<decimal?> mappedInputs, int index)
-            => index >= PeriodCount ? (mappedInputs[index] - mappedInputs[index - PeriodCount]) / mappedInputs[index - PeriodCount] * 100 : (decimal?)null;
+        {
+            if (index >= PeriodCount)
+            {
+                var denominator = mappedInputs[index - PeriodCount];
+                return denominator == 0 ? default : (mappedInputs[index] - denominator) / denominator * 100;
+            }
+            else
+                return default;
+        }
 	}
 
 	public class PercentageDifferenceByTuple : PercentageDifference<decimal?, decimal?>

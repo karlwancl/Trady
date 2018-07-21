@@ -69,7 +69,7 @@ namespace Trady.Analysis.Indicator
                 sar = prevOutputToMap + _acceleratingFactor * (_extremePoint - prevOutputToMap);
                 sar = new decimal[] { sar.Value, mappedInputs[index - 1].Low, mappedInputs[index - 2].Low }.Min();
 
-                bool isNewExtreme = mappedInputs[index].High > _extremePoint;
+                var isNewExtreme = mappedInputs[index].High > _extremePoint;
                 _extremePoint = Math.Max(_extremePoint, mappedInputs[index].High);
                 if (mappedInputs[index].Low > sar && isNewExtreme)
                     _acceleratingFactor += Math.Min(Step, MaximumStep - _acceleratingFactor);
@@ -119,7 +119,7 @@ namespace Trady.Analysis.Indicator
             if (isDowntrend)
                 return false;
 
-            Func<int, decimal> highLowMean = i => (inputs[i].High + inputs[i].Low) / 2;
+            decimal highLowMean(int i) => (inputs[i].High + inputs[i].Low) / 2;
             return highLowMean(index) > highLowMean(index - 1);
         }
 

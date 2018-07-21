@@ -35,10 +35,12 @@ namespace Trady.Analysis.Candlestick
 
         protected override bool? ComputeByIndexImpl(IReadOnlyList<(decimal Open, decimal High, decimal Low, decimal Close)> mappedInputs, int index)
         {
-            if (index < 2) return null;
+            if (index < 2) return default;
+
             bool isBlackIOhlcvDataWithinGap = (mappedInputs[index].Open > mappedInputs[index - 1].Open) &&
                 (mappedInputs[index].Open < mappedInputs[index - 1].Close) &&
                 (mappedInputs[index].Close < mappedInputs[index - 1].Open);
+
             return (_upTrend[index - 1] ?? false) &&
                 _bullish[index - 2] &&
                 mappedInputs[index - 2].High < mappedInputs[index - 1].Low &&

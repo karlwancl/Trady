@@ -49,12 +49,10 @@ namespace Trady.Analysis.Candlestick
         protected override bool? ComputeByIndexImpl(IReadOnlyList<(decimal Open, decimal High, decimal Low, decimal Close)> mappedInputs, int index)
         {
             if (index < DownTrendPeriodCount)
-            {
-                return null;
-            }
+                return default;
 
-            int i = index - DownTrendPeriodCount;
-            bool isPassThrough = mappedInputs[i + 1].Open > mappedInputs[i].Close && mappedInputs[i + 1].Close < (mappedInputs[i].Open + mappedInputs[i].Close) / 2;
+            var i = index - DownTrendPeriodCount;
+            var isPassThrough = mappedInputs[i + 1].Open > mappedInputs[i].Close && mappedInputs[i + 1].Close < (mappedInputs[i].Open + mappedInputs[i].Close) / 2;
             return (_upTrend[i] ?? false) && _bullish[i] && isPassThrough && _bearish[i + 1];
         }
     }

@@ -28,8 +28,8 @@ namespace Trady.Analysis.Indicator
 
         protected override (decimal? LowerBand, decimal? MiddleBand, decimal? UpperBand) ComputeByIndexImpl(IReadOnlyList<decimal> mappedInputs, int index)
         {
-            decimal? middleBand = _sma[index];
-            decimal? sd = _sd[index];
+            var middleBand = _sma[index];
+            var sd = _sd[index];
             return (middleBand - SdCount * sd, middleBand, middleBand + SdCount * sd);
         }
     }

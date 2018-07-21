@@ -26,8 +26,8 @@ namespace Trady.Analysis.Indicator
 
         protected override decimal? ComputeByIndexImpl(IReadOnlyList<decimal> mappedInputs, int index)
         {
-            var bb = _bb[index];
-            return (bb.UpperBand - bb.LowerBand) / bb.MiddleBand * 100;
+            var (LowerBand, MiddleBand, UpperBand) = _bb[index];
+            return MiddleBand == 0 ? default : (UpperBand - LowerBand) / MiddleBand * 100;
         }
     }
 

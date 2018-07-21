@@ -27,7 +27,7 @@ namespace Trady.Analysis.Candlestick
         protected override bool? ComputeByIndexImpl(IReadOnlyList<(decimal Open, decimal High, decimal Low, decimal Close)> mappedInputs, int index)
         {
             if (index == 0)
-                return null;
+                return default;
 
             if (_bearish[index - 1] == _bearish[index])
                 return false;

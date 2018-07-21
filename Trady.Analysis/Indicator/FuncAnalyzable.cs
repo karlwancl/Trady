@@ -34,9 +34,7 @@ namespace Trady.Analysis.Indicator
         protected override decimal? ComputeByIndexImpl(IReadOnlyList<TInput> mappedInputs, int index)
         {
             if (_func == null || _ctx == null)
-            {
                 throw new NullReferenceException("No func is found for the analyzable, please ensure you have called Init method to init");
-            }
 
             return _func(mappedInputs, index, Parameters, _ctx);
         }

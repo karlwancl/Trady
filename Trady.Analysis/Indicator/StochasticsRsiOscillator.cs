@@ -26,7 +26,7 @@ namespace Trady.Analysis.Indicator
         protected override decimal? ComputeByIndexImpl(IReadOnlyList<decimal?> mappedInputs, int index)
         {
             if (index < PeriodCount - 1)
-                return default(decimal?);
+                return default;
 
             var rsiHigh = _rsiHigh(index);
             var rsiLow = _rsiLow(index);

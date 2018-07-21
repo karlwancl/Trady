@@ -18,7 +18,7 @@ namespace Trady.Analysis.Candlestick
         protected override bool? ComputeByIndexImpl(IReadOnlyList<(decimal High, decimal Low)> mappedInputs, int index)
         {
             if (index <= PeriodCount - 1)
-                return null;
+                return default;
 
             for (int i = 0; i < PeriodCount; i++)
             {

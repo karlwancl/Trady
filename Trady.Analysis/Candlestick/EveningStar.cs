@@ -43,9 +43,9 @@ namespace Trady.Analysis.Candlestick
 
         protected override bool? ComputeByIndexImpl(IReadOnlyList<(decimal Open, decimal High, decimal Low, decimal Close)> mappedInputs, int index)
         {
-            if (index < 2) return null;
+            if (index < 2) return default;
 
-            Func<int, decimal> midPoint = i => (mappedInputs[i].Open + mappedInputs[i].Close) / 2;
+            decimal midPoint(int i) => (mappedInputs[i].Open + mappedInputs[i].Close) / 2;
 
             return (_upTrend[index - 1] ?? false) &&
                 _bullishLongDay[index - 2] &&

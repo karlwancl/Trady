@@ -22,7 +22,10 @@ namespace Trady.Analysis.Indicator
         }
 
         protected override decimal? ComputeByIndexImpl(IReadOnlyList<decimal?> mappedInputs, int index)
-            => 100 * _rm[index] / (1 + _rm[index]);
+        {
+            var currentRm = _rm[index];
+            return currentRm == 0 ? default : 100 * currentRm / (1 + currentRm);
+        }    
     }
 
     public class RelativeMomentumIndexByTuple : RelativeMomentumIndex<decimal?, decimal?>

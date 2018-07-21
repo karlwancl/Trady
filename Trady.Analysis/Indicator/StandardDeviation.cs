@@ -22,11 +22,11 @@ namespace Trady.Analysis.Indicator
 				return null;
 
             var subset = mappedInputs.Skip(index - PeriodCount + 1).Take(PeriodCount);
-            decimal? average = subset.Average();
-            decimal? sumOfDiff = subset.Select(v => (v - average) * (v - average)).Sum();
+            var average = subset.Average();
+            var sumOfDiff = subset.Select(v => (v - average) * (v - average)).Sum();
 
             if (!sumOfDiff.HasValue)
-                return null;
+                return default;
             
 			return Convert.ToDecimal(Math.Sqrt(Convert.ToDouble(sumOfDiff / subset.Count())));
         }

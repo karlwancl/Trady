@@ -24,8 +24,13 @@ namespace Trady.Analysis.Indicator
 
         protected override decimal? ComputeByIndexImpl(IReadOnlyList<(decimal High, decimal Low, decimal Close)> mappedInputs, int index)
         {
-            var value = (_pdi[index] - _mdi[index]) / (_pdi[index] + _mdi[index]);
-            return value.HasValue ? Math.Abs(value.Value) * 100 : (decimal?)null;
+            var pdi = _pdi[index];
+            var mdi = _mdi[index];
+            if (pdi + mdi == 0)
+                return default;
+
+            var value = (pdi - mdi) / (pdi + mdi);
+            return value.HasValue ? Math.Abs(value.Value) * 100 : default;
         }
     }
 

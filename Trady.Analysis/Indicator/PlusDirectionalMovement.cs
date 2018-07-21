@@ -13,7 +13,7 @@ namespace Trady.Analysis.Indicator
         }
 
         protected override decimal? ComputeByIndexImpl(IReadOnlyList<decimal> mappedInputs, int index)
-            => index > 0 ? mappedInputs[index] - mappedInputs[index - 1] : (decimal?)null;
+            => index > 0 ? (decimal?)mappedInputs[index] - mappedInputs[index - 1] : default;
     }
 
     public class PlusDirectionalMovementByTuple : PlusDirectionalMovement<decimal, decimal?>
