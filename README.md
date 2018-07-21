@@ -19,20 +19,20 @@ I've noticed that there's a lot of enthusiasts continually contributing to this 
 * Strategy backtesting by buy/sell rule
 
 ## Recent update
-### v3.1.0-beta2
+### v3.1
+* Fix StooqImporter, migrated to .NET Standard 2.0
+* Temporarily remove support for QuandlImporter & GoogleFinanceImporter
+* Fix divide by zero issue for various indicators
+* Fix null reference to diff/pcdiff/sma, etc.
 * Fix YahooFinanceImporter to use local time for query
 * Update dependencies for csvImporter
 * Boost performance for RuleExecutor & Backtesting
-
-### v3.1.0-beta0
 * Added Harami (thanks to @richardsjoberg)
 * Added indicators: ParabolicStopAndReverse (Sar), DynamicMomentumIndex(Dymoi), RelativeMomentumIndex (Rmi), NetMomentumOscillator (Nmo), StochasticsRsiOscillator (StochRsi), StochasticsMomentumIndex (Smi), CommodityChannelIndex (Cci)
 * IOhlcv interface is extracted, any class that implements IOhlcv interface can be used to calculate indicators (thanks to @LadislavBohm)
 * DateTimeOffset is used as default instead of DateTime
-
 * Renamed IndexedCandle.Execute to IndexedCandle.Eval
 * Renamed ClosePriceChange to Momentum (Mtm), ClosePricePercentageChange to RateOfChange (Roc)
-
 * Fix potential crash when computing EfficiencyRatio (thanks to @Mike-EEE)
 
 ### v3.0.1
