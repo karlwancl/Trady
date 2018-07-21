@@ -85,9 +85,9 @@ namespace Trady.Analysis.Infrastructure
         // Can only get in-range values from IchimokuCloud
         internal protected (TOutput Prev, TOutput Current, TOutput Next) Compute(Func<int, TOutput> outputFunc, int index)
         {
-            var prev = index > 0 ? outputFunc(index - 1) : default(TOutput);
+            var prev = index > 0 ? outputFunc(index - 1) : default;
             var current = outputFunc(index);
-            var next = index < _mappedInputs.Count - 1 ? outputFunc(index + 1) : default(TOutput);
+            var next = index < _mappedInputs.Count - 1 ? outputFunc(index + 1) : default;
 
             return (prev, current, next);
         }
