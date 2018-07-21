@@ -61,18 +61,17 @@ namespace Trady.Test
             Assert.AreEqual(candle.Volume, 3_770_530_000);
         }
 
-        // TODO: test later
-        //[TestMethod]
-        //public void ImportByStooq()
-        //{
-        //    var importer = new StooqImporter();
-        //    var candle = importer.ImportAsync("^SPX", new DateTime(2017, 1, 3), new DateTime(2017, 1, 3)).Result.First();   // Endtime stock history inclusive
-        //    Assert.AreEqual(candle.Open, 2251.57m);
-        //    Assert.AreEqual(candle.High, 2263.88m);
-        //    Assert.AreEqual(candle.Low, 2245.13m);
-        //    Assert.AreEqual(candle.Close, 2257.83m);
-        //    Assert.AreEqual(candle.Volume, 644_640_832);
-        //}
+       [TestMethod]
+        public void ImportByStooq()
+        {
+            var importer = new StooqImporter();
+            var candle = importer.ImportAsync("^SPX", new DateTime(2017, 1, 3), new DateTime(2017, 1, 3)).Result.First();   // Endtime stock history inclusive
+            Assert.AreEqual(candle.Open, 2251.57m);
+            Assert.AreEqual(candle.High, 2263.88m);
+            Assert.AreEqual(candle.Low, 2245.13m);
+            Assert.AreEqual(candle.Close, 2257.83m);
+            Assert.AreEqual(candle.Volume, 644_640_832);
+        }
 
         [TestMethod]
         public void ImportFromCsv()
