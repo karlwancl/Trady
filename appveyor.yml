@@ -25,3 +25,8 @@ deploy:
     secure: Q0wn/s/Hz++CAXsroPtrrzn6D58oUtxVpjCmCsxdgVoywVIzfErcCIrtb/FOfEd5
   on:
     branch: v3.1
+  provider: NuGet
+  api_key:
+    secure: Q0wn/s/Hz++CAXsroPtrrzn6D58oUtxVpjCmCsxdgVoywVIzfErcCIrtb/FOfEd5
+  on:
+    branch: master
