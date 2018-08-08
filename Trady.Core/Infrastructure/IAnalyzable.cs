@@ -32,6 +32,13 @@ namespace Trady.Core.Infrastructure
 		new IReadOnlyList<TOutput> Compute(IEnumerable<int> indexes);
 
         /// <summary>
+        /// Compute the target list by a list of index
+        /// </summary>
+        /// <param name="indexes">Indexes.</param>
+        /// <returns>The select.</returns>
+        IReadOnlyList<TOutput> Compute(params int[] indexes);
+
+        /// <summary>
         /// Compute the prev & the current by an index
         /// </summary>
         /// <returns>The compute.</returns>

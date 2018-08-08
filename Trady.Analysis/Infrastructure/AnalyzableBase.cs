@@ -49,6 +49,8 @@ namespace Trady.Analysis.Infrastructure
 
         public IReadOnlyList<TOutput> Compute(IEnumerable<int> indexes) => Compute(i => this[i], indexes);
 
+        public IReadOnlyList<TOutput> Compute(params int[] indexes) => Compute(i => this[i], indexes);
+
         public (TOutput Prev, TOutput Current, TOutput Next) ComputeNeighbour(int index) => Compute(i => this[i], index);
 
 		protected abstract TOutputToMap ComputeByIndexImpl(IReadOnlyList<TMappedInput> mappedInputs, int index);
