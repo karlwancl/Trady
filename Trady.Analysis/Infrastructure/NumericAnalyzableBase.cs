@@ -54,16 +54,16 @@ namespace Trady.Analysis.Infrastructure
 
         #region ISdAnalyzable implementation
 
-        public IReadOnlyList<TOutput> ComputeSd(int periodCount, decimal sdValue, int? startIndex = default, int? endIndex = default)
-            => Compute(i => Sd(periodCount, sdValue, i), startIndex, endIndex);
+        public IReadOnlyList<TOutput> ComputeSd(int periodCount, int? startIndex = default, int? endIndex = default)
+            => Compute(i => Sd(periodCount, i), startIndex, endIndex);
 
-        public IReadOnlyList<TOutput> ComputeSd(int periodCount, decimal sdValue, IEnumerable<int> indexes)
-            => Compute(i => Sd(periodCount, sdValue, i), indexes);
+        public IReadOnlyList<TOutput> ComputeSd(int periodCount, IEnumerable<int> indexes)
+            => Compute(i => Sd(periodCount, i), indexes);
 
-        public (TOutput Prev, TOutput Current, TOutput Next) ComputeNeighbourSd(int periodCount, decimal sdValue, int index)
-            => Compute(i => Sd(periodCount, sdValue, i), index);
+        public (TOutput Prev, TOutput Current, TOutput Next) ComputeNeighbourSd(int periodCount, int index)
+            => Compute(i => Sd(periodCount, i), index);
 
-        public TOutput Sd(int periodCount, decimal sdValue, int index)
+        public TOutput Sd(int periodCount, int index)
         {
             decimal? sd(int i)
             {

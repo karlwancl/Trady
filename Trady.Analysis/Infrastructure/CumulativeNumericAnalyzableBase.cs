@@ -52,31 +52,29 @@ namespace Trady.Analysis.Infrastructure
 
 		#region ISdAnalyzable implementation
 
-		public IReadOnlyList<TOutput> ComputeSd(int periodCount, decimal sdValue, int? startIndex = default(int?), int? endIndex = default(int?))
-			=> Compute(i => Sd(periodCount, sdValue, i), startIndex, endIndex);
+		public IReadOnlyList<TOutput> ComputeSd(int periodCount, int? startIndex = default, int? endIndex = default)
+			=> Compute(i => Sd(periodCount, i), startIndex, endIndex);
 
-		public IReadOnlyList<TOutput> ComputeSd(int periodCount, decimal sdValue, IEnumerable<int> indexes)
-			=> Compute(i => Sd(periodCount, sdValue, i), indexes);
+		public IReadOnlyList<TOutput> ComputeSd(int periodCount, IEnumerable<int> indexes)
+			=> Compute(i => Sd(periodCount, i), indexes);
 
-		public (TOutput Prev, TOutput Current, TOutput Next) ComputeNeighbourSd(int periodCount, decimal sdValue, int index)
-			=> Compute(i => Sd(periodCount, sdValue, i), index);
+		public (TOutput Prev, TOutput Current, TOutput Next) ComputeNeighbourSd(int periodCount, int index)
+			=> Compute(i => Sd(periodCount, i), index);
 
-		public TOutput Sd(int periodCount, decimal sdValue, int index)
+		public TOutput Sd(int periodCount, int index)
 		{
 			if (index < periodCount - 1)
-            {
-                return default(TOutput);
-            }
+                return default;
 
-            Func<int, decimal?> sd = i =>
+            decimal? sd(int i)
             {
                 Func<int, IEnumerable<decimal?>> items = j => Enumerable.Range(j - periodCount + 1, periodCount).Select(ComputeByIndex);
                 var count = items(i).Count();
                 var avg = items(i).Average();
                 var diffSum = items(i).Select(item => (item - avg) * (item - avg)).Sum();
                 return Convert.ToDecimal(Math.Sqrt(Convert.ToDouble(diffSum / count)));
-            };
-            
+            }
+
             return Map(sd, index);
 		}
 
