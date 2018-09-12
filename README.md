@@ -226,10 +226,10 @@ Nuget package is available in modules, please install the package according to t
 
     // Get backtest result for the portfolio
     Console.WriteLine(string.Format("Transaction count: {0:#.##}, P/L ratio: {1:0.##}%, Principal: {2:#}, Total: {3:#}",
-        result.TransactionCount,
-        result.ProfitLossRatio * 100,
+        resultresult.Transactions.Count(),
+        result.CorrectedProfitLoss * 100,
         result.Principal,
-        result.Total));
+        result.CorrectedBalance));
 [Back to content](#Content)
 
 <a name="ImplementYourOwnPattern"></a>
