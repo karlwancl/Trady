@@ -7,12 +7,12 @@ using Trady.Core.Infrastructure;
 
 namespace Trady.Analysis.Indicator
 {
-    public class KaufmanAdaptiveMovingAverage<TInput, TOutput> : NumericAnalyzableBase<TInput, decimal, TOutput>
+    public class KaufmanAdaptiveMovingAverage<TInput, TOutput> : NumericAnalyzableBase<TInput, decimal?, TOutput>
     {
         private EfficiencyRatioByTuple _er;
         private readonly GenericMovingAverage _gma;
 
-        public KaufmanAdaptiveMovingAverage(IEnumerable<TInput> inputs, Func<TInput, decimal> inputMapper, int periodCount, int emaFastPeriodCount, int emaSlowPeriodCount) : base(inputs, inputMapper)
+        public KaufmanAdaptiveMovingAverage(IEnumerable<TInput> inputs, Func<TInput, decimal?> inputMapper, int periodCount, int emaFastPeriodCount, int emaSlowPeriodCount) : base(inputs, inputMapper)
         {
             _er = new EfficiencyRatioByTuple(inputs.Select(inputMapper), periodCount);
 
@@ -40,7 +40,7 @@ namespace Trady.Analysis.Indicator
 
         public int EmaSlowPeriodCount { get; }
 
-        protected override decimal? ComputeByIndexImpl(IReadOnlyList<decimal> mappedInputs, int index) => _gma[index];
+        protected override decimal? ComputeByIndexImpl(IReadOnlyList<decimal?> mappedInputs, int index) => _gma[index];
     }
 
     public class KaufmanAdaptiveMovingAverageByTuple : KaufmanAdaptiveMovingAverage<decimal, decimal?>

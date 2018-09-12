@@ -63,7 +63,7 @@ namespace Trady.Analysis.Extension
         public static IReadOnlyList<decimal?> Dymoi(this IEnumerable<decimal?> inputs, int sdPeriod, int smoothedSdPeriod, int rsiPeriod, int upLimit, int lowLimit, int? startIndex = null, int? endIndex = null)
             => new DynamicMomentumIndexByTuple(inputs, sdPeriod, smoothedSdPeriod, rsiPeriod, upLimit, lowLimit).Compute(startIndex, endIndex);
 
-        public static IReadOnlyList<decimal?> Er(this IEnumerable<decimal> inputs, int periodCount, int? startIndex = null, int? endIndex = null)
+        public static IReadOnlyList<decimal?> Er(this IEnumerable<decimal?> inputs, int periodCount, int? startIndex = null, int? endIndex = null)
             => new EfficiencyRatioByTuple(inputs, periodCount).Compute(startIndex, endIndex);
 
         public static IReadOnlyList<decimal?> Ema(this IEnumerable<decimal> inputs, int periodCount, int? startIndex = null, int? endIndex = null)
