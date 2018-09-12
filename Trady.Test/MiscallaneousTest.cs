@@ -41,6 +41,40 @@ namespace Trady.Test
         }
 
         [TestMethod]
+        public async Task TestRuleExecutorWithVerifyAsync()
+        {
+            var candles = await ImportIOhlcvDatasAsync();
+
+            void Verify(Predicate<IIndexedOhlcv> rule)
+            {
+                IReadOnlyList<IIndexedOhlcv> list;
+
+                // Get all indexed candle who fulfill the rule
+                using (var ctx = new AnalyzeContext(candles))
+                {
+                    var executor = new SimpleRuleExecutor(ctx, rule);
+                    list = executor.Execute();
+                }
+
+                var indexList = list.Select(l => l.Index);
+                //var indexString = string.Join(",", indexList);
+
+                // Verify if fulfilled indexed candle is true or not
+                foreach (var index in indexList)
+                {
+                    var ic = new IndexedCandle(candles, index);
+                    Assert.IsTrue(rule(ic));
+                }
+            }
+
+            bool buyRule(IIndexedOhlcv ic) => ic.IsEmaBullishCross(21, 55);
+            Verify(buyRule);
+
+            bool sellRule(IIndexedOhlcv ic) => ic.IsEmaBearishCross(21, 55);
+            Verify(sellRule);
+        }
+
+        [TestMethod]
         public async Task TestTransformationAsync()
         {
             var candles = await ImportIOhlcvDatasAsync();

@@ -161,5 +161,32 @@ namespace Trady.Test
 		{
 			File.AppendAllLines(logPath, new[] { $"{index}({dateTime:yyyyMMdd}), Buy {candles.GetHashCode()}@{buyPrice} * {quantity}: {absCashFlow}, currentCashAmount: {currentCashAmount}" });
 		}
+
+        [TestMethod]
+        public async Task TestBacktestWithValidationAsync()
+        {
+            var candles = await ImportIOhlcvDatasAsync();
+
+            var buyRule = Rule.Create(ic => ic.IsEmaBullishCross(21, 55));
+            var sellRule = Rule.Create(ic => ic.IsEmaBearishCross(21, 55));
+
+            var runner = new Builder()
+                .Add(candles)
+                .Buy(buyRule)
+                .Sell(sellRule)
+                .Build();
+
+            var result = await runner.RunAsync(1000);
+            var transactionIndexes = result.Transactions.Select(t => t.Index);
+            //var indexString = string.Join(",", transactionIndexes);
+
+            foreach (var transactionIndex in transactionIndexes)
+            {
+                var ic = new IndexedCandle(candles, transactionIndex - 1);
+                bool isBuyRuleValid = buyRule(ic);
+                bool isSellRuleValid = sellRule(ic);
+                Assert.IsTrue(isBuyRuleValid || isSellRuleValid);
+            }
+        }
     }
 }
