@@ -73,8 +73,8 @@ namespace Trady.Analysis.Infrastructure
                 IEnumerable<decimal?> items(int j) => Enumerable.Range(j - periodCount + 1, periodCount).Select(ComputeByIndex);
                 var count = items(i).Count();
                 var avg = items(i).Average();
-                var diffSum = items(i).Select(item => (item - avg) * (item - avg)).Sum();
-                return Convert.ToDecimal(Math.Sqrt(Convert.ToDouble(diffSum / count)));
+                var variance = items(i).Select(item => (item - avg) * (item - avg)).Sum() / count;
+                return Convert.ToDecimal(Math.Sqrt(Convert.ToDouble(variance)));
             }
 
             return Map(sd, index);
