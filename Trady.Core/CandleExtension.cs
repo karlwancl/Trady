@@ -25,39 +25,61 @@ namespace Trady.Core
             where TSourcePeriod : IPeriod
             where TTargetPeriod : IPeriod
         {
+            if (!candles.Any())
+                return candles.ToList();
+
             if (typeof(TSourcePeriod).Equals(typeof(TTargetPeriod)))
                 return candles.ToList();
 
-            if (!IsTimeframesValid<TSourcePeriod>(candles, out IOhlcv err))
+            if (!IsTimeframesValid<TSourcePeriod>(candles, out var err))
                 throw new InvalidTimeframeException(err.DateTime);
 
             if (!IsTransformationValid<TSourcePeriod, TTargetPeriod>())
                 throw new InvalidTransformationException(typeof(TSourcePeriod), typeof(TTargetPeriod));
 
-            var outIOhlcvDatas = new List<IOhlcv>();
+            var outputCandles = new List<IOhlcv>();
             var periodInstance = Activator.CreateInstance<TTargetPeriod>();
 
-            var startTime = candles.First().DateTime;
-            while (startTime <= candles.Last().DateTime)
+            // To prevent lazy evaluated when compute
+            var orderedCandles = candles.OrderBy(c => c.DateTime).ToList();
+
+            var periodStartTime = orderedCandles[0].DateTime;
+            var periodEndTime = periodInstance.NextTimestamp(periodStartTime);
+
+            var tempCandles = new List<IOhlcv>();
+            for (int i = 0; i < orderedCandles.Count; i++)
             {
-                var nextStartTime = periodInstance.NextTimestamp(startTime);
-                if (periodInstance.IsTimestamp(startTime))
+                var indexTime = orderedCandles[i].DateTime;
+                if (indexTime >= periodEndTime)
                 {
-                    var outIOhlcvData = ComputeIOhlcvData(candles, startTime, nextStartTime);
-                    if (outIOhlcvData != null)
-                        outIOhlcvDatas.Add(outIOhlcvData);
+                    periodStartTime = periodEndTime;
+                    periodEndTime = periodInstance.NextTimestamp(periodStartTime);
+
+                    AddComputedCandleToOutput(outputCandles, tempCandles);
+                    tempCandles = new List<IOhlcv>();
                 }
-                startTime = nextStartTime;
+
+                tempCandles.Add(orderedCandles[i]);
             }
 
-            return outIOhlcvDatas;
+            if (tempCandles.Any())
+                AddComputedCandleToOutput(outputCandles, tempCandles);
+
+            return outputCandles;
+        }
+
+        private static void AddComputedCandleToOutput(List<IOhlcv> outputCandles, List<IOhlcv> tempCandles)
+        {
+            var computedCandle = ComputeCandles(tempCandles);
+            if (computedCandle != null)
+                outputCandles.Add(computedCandle);
         }
 
         private static bool IsTimeframesValid<TPeriod>(IEnumerable<IOhlcv> candles, out IOhlcv err)
             where TPeriod : IPeriod
         {
             var periodInstance = Activator.CreateInstance<TPeriod>();
-            err = default(IOhlcv);
+            err = default;
             for (int i = 0; i < candles.Count() - 1; i++)
             {
                 var candleEndTime = periodInstance.NextTimestamp(candles.ElementAt(i).DateTime);
@@ -91,20 +113,18 @@ namespace Trady.Core
             return true;
         }
 
-        private static IOhlcv ComputeIOhlcvData(IEnumerable<IOhlcv> candles, DateTimeOffset startTime, DateTimeOffset endTime)
+        private static IOhlcv ComputeCandles(IEnumerable<IOhlcv> candles)
         {
-            var candle = candles.Where(c => c.DateTime >= startTime && c.DateTime < endTime);
-            if (candle.Any())
-            {
-                var dateTime = candle.First().DateTime;
-                var open = candle.First().Open;
-                var high = candle.Max(stick => stick.High);
-                var low = candle.Min(stick => stick.Low);
-                var close = candle.Last().Close;
-                var volume = candle.Sum(stick => stick.Volume);
-                return new Candle(dateTime, open, high, low, close, volume);
-            }
-            return null;
+            if (!candles.Any())
+                return null;
+
+            var dateTime = candles.First().DateTime;
+            var open = candles.First().Open;
+            var high = candles.Max(stick => stick.High);
+            var low = candles.Min(stick => stick.Low);
+            var close = candles.Last().Close;
+            var volume = candles.Sum(stick => stick.Volume);
+            return new Candle(dateTime, open, high, low, close, volume);
         }
 
         #endregion candle list transformation
