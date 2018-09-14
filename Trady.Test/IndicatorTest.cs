@@ -11,6 +11,7 @@ using Trady.Analysis.Extension;
 using Trady.Core.Infrastructure;
 using Trady.Importer.Csv;
 using System;
+using System.Diagnostics;
 
 namespace Trady.Test
 {
@@ -27,6 +28,23 @@ namespace Trady.Test
             //var candles = await yahooImporter.ImportAsync("FB");
             //File.WriteAllLines("fb.csv", candles.Select(c => $"{c.DateTime.ToString("d")},{c.Open},{c.High},{c.Low},{c.Close},{c.Volume}"));
             //return candles;
+        }
+
+        protected async Task<IEnumerable<IOhlcv>> ImportSpyAsync()
+        {
+            var csvImporter = new CsvImporter("spx.csv", CultureInfo.GetCultureInfo("en-US"));
+            return await csvImporter.ImportAsync("spx");
+        }
+
+        [TestMethod]
+        public async Task TestMacdPerformanceAsync()
+        {
+            var sw = new Stopwatch();
+            var candles = await ImportSpyAsync();
+            sw.Start();
+            var result = candles.Macd(12, 26, 9)[candles.Count() - 1];
+            sw.Stop();
+            Assert.IsTrue(false, sw.ElapsedMilliseconds.ToString());
         }
 
         [TestMethod]
