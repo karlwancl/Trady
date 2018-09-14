@@ -13,6 +13,9 @@ namespace Trady.Analysis.Infrastructure
 
         protected sealed override TOutputToMap ComputeByIndexImpl(IReadOnlyList<TMappedInput> mappedInputs, int index)
         {
+            // Init LastCacheIndex when ComputeByIndexImpl triggers
+            LastCacheIndex = LastCacheIndex ?? InitialValueIndex;
+
             var tick = default(TOutputToMap);
             if (index < InitialValueIndex)
             {
@@ -25,8 +28,8 @@ namespace Trady.Analysis.Infrastructure
             else
             {
                 // get start index of calculation to cache
-                int cacheStartIndex = Cache.Keys.DefaultIfEmpty(InitialValueIndex).Where(k => k >= InitialValueIndex).Max();
-                for (int i = cacheStartIndex; i < index; i++)
+                //int cacheStartIndex = Cache.Keys.DefaultIfEmpty(InitialValueIndex).Where(k => k >= InitialValueIndex).Max();
+                for (int i = LastCacheIndex.Value; i < index; i++)
                 {
                     var prevTick = Cache.GetOrAdd(i, _i => ComputeByIndexImpl(mappedInputs, _i));
                     tick = ComputeCumulativeValue(mappedInputs, i + 1, prevTick);
@@ -37,14 +40,17 @@ namespace Trady.Analysis.Infrastructure
                         Cache.AddOrUpdate(i + 1, tick, (_i, _t) => tick);
                     }
                 }
+                LastCacheIndex = index - 1;
             }
 
             return tick;
         }
 
+        private int? LastCacheIndex { get; set; }
+
         protected virtual int InitialValueIndex { get; } = 0;
 
-        protected virtual TOutputToMap ComputeNullValue(IReadOnlyList<TMappedInput> mappedInputs, int index) => default(TOutputToMap);
+        protected virtual TOutputToMap ComputeNullValue(IReadOnlyList<TMappedInput> mappedInputs, int index) => default;
 
         protected abstract TOutputToMap ComputeInitialValue(IReadOnlyList<TMappedInput> mappedInputs, int index);
 
