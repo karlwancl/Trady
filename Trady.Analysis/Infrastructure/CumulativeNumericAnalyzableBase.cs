@@ -68,7 +68,7 @@ namespace Trady.Analysis.Infrastructure
 
             decimal? sd(int i)
             {
-                Func<int, IEnumerable<decimal?>> items = j => Enumerable.Range(j - periodCount + 1, periodCount).Select(ComputeByIndex);
+                IEnumerable<decimal?> items(int j) => Enumerable.Range(j - periodCount + 1, periodCount).Select(ComputeByIndex);
                 var count = items(i).Count();
                 var avg = items(i).Average();
                 var diffSum = items(i).Select(item => (item - avg) * (item - avg)).Sum();
