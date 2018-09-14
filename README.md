@@ -141,11 +141,11 @@ Nuget package is available in modules, please install the package according to t
 
 <a name="ComputeIndicatorsOperation"></a>
 ### Compute simple operation on an indicator
-    // Simple operation on indicator is supported, now supports only diff, pcDiff, sma, sd
+    // Simple operation on indicator is supported, now supports only diff, rDiff, sma, sd
     var closes = new List<decimal>{ ... };
     var smaDiff = closes.Sma(30).Diff(index);   // i-th term - (i-1)-th term
     var smaSma = closes.Sma(30).Sma(10, index); // average(n items)
-    var smaPcDiff = closes.Sma(30).PcDiff(index); // (i-th term - (i-1)-th term) / (i-1)-th term * 100
+    var smaRDiff = closes.Sma(30).RDiff(index); // (i-th term - (i-1)-th term) / (i-1)-th term * 100
     var smaSd = closes.Sma(30).Sd(10, 2, index);
 
     // This also applies to candles

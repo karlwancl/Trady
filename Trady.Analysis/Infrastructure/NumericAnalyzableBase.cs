@@ -7,7 +7,7 @@ using Trady.Core.Infrastructure;
 namespace Trady.Analysis.Infrastructure
 {
     public abstract class NumericAnalyzableBase<TInput, TMappedInput, TOutput>
-        : AnalyzableBase<TInput, TMappedInput, decimal?, TOutput>, IDiffAnalyzable<TOutput>, ISmaAnalyzable<TOutput>, IPcDiffAnalyzable<TOutput>, ISdAnalyzable<TOutput>
+        : AnalyzableBase<TInput, TMappedInput, decimal?, TOutput>, IDiffAnalyzable<TOutput>, ISmaAnalyzable<TOutput>, IRDiffAnalyzable<TOutput>, ISdAnalyzable<TOutput>
     {
         protected NumericAnalyzableBase(IEnumerable<TInput> inputs, Func<TInput, TMappedInput> inputMapper) : base(inputs, inputMapper)
         {
@@ -39,15 +39,15 @@ namespace Trady.Analysis.Infrastructure
 
         #endregion  
 
-        #region IPcDiffAnalyzable implementation
+        #region IRDiffAnalyzable implementation
 
-        public IReadOnlyList<TOutput> ComputePcDiff(int? startIndex = default, int? endIndex = default) => Compute(PcDiff, startIndex, endIndex);
+        public IReadOnlyList<TOutput> ComputeRDiff(int? startIndex = default, int? endIndex = default) => Compute(RDiff, startIndex, endIndex);
 
-        public IReadOnlyList<TOutput> ComputePcDiff(IEnumerable<int> indexes) => Compute(PcDiff, indexes);
+        public IReadOnlyList<TOutput> ComputeRDiff(IEnumerable<int> indexes) => Compute(RDiff, indexes);
 
-        public (TOutput Prev, TOutput Current, TOutput Next) ComputeNeighbourPcDiff(int index) => Compute(PcDiff, index);
+        public (TOutput Prev, TOutput Current, TOutput Next) ComputeNeighbourRDiff(int index) => Compute(RDiff, index);
 
-        public TOutput PcDiff(int index)
+        public TOutput RDiff(int index)
             => Map(i => index > 0 ? (ComputeByIndex(i) - ComputeByIndex(i - 1)) / ComputeByIndex(i - 1) * 100 : default, index);
 
         #endregion
