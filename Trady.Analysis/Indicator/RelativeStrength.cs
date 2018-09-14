@@ -19,8 +19,8 @@ namespace Trady.Analysis.Indicator
         {
             PeriodCount = periodCount;
 
-            _u = new PositiveDifferenceByTuple(inputs.Select(inputMapper), 1);
-            _d = new NegativeDifferenceByTuple(inputs.Select(inputMapper), 1);
+            _u = new PositiveDifferenceByTuple(inputs.Select(inputMapper).ToList(), 1);
+            _d = new NegativeDifferenceByTuple(inputs.Select(inputMapper).ToList(), 1);
 
             _uEma = new GenericMovingAverage(
                 periodCount,

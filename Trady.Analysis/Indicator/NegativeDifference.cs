@@ -13,7 +13,7 @@ namespace Trady.Analysis.Indicator
         public NegativeDifference(IEnumerable<TInput> inputs, Func<TInput, decimal?> inputMapper, int periodCount = 1) : base(inputs, inputMapper)
         {
             PeriodCount = periodCount;
-            _diff = new DifferenceByTuple(inputs.Select(inputMapper), periodCount);
+            _diff = new DifferenceByTuple(inputs.Select(inputMapper).ToList(), periodCount);
         }
 
         protected override decimal? ComputeByIndexImpl(IReadOnlyList<decimal?> mappedInputs, int index)

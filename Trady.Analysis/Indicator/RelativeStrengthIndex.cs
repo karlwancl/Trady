@@ -13,7 +13,7 @@ namespace Trady.Analysis.Indicator
 
         public RelativeStrengthIndex(IEnumerable<TInput> inputs, Func<TInput, decimal?> inputMapper, int periodCount) : base(inputs, inputMapper)
         {
-            _rs = new RelativeStrengthByTuple(inputs.Select(inputMapper), periodCount);
+            _rs = new RelativeStrengthByTuple(inputs.Select(inputMapper).ToList(), periodCount);
 
             PeriodCount = periodCount;
         }
