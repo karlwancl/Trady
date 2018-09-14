@@ -9,11 +9,12 @@ using Trady.Core.Infrastructure;
 
 namespace Trady.Analysis.Indicator
 {
-    public class ParabolicStopAndReverse<TInput, TOutput> : CumulativeAnalyzableBase<TInput, (decimal High, decimal Low), decimal?, TOutput>
+    public class ParabolicStopAndReverse<TInput, TOutput> : CumulativeNumericAnalyzableBase<TInput, (decimal High, decimal Low), TOutput>
     {
         const int LongShortDeterminationPeriod = 4;
 
         public decimal Step { get; }
+
         public decimal MaximumStep { get; }
 
         bool _isUptrend;
