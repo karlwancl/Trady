@@ -16,8 +16,7 @@ using BenchmarkDotNet.Columns;
 namespace Trady.Benchmarks.Version31
 {
     [Config(typeof(Config))]
-    [ClrJob, CoreJob, MonoJob]
-    [LegacyJitX86Job, LegacyJitX64Job, RyuJitX64Job]
+    [CoreJob]
     public class Benchmark
     {
         private const int _n = 10000;
@@ -40,8 +39,7 @@ namespace Trady.Benchmarks.Version31
         {
             public Config()
             {
-                Add(StatisticColumn.P90,
-                    StatisticColumn.P95);
+                Add(StatisticColumn.P90);
             }
         }
 
@@ -110,6 +108,102 @@ namespace Trady.Benchmarks.Version31
 
         [Benchmark]
         public IReadOnlyList<IAnalyzableTick<decimal?>> BbWidth() => _data.BbWidth(20, 2);
+
+        [Benchmark]
+        public IReadOnlyList<IAnalyzableTick<(decimal?, decimal?)>> Chandlr() => _data.Chandlr(22, 3);
+
+        [Benchmark]
+        public IReadOnlyList<IAnalyzableTick<decimal?>> Mtm() => _data.Mtm();
+
+        [Benchmark]
+        public IReadOnlyList<IAnalyzableTick<decimal?>> Roc() => _data.Roc();
+
+        [Benchmark]
+        public IReadOnlyList<IAnalyzableTick<decimal?>> Pdi() => _data.Pdi(14);
+
+        [Benchmark]
+        public IReadOnlyList<IAnalyzableTick<decimal?>> Mdi() => _data.Mdi(14);
+
+        [Benchmark]
+        public IReadOnlyList<IAnalyzableTick<decimal?>> Adx() => _data.Adx(14);
+
+        [Benchmark]
+        public IReadOnlyList<IAnalyzableTick<decimal?>> Adxr() => _data.Adxr(14, 3);
+
+        [Benchmark]
+        public IReadOnlyList<IAnalyzableTick<decimal?>> Er() => _data.Er(10);
+
+        [Benchmark]
+        public IReadOnlyList<IAnalyzableTick<decimal?>> Kama() => _data.Kama(10, 2, 30);
+
+        [Benchmark]
+        public IReadOnlyList<IAnalyzableTick<decimal?>> EmaOsc() => _data.EmaOsc(10, 30);
+
+        [Benchmark]
+        public IReadOnlyList<IAnalyzableTick<decimal?>> HighHigh() => _data.HighHigh(10);
+
+        [Benchmark]
+        public IReadOnlyList<IAnalyzableTick<decimal?>> HighClose() => _data.HighClose(10);
+
+        [Benchmark]
+        public IReadOnlyList<IAnalyzableTick<decimal?>> HistHighHigh() => _data.HistHighHigh();
+
+        [Benchmark]
+        public IReadOnlyList<IAnalyzableTick<decimal?>> HistHighClose() => _data.HistHighClose();
+
+        [Benchmark]
+        public IReadOnlyList<IAnalyzableTick<decimal?>> LowLow() => _data.LowLow(10);
+
+        [Benchmark]
+        public IReadOnlyList<IAnalyzableTick<decimal?>> LowClose() => _data.LowClose(10);
+
+        [Benchmark]
+        public IReadOnlyList<IAnalyzableTick<decimal?>> HistLowLow() => _data.HistLowLow();
+
+        [Benchmark]
+        public IReadOnlyList<IAnalyzableTick<decimal?>> HistLowClose() => _data.HistLowClose();
+
+        [Benchmark]
+        public IReadOnlyList<IAnalyzableTick<(decimal?, decimal?, decimal?, decimal?, decimal?)>> Ichimoku() => _data.Ichimoku(9, 26, 52);
+
+        [Benchmark]
+        public IReadOnlyList<IAnalyzableTick<decimal?>> Mma() => _data.Mma(30);
+
+        [Benchmark]
+        public IReadOnlyList<IAnalyzableTick<decimal?>> MacdHist() => _data.MacdHist(12, 26, 9);
+
+        [Benchmark]
+        public IReadOnlyList<IAnalyzableTick<decimal?>> Obv() => _data.Obv();
+
+        [Benchmark]
+        public IReadOnlyList<IAnalyzableTick<decimal?>> Rsv() => _data.Rsv(14);
+
+        [Benchmark]
+        public IReadOnlyList<IAnalyzableTick<decimal?>> Rs() => _data.Rs(14);
+
+        [Benchmark]
+        public IReadOnlyList<IAnalyzableTick<decimal?>> SmaOsc() => _data.SmaOsc(10, 30);
+
+        [Benchmark]
+        public IReadOnlyList<IAnalyzableTick<decimal?>> Sd() => _data.Sd(10);
+
+        [Benchmark]
+        public IReadOnlyList<IAnalyzableTick<(decimal?, decimal?, decimal?)>> FastSto() => _data.FastSto(14, 3);
+
+        [Benchmark]
+        public IReadOnlyList<IAnalyzableTick<(decimal?, decimal?, decimal?)>> SlowSto() => _data.SlowSto(14, 3);
+
+        [Benchmark]
+        public IReadOnlyList<IAnalyzableTick<(decimal?, decimal?, decimal?)>> FullSto() => _data.FullSto(14, 3, 3);
+
+        [Benchmark]
+        public IReadOnlyList<IAnalyzableTick<decimal?>> FastStoOsc() => _data.FastStoOsc(14, 3);
+
+        [Benchmark]
+        public IReadOnlyList<IAnalyzableTick<decimal?>> SlowStoOsc() => _data.SlowStoOsc(14, 3);
+
+        [Benchmark]
+        public IReadOnlyList<IAnalyzableTick<decimal?>> FullStoOsc() => _data.FullStoOsc(14, 3, 3);
     }
 
     public class Program
