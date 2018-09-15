@@ -30,22 +30,22 @@ namespace Trady.Test
             //return candles;
         }
 
-        protected async Task<IEnumerable<IOhlcv>> ImportSpyAsync()
-        {
-            var csvImporter = new CsvImporter("spx.csv", CultureInfo.GetCultureInfo("en-US"));
-            return await csvImporter.ImportAsync("spx");
-        }
+        //protected async Task<IEnumerable<IOhlcv>> ImportSpyAsync()
+        //{
+        //    var csvImporter = new CsvImporter("spx.csv", CultureInfo.GetCultureInfo("en-US"));
+        //    return await csvImporter.ImportAsync("spx");
+        //}
 
-        [TestMethod]
-        public async Task TestMacdPerformanceAsync()
-        {
-            var sw = new Stopwatch();
-            var candles = await ImportSpyAsync();
-            sw.Start();
-            var result = candles.Macd(12, 26, 9)[candles.Count() - 1];
-            sw.Stop();
-            Assert.IsTrue(false, sw.ElapsedMilliseconds.ToString());
-        }
+        //[TestMethod]
+        //public async Task TestMacdPerformanceAsync()
+        //{
+        //    var sw = new Stopwatch();
+        //    var candles = await ImportSpyAsync();
+        //    sw.Start();
+        //    var result = candles.Macd(12, 26, 9)[candles.Count() - 1];
+        //    sw.Stop();
+        //    Assert.IsTrue(false, sw.ElapsedMilliseconds.ToString());
+        //}
 
         [TestMethod]
         public async Task TestCciAsync()
@@ -527,5 +527,21 @@ namespace Trady.Test
 			var result = candles.FullStoOsc(14, 3, 3)[candles.Count() - 1];
 			Assert.IsTrue((-9.14m).IsApproximatelyEquals(result.Tick.Value));
 		}
+
+        [TestMethod]
+        public async Task TestWmaAsync()
+        {
+            var candles = await ImportIOhlcvDatasAsync();
+            var result = candles.Wma(20)[candles.Count() - 1];
+            Assert.IsTrue((171.2445727m).IsApproximatelyEquals(result.Tick.Value));
+        }
+
+        [TestMethod]
+        public async Task TestHmaAsync()
+        {
+            var candles = await ImportIOhlcvDatasAsync();
+            var result = candles.Hma(30)[candles.Count() - 1];
+            Assert.IsTrue((172.8926202m).IsApproximatelyEquals(result.Tick.Value));
+        }
     }
 }
