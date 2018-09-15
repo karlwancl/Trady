@@ -74,16 +74,16 @@ namespace Trady.Benchmarks.Version31
         public IReadOnlyList<IAnalyzableTick<decimal?>> NetMomentumOscillator() => _data.Nmo(14);
 
         [Benchmark]
-        public IReadOnlyList<IAnalyzableTick<decimal?>> RM() => _data.Rm(20, 4);
+        public IReadOnlyList<IAnalyzableTick<decimal?>> RelativeMomentum() => _data.Rm(20, 4);
 
         [Benchmark]
-        public IReadOnlyList<IAnalyzableTick<decimal?>> RMI() => _data.Rmi(20, 4);
+        public IReadOnlyList<IAnalyzableTick<decimal?>> RelativeMomentumIndex() => _data.Rmi(20, 4);
 
         [Benchmark]
-        public IReadOnlyList<IAnalyzableTick<decimal?>> DYMOI() => _data.Dymoi(5, 10, 14, 30, 5);
+        public IReadOnlyList<IAnalyzableTick<decimal?>> DynamicMomentumIndex() => _data.Dymoi(5, 10, 14, 30, 5);
 
         [Benchmark]
-        public IReadOnlyList<IAnalyzableTick<decimal?>> SAR() => _data.Sar(0.02m, 0.2m);
+        public IReadOnlyList<IAnalyzableTick<decimal?>> ParabolicStopAndReverse() => _data.Sar(0.02m, 0.2m);
 
         [Benchmark]
         public IReadOnlyList<IAnalyzableTick<decimal?>> Median() => _data.Median(20);
@@ -92,118 +92,127 @@ namespace Trady.Benchmarks.Version31
         public IReadOnlyList<IAnalyzableTick<decimal?>> Percentile() => _data.Percentile(30, 0.7m);
 
         [Benchmark]
-        public IReadOnlyList<IAnalyzableTick<decimal?>> AccumDist() => _data.AccumDist(20);
+        public IReadOnlyList<IAnalyzableTick<decimal?>> AccumulationDistributionLine() => _data.AccumDist(20);
 
         [Benchmark]
         public IReadOnlyList<IAnalyzableTick<(decimal?, decimal?)>> Aroon() => _data.Aroon(25);
 
         [Benchmark]
-        public IReadOnlyList<IAnalyzableTick<decimal?>> AroonOsc() => _data.AroonOsc(25);
+        public IReadOnlyList<IAnalyzableTick<decimal?>> AroonOscillator() => _data.AroonOsc(25);
 
         [Benchmark]
-        public IReadOnlyList<IAnalyzableTick<decimal?>> Atr() => _data.Atr(14);
+        public IReadOnlyList<IAnalyzableTick<decimal?>> AverageTrueRange() => _data.Atr(14);
 
         [Benchmark]
-        public IReadOnlyList<IAnalyzableTick<(decimal?, decimal?, decimal?)>> Bb() => _data.Bb(20, 2);
+        public IReadOnlyList<IAnalyzableTick<(decimal?, decimal?, decimal?)>> BollingerBands() => _data.Bb(20, 2);
 
         [Benchmark]
-        public IReadOnlyList<IAnalyzableTick<decimal?>> BbWidth() => _data.BbWidth(20, 2);
+        public IReadOnlyList<IAnalyzableTick<decimal?>> BollingerBandWidth() => _data.BbWidth(20, 2);
 
         [Benchmark]
-        public IReadOnlyList<IAnalyzableTick<(decimal?, decimal?)>> Chandlr() => _data.Chandlr(22, 3);
+        public IReadOnlyList<IAnalyzableTick<(decimal?, decimal?)>> ChandelierExit() => _data.Chandlr(22, 3);
 
         [Benchmark]
-        public IReadOnlyList<IAnalyzableTick<decimal?>> Mtm() => _data.Mtm();
+        public IReadOnlyList<IAnalyzableTick<decimal?>> Momentum() => _data.Mtm();
 
         [Benchmark]
-        public IReadOnlyList<IAnalyzableTick<decimal?>> Roc() => _data.Roc();
+        public IReadOnlyList<IAnalyzableTick<decimal?>> RateOfChange() => _data.Roc();
 
         [Benchmark]
-        public IReadOnlyList<IAnalyzableTick<decimal?>> Pdi() => _data.Pdi(14);
+        public IReadOnlyList<IAnalyzableTick<decimal?>> PlusDirectionalIndicator() => _data.Pdi(14);
 
         [Benchmark]
-        public IReadOnlyList<IAnalyzableTick<decimal?>> Mdi() => _data.Mdi(14);
+        public IReadOnlyList<IAnalyzableTick<decimal?>> MinusDirectionalIndicator() => _data.Mdi(14);
 
         [Benchmark]
-        public IReadOnlyList<IAnalyzableTick<decimal?>> Adx() => _data.Adx(14);
+        public IReadOnlyList<IAnalyzableTick<decimal?>> AverageDirectionalIndex() => _data.Adx(14);
 
         [Benchmark]
-        public IReadOnlyList<IAnalyzableTick<decimal?>> Adxr() => _data.Adxr(14, 3);
+        public IReadOnlyList<IAnalyzableTick<decimal?>> AverageDirectionalIndexRating() => _data.Adxr(14, 3);
 
         [Benchmark]
-        public IReadOnlyList<IAnalyzableTick<decimal?>> Er() => _data.Er(10);
+        public IReadOnlyList<IAnalyzableTick<decimal?>> EfficiencyRatio() => _data.Er(10);
 
         [Benchmark]
-        public IReadOnlyList<IAnalyzableTick<decimal?>> Kama() => _data.Kama(10, 2, 30);
+        public IReadOnlyList<IAnalyzableTick<decimal?>> KaufmanAdaptiveMovingAverage() => _data.Kama(10, 2, 30);
 
         [Benchmark]
-        public IReadOnlyList<IAnalyzableTick<decimal?>> EmaOsc() => _data.EmaOsc(10, 30);
+        public IReadOnlyList<IAnalyzableTick<decimal?>> ExponentialMovingAverageOscillator() => _data.EmaOsc(10, 30);
 
         [Benchmark]
-        public IReadOnlyList<IAnalyzableTick<decimal?>> HighHigh() => _data.HighHigh(10);
+        public IReadOnlyList<IAnalyzableTick<decimal?>> HighestHigh() => _data.HighHigh(10);
 
         [Benchmark]
-        public IReadOnlyList<IAnalyzableTick<decimal?>> HighClose() => _data.HighClose(10);
+        public IReadOnlyList<IAnalyzableTick<decimal?>> HighestClose() => _data.HighClose(10);
 
         [Benchmark]
-        public IReadOnlyList<IAnalyzableTick<decimal?>> HistHighHigh() => _data.HistHighHigh();
+        public IReadOnlyList<IAnalyzableTick<decimal?>> HistoricalHighestHigh() => _data.HistHighHigh();
 
         [Benchmark]
-        public IReadOnlyList<IAnalyzableTick<decimal?>> HistHighClose() => _data.HistHighClose();
+        public IReadOnlyList<IAnalyzableTick<decimal?>> HistoricalHighestClose() => _data.HistHighClose();
 
         [Benchmark]
-        public IReadOnlyList<IAnalyzableTick<decimal?>> LowLow() => _data.LowLow(10);
+        public IReadOnlyList<IAnalyzableTick<decimal?>> LowestLow() => _data.LowLow(10);
 
         [Benchmark]
-        public IReadOnlyList<IAnalyzableTick<decimal?>> LowClose() => _data.LowClose(10);
+        public IReadOnlyList<IAnalyzableTick<decimal?>> LowestClose() => _data.LowClose(10);
 
         [Benchmark]
-        public IReadOnlyList<IAnalyzableTick<decimal?>> HistLowLow() => _data.HistLowLow();
+        public IReadOnlyList<IAnalyzableTick<decimal?>> HistoricalLowestLow() => _data.HistLowLow();
 
         [Benchmark]
-        public IReadOnlyList<IAnalyzableTick<decimal?>> HistLowClose() => _data.HistLowClose();
+        public IReadOnlyList<IAnalyzableTick<decimal?>> HistoricalLowestClose() => _data.HistLowClose();
 
         [Benchmark]
-        public IReadOnlyList<IAnalyzableTick<(decimal?, decimal?, decimal?, decimal?, decimal?)>> Ichimoku() => _data.Ichimoku(9, 26, 52);
+        public IReadOnlyList<IAnalyzableTick<(decimal?, decimal?, decimal?, decimal?, decimal?)>> IchimokuCloud() => _data.Ichimoku(9, 26, 52);
 
         [Benchmark]
-        public IReadOnlyList<IAnalyzableTick<decimal?>> Mma() => _data.Mma(30);
+        public IReadOnlyList<IAnalyzableTick<decimal?>> ModifiedMovingAverage() => _data.Mma(30);
 
         [Benchmark]
         public IReadOnlyList<IAnalyzableTick<decimal?>> MacdHist() => _data.MacdHist(12, 26, 9);
 
         [Benchmark]
-        public IReadOnlyList<IAnalyzableTick<decimal?>> Obv() => _data.Obv();
+        public IReadOnlyList<IAnalyzableTick<decimal?>> OnBalanceVolume() => _data.Obv();
 
         [Benchmark]
-        public IReadOnlyList<IAnalyzableTick<decimal?>> Rsv() => _data.Rsv(14);
+        public IReadOnlyList<IAnalyzableTick<decimal?>> RawStochasticsValue() => _data.Rsv(14);
 
         [Benchmark]
-        public IReadOnlyList<IAnalyzableTick<decimal?>> Rs() => _data.Rs(14);
+        public IReadOnlyList<IAnalyzableTick<decimal?>> RelativeStrength() => _data.Rs(14);
 
         [Benchmark]
-        public IReadOnlyList<IAnalyzableTick<decimal?>> SmaOsc() => _data.SmaOsc(10, 30);
+        public IReadOnlyList<IAnalyzableTick<decimal?>> SimpleMovingAverageOscillator() => _data.SmaOsc(10, 30);
 
         [Benchmark]
-        public IReadOnlyList<IAnalyzableTick<decimal?>> Sd() => _data.Sd(10);
+        public IReadOnlyList<IAnalyzableTick<decimal?>> StandardDeviation() => _data.Sd(10);
 
         [Benchmark]
-        public IReadOnlyList<IAnalyzableTick<(decimal?, decimal?, decimal?)>> FastSto() => _data.FastSto(14, 3);
+        public IReadOnlyList<IAnalyzableTick<(decimal?, decimal?, decimal?)>> Stochastics_Fast() => _data.FastSto(14, 3);
 
         [Benchmark]
-        public IReadOnlyList<IAnalyzableTick<(decimal?, decimal?, decimal?)>> SlowSto() => _data.SlowSto(14, 3);
+        public IReadOnlyList<IAnalyzableTick<(decimal?, decimal?, decimal?)>> Stochastics_Slow() => _data.SlowSto(14, 3);
 
         [Benchmark]
-        public IReadOnlyList<IAnalyzableTick<(decimal?, decimal?, decimal?)>> FullSto() => _data.FullSto(14, 3, 3);
+        public IReadOnlyList<IAnalyzableTick<(decimal?, decimal?, decimal?)>> Stochastics_Full() => _data.FullSto(14, 3, 3);
 
         [Benchmark]
-        public IReadOnlyList<IAnalyzableTick<decimal?>> FastStoOsc() => _data.FastStoOsc(14, 3);
+        public IReadOnlyList<IAnalyzableTick<decimal?>> StochasticsOscillator_Fast() => _data.FastStoOsc(14, 3);
 
         [Benchmark]
-        public IReadOnlyList<IAnalyzableTick<decimal?>> SlowStoOsc() => _data.SlowStoOsc(14, 3);
+        public IReadOnlyList<IAnalyzableTick<decimal?>> StochasticsOscillator_Slow() => _data.SlowStoOsc(14, 3);
 
         [Benchmark]
-        public IReadOnlyList<IAnalyzableTick<decimal?>> FullStoOsc() => _data.FullStoOsc(14, 3, 3);
+        public IReadOnlyList<IAnalyzableTick<decimal?>> StochasticsOscillator_Full() => _data.FullStoOsc(14, 3, 3);
+
+        [Benchmark]
+        public IReadOnlyList<IAnalyzableTick<decimal?>> WeightedMovingAverage() => _data.Wma(20);
+
+        [Benchmark]
+        public IReadOnlyList<IAnalyzableTick<decimal?>> HullMovingAverage() => _data.Hma(30);
+
+        [Benchmark]
+        public IReadOnlyList<IAnalyzableTick<(decimal?, decimal?, decimal?)>> KeltnerChannels() => _data.Kc(20, 2, 10);
     }
 
     public class Program
