@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+<meta charset='utf-8' />
+<title>Trady.Benchmarks.Version31.Benchmark</title>
+
+<style type="text/css">
+	table { border-collapse: collapse; display: block; width: 100%; overflow: auto; }
+	td, th { padding: 6px 13px; border: 1px solid #ddd; }
+	tr { background-color: #fff; border-top: 1px solid #ccc; }
+	tr:nth-child(even) { background: #f8f8f8; }
+</style>
+</head>
+<body>
+<pre><code>
+BenchmarkDotNet=v0.11.1, OS=Windows 10.0.17134.228 (1803/April2018Update/Redstone4)
+AMD FX(tm)-8350 Eight-Core Processor (Max: 4.34GHz), 1 CPU, 8 logical and 4 physical cores
+.NET Core SDK=2.1.402
+  [Host]    : .NET Core 2.1.4 (CoreCLR 4.6.26814.03, CoreFX 4.6.26814.02), 64bit RyuJIT
+  Core      : .NET Core 2.1.4 (CoreCLR 4.6.26814.03, CoreFX 4.6.26814.02), 64bit RyuJIT
+  RyuJitX64 : .NET Core 2.1.4 (CoreCLR 4.6.26814.03, CoreFX 4.6.26814.02), 64bit RyuJIT
+</code></pre>
+<pre><code></code></pre>
+
+<table>
+<thead><tr><th>                   Method</th><th>   Job</th><th>Jit</th><th>Platform</th><th>Runtime</th><th>    Mean</th><th>  Error</th><th> StdDev</th><th>     P90</th><th>     P95</th>
+</tr>
+</thead><tbody><tr><td>TransformToMonthly</td><td>Clr</td><td>RyuJit</td><td>X64</td><td>Clr</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td>
+</tr><tr><td>TransformToDaily</td><td>Clr</td><td>RyuJit</td><td>X64</td><td>Clr</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td>
+</tr><tr><td>RelativeStrengthIndex</td><td>Clr</td><td>RyuJit</td><td>X64</td><td>Clr</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td>
+</tr><tr><td>ExponentialMovingAverage</td><td>Clr</td><td>RyuJit</td><td>X64</td><td>Clr</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td>
+</tr><tr><td>SimpleMovingAverage</td><td>Clr</td><td>RyuJit</td><td>X64</td><td>Clr</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td>
+</tr><tr><td>MACD</td><td>Clr</td><td>RyuJit</td><td>X64</td><td>Clr</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td>
+</tr><tr><td>CommodityChannelIndex</td><td>Clr</td><td>RyuJit</td><td>X64</td><td>Clr</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td>
+</tr><tr><td>StochasticMomentumIndex</td><td>Clr</td><td>RyuJit</td><td>X64</td><td>Clr</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td>
+</tr><tr><td>StochasticRelativeStrengthIndex</td><td>Clr</td><td>RyuJit</td><td>X64</td><td>Clr</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td>
+</tr><tr><td>NetMomentumOscillator</td><td>Clr</td><td>RyuJit</td><td>X64</td><td>Clr</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td>
+</tr><tr><td>RM</td><td>Clr</td><td>RyuJit</td><td>X64</td><td>Clr</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td>
+</tr><tr><td>RMI</td><td>Clr</td><td>RyuJit</td><td>X64</td><td>Clr</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td>
+</tr><tr><td>DYMOI</td><td>Clr</td><td>RyuJit</td><td>X64</td><td>Clr</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td>
+</tr><tr><td>SAR</td><td>Clr</td><td>RyuJit</td><td>X64</td><td>Clr</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td>
+</tr><tr><td>Median</td><td>Clr</td><td>RyuJit</td><td>X64</td><td>Clr</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td>
+</tr><tr><td>Percentile</td><td>Clr</td><td>RyuJit</td><td>X64</td><td>Clr</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td>
+</tr><tr><td>AccumDist</td><td>Clr</td><td>RyuJit</td><td>X64</td><td>Clr</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td>
+</tr><tr><td>Aroon</td><td>Clr</td><td>RyuJit</td><td>X64</td><td>Clr</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td>
+</tr><tr><td>AroonOsc</td><td>Clr</td><td>RyuJit</td><td>X64</td><td>Clr</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td>
+</tr><tr><td>Atr</td><td>Clr</td><td>RyuJit</td><td>X64</td><td>Clr</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td>
+</tr><tr><td>Bb</td><td>Clr</td><td>RyuJit</td><td>X64</td><td>Clr</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td>
+</tr><tr><td>BbWidth</td><td>Clr</td><td>RyuJit</td><td>X64</td><td>Clr</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td>
+</tr><tr><td>TransformToMonthly</td><td>Core</td><td>RyuJit</td><td>X64</td><td>Core</td><td>617.6 us</td><td>4.470 us</td><td>3.962 us</td><td>622.1 us</td><td>624.5 us</td>
+</tr><tr><td>TransformToDaily</td><td>Core</td><td>RyuJit</td><td>X64</td><td>Core</td><td>623.6 us</td><td>1.397 us</td><td>1.307 us</td><td>625.1 us</td><td>625.4 us</td>
+</tr><tr><td>RelativeStrengthIndex</td><td>Core</td><td>RyuJit</td><td>X64</td><td>Core</td><td>8,788.2 us</td><td>38.652 us</td><td>32.276 us</td><td>8,826.5 us</td><td>8,838.3 us</td>
+</tr><tr><td>ExponentialMovingAverage</td><td>Core</td><td>RyuJit</td><td>X64</td><td>Core</td><td>3,744.3 us</td><td>28.096 us</td><td>23.462 us</td><td>3,771.9 us</td><td>3,785.0 us</td>
+</tr><tr><td>SimpleMovingAverage</td><td>Core</td><td>RyuJit</td><td>X64</td><td>Core</td><td>2,532.1 us</td><td>63.585 us</td><td>62.449 us</td><td>2,619.4 us</td><td>2,651.6 us</td>
+</tr><tr><td>MACD</td><td>Core</td><td>RyuJit</td><td>X64</td><td>Core</td><td>8,445.1 us</td><td>206.271 us</td><td>253.319 us</td><td>8,790.6 us</td><td>8,865.9 us</td>
+</tr><tr><td>CommodityChannelIndex</td><td>Core</td><td>RyuJit</td><td>X64</td><td>Core</td><td>10,566.6 us</td><td>43.610 us</td><td>38.659 us</td><td>10,624.0 us</td><td>10,640.1 us</td>
+</tr><tr><td>StochasticMomentumIndex</td><td>Core</td><td>RyuJit</td><td>X64</td><td>Core</td><td>15,965.4 us</td><td>311.800 us</td><td>485.434 us</td><td>16,818.5 us</td><td>16,931.3 us</td>
+</tr><tr><td>StochasticRelativeStrengthIndex</td><td>Core</td><td>RyuJit</td><td>X64</td><td>Core</td><td>15,661.4 us</td><td>446.565 us</td><td>458.590 us</td><td>16,467.1 us</td><td>16,499.2 us</td>
+</tr><tr><td>NetMomentumOscillator</td><td>Core</td><td>RyuJit</td><td>X64</td><td>Core</td><td>9,606.6 us</td><td>224.640 us</td><td>267.418 us</td><td>9,940.0 us</td><td>10,088.3 us</td>
+</tr><tr><td>RM</td><td>Core</td><td>RyuJit</td><td>X64</td><td>Core</td><td>8,107.0 us</td><td>23.845 us</td><td>19.911 us</td><td>8,122.5 us</td><td>8,135.6 us</td>
+</tr><tr><td>RMI</td><td>Core</td><td>RyuJit</td><td>X64</td><td>Core</td><td>9,431.3 us</td><td>198.517 us</td><td>185.692 us</td><td>9,743.3 us</td><td>9,763.7 us</td>
+</tr><tr><td>DYMOI</td><td>Core</td><td>RyuJit</td><td>X64</td><td>Core</td><td>2,461,830.3 us</td><td>21,463.469 us</td><td>20,076.941 us</td><td>2,491,578.2 us</td><td>2,494,853.7 us</td>
+</tr><tr><td>SAR</td><td>Core</td><td>RyuJit</td><td>X64</td><td>Core</td><td>2,808.5 us</td><td>27.176 us</td><td>22.693 us</td><td>2,831.4 us</td><td>2,846.2 us</td>
+</tr><tr><td>Median</td><td>Core</td><td>RyuJit</td><td>X64</td><td>Core</td><td>5,980.1 us</td><td>116.800 us</td><td>119.945 us</td><td>6,160.5 us</td><td>6,197.5 us</td>
+</tr><tr><td>Percentile</td><td>Core</td><td>RyuJit</td><td>X64</td><td>Core</td><td>7,318.3 us</td><td>40.218 us</td><td>31.400 us</td><td>7,339.5 us</td><td>7,362.7 us</td>
+</tr><tr><td>AccumDist</td><td>Core</td><td>RyuJit</td><td>X64</td><td>Core</td><td>2,279.3 us</td><td>43.912 us</td><td>52.275 us</td><td>2,367.0 us</td><td>2,367.2 us</td>
+</tr><tr><td>Aroon</td><td>Core</td><td>RyuJit</td><td>X64</td><td>Core</td><td>10,401.9 us</td><td>196.372 us</td><td>233.767 us</td><td>10,738.7 us</td><td>10,772.6 us</td>
+</tr><tr><td>AroonOsc</td><td>Core</td><td>RyuJit</td><td>X64</td><td>Core</td><td>10,933.4 us</td><td>233.662 us</td><td>207.135 us</td><td>11,236.0 us</td><td>11,353.1 us</td>
+</tr><tr><td>Atr</td><td>Core</td><td>RyuJit</td><td>X64</td><td>Core</td><td>4,575.3 us</td><td>15.177 us</td><td>14.196 us</td><td>4,590.1 us</td><td>4,594.5 us</td>
+</tr><tr><td>Bb</td><td>Core</td><td>RyuJit</td><td>X64</td><td>Core</td><td>7,706.5 us</td><td>124.177 us</td><td>116.155 us</td><td>7,838.7 us</td><td>7,868.2 us</td>
+</tr><tr><td>BbWidth</td><td>Core</td><td>RyuJit</td><td>X64</td><td>Core</td><td>8,228.9 us</td><td>110.915 us</td><td>103.750 us</td><td>8,349.4 us</td><td>8,356.0 us</td>
+</tr><tr><td>TransformToMonthly</td><td>LegacyJitX64</td><td>LegacyJit</td><td>X64</td><td>Clr</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td>
+</tr><tr><td>TransformToDaily</td><td>LegacyJitX64</td><td>LegacyJit</td><td>X64</td><td>Clr</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td>
+</tr><tr><td>RelativeStrengthIndex</td><td>LegacyJitX64</td><td>LegacyJit</td><td>X64</td><td>Clr</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td>
+</tr><tr><td>ExponentialMovingAverage</td><td>LegacyJitX64</td><td>LegacyJit</td><td>X64</td><td>Clr</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td>
+</tr><tr><td>SimpleMovingAverage</td><td>LegacyJitX64</td><td>LegacyJit</td><td>X64</td><td>Clr</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td>
+</tr><tr><td>MACD</td><td>LegacyJitX64</td><td>LegacyJit</td><td>X64</td><td>Clr</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td>
+</tr><tr><td>CommodityChannelIndex</td><td>LegacyJitX64</td><td>LegacyJit</td><td>X64</td><td>Clr</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td>
+</tr><tr><td>StochasticMomentumIndex</td><td>LegacyJitX64</td><td>LegacyJit</td><td>X64</td><td>Clr</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td>
+</tr><tr><td>StochasticRelativeStrengthIndex</td><td>LegacyJitX64</td><td>LegacyJit</td><td>X64</td><td>Clr</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td>
+</tr><tr><td>NetMomentumOscillator</td><td>LegacyJitX64</td><td>LegacyJit</td><td>X64</td><td>Clr</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td>
+</tr><tr><td>RM</td><td>LegacyJitX64</td><td>LegacyJit</td><td>X64</td><td>Clr</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td>
+</tr><tr><td>RMI</td><td>LegacyJitX64</td><td>LegacyJit</td><td>X64</td><td>Clr</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td>
+</tr><tr><td>DYMOI</td><td>LegacyJitX64</td><td>LegacyJit</td><td>X64</td><td>Clr</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td>
+</tr><tr><td>SAR</td><td>LegacyJitX64</td><td>LegacyJit</td><td>X64</td><td>Clr</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td>
+</tr><tr><td>Median</td><td>LegacyJitX64</td><td>LegacyJit</td><td>X64</td><td>Clr</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td>
+</tr><tr><td>Percentile</td><td>LegacyJitX64</td><td>LegacyJit</td><td>X64</td><td>Clr</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td>
+</tr><tr><td>AccumDist</td><td>LegacyJitX64</td><td>LegacyJit</td><td>X64</td><td>Clr</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td>
+</tr><tr><td>Aroon</td><td>LegacyJitX64</td><td>LegacyJit</td><td>X64</td><td>Clr</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td>
+</tr><tr><td>AroonOsc</td><td>LegacyJitX64</td><td>LegacyJit</td><td>X64</td><td>Clr</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td>
+</tr><tr><td>Atr</td><td>LegacyJitX64</td><td>LegacyJit</td><td>X64</td><td>Clr</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td>
+</tr><tr><td>Bb</td><td>LegacyJitX64</td><td>LegacyJit</td><td>X64</td><td>Clr</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td>
+</tr><tr><td>BbWidth</td><td>LegacyJitX64</td><td>LegacyJit</td><td>X64</td><td>Clr</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td>
+</tr><tr><td>TransformToMonthly</td><td>LegacyJitX86</td><td>LegacyJit</td><td>X86</td><td>Clr</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td>
+</tr><tr><td>TransformToDaily</td><td>LegacyJitX86</td><td>LegacyJit</td><td>X86</td><td>Clr</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td>
+</tr><tr><td>RelativeStrengthIndex</td><td>LegacyJitX86</td><td>LegacyJit</td><td>X86</td><td>Clr</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td>
+</tr><tr><td>ExponentialMovingAverage</td><td>LegacyJitX86</td><td>LegacyJit</td><td>X86</td><td>Clr</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td>
+</tr><tr><td>SimpleMovingAverage</td><td>LegacyJitX86</td><td>LegacyJit</td><td>X86</td><td>Clr</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td>
+</tr><tr><td>MACD</td><td>LegacyJitX86</td><td>LegacyJit</td><td>X86</td><td>Clr</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td>
+</tr><tr><td>CommodityChannelIndex</td><td>LegacyJitX86</td><td>LegacyJit</td><td>X86</td><td>Clr</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td>
+</tr><tr><td>StochasticMomentumIndex</td><td>LegacyJitX86</td><td>LegacyJit</td><td>X86</td><td>Clr</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td>
+</tr><tr><td>StochasticRelativeStrengthIndex</td><td>LegacyJitX86</td><td>LegacyJit</td><td>X86</td><td>Clr</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td>
+</tr><tr><td>NetMomentumOscillator</td><td>LegacyJitX86</td><td>LegacyJit</td><td>X86</td><td>Clr</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td>
+</tr><tr><td>RM</td><td>LegacyJitX86</td><td>LegacyJit</td><td>X86</td><td>Clr</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td>
+</tr><tr><td>RMI</td><td>LegacyJitX86</td><td>LegacyJit</td><td>X86</td><td>Clr</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td>
+</tr><tr><td>DYMOI</td><td>LegacyJitX86</td><td>LegacyJit</td><td>X86</td><td>Clr</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td>
+</tr><tr><td>SAR</td><td>LegacyJitX86</td><td>LegacyJit</td><td>X86</td><td>Clr</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td>
+</tr><tr><td>Median</td><td>LegacyJitX86</td><td>LegacyJit</td><td>X86</td><td>Clr</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td>
+</tr><tr><td>Percentile</td><td>LegacyJitX86</td><td>LegacyJit</td><td>X86</td><td>Clr</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td>
+</tr><tr><td>AccumDist</td><td>LegacyJitX86</td><td>LegacyJit</td><td>X86</td><td>Clr</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td>
+</tr><tr><td>Aroon</td><td>LegacyJitX86</td><td>LegacyJit</td><td>X86</td><td>Clr</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td>
+</tr><tr><td>AroonOsc</td><td>LegacyJitX86</td><td>LegacyJit</td><td>X86</td><td>Clr</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td>
+</tr><tr><td>Atr</td><td>LegacyJitX86</td><td>LegacyJit</td><td>X86</td><td>Clr</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td>
+</tr><tr><td>Bb</td><td>LegacyJitX86</td><td>LegacyJit</td><td>X86</td><td>Clr</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td>
+</tr><tr><td>BbWidth</td><td>LegacyJitX86</td><td>LegacyJit</td><td>X86</td><td>Clr</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td>
+</tr><tr><td>TransformToMonthly</td><td>RyuJitX64</td><td>RyuJit</td><td>X64</td><td>Core</td><td>624.8 us</td><td>1.264 us</td><td>1.120 us</td><td>626.1 us</td><td>626.7 us</td>
+</tr><tr><td>TransformToDaily</td><td>RyuJitX64</td><td>RyuJit</td><td>X64</td><td>Core</td><td>644.1 us</td><td>14.917 us</td><td>15.319 us</td><td>667.9 us</td><td>670.4 us</td>
+</tr><tr><td>RelativeStrengthIndex</td><td>RyuJitX64</td><td>RyuJit</td><td>X64</td><td>Core</td><td>9,011.1 us</td><td>177.019 us</td><td>203.856 us</td><td>9,295.1 us</td><td>9,358.3 us</td>
+</tr><tr><td>ExponentialMovingAverage</td><td>RyuJitX64</td><td>RyuJit</td><td>X64</td><td>Core</td><td>3,766.4 us</td><td>10.483 us</td><td>9.293 us</td><td>3,774.7 us</td><td>3,776.1 us</td>
+</tr><tr><td>SimpleMovingAverage</td><td>RyuJitX64</td><td>RyuJit</td><td>X64</td><td>Core</td><td>2,501.8 us</td><td>40.158 us</td><td>37.564 us</td><td>2,561.5 us</td><td>2,567.6 us</td>
+</tr><tr><td>MACD</td><td>RyuJitX64</td><td>RyuJit</td><td>X64</td><td>Core</td><td>8,355.0 us</td><td>48.526 us</td><td>43.017 us</td><td>8,422.2 us</td><td>8,424.7 us</td>
+</tr><tr><td>CommodityChannelIndex</td><td>RyuJitX64</td><td>RyuJit</td><td>X64</td><td>Core</td><td>10,661.2 us</td><td>169.561 us</td><td>158.607 us</td><td>10,883.6 us</td><td>10,962.3 us</td>
+</tr><tr><td>StochasticMomentumIndex</td><td>RyuJitX64</td><td>RyuJit</td><td>X64</td><td>Core</td><td>15,446.7 us</td><td>197.882 us</td><td>185.099 us</td><td>15,657.9 us</td><td>15,676.9 us</td>
+</tr><tr><td>StochasticRelativeStrengthIndex</td><td>RyuJitX64</td><td>RyuJit</td><td>X64</td><td>Core</td><td>15,066.7 us</td><td>90.695 us</td><td>70.809 us</td><td>15,167.0 us</td><td>15,180.7 us</td>
+</tr><tr><td>NetMomentumOscillator</td><td>RyuJitX64</td><td>RyuJit</td><td>X64</td><td>Core</td><td>9,434.1 us</td><td>51.352 us</td><td>42.881 us</td><td>9,489.3 us</td><td>9,503.9 us</td>
+</tr><tr><td>RM</td><td>RyuJitX64</td><td>RyuJit</td><td>X64</td><td>Core</td><td>8,097.7 us</td><td>31.829 us</td><td>24.850 us</td><td>8,132.1 us</td><td>8,135.9 us</td>
+</tr><tr><td>RMI</td><td>RyuJitX64</td><td>RyuJit</td><td>X64</td><td>Core</td><td>9,373.9 us</td><td>65.590 us</td><td>54.771 us</td><td>9,425.4 us</td><td>9,435.8 us</td>
+</tr><tr><td>DYMOI</td><td>RyuJitX64</td><td>RyuJit</td><td>X64</td><td>Core</td><td>2,448,177.9 us</td><td>7,310.800 us</td><td>6,838.527 us</td><td>2,456,877.2 us</td><td>2,460,907.2 us</td>
+</tr><tr><td>SAR</td><td>RyuJitX64</td><td>RyuJit</td><td>X64</td><td>Core</td><td>2,798.9 us</td><td>26.875 us</td><td>23.824 us</td><td>2,829.7 us</td><td>2,839.5 us</td>
+</tr><tr><td>Median</td><td>RyuJitX64</td><td>RyuJit</td><td>X64</td><td>Core</td><td>5,939.1 us</td><td>19.814 us</td><td>17.565 us</td><td>5,962.5 us</td><td>5,968.0 us</td>
+</tr><tr><td>Percentile</td><td>RyuJitX64</td><td>RyuJit</td><td>X64</td><td>Core</td><td>7,298.7 us</td><td>24.682 us</td><td>20.611 us</td><td>7,320.3 us</td><td>7,329.4 us</td>
+</tr><tr><td>AccumDist</td><td>RyuJitX64</td><td>RyuJit</td><td>X64</td><td>Core</td><td>2,248.3 us</td><td>7.664 us</td><td>6.794 us</td><td>2,256.2 us</td><td>2,256.7 us</td>
+</tr><tr><td>Aroon</td><td>RyuJitX64</td><td>RyuJit</td><td>X64</td><td>Core</td><td>10,481.1 us</td><td>29.730 us</td><td>24.826 us</td><td>10,507.5 us</td><td>10,515.7 us</td>
+</tr><tr><td>AroonOsc</td><td>RyuJitX64</td><td>RyuJit</td><td>X64</td><td>Core</td><td>10,648.6 us</td><td>54.335 us</td><td>48.167 us</td><td>10,689.2 us</td><td>10,696.1 us</td>
+</tr><tr><td>Atr</td><td>RyuJitX64</td><td>RyuJit</td><td>X64</td><td>Core</td><td>4,703.9 us</td><td>90.148 us</td><td>88.538 us</td><td>4,828.4 us</td><td>4,858.7 us</td>
+</tr><tr><td>Bb</td><td>RyuJitX64</td><td>RyuJit</td><td>X64</td><td>Core</td><td>7,864.3 us</td><td>156.204 us</td><td>197.548 us</td><td>8,100.4 us</td><td>8,109.5 us</td>
+</tr><tr><td>BbWidth</td><td>RyuJitX64</td><td>RyuJit</td><td>X64</td><td>Core</td><td>8,287.3 us</td><td>31.184 us</td><td>24.347 us</td><td>8,301.9 us</td><td>8,325.6 us</td>
+</tr></tbody></table>
+</body>
+</html>

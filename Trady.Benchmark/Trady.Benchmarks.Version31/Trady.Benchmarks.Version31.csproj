@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BenchmarkDotNet" Version="0.11.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Trady.Analysis\Trady.Analysis.csproj" />
+    <ProjectReference Include="..\..\Trady.Core\Trady.Core.csproj" />
+    <ProjectReference Include="..\..\Trady.Importer.Csv\Trady.Importer.Csv.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Data\EURUSD.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>
