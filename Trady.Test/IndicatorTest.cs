@@ -543,5 +543,15 @@ namespace Trady.Test
             var result = candles.Hma(30)[candles.Count() - 1];
             Assert.IsTrue((172.8926202m).IsApproximatelyEquals(result.Tick.Value));
         }
+
+        [TestMethod]
+        public async Task TestKcAsync()
+        {
+            var candles = await ImportIOhlcvDatasAsync();
+            var result = candles.Kc(20, 2, 10)[candles.Count() - 1];
+            Assert.IsTrue(result.Tick.LowerChannel.Value.IsApproximatelyEquals(165.81m));
+            Assert.IsTrue(result.Tick.Middle.Value.IsApproximatelyEquals(170.65m));
+            Assert.IsTrue(result.Tick.UpperChannel.Value.IsApproximatelyEquals(175.50m));
+        }
     }
 }

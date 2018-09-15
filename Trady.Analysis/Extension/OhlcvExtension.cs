@@ -194,5 +194,8 @@ namespace Trady.Analysis.Extension
 
         public static IReadOnlyList<AnalyzableTick<decimal?>> Hma(this IEnumerable<IOhlcv> candles, int periodCount, int? startIndex = null, int? endIndex = null)
             => new HullMovingAverage(candles, periodCount).Compute(startIndex, endIndex);
+
+        public static IReadOnlyList<AnalyzableTick<(decimal? LowerChannel, decimal? Middle, decimal? UpperChannel)>> Kc(this IEnumerable<IOhlcv> candles, int periodCount, decimal sdCount, int atrPeriodCount, int? startIndex = null, int? endIndex = null)
+            => new KeltnerChannels(candles, periodCount, sdCount, atrPeriodCount).Compute(startIndex, endIndex);
     }
 }
