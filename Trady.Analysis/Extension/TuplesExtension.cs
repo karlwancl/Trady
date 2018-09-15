@@ -194,5 +194,14 @@ namespace Trady.Analysis.Extension
 
         public static IReadOnlyList<decimal?> Smi(this IEnumerable<(decimal High, decimal Low, decimal Close)> inputs, int periodCount, int smoothingPeriodA, int smoothingPeriodB, int? startIndex = null, int? endIndex = null)
             => new StochasticsMomentumIndexByTuple(inputs, periodCount, smoothingPeriodA, smoothingPeriodB).Compute(startIndex, endIndex);
+
+        public static IReadOnlyList<decimal?> Wma(this IEnumerable<decimal?> inputs, int periodCount, int? startIndex = null, int? endIndex = null)
+            => new WeightedMovingAverageByTuple(inputs, periodCount).Compute(startIndex, endIndex);
+
+        public static IReadOnlyList<decimal?> Hma(this IEnumerable<decimal?> inputs, int periodCount, int? startIndex = null, int? endIndex = null)
+            => new HullMovingAverageByTuple(inputs, periodCount).Compute(startIndex, endIndex);
+
+        public static IReadOnlyList<(decimal? LowerChannel, decimal? Middle, decimal? UpperChannel)> Kc(this IEnumerable<(decimal High, decimal Low, decimal Close)> inputs, int periodCount, decimal sdCount, int atrPeriodCount, int? startIndex = null, int? endIndex = null)
+            => new KeltnerChannelsByTuple(inputs, periodCount, sdCount, atrPeriodCount).Compute(startIndex, endIndex);
     }
 }
