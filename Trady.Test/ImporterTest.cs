@@ -5,6 +5,7 @@ using System.Linq;
 using Trady.Importer;
 using Trady.Importer.AlphaVantage;
 using Trady.Importer.Csv;
+using Trady.Importer.Quandl;
 //using Trady.Importer.Google;
 //using Trady.Importer.Quandl;
 using Trady.Importer.Stooq;
@@ -35,37 +36,37 @@ namespace Trady.Test
         //}
 
         // TODO: test later
-        //[TestMethod]
-        //public void ImportByQuandlYahoo()
-        //{
-        //    // Test account api key
-        //    const string ApiKey = "Sys3z7hfYmzjiXPxwfQJ";
+        [TestMethod]
+        public void ImportByQuandlYahoo()
+        {
+            // Test account api key
+            const string ApiKey = "kQniaxZEnuxUTN2QGFgF";
 
-        //    var importer = new QuandlWikiImporter(ApiKey);
-        //    var candle = importer.ImportAsync("AAPL", new DateTime(2017, 1, 3), new DateTime(2017, 1, 3)).Result.First();
-        //    Assert.AreEqual(candle.Open, 115.8m);
-        //    Assert.AreEqual(candle.High, 116.33m);
-        //    Assert.AreEqual(candle.Low, 114.76m);
-        //    Assert.AreEqual(candle.Close, 116.15m);
-        //    Assert.AreEqual(candle.Volume, 28_781_865);
-        //}
+            var importer = new QuandlWikiImporter(ApiKey);
+            var candle = importer.ImportAsync("AAPL", new DateTime(2017, 1, 3), new DateTime(2017, 1, 3)).Result.First();
+            Assert.AreEqual(candle.Open, 115.8m);
+            Assert.AreEqual(candle.High, 116.33m);
+            Assert.AreEqual(candle.Low, 114.76m);
+            Assert.AreEqual(candle.Close, 116.15m);
+            Assert.AreEqual(candle.Volume, 28_781_865);
+        }
 
-        //[TestMethod]
-        //public void ImportByAlphaVantage()
-        //{
-        //    // Test account api key
-        //    const string ApiKey = "[YourApiKey]";
+        [TestMethod]
+        public void ImportByAlphaVantage()
+        {
+            // Test account api key
+            const string ApiKey = "WUT9R5SC4IHCNA4S";
 
-        //    var importer = new AlphaVantageImporter(ApiKey, OutputSize.full);
-        //    //var candles = importer.ImportAsync("AAPL", new DateTime(2016, 9, 15), new DateTime(2018, 9, 15)).Result;
-        //    var candles = importer.ImportAsync("AAPL").Result;
-        //    var candle = candles.First();
-        //    Assert.AreEqual(candle.Open, 115.8m);
-        //    Assert.AreEqual(candle.High, 116.33m);
-        //    Assert.AreEqual(candle.Low, 114.76m);
-        //    Assert.AreEqual(candle.Close, 116.15m);
-        //    Assert.AreEqual(candle.Volume, 28_781_865);
-        //}
+            var importer = new AlphaVantageImporter(ApiKey, OutputSize.full);
+            //var candles = importer.ImportAsync("AAPL", new DateTime(2016, 9, 15), new DateTime(2018, 9, 15)).Result;
+            var candles = importer.ImportAsync("AAPL").Result;
+            var candle = candles.FirstOrDefault(c => c.DateTime == new DateTime(2017, 1, 3));
+            Assert.AreEqual(candle.Open, 115.8m);
+            Assert.AreEqual(candle.High, 116.33m);
+            Assert.AreEqual(candle.Low, 114.76m);
+            Assert.AreEqual(candle.Close, 116.15m);
+            Assert.AreEqual(candle.Volume, 28_781_865);
+        }
 
         [TestMethod]
         public void ImportByYahoo()

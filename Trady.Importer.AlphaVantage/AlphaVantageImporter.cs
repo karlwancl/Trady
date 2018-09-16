@@ -90,12 +90,12 @@ namespace Trady.Importer.AlphaVantage
             var cultureInfo = new CultureInfo(culture);
             var candles = new List<IOhlcv>();
             using(var csvReader = new CsvReader(textReader, new Configuration() { CultureInfo = cultureInfo, Delimiter = ",", HasHeaderRecord = true }))
-            {                
+            {
                 bool isHeaderBypassed = false;
-                while(csvReader.Read())
+                while (csvReader.Read())
                 {
                     // HasHeaderRecord is not working for CsvReader 6.0.2
-                    if(!isHeaderBypassed)
+                    if (!isHeaderBypassed)
                     {
                         isHeaderBypassed = true;
                         continue;

@@ -35,7 +35,7 @@
         <LangVersion>7.1</LangVersion>
       </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Quandl.NET" Version="1.2.0" />
+    <PackageReference Include="Quandl.NET" Version="1.2.1" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Trady.Core\Trady.Core.csproj" />
