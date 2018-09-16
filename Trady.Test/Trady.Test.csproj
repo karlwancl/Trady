@@ -11,7 +11,7 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <LangVersion>7.1</LangVersion>
+    <LangVersion>7.3</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -23,6 +23,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Trady.Analysis\Trady.Analysis.csproj" />
     <ProjectReference Include="..\Trady.Core\Trady.Core.csproj" />
+    <ProjectReference Include="..\Trady.Importer.AlphaVantage\Trady.Importer.AlphaVantage.csproj" />
     <ProjectReference Include="..\Trady.Importer\Trady.Importer.csproj" />
     <ProjectReference Include="..\Trady.Importer.Csv\Trady.Importer.Csv.csproj" />
     <ProjectReference Include="..\Trady.Importer.Stooq\Trady.Importer.Stooq.csproj" />
