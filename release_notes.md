@@ -3,6 +3,7 @@
 [v3.2](#v32) | [v3.1](#v31) | [v3.0.1](#301)
 
 <a name="v32"></a>
+## v3.2
 * Added WeightedMovingAverage, HullMovingAverage & KeltnerChannels
 * Added AlphaVantage importer (thanks to @irperez)
 * Reactivate support for QuandlImporter
@@ -15,6 +16,7 @@
 * Renamed simple operation "PcDiff" to "RDiff"
 
 <a name="v31"></a>
+## v3.1
 * Fix StooqImporter, migrated to .NET Standard 2.0
 * Temporarily remove support for QuandlImporter & GoogleFinanceImporter
 * Fix divide by zero issue for various indicators
@@ -31,4 +33,5 @@
 * Fix potential crash when computing EfficiencyRatio (thanks to @Mike-EEE)
 
 <a name="v301"></a>
+## v3.0.1
 * Fixed potential crash when doing backtest (Thanks for @LadislavBohm)
