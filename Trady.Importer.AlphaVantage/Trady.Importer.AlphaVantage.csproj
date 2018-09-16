@@ -3,6 +3,15 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <LangVersion>latest</LangVersion>
+    <Version>3.2.0</Version>
+    <PackageProjectUrl>https://github.com/lppkarl/Trady</PackageProjectUrl>
+    <PackageLicenseUrl>https://github.com/lppkarl/Trady/blob/master/LICENSE</PackageLicenseUrl>
+    <Product />
+    <Company />
+    <Authors>@irperez</Authors>
+    <PackageTags>Trady;Technical;Analysis;Finance;Stock</PackageTags>
+    <PackageReleaseNotes>
+    Please refer to https://github.com/lppkarl/Trady/</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
