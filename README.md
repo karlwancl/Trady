@@ -1,7 +1,7 @@
 # Trady
 [![Build status](https://ci.appveyor.com/api/projects/status/kqwo74gn5ms3h0n2?svg=true)](https://ci.appveyor.com/project/lppkarl/trady)
-[![NuGet Pre Release](https://img.shields.io/nuget/v/Trady.Analysis.svg)](https://www.nuget.org/packages/Trady.Analysis/3.0.0)
-[![NuGet](https://img.shields.io/nuget/dt/Trady.Analysis.svg)](https://www.nuget.org/packages/Trady.Analysis/3.0.0)
+[![NuGet Pre Release](https://img.shields.io/nuget/v/Trady.Analysis.svg)](https://www.nuget.org/packages/Trady.Analysis/3.2.0)
+[![NuGet](https://img.shields.io/nuget/dt/Trady.Analysis.svg)](https://www.nuget.org/packages/Trady.Analysis/3.2.0)
 [![license](https://img.shields.io/github/license/lppkarl/Trady.svg)](LICENSE)
 
 Trady is a handy library for computing technical indicators, and targets to be an automated trading system that provides stock data feeding, indicator computing, strategy building and automatic trading. It is built based on .NET Standard 2.0.
@@ -9,34 +9,25 @@ Trady is a handy library for computing technical indicators, and targets to be a
 ## Read Before You Use
 This library is a hobby project, and would probably making breaking changes, use with care when in production.
 
-## About contributions (30/12/2017)
-I've noticed that there's a lot of enthusiasts continually contributing to this project. I have to say thank you to all of you giving your precious time & effort on creating issues/ PRs or making suggestions. I've been busy for these few months, and do not have time on reviewing all the works, and I have to apologize on this. At the same time, I'm looking for collaborators who could help reviewing PRs & maintaining this repo, please let me know if you're interested in it :) Again, thanks to all of you & Happy New Year :D
-
 ## Currently Available Features
-* Stock data feeding (via CSV File, [Quandl.NET](https://github.com/lppkarl/Quandl.NET), [YahooFinanceApi](https://github.com/lppkarl/YahooFinanceApi), [StooqApi](https://github.com/lppkarl/StooqApi), [Nuba.Finance.Google](https://github.com/nubasoftware/Nuba.Finance.Google))
+* Stock data feeding (including csv, yahoo finance, quandl, alphavantage, stooq)
 * Indicator computing (including SMA, EMA, RSI, MACD, BB, etc.)
 * Signal capturing by rules
 * Strategy backtesting by buy/sell rule
 
-## Recent update
-### v3.1
-* Fix StooqImporter, migrated to .NET Standard 2.0
-* Temporarily remove support for QuandlImporter & GoogleFinanceImporter
-* Fix divide by zero issue for various indicators
-* Fix null reference to diff/pcdiff/sma, etc.
-* Fix YahooFinanceImporter to use local time for query
-* Update dependencies for csvImporter
-* Boost performance for RuleExecutor & Backtesting
-* Added Harami (thanks to @richardsjoberg)
-* Added indicators: ParabolicStopAndReverse (Sar), DynamicMomentumIndex(Dymoi), RelativeMomentumIndex (Rmi), NetMomentumOscillator (Nmo), StochasticsRsiOscillator (StochRsi), StochasticsMomentumIndex (Smi), CommodityChannelIndex (Cci)
-* IOhlcv interface is extracted, any class that implements IOhlcv interface can be used to calculate indicators (thanks to @LadislavBohm)
-* DateTimeOffset is used as default instead of DateTime
-* Renamed IndexedCandle.Execute to IndexedCandle.Eval
-* Renamed ClosePriceChange to Momentum (Mtm), ClosePricePercentageChange to RateOfChange (Roc)
-* Fix potential crash when computing EfficiencyRatio (thanks to @Mike-EEE)
+## v3.2 update
+* Added WeightedMovingAverage, HullMovingAverage & KeltnerChannels
+* Added AlphaVantage importer (thanks to @irperez)
+* Reactivate support for QuandlImporter
+* Boost performance on date time transformation (thanks to @pavlexander)
+* Boost performance for various indicators (HistoricalHighest/HistoricalLowest/EmaOsc/Macd/ADLine/Obv/ParabolicSar, etc.)
+* Update dependencies for importers
+* Remove redundant sdCount parameter for Sd operation
+* EffeciencyRatio & Kama now accepts nullable decimal as input
+* Allow use of simple operation for ParabolicSar
+* Renamed simple operation "PcDiff" to "RDiff"
 
-### v3.0.1
-* Fixed potential crash when doing backtest (Thanks for @LadislavBohm)
+For older version history, please refer to another markdown document [here](release_notes.md)
 
 ## Updates from 2.0.x to 3.0.0
 Please refer to another markdown document [here](update_from_2.0.x.md)
@@ -49,6 +40,13 @@ Please refer to another markdown document [here](update_from_2.0.x.md)
 * Xamarin.Android 7.5 or above
 * Xamarin.Mac 3.8 or above
 
+## Currently Supported Importers
+* Csv file
+* Yahoo Finance
+* Quandl
+* Stooq
+* AlphaVantage
+
 ## Currently Supported Indicators
 Please refer to another markdown document [here](supported_indicators.md)
 
@@ -56,7 +54,7 @@ Please refer to another markdown document [here](supported_indicators.md)
 Nuget package is available in modules, please install the package according to the needs
 
     // For importing
-    PM > Install-Package Trady.Importer 
+    PM > Install-Package Trady.Importer
 
     // For computing & backtesting
     PM > Install-Package Trady.Analysis
@@ -107,8 +105,11 @@ Nuget package is available in modules, please install the package according to t
     // From Stooq
     var importer = new StooqImporter();
 
-    // From Google Finance
-    var importer = new GoogleFinanceImporter();
+    // From AlphaVantage
+    var importer = new AlphaVantageImporter(apiKey);
+
+    // From Google Finance (Temporarily not available now)
+    // var importer = new GoogleFinanceImporter();
 
     // Or from dedicated csv file
     var importer = new CsvImporter("FB.csv");
@@ -283,7 +284,7 @@ Nuget package is available in modules, please install the package according to t
     // You can also implement your own importer by implementing the IImporter interface
     public class MyImporter : IImporter
     {
-        public async Task<IReadOnlyList<Candle>> ImportAsync(string symbol, DateTime? startTime = null, DateTime? endTime = null, PeriodOption period = PeriodOption.Daily, CancellationToken token = default(CancellationToken))
+        public async Task<IReadOnlyList<IOhlcv>> ImportAsync(string symbol, DateTime? startTime = null, DateTime? endTime = null, PeriodOption period = PeriodOption.Daily, CancellationToken token = default(CancellationToken))
         {
             // Your implementation to return a list of candles
         }
@@ -297,19 +298,19 @@ Nuget package is available in modules, please install the package according to t
 <a name="ImplementYourOwnIndicatorSimpleType"></a>
 ### Implement your own indicator - Simple Type
     // You can also implement your own indicator by extending the AnalyzableBase<TInput, TOutput> class
-    public class MyIndicator : AnalyzableBase<Candle, AnalyzableTick<decimal?>>
+    public class MyIndicator : AnalyzableBase<IOhlcv, AnalyzableTick<decimal?>>
     {
         // Backing indicator for the indicator
         SimpleMovingAverageByTuple _sma;
 
-        public MyIndicator(IEnumerable<Candle> inputs, int periodCount) : base(inputs)
+        public MyIndicator(IEnumerable<IOhlcv> inputs, int periodCount) : base(inputs)
         {
             // Initialize reference indicators, or other required stuff here
-            _sma = new SimpleMovingAverageByTuple(inputs.Select(i => i.Close), periodCount);
+            _sma = new SimpleMovingAverageByTuple(inputs.Select(i => i.Close).ToList(), periodCount);
         }
 
         // Implement the compute algorithm, uses mappedInputs, index & backing indicators for computation here
-        protected override AnalyzableTick<decimal?> ComputeByIndexImpl(IReadOnlyList<Candle> mappedInputs, int index)
+        protected override AnalyzableTick<decimal?> ComputeByIndexImpl(IReadOnlyList<IOhlcv> mappedInputs, int index)
         {
 			return new AnalyzableTick<decimal?>(mappedInputs[index].DateTime, _sma[index]);
 		}
@@ -326,25 +327,25 @@ Nuget package is available in modules, please install the package according to t
 <a name="ImplementYourOwnIndicatorCummulativeType"></a>
 ### Implement your own indicator - Cummulative Type
     // You can implement your own indicator by extending the CummulativeAnalyzableBase<TInput, TOutput> class
-    public class MyCumulativeIndicator : CumulativeAnalyzableBase<Candle, AnalyzableTick<decimal?>>
+    public class MyCumulativeIndicator : CumulativeAnalyzableBase<IOhlcv, AnalyzableTick<decimal?>>
     {
         // Backing indicator for the indicator
-        SimpleMovingAverageByTuple _sma;
+        readonly SimpleMovingAverageByTuple _sma;
 
-        public MyCumulativeIndicator(IEnumerable<Candle> inputs, int periodCount) : base(inputs)
+        public MyCumulativeIndicator(IEnumerable<IOhlcv> inputs, int periodCount) : base(inputs)
         {
             // Initialize reference indicators, or other required stuff here
-            _sma = new SimpleMovingAverageByTuple(inputs.Select(i => i.Close), periodCount);
+            _sma = new SimpleMovingAverageByTuple(inputs.Select(i => i.Close).ToList(), periodCount);
         }
 
         // Implement the compute algorithm for index > InitialValueIndex, uses mappedInputs, index, prev analyzable tick & backing indicators for computation here
-        protected override AnalyzableTick<decimal?> ComputeCumulativeValue(IReadOnlyList<Candle> mappedInputs, int index, AnalyzableTick<decimal?> prevOutputToMap)
+        protected override AnalyzableTick<decimal?> ComputeCumulativeValue(IReadOnlyList<IOhlcv> mappedInputs, int index, AnalyzableTick<decimal?> prevOutputToMap)
         {
             return new AnalyzableTick<decimal?>(mappedInputs[index].DateTime, _sma[index] + prevOutputToMap.Tick);
         }
 
         // Same for the above but for index = InitialValueIndex
-        protected override AnalyzableTick<decimal?> ComputeInitialValue(IReadOnlyList<Candle> mappedInputs, int index)
+        protected override AnalyzableTick<decimal?> ComputeInitialValue(IReadOnlyList<IOhlcv> mappedInputs, int index)
         {
             return new AnalyzableTick<decimal?>(mappedInputs[index].DateTime, _sma[index]);
         }
@@ -363,11 +364,11 @@ Nuget package is available in modules, please install the package according to t
 <a name="ImplementYourOwnIndicatorMovingAverageType"></a>
 ### Implement your own indicator - Moving-Average Type
     // You can make use of the GenericMovingAverage class to get rid of implementing MA-related indicator on your own
-     public class MyGmaIndicator : AnalyzableBase<Candle, AnalyzableTick<decimal?>>
+     public class MyGmaIndicator : AnalyzableBase<IOhlcv, AnalyzableTick<decimal?>>
     {
         GenericMovingAverage _gma;
 
-        public MyGmaIndicator(IEnumerable<Candle> inputs, int periodCount) : base(inputs)
+        public MyGmaIndicator(IEnumerable<IOhlcv> inputs, int periodCount) : base(inputs)
         {
             // parameters: initialValueIndex, initialValueFunction, indexValueFunction, smoothingFactorFunction
 			_gma = new GenericMovingAverage(
@@ -376,7 +377,7 @@ Nuget package is available in modules, please install the package according to t
 				inputs.Count());
         }
 
-        protected override AnalyzableTick<decimal?> ComputeByIndexImpl(IReadOnlyList<Candle> mappedInputs, int index)
+        protected override AnalyzableTick<decimal?> ComputeByIndexImpl(IReadOnlyList<IOhlcv> mappedInputs, int index)
         {
             return new AnalyzableTick<decimal?>(mappedInputs[index].DateTime, _gma[index]);
         }
