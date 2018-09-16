@@ -15,9 +15,9 @@ namespace Trady.Analysis.Indicator
             : base(inputs, inputMapper)
         {
             PeriodCount = periodCount;
-            _halfPeriodWma = new WeightedMovingAverageByTuple(inputs.Select(inputMapper).ToList(), periodCount / 2);
+            _halfPeriodWma = new WeightedMovingAverageByTuple(inputs.Select(inputMapper).ToList(), Convert.ToInt32(Math.Round((periodCount * 1.0) / 2)));
             _fullPeriodWma = new WeightedMovingAverageByTuple(inputs.Select(inputMapper).ToList(), periodCount);
-            SqrtFactor = Convert.ToInt32(Math.Floor(Math.Sqrt(Convert.ToDouble(periodCount))));
+            SqrtFactor = Convert.ToInt32(Math.Round(Math.Sqrt(Convert.ToDouble(periodCount))));
             TriangularSqrtFactor = (1 + SqrtFactor) * SqrtFactor / 2;
         }
 
