@@ -18,4 +18,6 @@ Supported options are:
 * Monthly
 
 
+
+        // Transform<Source, Target>        
         var weeklyCandles = dailyCandles.Transform<Daily, Weekly>();

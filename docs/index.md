@@ -9,48 +9,21 @@
 ## Overview
 Trady is a .Net Standard 2.0 library for computing financial technical indicators, building buy/sell rules, back-testing and ultimately targets to be an automated trading system that provides stock data feeding, indicator computing, strategy building and automatic trading.
 
-## Read Before You Use
-This library is a hobby project, and would probably making breaking changes, use with care when in production.
-
-## Currently Available Features
-* Take in stock feeds (candle data) (including csv, Yahoo! Finance, Quandl, AlphaVantage, Stooq)
-* Indicator & Oscillator calculations (including but not limited to Simple Moving Average, Exponential Moving Average, Relative Strength Index (RSI), Moving Average Convergence/Divergence (MACD), Bollinger Band (BB), and [much much more](https://lppkarl.github.io/Trady/indicators.md))
-* Capture signals by coding rules
-* Measure your strategy by utilizing back-testing buy/sell rules.
-
-
-
-## Supported Platforms
-* .NET Core 2.0 or above
-* .NET Framework 4.6.1 or above
-* Mono 5.4 or above
-* Xamarin.iOS 10.4 or above
-* Xamarin.Android 7.5 or above
-* Xamarin.Mac 3.8 or above
-
-## Currently Supported Importers
-* Csv file
-* Yahoo Finance
-* Quandl
-* Stooq
-* AlphaVantage
-
-## Currently Supported Indicators
-Please refer to another markdown document [here](supported_indicators.md)
-
 
 
 ## How To Use
 <a name="Content"></a>
 * Getting Started
     * [Learn how to get started with Trady](getting_started.md)
+    * [Supported Platforms](platforms.md)
+    * [Features](features.md)
 
 * Importing
     * [Import Stock Data](importing.md)
     
 * Computing
     * [Transform Stock Data](transform.md)
-    * [Compute Indicator](#ComputeIndicators)
+    * [Using Indicators](indicator_usage.md)
     * [Compute Simple Operations on Indicator](#ComputeIndicatorsOperation)
     * [Convert Func to Indicator](#ConvertFunctionToAnalyzable)
     * [Register Func for Global Use](#RegisterFuncForGlobalUse)
@@ -58,9 +31,9 @@ Please refer to another markdown document [here](supported_indicators.md)
     * [Supported Candlestick Patterns](candlestock.md)
     * [Supported Rule Patterns](rule_patterns.md)
     
-* Backtesting
+* Back-testing
     * [Capture Signals by Rules](#CaptureSignalByRules)
-    * [Strategy Building and Backtesting](#StrategyBuildingAndBacktesting)
+    * [Strategy Building and Back-testing](#StrategyBuildingAndBacktesting)
     * [Implement Rule Pattern](#ImplementYourOwnPattern)
     * [Register Rule for Global Use](#RegisterRuleForGlobalUse)
 
@@ -69,22 +42,7 @@ Please refer to another markdown document [here](supported_indicators.md)
     * [Implement Your Own Indicator - Simple Type](#ImplementYourOwnIndicatorSimpleType)
     * [Implement Your Own Indicator - Cummulative Type](#ImplementYourOwnIndicatorCummulativeType)
     * [Implement Your Own Indicator - Moving Average Type](#ImplementYourOwnIndicatorMovingAverageType)
-
-
-
-<a name="ComputeIndicators"></a>
-### Compute indicator
-    // This library supports computing from tuples or candles, extensions are recommended for computing
-    var closes = new List<decimal>{ ... };
-    var smaTs = closes.Sma(30);
-    var sma = closes.Sma(30)[index];
-
-    // or, traditional call
-    var sma = new SimpleMovingAverageByTuple(closes, 30)[index];
-    
-    // the corresponding version of candle
-    var sma = new SimpleMovingAverage(candles, 30)[index];
-[Back to content](#Content)
+   
 
 <a name="ComputeIndicatorsOperation"></a>
 ### Compute simple operation on an indicator
@@ -326,6 +284,3 @@ Please refer to another markdown document [here](supported_indicators.md)
 * () REPL for dynamic indicator creation, rule creation, strategy making, backtesting, etc.
     * State saver & loader
 * MORE, MORE AND MORE!!!!
-
-## Powered by
-* [CsvHelper](https://github.com/JoshClose/CsvHelper) ([@JoshClose](https://github.com/JoshClose)) : Great library for reading/ writing CSV file

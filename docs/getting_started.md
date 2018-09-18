@@ -11,6 +11,9 @@ Nuget package is available in modules, please install the package according to t
     // For computing & backtesting
     PM > Install-Package Trady.Analysis
 
+    // The Core package
+    PM > Install-Package Trady.Core
+
 
 ## Step 1: Import Candlestick data from Feed
     var importer = new YahooFinanceImporter();
