@@ -69,6 +69,18 @@ namespace Trady.Test
         }
 
         [TestMethod]
+        public void ImportByAlphaVantage_Hourly()
+        {
+            // Test account api key
+            const string ApiKey = "WUT9R5SC4IHCNA4S";
+
+            var importer = new AlphaVantageImporter(ApiKey, OutputSize.full);            
+            var candles = importer.ImportAsync("WBA", period: Core.Period.PeriodOption.Hourly).Result;
+            var candle = candles.FirstOrDefault();
+            Assert.IsNotNull(candle);            
+        }
+
+        [TestMethod]
         public void ImportByYahoo()
         {
             var importer = new YahooFinanceImporter();

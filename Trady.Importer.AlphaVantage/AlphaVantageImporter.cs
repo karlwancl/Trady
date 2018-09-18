@@ -24,8 +24,8 @@ namespace Trady.Importer.AlphaVantage
 
         protected string ApiKey { get; set; }
         public OutputSize OutputSize { get; set; }
-        private static readonly HttpClient client = new HttpClient();
-        protected static HttpClient Client
+        private readonly HttpClient client = new HttpClient();
+        protected HttpClient Client
         {
             get
             {
@@ -56,18 +56,23 @@ namespace Trady.Importer.AlphaVantage
             switch(period)
             {
                 case PeriodOption.PerMinute:
+                    format = "yyyy-MM-dd HH:mm:ss";
                     function = "function=TIME_SERIES_INTRADAY&interval=1min";                    
                     break;
                 case PeriodOption.Per5Minute:
+                    format = "yyyy-MM-dd HH:mm:ss";
                     function = "function=TIME_SERIES_INTRADAY&interval=5min";                    
                     break;
                 case PeriodOption.Per15Minute:
+                    format = "yyyy-MM-dd HH:mm:ss";
                     function = "function=TIME_SERIES_INTRADAY&interval=15min";
                     break;
                 case PeriodOption.Per30Minute:
+                    format = "yyyy-MM-dd HH:mm:ss";
                     function = "function=TIME_SERIES_INTRADAY&interval=30min";
                     break;
                 case PeriodOption.Hourly:
+                    format = "yyyy-MM-dd HH:mm:ss";
                     function = "function=TIME_SERIES_INTRADAY&interval=60min";
                     break;
                 case PeriodOption.Daily:
