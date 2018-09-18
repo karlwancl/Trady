@@ -1,82 +1,39 @@
+[Getting Started](getting_started.md) | [Release Notes](release_notes.md) | [Indicators](indicators.md) | 
+
 # Trady
 [![Build status](https://ci.appveyor.com/api/projects/status/kqwo74gn5ms3h0n2?svg=true)](https://ci.appveyor.com/project/lppkarl/trady)
 [![NuGet Pre Release](https://img.shields.io/nuget/v/Trady.Analysis.svg)](https://www.nuget.org/packages/Trady.Analysis/3.2.0)
 [![NuGet](https://img.shields.io/nuget/dt/Trady.Analysis.svg)](https://www.nuget.org/packages/Trady.Analysis/3.2.0)
 [![license](https://img.shields.io/github/license/lppkarl/Trady.svg)](LICENSE)
 
-Trady is a handy library for computing technical indicators, and targets to be an automated trading system that provides stock data feeding, indicator computing, strategy building and automatic trading. It is built based on .NET Standard 2.0.
+## Overview
+Trady is a .Net Standard 2.0 library for computing financial technical indicators, building buy/sell rules, back-testing and ultimately targets to be an automated trading system that provides stock data feeding, indicator computing, strategy building and automatic trading.
 
-## Read Before You Use
-This library is a hobby project, and would probably making breaking changes, use with care when in production.
 
-## Currently Available Features
-* Stock data feeding (including csv, yahoo finance, quandl, alphavantage, stooq)
-* Indicator computing (including SMA, EMA, RSI, MACD, BB, etc.)
-* Signal capturing by rules
-* Strategy backtesting by buy/sell rule
-
-## v3.2 update
-* Added WeightedMovingAverage, HullMovingAverage & KeltnerChannels
-* Added AlphaVantage importer (thanks to @irperez)
-* Reactivate support for QuandlImporter
-* Boost performance on date time transformation (thanks to @pavlexander)
-* Boost performance for various indicators (HistoricalHighest/HistoricalLowest/EmaOsc/Macd/ADLine/Obv/ParabolicSar, etc.)
-* Update dependencies for importers
-* Remove redundant sdCount parameter for Sd operation
-* EffeciencyRatio & Kama now accepts nullable decimal as input
-* Allow use of simple operation for ParabolicSar
-* Renamed simple operation "PcDiff" to "RDiff"
-
-For older version history, please refer to another markdown document [here](release_notes.md)
-
-## Updates from 2.0.x to 3.0.0
-Please refer to another markdown document [here](update_from_2.0.x.md)
-
-## Supported Platforms
-* .NET Core 2.0 or above
-* .NET Framework 4.6.1 or above
-* Mono 5.4 or above
-* Xamarin.iOS 10.4 or above
-* Xamarin.Android 7.5 or above
-* Xamarin.Mac 3.8 or above
-
-## Currently Supported Importers
-* Csv file
-* Yahoo Finance
-* Quandl
-* Stooq
-* AlphaVantage
-
-## Currently Supported Indicators
-Please refer to another markdown document [here](supported_indicators.md)
-
-## How To Install
-Nuget package is available in modules, please install the package according to the needs
-
-    // For importing
-    PM > Install-Package Trady.Importer
-
-    // For computing & backtesting
-    PM > Install-Package Trady.Analysis
 
 ## How To Use
 <a name="Content"></a>
-* Tldr
-    * [Tldr](#tldr)
+* Getting Started
+    * [Learn how to get started with Trady](getting_started.md)
+    * [Supported Platforms](platforms.md)
+    * [Features](features.md)
 
 * Importing
-    * [Import Stock Data](#ImportStockData)
+    * [Import Stock Data](importing.md)
     
 * Computing
-    * [Transform Stock Data](#TransformStockData)
-    * [Compute Indicator](#ComputeIndicators)
+    * [Transform Stock Data](transform.md)
+    * [Using Indicators](indicator_usage.md)
     * [Compute Simple Operations on Indicator](#ComputeIndicatorsOperation)
     * [Convert Func to Indicator](#ConvertFunctionToAnalyzable)
     * [Register Func for Global Use](#RegisterFuncForGlobalUse)
+    * [Supported Indicators](indicators.md)
+    * [Supported Candlestick Patterns](candlestock.md)
+    * [Supported Rule Patterns](rule_patterns.md)
     
-* Backtesting
+* Back-testing
     * [Capture Signals by Rules](#CaptureSignalByRules)
-    * [Strategy Building and Backtesting](#StrategyBuildingAndBacktesting)
+    * [Strategy Building and Back-testing](#StrategyBuildingAndBacktesting)
     * [Implement Rule Pattern](#ImplementYourOwnPattern)
     * [Register Rule for Global Use](#RegisterRuleForGlobalUse)
 
@@ -85,60 +42,7 @@ Nuget package is available in modules, please install the package according to t
     * [Implement Your Own Indicator - Simple Type](#ImplementYourOwnIndicatorSimpleType)
     * [Implement Your Own Indicator - Cummulative Type](#ImplementYourOwnIndicatorCummulativeType)
     * [Implement Your Own Indicator - Moving Average Type](#ImplementYourOwnIndicatorMovingAverageType)
-
-<a name="tldr"></a>
-### Tldr
-    var importer = new YahooFinanceImporter();
-    var candles = await importer.ImportAsync("FB");
-    var last = candles.Sma(30).Last();
-    Console.WriteLine($"{last.DateTime}, {last.Tick}");
-[Back to content](#Content)
-
-<a name="ImportStockData"></a>
-### Import stock data
-    // From Quandl wiki database
-    var importer = new QuandlWikiImporter(apiKey);
-
-    // From Yahoo Finance
-    var importer = new YahooFinanceImporter();
-
-    // From Stooq
-    var importer = new StooqImporter();
-
-    // From AlphaVantage
-    var importer = new AlphaVantageImporter(apiKey);
-
-    // From Google Finance (Temporarily not available now)
-    // var importer = new GoogleFinanceImporter();
-
-    // Or from dedicated csv file
-    var importer = new CsvImporter("FB.csv");
-
-    // Get stock data from the above importer
-    var candles = await importer.ImportAsync("FB");
-[Back to content](#Content)
-
-<a name="TransformStockData"></a>
-### Transform stock data to specified period before computation
-    // Transform the series for computation, downcast is forbidden
-    // Supported period: PerSecond, PerMinute, Per15Minutes, Per30Minutes, Hourly, BiHourly, Daily, Weekly, Monthly
-
-    var transformedCandles = candles.Transform<Daily, Weekly>();
-[Back to content](#Content)
-
-<a name="ComputeIndicators"></a>
-### Compute indicator
-    // This library supports computing from tuples or candles, extensions are recommended for computing
-    var closes = new List<decimal>{ ... };
-    var smaTs = closes.Sma(30);
-    var sma = closes.Sma(30)[index];
-
-    // or, traditional call
-    var sma = new SimpleMovingAverageByTuple(closes, 30)[index];
-    
-    // the corresponding version of candle
-    var sma = new SimpleMovingAverage(candles, 30)[index];
-[Back to content](#Content)
+   
 
 <a name="ComputeIndicatorsOperation"></a>
 ### Compute simple operation on an indicator
@@ -279,21 +183,6 @@ Nuget package is available in modules, please install the package according to t
         var isAboveSma30Candles = new SimpleRuleExecutor(ctx, ruleX).Execute();
     }
 
-<a name="ImplementYourOwnImporter"></a>
-### Implement your own importer
-    // You can also implement your own importer by implementing the IImporter interface
-    public class MyImporter : IImporter
-    {
-        public async Task<IReadOnlyList<IOhlcv>> ImportAsync(string symbol, DateTime? startTime = null, DateTime? endTime = null, PeriodOption period = PeriodOption.Daily, CancellationToken token = default(CancellationToken))
-        {
-            // Your implementation to return a list of candles
-        }
-    }
-    
-    // Use case
-    var importer = new MyImporter();
-    var candles = await importer.ImportAsync("FB");
-[Back to content](#Content)
 
 <a name="ImplementYourOwnIndicatorSimpleType"></a>
 ### Implement your own indicator - Simple Type
@@ -395,6 +284,3 @@ Nuget package is available in modules, please install the package according to t
 * () REPL for dynamic indicator creation, rule creation, strategy making, backtesting, etc.
     * State saver & loader
 * MORE, MORE AND MORE!!!!
-
-## Powered by
-* [CsvHelper](https://github.com/JoshClose/CsvHelper) ([@JoshClose](https://github.com/JoshClose)) : Great library for reading/ writing CSV file
