@@ -49,11 +49,14 @@ Please refer to another markdown document [here](supported_indicators.md)
     * [Import Stock Data](importing.md)
     
 * Computing
-    * [Transform Stock Data](#TransformStockData)
+    * [Transform Stock Data](transform.md)
     * [Compute Indicator](#ComputeIndicators)
     * [Compute Simple Operations on Indicator](#ComputeIndicatorsOperation)
     * [Convert Func to Indicator](#ConvertFunctionToAnalyzable)
     * [Register Func for Global Use](#RegisterFuncForGlobalUse)
+    * [Supported Indicators](indicators.md)
+    * [Supported Candlestick Patterns](candlestock.md)
+    * [Supported Rule Patterns](rule_patterns.md)
     
 * Backtesting
     * [Capture Signals by Rules](#CaptureSignalByRules)
@@ -68,14 +71,6 @@ Please refer to another markdown document [here](supported_indicators.md)
     * [Implement Your Own Indicator - Moving Average Type](#ImplementYourOwnIndicatorMovingAverageType)
 
 
-
-<a name="TransformStockData"></a>
-### Transform stock data to specified period before computation
-    // Transform the series for computation, downcast is forbidden
-    // Supported period: PerSecond, PerMinute, Per15Minutes, Per30Minutes, Hourly, BiHourly, Daily, Weekly, Monthly
-
-    var transformedCandles = candles.Transform<Daily, Weekly>();
-[Back to content](#Content)
 
 <a name="ComputeIndicators"></a>
 ### Compute indicator

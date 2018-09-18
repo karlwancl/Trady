@@ -72,3 +72,20 @@ You can implement your own importer by implementing the IImporter interface foun
     var importer = new MyImporter();
     var candles = await importer.ImportAsync("FB");
 
+## Using the CSV Importer
+The CSV importer allows for custom configuration regarding the format of the CSV file.
+
+The CsvImportConfiguration class allows options for date formats, culture, delimiter and header records.
+
+    var config = new CsvImportConfiguration()
+    {
+        Culture = "en-US",
+        Delimiter = ";",
+        DateFormat = "yyyyMMdd HHmmss",
+        HasHeaderRecord = false
+    };
+
+Once the configuration is defined, pass in the configuration to the CsvImporter's constructor.
+
+    var importer = new CsvImporter("EURUSD.csv", config);
+    var candles = await importer.ImportAsync("EURUSD");
