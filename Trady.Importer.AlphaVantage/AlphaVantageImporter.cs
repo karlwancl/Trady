@@ -24,8 +24,8 @@ namespace Trady.Importer.AlphaVantage
 
         protected string ApiKey { get; set; }
         public OutputSize OutputSize { get; set; }
-        private static readonly HttpClient client = new HttpClient();
-        protected static HttpClient Client
+        private readonly HttpClient client = new HttpClient();
+        protected HttpClient Client
         {
             get
             {
