@@ -69,34 +69,28 @@ namespace Trady.Analysis.Backtest
 
         private BuySellRuleExecutor CreateBuySellRuleExecutor(IAnalyzeContext<IOhlcv> context, decimal premium, IDictionary<IEnumerable<IOhlcv>, decimal> assetCashMap, List<Transaction> transactions)
         {
-            Func<IEnumerable<Transaction>, IAnalyzeContext<IOhlcv>, TransactionType, bool> isPreviousTransactionA = (ts, ctx, tt)
-                => ts.LastOrDefault(_t => _t.IOhlcvDatas.Equals(ctx.BackingList))?.Type == tt;
+            bool isPrevTransactionOfType(IEnumerable<Transaction> ts, IAnalyzeContext<IOhlcv> ctx, TransactionType tt)
+                => ts.LastOrDefault(_t => _t.OhlcvList.Equals(ctx.BackingList))?.Type == tt;
 
-            Predicate<IIndexedOhlcv> buyRule = ic
-                => !isPreviousTransactionA(transactions, ic.Context, TransactionType.Buy) && _buyRule(ic);
+            bool buyRule(IIndexedOhlcv ic)
+                => !isPrevTransactionOfType(transactions, ic.Context, TransactionType.Buy) && _buyRule(ic);
 
-            Predicate<IIndexedOhlcv> sellRule = ic
-                => transactions.Any() && !isPreviousTransactionA(transactions, ic.Context, TransactionType.Sell) && _sellRule(ic);
+            bool sellRule(IIndexedOhlcv ic)
+                => transactions.Any() && !isPrevTransactionOfType(transactions, ic.Context, TransactionType.Sell) && _sellRule(ic);
 
-            Func<IIndexedOhlcv, int, (TransactionType, IIndexedOhlcv)?> outputFunc = (ic, i) =>
+            (TransactionType, IIndexedOhlcv)? outputFunc(IIndexedOhlcv ic, int i)
             {
                 if (ic.Next == null)
-                {
                     return null;
-                }
 
                 var type = (TransactionType)i;
                 if (type.Equals(TransactionType.Buy))
-                {
                     BuyAsset(ic, premium, assetCashMap, transactions);
-                }
                 else
-                {
                     SellAsset(ic, premium, assetCashMap, transactions);
-                }
 
                 return ((TransactionType)i, ic);
-            };
+            }
 
             return new BuySellRuleExecutor(outputFunc, context, buyRule, sellRule);
         }
@@ -105,26 +99,26 @@ namespace Trady.Analysis.Backtest
         {
             if (assetCashMap.TryGetValue(indexedCandle.BackingList, out decimal availableQuoteCurrency))
             {
-                var nextIOhlcvData = indexedCandle.Next;
-                decimal baseCurrencyQte = (availableQuoteCurrency - premium) / nextIOhlcvData.Open;
+                var nextCandle = indexedCandle.Next;
+                decimal baseCurrencyQte = (availableQuoteCurrency - premium) / nextCandle.Open;
 
                 if (_buyCompleteBaseCurrencies)
                 {
                     baseCurrencyQte = Math.Floor(baseCurrencyQte);
                 }
 
-                decimal quoteCurrencyQte = nextIOhlcvData.Open * baseCurrencyQte + premium;
+                decimal quoteCurrencyQte = nextCandle.Open * baseCurrencyQte + premium;
 
                 // EUR/USD (1€ = 1000$) ; flat exchange fee ratio percent = 0.1
                 // you buy 2000$
                 // Total 2€, fee = 2 * 0.001 = 0.002, net = 2 - 0.002 = 1.998 €
                 baseCurrencyQte -= _flatExchangeFee * baseCurrencyQte;
-                var quoteCurrencyFee = _flatExchangeFee * nextIOhlcvData.Open;
+                var quoteCurrencyFee = _flatExchangeFee * nextCandle.Open;
 
                 assetCashMap[indexedCandle.BackingList] -= quoteCurrencyQte;
                 
-                transactions.Add(new Transaction(indexedCandle.BackingList, nextIOhlcvData.Index, nextIOhlcvData.DateTime, TransactionType.Buy, baseCurrencyQte, quoteCurrencyQte));
-                OnBought?.Invoke(indexedCandle.BackingList, nextIOhlcvData.Index, nextIOhlcvData.DateTime, nextIOhlcvData.Open, baseCurrencyQte, quoteCurrencyQte, assetCashMap[indexedCandle.BackingList]);
+                transactions.Add(new Transaction(indexedCandle.BackingList, nextCandle.Index, nextCandle.DateTime, TransactionType.Buy, baseCurrencyQte, quoteCurrencyQte));
+                OnBought?.Invoke(indexedCandle.BackingList, nextCandle.Index, nextCandle.DateTime, nextCandle.Open, baseCurrencyQte, quoteCurrencyQte, assetCashMap[indexedCandle.BackingList]);
             }
         }
 
@@ -132,11 +126,13 @@ namespace Trady.Analysis.Backtest
         {
             if (assetCashMap.TryGetValue(indexedCandle.BackingList, out _))
             {
-                var nextIOhlcvData = indexedCandle.Next;
-                var lastTransaction = transactions.LastOrDefault(t => t.IOhlcvDatas.Equals(indexedCandle.BackingList));
+                var nextCandle = indexedCandle.Next;
+                var lastTransaction = transactions.LastOrDefault(t => t.OhlcvList.Equals(indexedCandle.BackingList));
+                if (lastTransaction == default)
+                    return;
 
                 var baseCurrencyQte = lastTransaction.Quantity;
-                decimal quoteCurrencyQte = nextIOhlcvData.Open * baseCurrencyQte - premium;
+                decimal quoteCurrencyQte = nextCandle.Open * baseCurrencyQte - premium;
                 
                 // EUR/USD (1€ = 1000$) ; flat exchange fee ratio percent = 0.1
                 // you sell 1.999€
@@ -146,8 +142,8 @@ namespace Trady.Analysis.Backtest
                 decimal plRatio = (quoteCurrencyQte - lastTransaction.AbsoluteCashFlow) / lastTransaction.AbsoluteCashFlow;
                 assetCashMap[indexedCandle.BackingList] += quoteCurrencyQte;
 
-                transactions.Add(new Transaction(indexedCandle.BackingList, nextIOhlcvData.Index, nextIOhlcvData.DateTime, TransactionType.Sell, baseCurrencyQte, quoteCurrencyQte));
-                OnSold?.Invoke(indexedCandle.BackingList, nextIOhlcvData.Index, nextIOhlcvData.DateTime, nextIOhlcvData.Open, baseCurrencyQte, quoteCurrencyQte, assetCashMap[indexedCandle.BackingList], plRatio);
+                transactions.Add(new Transaction(indexedCandle.BackingList, nextCandle.Index, nextCandle.DateTime, TransactionType.Sell, baseCurrencyQte, quoteCurrencyQte));
+                OnSold?.Invoke(indexedCandle.BackingList, nextCandle.Index, nextCandle.DateTime, nextCandle.Open, baseCurrencyQte, quoteCurrencyQte, assetCashMap[indexedCandle.BackingList], plRatio);
             }
         }
     }

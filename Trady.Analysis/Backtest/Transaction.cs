@@ -9,7 +9,7 @@ namespace Trady.Analysis.Backtest
     {
         public Transaction(IEnumerable<IOhlcv> candles, int index, DateTimeOffset dateTime, TransactionType type, decimal quantity, decimal absCashFlow)
         {
-            IOhlcvDatas = candles;
+            OhlcvList = candles;
             Index = index;
             DateTime = dateTime;
             Type = type;
@@ -17,7 +17,7 @@ namespace Trady.Analysis.Backtest
             AbsoluteCashFlow = absCashFlow;
         }
 
-        public IEnumerable<IOhlcv> IOhlcvDatas { get; }
+        public IEnumerable<IOhlcv> OhlcvList { get; }
 
         public DateTimeOffset DateTime { get; }
 
@@ -31,7 +31,7 @@ namespace Trady.Analysis.Backtest
 
         public bool Equals(Transaction other)
             => other != null
-               && IOhlcvDatas.Equals(other.IOhlcvDatas)
+               && OhlcvList.Equals(other.OhlcvList)
                && DateTime == other.DateTime
                && Index == other.Index
                && Type == other.Type

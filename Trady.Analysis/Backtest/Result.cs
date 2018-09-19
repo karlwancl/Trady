@@ -29,9 +29,9 @@ namespace Trady.Analysis.Backtest
 
         public int TotalSellCount => Transactions.Count(t => t.Type == TransactionType.Sell);
 
-        public int BuyCount(IEnumerable<IOhlcv> candles) => Transactions.Count(t => t.IOhlcvDatas.Equals(candles) && t.Type == TransactionType.Buy);
+        public int BuyCount(IEnumerable<IOhlcv> candles) => Transactions.Count(t => t.OhlcvList.Equals(candles) && t.Type == TransactionType.Buy);
 
-        public int SellCount(IEnumerable<IOhlcv> candles) => Transactions.Count(t => t.IOhlcvDatas.Equals(candles) && t.Type == TransactionType.Sell);
+        public int SellCount(IEnumerable<IOhlcv> candles) => Transactions.Count(t => t.OhlcvList.Equals(candles) && t.Type == TransactionType.Sell);
 
         public int TotalCorrectedTransactionCount => TotalCorrectedBuyCount + TotalSellCount;
 
@@ -39,7 +39,7 @@ namespace Trady.Analysis.Backtest
 
         public int CorrectedBuyCount(IEnumerable<IOhlcv> candles)
         {
-            var trans = Transactions.Where(t => t.IOhlcvDatas.Equals(candles));
+            var trans = Transactions.Where(t => t.OhlcvList.Equals(candles));
             if (trans.Any())
             {
                 var lastTrans = trans.ElementAt(trans.Count() - 1);
@@ -69,7 +69,7 @@ namespace Trady.Analysis.Backtest
             if (!PostAssetCashMap.TryGetValue(candles, out decimal postCash))
                 throw new ArgumentException("Can't get the final cash amount for the corresponding asset!");
 
-            var trans = Transactions.Where(t => t.IOhlcvDatas.Equals(candles));
+            var trans = Transactions.Where(t => t.OhlcvList.Equals(candles));
             if (trans.Any() && trans.Last().Type == TransactionType.Buy)
                 postCash += trans.Last().AbsoluteCashFlow;
 
