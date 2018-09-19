@@ -193,7 +193,7 @@ namespace Trady.Test
         }
 
         [TestMethod]
-        public async Task TestIssue69()
+        public async Task TestIssue70()
         {
             var importer = new AlphaVantageImporter("[YourAPIKey]", OutputSize.full);
             var fb = importer.ImportAsync("fb", startTime: new DateTime(2018, 1, 1), period: PeriodOption.PerMinute).Result;
@@ -211,12 +211,15 @@ namespace Trady.Test
                             .And(c => c.IsRsiOverbought2());
 
             var runner = new Trady.Analysis.Backtest.Builder()
-                .Add(att, 33).Add(wba, 33).Add(fb, 33)
+                //.Add(att, 33).Add(wba, 33).Add(fb, 33)
+                .Add(wba)
                 .Buy(buyRule)
                 .Sell(sellRule)
+                .FlatExchangeFeeRate(5)
+                .Premium(1)
                 .Build();
 
-            var result = runner.RunAsync(10000, 1, new DateTime(2018, 1, 1)).Result;
+            var result = runner.RunAsync(10000, new DateTime(2018, 1, 1)).Result;
 
             Console.WriteLine($"Transaction count: {result.Transactions.Count():#.##}, P/L ratio: {result.TotalCorrectedProfitLossRatio * 100}%, Principal: {result.TotalPrincipal}, Total: {result.TotalCorrectedBalance}");
         }

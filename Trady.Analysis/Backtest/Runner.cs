@@ -13,18 +13,21 @@ namespace Trady.Analysis.Backtest
         private Predicate<IIndexedOhlcv> _buyRule, _sellRule;
         private readonly decimal _flatExchangeFee;
         private readonly bool _buyInCompleteQuantity;
+        private readonly decimal _premium;
 
         internal Runner(IDictionary<IEnumerable<IOhlcv>, int> weightings,
             Predicate<IIndexedOhlcv> buyRule,
             Predicate<IIndexedOhlcv> sellRule,
             decimal flatExchangeFee,
-            bool buyInCompleteQuantity)
+            bool buyInCompleteQuantity,
+            decimal premium)
         {
             _weightings = weightings;
             _buyRule = buyRule;
             _sellRule = sellRule;
             _flatExchangeFee = flatExchangeFee;
             _buyInCompleteQuantity = buyInCompleteQuantity;
+            _premium = premium;
         }
 
         public event BuyHandler OnBought;
@@ -35,10 +38,10 @@ namespace Trady.Analysis.Backtest
 
         public delegate void SellHandler(IEnumerable<IOhlcv> candles, int index, DateTimeOffset dateTime, decimal sellPrice, decimal quantity, decimal absCashFlow, decimal currentCashAmount, decimal plRatio);
 
-        public Task<Result> RunAsync(decimal principal, decimal premium = 1.0m, DateTime? startTime = null, DateTime? endTime = null)
-            => Task.Factory.StartNew(() => Run(principal, premium, startTime, endTime));
+        public Task<Result> RunAsync(decimal principal, DateTime? startTime = null, DateTime? endTime = null)
+            => Task.Factory.StartNew(() => Run(principal, startTime, endTime));
 
-        public Result Run(decimal principal, decimal premium = 1.0m, DateTime? startTime = null, DateTime? endTime = null)
+        public Result Run(decimal principal, DateTime? startTime = null, DateTime? endTime = null)
         {
             if (_weightings == null || !_weightings.Any())
                 throw new ArgumentException("You should have at least one candle set for calculation");
@@ -59,7 +62,7 @@ namespace Trady.Analysis.Backtest
                 var endIndex = asset.FindLastIndexOrDefault(c => c.DateTime <= (endTime ?? DateTimeOffset.MaxValue), asset.Count() - 1).Value;
                 using (var context = new AnalyzeContext(asset))
                 {
-                    var executor = CreateBuySellRuleExecutor(context, premium, assetCashMap, transactions);
+                    var executor = CreateBuySellRuleExecutor(context, _premium, assetCashMap, transactions);
                     executor.Execute(startIndex, endIndex);
                 }
             }
