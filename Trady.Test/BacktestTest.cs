@@ -83,7 +83,7 @@ namespace Trady.Test
 
             var runner = new Builder()
                 .Add(candles)
-                .BuyPartialCurrencies()
+                .BuyWithAllAvailableCash()
                 .Buy(buyRule)
                 .Sell(sellRule)
                 .Build();
@@ -121,8 +121,8 @@ namespace Trady.Test
 
             var runner = new Builder()
                 .Add(candles)
-                .BuyPartialCurrencies()
-                .Fee(0.001m)
+                .BuyWithAllAvailableCash()
+                .FlatExchangeFeeRate(0.001m)
                 .Buy(buyRule)
                 .Sell(sellRule)
                 .Build();
