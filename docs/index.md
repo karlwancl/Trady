@@ -124,10 +124,13 @@ Trady is a .Net Standard 2.0 library for computing financial technical indicator
         .Add(aapl, 30)
         .Buy(buyRule)
         .Sell(sellRule)
+        .BuyWithAllAvailableCash()
+        .FlatExchangeFeeRate(0.001m)
+        .Premium(1)
         .Build();
     
     // Start backtesting with the portfolio
-    var result = await runner.RunAsync(10000, 1);
+    var result = await runner.RunAsync(10000);
 
     // Get backtest result for the portfolio
     Console.WriteLine(string.Format("Transaction count: {0:#.##}, P/L ratio: {1:0.##}%, Principal: {2:#}, Total: {3:#}",
