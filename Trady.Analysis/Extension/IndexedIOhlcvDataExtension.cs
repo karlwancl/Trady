@@ -38,10 +38,10 @@ namespace Trady.Analysis.Extension
         public static bool IsBelowBbLow(this IIndexedOhlcv ic, int periodCount, int sdCount)
             => ic.Get<BollingerBands>(periodCount, sdCount)[ic.Index].Tick.IsTrue((low, mid, up) => ic.Close < low);
 
-        public static bool IsRsiOverbought(this IIndexedOhlcv ic, int periodCount)
+        public static bool IsRsiOverbought(this IIndexedOhlcv ic, int periodCount = 14)
             => ic.Get<RelativeStrengthIndex>(periodCount)[ic.Index].Tick.IsTrue(t => t >= 70);
 
-        public static bool IsRsiOversold(this IIndexedOhlcv ic, int periodCount)
+        public static bool IsRsiOversold(this IIndexedOhlcv ic, int periodCount = 14)
             => ic.Get<RelativeStrengthIndex>(periodCount)[ic.Index].Tick.IsTrue(t => t <= 30);
 
         public static bool IsFastStoOverbought(this IIndexedOhlcv ic, int periodCount, int smaPeriodCount)
@@ -62,13 +62,13 @@ namespace Trady.Analysis.Extension
         public static bool IsSlowStoOversold(this IIndexedOhlcv ic, int periodCount, int smaPeriodCountD)
             => ic.Get<Stochastics.Slow>(periodCount, smaPeriodCountD)[ic.Index].Tick.IsTrue((k, d, j) => k <= 20);
 
-        public static bool IsAboveSma(this IIndexedOhlcv ic, int periodCount)
+        public static bool IsAboveSma(this IIndexedOhlcv ic, int periodCount = 30)
             => ic.Get<SimpleMovingAverage>(periodCount)[ic.Index].Tick.IsTrue(t => ic.Close > t);
 
         public static bool IsAboveEma(this IIndexedOhlcv ic, int periodCount)
             => ic.Get<ExponentialMovingAverage>(periodCount)[ic.Index].Tick.IsTrue(t => ic.Close > t);
 
-        public static bool IsBelowSma(this IIndexedOhlcv ic, int periodCount)
+        public static bool IsBelowSma(this IIndexedOhlcv ic, int periodCount = 30)
             => ic.Get<SimpleMovingAverage>(periodCount)[ic.Index].Tick.IsTrue(t => ic.Close < t);
 
         public static bool IsBelowEma(this IIndexedOhlcv ic, int periodCount)
@@ -98,10 +98,10 @@ namespace Trady.Analysis.Extension
         public static bool IsEmaOscBearish(this IIndexedOhlcv ic, int periodCount1, int periodCount2)
             => ic.Get<ExponentialMovingAverageOscillator>(periodCount1, periodCount2).Diff(ic.Index).Tick.IsNegative();
 
-        public static bool IsMacdOscBullish(this IIndexedOhlcv ic, int emaPeriodCount1, int emaPeriodCount2, int demPeriodCount)
+        public static bool IsMacdOscBullish(this IIndexedOhlcv ic, int emaPeriodCount1 = 12, int emaPeriodCount2 = 26, int demPeriodCount = 9)
             => ic.Get<MovingAverageConvergenceDivergenceHistogram>(emaPeriodCount1, emaPeriodCount2, demPeriodCount).Diff(ic.Index).Tick.IsPositive();
 
-        public static bool IsMacdOscBearish(this IIndexedOhlcv ic, int emaPeriodCount1, int emaPeriodCount2, int demPeriodCount)
+        public static bool IsMacdOscBearish(this IIndexedOhlcv ic, int emaPeriodCount1 = 12, int emaPeriodCount2 = 26, int demPeriodCount = 9)
             => ic.Get<MovingAverageConvergenceDivergenceHistogram>(emaPeriodCount1, emaPeriodCount2, demPeriodCount).Diff(ic.Index).Tick.IsNegative();
 
         public static bool IsFastStoOscBullish(this IIndexedOhlcv ic, int periodCount, int smaPeriodCount)
@@ -138,11 +138,11 @@ namespace Trady.Analysis.Extension
             => ic.Get<ExponentialMovingAverageOscillator>(periodCount1, periodCount2).ComputeNeighbour(ic.Index)
                  .IsTrue((prev, current, _) => prev.Tick.IsPositive() && current.Tick.IsNegative());
 
-        public static bool IsMacdBullishCross(this IIndexedOhlcv ic, int emaPeriodCount1, int emaPeriodCount2, int demPeriodCount)
+        public static bool IsMacdBullishCross(this IIndexedOhlcv ic, int emaPeriodCount1 = 12, int emaPeriodCount2 = 26, int demPeriodCount = 9)
             => ic.Get<MovingAverageConvergenceDivergenceHistogram>(emaPeriodCount1, emaPeriodCount2, demPeriodCount).ComputeNeighbour(ic.Index)
                  .IsTrue((prev, current, _) => prev.Tick.IsNegative() && current.Tick.IsPositive());
 
-        public static bool IsMacdBearishCross(this IIndexedOhlcv ic, int emaPeriodCount1, int emaPeriodCount2, int demPeriodCount)
+        public static bool IsMacdBearishCross(this IIndexedOhlcv ic, int emaPeriodCount1 = 12, int emaPeriodCount2 = 26, int demPeriodCount = 9)
             => ic.Get<MovingAverageConvergenceDivergenceHistogram>(emaPeriodCount1, emaPeriodCount2, demPeriodCount).ComputeNeighbour(ic.Index)
                  .IsTrue((prev, current, _) => prev.Tick.IsPositive() && current.Tick.IsNegative());
 
