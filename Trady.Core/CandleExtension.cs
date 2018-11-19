@@ -80,9 +80,11 @@ namespace Trady.Core
         {
             var periodInstance = Activator.CreateInstance<TPeriod>();
             err = default;
+            var offset = candles.Any() ? candles.First().DateTime.Offset.Hours : 0;
             for (int i = 0; i < candles.Count() - 1; i++)
             {
-                var candleEndTime = periodInstance.NextTimestamp(candles.ElementAt(i).DateTime);
+                var nextTime = periodInstance.NextTimestamp(candles.ElementAt(i).DateTime);
+                var candleEndTime = new DateTimeOffset(nextTime.Date, TimeSpan.FromHours(offset));
                 if (candleEndTime > candles.ElementAt(i + 1).DateTime)
                 {
                     err = candles.ElementAt(i);
