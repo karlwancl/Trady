@@ -51,7 +51,6 @@
   </ItemGroup>
   <!--<Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />-->
   <ItemGroup>
-    <Folder Include="Backtest\" />
     <Folder Include="Candlestick\" />
   </ItemGroup>
 </Project>
