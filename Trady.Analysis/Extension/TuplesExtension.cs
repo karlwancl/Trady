@@ -183,11 +183,17 @@ namespace Trady.Analysis.Extension
 		public static IReadOnlyList<decimal?> Median(this IEnumerable<decimal?> inputs, int periodCount, int? startIndex = null, int? endIndex = null)
 	        => new MedianByTuple(inputs, periodCount).Compute(startIndex, endIndex);
 
+        public static IReadOnlyList<decimal?> Nvi(this IEnumerable<(decimal Close, decimal Volume)> inputs, int? startIndex = null, int? endIndex = null)
+            => new NegativeVolumeIndexByTuple(inputs).Compute(startIndex, endIndex);
+
         public static IReadOnlyList<decimal?> Percentile(this IEnumerable<decimal> inputs, int periodCount, decimal percent, int? startIndex = null, int? endIndex = null)
             => new PercentileByTuple(inputs, periodCount, percent).Compute(startIndex, endIndex);
 
 		public static IReadOnlyList<decimal?> Percentile(this IEnumerable<decimal?> inputs, int periodCount, decimal percent, int? startIndex = null, int? endIndex = null)
 	        => new PercentileByTuple(inputs, periodCount, percent).Compute(startIndex, endIndex);
+
+        public static IReadOnlyList<decimal?> Pvi(this IEnumerable<(decimal Close, decimal Volume)> inputs, int? startIndex = null, int? endIndex = null)
+            => new PositiveVolumeIndexByTuple(inputs).Compute(startIndex, endIndex);
 
         public static IReadOnlyList<decimal?> Sar(this IEnumerable<(decimal High, decimal Low)> inputs, decimal step, decimal maximumStep, int? startIndex = null, int? endIndex = null)
             => new ParabolicStopAndReverseByTuple(inputs, step, maximumStep).Compute(startIndex, endIndex);

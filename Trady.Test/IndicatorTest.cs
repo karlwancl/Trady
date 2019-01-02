@@ -48,6 +48,22 @@ namespace Trady.Test
         //}
 
         [TestMethod]
+        public async Task TestNviAsync()
+        {
+            var candles = await ImportIOhlcvDatasAsync();
+            var result = candles.Nvi()[candles.Count() - 1];
+            Assert.IsTrue(result.Tick.Value.IsApproximatelyEquals(170.2842636m));
+        }
+
+        [TestMethod]
+        public async Task TestPviAsync()
+        {
+            var candles = await ImportIOhlcvDatasAsync();
+            var result = candles.Pvi()[candles.Count() - 1];
+            Assert.IsTrue(result.Tick.Value.IsApproximatelyEquals(261.1533739m));
+        }
+
+        [TestMethod]
         public async Task TestCciAsync()
         {
             var candles = await ImportIOhlcvDatasAsync();

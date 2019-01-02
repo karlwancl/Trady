@@ -120,6 +120,9 @@ namespace Trady.Analysis.Extension
         public static IReadOnlyList<AnalyzableTick<decimal?>> Nmo(this IEnumerable<IOhlcv> candles, int periodCount, int? startIndex = null, int? endIndex = null)
             => new NetMomentumOscillator(candles, periodCount).Compute(startIndex, endIndex);
 
+        public static IReadOnlyList<AnalyzableTick<decimal?>> Nvi(this IEnumerable<IOhlcv> candles, int? startIndex = null, int? endIndex = null)
+            => new NegativeVolumeIndex(candles).Compute(startIndex, endIndex);
+
         public static IReadOnlyList<AnalyzableTick<decimal?>> Obv(this IEnumerable<IOhlcv> candles, int? startIndex = null, int? endIndex = null)
             => new OnBalanceVolume(candles).Compute(startIndex, endIndex);
 
@@ -128,6 +131,9 @@ namespace Trady.Analysis.Extension
 
         public static IReadOnlyList<AnalyzableTick<decimal?>> Pdm(this IEnumerable<IOhlcv> candles, int? startIndex = null, int? endIndex = null)
             => new PlusDirectionalMovement(candles).Compute(startIndex, endIndex);
+
+        public static IReadOnlyList<AnalyzableTick<decimal?>> Pvi(this IEnumerable<IOhlcv> candles, int? startIndex = null, int? endIndex = null)
+            => new PositiveVolumeIndex(candles).Compute(startIndex, endIndex);
 
         public static IReadOnlyList<AnalyzableTick<decimal?>> Rm(this IEnumerable<IOhlcv> candles, int rmiPeriod, int mtmPeriod, int? startIndex = null, int? endIndex = null)
             => new RelativeMomentum(candles, rmiPeriod, mtmPeriod).Compute(startIndex, endIndex);
