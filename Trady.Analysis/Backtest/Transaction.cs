@@ -7,7 +7,7 @@ namespace Trady.Analysis.Backtest
 {
     public class Transaction : IEquatable<Transaction>
     {
-        public Transaction(IEnumerable<IOhlcv> candles, int index, DateTimeOffset dateTime, TransactionType type, decimal quantity, decimal absCashFlow)
+        public Transaction(IEnumerable<IOhlcv> candles, int index, DateTimeOffset dateTime, TransactionType type, decimal quantity, decimal absCashFlow, decimal cost)
         {
             OhlcvList = candles;
             Index = index;
@@ -15,6 +15,7 @@ namespace Trady.Analysis.Backtest
             Type = type;
             Quantity = quantity;
             AbsoluteCashFlow = absCashFlow;
+            Cost = cost;
         }
 
         public IEnumerable<IOhlcv> OhlcvList { get; }
@@ -29,6 +30,8 @@ namespace Trady.Analysis.Backtest
 
         public decimal AbsoluteCashFlow { get; }
 
+        public decimal Cost { get; set; }
+
         public bool Equals(Transaction other)
             => other != null
                && OhlcvList.Equals(other.OhlcvList)
@@ -36,7 +39,8 @@ namespace Trady.Analysis.Backtest
                && Index == other.Index
                && Type == other.Type
                && Quantity == other.Quantity
-               && AbsoluteCashFlow == other.AbsoluteCashFlow;
+               && AbsoluteCashFlow == other.AbsoluteCashFlow
+               && Cost == other.Cost;
 
         public override bool Equals(object obj)
         {
@@ -50,7 +54,7 @@ namespace Trady.Analysis.Backtest
 
         public override string ToString()
         {
-            return $"Idx: {Index}; Date: {DateTime:d} Type: {Type}; Quantity: {Quantity:N3}; AbsoluteCashFlow: {AbsoluteCashFlow:N3}";
+            return $"Idx: {Index}; Date: {DateTime:d} Type: {Type}; Quantity: {Quantity:N3}; AbsoluteCashFlow: {AbsoluteCashFlow:N3}; Cost: {Cost:N3}";
         }
     }
 }
