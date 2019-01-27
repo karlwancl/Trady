@@ -35,11 +35,9 @@ namespace Trady.Analysis.Candlestick
         protected override bool? ComputeByIndexImpl(IReadOnlyList<(decimal Open, decimal High, decimal Low, decimal Close)> mappedInputs, int index)
         {
             if (index < 1)
-            {
-                return null;
-            }
+                return default;
 
-            bool isEngulf = mappedInputs[index].Open > mappedInputs[index - 1].Close && mappedInputs[index].Close < mappedInputs[index - 1].Open;
+            var isEngulf = mappedInputs[index].Open > mappedInputs[index - 1].Close && mappedInputs[index].Close < mappedInputs[index - 1].Open;
             return (_upTrend[index - 1] ?? false) && _bullish[index - 1] && _bearish[index] && isEngulf;
         }
     }

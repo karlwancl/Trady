@@ -44,7 +44,7 @@ namespace Trady.Analysis.Indicator
         protected override decimal? ComputeByIndexImpl(IReadOnlyList<decimal?> mappedInputs, int index)
         {
             var dEma = _dEma[index];
-            return dEma.HasValue && dEma != 0 ? _uEma[index] / dEma : default(decimal?);
+            return dEma.HasValue && dEma != 0 ? _uEma[index] / dEma : default;
         }
     }
 

@@ -6,14 +6,17 @@ using Trady.Core;
 
 namespace Trady.Analysis.Indicator
 {
-    public class HistoricalLowest<TInput, TOutput> : NumericAnalyzableBase<TInput, decimal, TOutput>
+    public class HistoricalLowest<TInput, TOutput> : CumulativeNumericAnalyzableBase<TInput, decimal, TOutput>
     {
         public HistoricalLowest(IEnumerable<TInput> inputs, Func<TInput, decimal> inputMapper) : base(inputs, inputMapper)
         {
         }
 
-        protected override decimal? ComputeByIndexImpl(IReadOnlyList<decimal> mappedInputs, int index)
-            => mappedInputs.Take(index + 1).Min();
+        protected override decimal? ComputeCumulativeValue(IReadOnlyList<decimal> mappedInputs, int index, decimal? prevOutputToMap)
+            => mappedInputs[index] < prevOutputToMap ? mappedInputs[index] : prevOutputToMap;
+
+        protected override decimal? ComputeInitialValue(IReadOnlyList<decimal> mappedInputs, int index)
+            => mappedInputs[index];
     }
 
     public class HistoricalLowestByTuple : HistoricalLowest<decimal, decimal?>

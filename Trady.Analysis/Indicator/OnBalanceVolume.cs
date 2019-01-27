@@ -17,9 +17,9 @@ namespace Trady.Analysis.Indicator
 
         protected override decimal? ComputeCumulativeValue(IReadOnlyList<(decimal Close, decimal Volume)> mappedInputs, int index, decimal? prevOutputToMap)
         {
-            var input = mappedInputs[index];
+            var (Close, Volume) = mappedInputs[index];
             var prevInput = mappedInputs[index - 1];
-            decimal increment = input.Volume * (input.Close > prevInput.Close ? 1 : (input.Close == prevInput.Close ? 0 : -1));
+            var increment = Volume * (Close > prevInput.Close ? 1 : (Close == prevInput.Close ? 0 : -1));
             return prevOutputToMap + increment;
         }
     }

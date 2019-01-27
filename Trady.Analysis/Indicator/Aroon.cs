@@ -27,9 +27,7 @@ namespace Trady.Analysis.Indicator
         protected override (decimal? Up, decimal? Down) ComputeByIndexImpl(IReadOnlyList<(decimal High, decimal Low)> mappedInputs, int index)
         {
             if (index < PeriodCount - 1)
-            {
-                return (null, null);
-            }
+                return (default, default);
 
             var nearestIndexToHighestHigh = index - PeriodCount + 1 + mappedInputs
                 .Skip(index - PeriodCount + 1)

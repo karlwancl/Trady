@@ -7,7 +7,7 @@ using Trady.Core.Infrastructure;
 
 namespace Trady.Analysis.Extension
 {
-    public static class IOhlcvDatasExtension
+    public static class OhlcvExtension
     {
         public static IReadOnlyList<AnalyzableTick<decimal?>> Func(this IEnumerable<IOhlcv> candles, Func<IReadOnlyList<IOhlcv>, int, IReadOnlyList<decimal>, IAnalyzeContext<IOhlcv>, decimal?> func, params decimal[] parameters)
             => func.AsAnalyzable(candles, parameters).Compute();
@@ -120,6 +120,9 @@ namespace Trady.Analysis.Extension
         public static IReadOnlyList<AnalyzableTick<decimal?>> Nmo(this IEnumerable<IOhlcv> candles, int periodCount, int? startIndex = null, int? endIndex = null)
             => new NetMomentumOscillator(candles, periodCount).Compute(startIndex, endIndex);
 
+        public static IReadOnlyList<AnalyzableTick<decimal?>> Nvi(this IEnumerable<IOhlcv> candles, int? startIndex = null, int? endIndex = null)
+            => new NegativeVolumeIndex(candles).Compute(startIndex, endIndex);
+
         public static IReadOnlyList<AnalyzableTick<decimal?>> Obv(this IEnumerable<IOhlcv> candles, int? startIndex = null, int? endIndex = null)
             => new OnBalanceVolume(candles).Compute(startIndex, endIndex);
 
@@ -128,6 +131,9 @@ namespace Trady.Analysis.Extension
 
         public static IReadOnlyList<AnalyzableTick<decimal?>> Pdm(this IEnumerable<IOhlcv> candles, int? startIndex = null, int? endIndex = null)
             => new PlusDirectionalMovement(candles).Compute(startIndex, endIndex);
+
+        public static IReadOnlyList<AnalyzableTick<decimal?>> Pvi(this IEnumerable<IOhlcv> candles, int? startIndex = null, int? endIndex = null)
+            => new PositiveVolumeIndex(candles).Compute(startIndex, endIndex);
 
         public static IReadOnlyList<AnalyzableTick<decimal?>> Rm(this IEnumerable<IOhlcv> candles, int rmiPeriod, int mtmPeriod, int? startIndex = null, int? endIndex = null)
             => new RelativeMomentum(candles, rmiPeriod, mtmPeriod).Compute(startIndex, endIndex);
@@ -189,7 +195,13 @@ namespace Trady.Analysis.Extension
         public static IReadOnlyList<AnalyzableTick<decimal?>> Smi(this IEnumerable<IOhlcv> candles, int periodCount, int smoothingPeriodA, int smoothingPeriodB, int? startIndex = null, int? endIndex = null)
             => new StochasticsMomentumIndex(candles, periodCount, smoothingPeriodA, smoothingPeriodB).Compute(startIndex, endIndex);
 
-        public static IReadOnlyList<AnalyzableTick<decimal?>> Vwap(this IEnumerable<IOhlcv> candles, int? period = null, int? startIndex = null, int? endIndex = null)
-            => new VolumeWeightedAveragePrice(candles, period).Compute(startIndex, endIndex);
+        public static IReadOnlyList<AnalyzableTick<decimal?>> Wma(this IEnumerable<IOhlcv> candles, int periodCount, int? startIndex = null, int? endIndex = null)
+            => new WeightedMovingAverage(candles, periodCount).Compute(startIndex, endIndex);
+
+        public static IReadOnlyList<AnalyzableTick<decimal?>> Hma(this IEnumerable<IOhlcv> candles, int periodCount, int? startIndex = null, int? endIndex = null)
+            => new HullMovingAverage(candles, periodCount).Compute(startIndex, endIndex);
+
+        public static IReadOnlyList<AnalyzableTick<(decimal? LowerChannel, decimal? Middle, decimal? UpperChannel)>> Kc(this IEnumerable<IOhlcv> candles, int periodCount, decimal sdCount, int atrPeriodCount, int? startIndex = null, int? endIndex = null)
+            => new KeltnerChannels(candles, periodCount, sdCount, atrPeriodCount).Compute(startIndex, endIndex);
     }
 }

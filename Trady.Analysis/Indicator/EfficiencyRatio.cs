@@ -7,31 +7,38 @@ using Trady.Core.Infrastructure;
 
 namespace Trady.Analysis.Indicator
 {
-    public class EfficiencyRatio<TInput, TOutput> : NumericAnalyzableBase<TInput, decimal, TOutput>
+    public class EfficiencyRatio<TInput, TOutput> : NumericAnalyzableBase<TInput, decimal?, TOutput>
     {
-        public EfficiencyRatio(IEnumerable<TInput> inputs, Func<TInput, decimal> inputMapper, int periodCount) : base(inputs, inputMapper)
+        public EfficiencyRatio(IEnumerable<TInput> inputs, Func<TInput, decimal?> inputMapper, int periodCount) : base(inputs, inputMapper)
         {
             PeriodCount = periodCount;
         }
 
         public int PeriodCount { get; }
 
-        protected override decimal? ComputeByIndexImpl(IReadOnlyList<decimal> mappedInputs, int index)
+        protected override decimal? ComputeByIndexImpl(IReadOnlyList<decimal?> mappedInputs, int index)
         {
             if (index <= 0 || index < PeriodCount)
-            {
-                return null;
-            }
+                return default;
 
-            decimal? change = Math.Abs(mappedInputs[index] - mappedInputs[index - PeriodCount]);
-            decimal? volatility = Enumerable.Range(index - PeriodCount + 1, PeriodCount).Select(i => Math.Abs(mappedInputs[i] - mappedInputs[i - 1])).Sum();
-            return volatility > 0 ? change / volatility : null;
+            if (!mappedInputs[index].HasValue || !mappedInputs[index - PeriodCount].HasValue)
+                return default;
+
+            var change = Math.Abs(mappedInputs[index].Value - mappedInputs[index - PeriodCount].Value);
+            var volatility = Enumerable.Range(index - PeriodCount + 1, PeriodCount).Select(i =>
+            {
+                if (!mappedInputs[i].HasValue || !mappedInputs[i - 1].HasValue)
+                    return default(decimal?);
+
+                return Math.Abs(mappedInputs[i].Value - mappedInputs[i - 1].Value);
+            }).Sum();
+            return volatility > 0 ? change / volatility : default;
         }
     }
 
-    public class EfficiencyRatioByTuple : EfficiencyRatio<decimal, decimal?>
+    public class EfficiencyRatioByTuple : EfficiencyRatio<decimal?, decimal?>
     {
-        public EfficiencyRatioByTuple(IEnumerable<decimal> inputs, int periodCount)
+        public EfficiencyRatioByTuple(IEnumerable<decimal?> inputs, int periodCount)
             : base(inputs, i => i, periodCount)
         {
         }

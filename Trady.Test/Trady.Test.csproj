@@ -7,6 +7,11 @@
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DocumentationFile></DocumentationFile>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -18,10 +23,10 @@
   <ItemGroup>
     <ProjectReference Include="..\Trady.Analysis\Trady.Analysis.csproj" />
     <ProjectReference Include="..\Trady.Core\Trady.Core.csproj" />
+    <ProjectReference Include="..\Trady.Importer.AlphaVantage\Trady.Importer.AlphaVantage.csproj" />
+    <ProjectReference Include="..\Trady.Importer.Quandl\Trady.Importer.Quandl.csproj" />
     <ProjectReference Include="..\Trady.Importer\Trady.Importer.csproj" />
     <ProjectReference Include="..\Trady.Importer.Csv\Trady.Importer.Csv.csproj" />
-    <ProjectReference Include="..\Trady.Importer.Google\Trady.Importer.Google.csproj" />
-    <ProjectReference Include="..\Trady.Importer.Quandl\Trady.Importer.Quandl.csproj" />
     <ProjectReference Include="..\Trady.Importer.Stooq\Trady.Importer.Stooq.csproj" />
     <ProjectReference Include="..\Trady.Importer.Yahoo\Trady.Importer.Yahoo.csproj" />
   </ItemGroup>
@@ -32,6 +37,9 @@
     </None>
     <None Update="fb.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="spx.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 

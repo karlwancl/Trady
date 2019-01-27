@@ -19,11 +19,11 @@ namespace Trady.Analysis.Indicator
             _pdm = new PlusDirectionalMovementByTuple(inputs.Select(i => inputMapper(i).High));
             _mdm = new MinusDirectionalMovementByTuple(inputs.Select(i => inputMapper(i).Low));
 
-            Func<int, decimal?> tpdm = i => (_pdm[i] > 0 && _pdm[i] > _mdm[i]) ? _pdm[i] : 0;
+            decimal? tpdm(int i) => (_pdm[i] > 0 && _pdm[i] > _mdm[i]) ? _pdm[i] : 0;
 
             _tpdmEma = new GenericMovingAverage(
                 periodCount,
-                i => Enumerable.Range(i - periodCount + 1, periodCount).Average(tpdm),
+                i => Enumerable.Range(i - periodCount + 1, periodCount).Average(j => tpdm(j)),
                 tpdm,
                 Smoothing.Mma(periodCount),
                 inputs.Count());
@@ -36,7 +36,10 @@ namespace Trady.Analysis.Indicator
         public int PeriodCount { get; }
 
         protected override decimal? ComputeByIndexImpl(IReadOnlyList<(decimal High, decimal Low, decimal Close)> mappedInputs, int index)
-            => _tpdmEma[index] / _atr[index] * 100;
+        {
+            var currentAtr = _atr[index];
+            return currentAtr == 0 ? default : _tpdmEma[index] / currentAtr * 100;
+        }
     }
 
     public class PlusDirectionalIndicatorByTuple : PlusDirectionalIndicator<(decimal High, decimal Low, decimal Close), decimal?>

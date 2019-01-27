@@ -11,6 +11,7 @@ using Trady.Analysis.Extension;
 using Trady.Core.Infrastructure;
 using Trady.Importer.Csv;
 using System;
+using System.Diagnostics;
 
 namespace Trady.Test
 {
@@ -27,6 +28,39 @@ namespace Trady.Test
             //var candles = await yahooImporter.ImportAsync("FB");
             //File.WriteAllLines("fb.csv", candles.Select(c => $"{c.DateTime.ToString("d")},{c.Open},{c.High},{c.Low},{c.Close},{c.Volume}"));
             //return candles;
+        }
+
+        //protected async Task<IEnumerable<IOhlcv>> ImportSpyAsync()
+        //{
+        //    var csvImporter = new CsvImporter("spx.csv", CultureInfo.GetCultureInfo("en-US"));
+        //    return await csvImporter.ImportAsync("spx");
+        //}
+
+        //[TestMethod]
+        //public async Task TestMacdPerformanceAsync()
+        //{
+        //    var sw = new Stopwatch();
+        //    var candles = await ImportSpyAsync();
+        //    sw.Start();
+        //    var result = candles.Macd(12, 26, 9)[candles.Count() - 1];
+        //    sw.Stop();
+        //    Assert.IsTrue(false, sw.ElapsedMilliseconds.ToString());
+        //}
+
+        [TestMethod]
+        public async Task TestNviAsync()
+        {
+            var candles = await ImportIOhlcvDatasAsync();
+            var result = candles.Nvi()[candles.Count() - 1];
+            Assert.IsTrue(result.Tick.Value.IsApproximatelyEquals(170.2842636m));
+        }
+
+        [TestMethod]
+        public async Task TestPviAsync()
+        {
+            var candles = await ImportIOhlcvDatasAsync();
+            var result = candles.Pvi()[candles.Count() - 1];
+            Assert.IsTrue(result.Tick.Value.IsApproximatelyEquals(261.1533739m));
         }
 
         [TestMethod]
@@ -509,6 +543,32 @@ namespace Trady.Test
 			var result = candles.FullStoOsc(14, 3, 3)[candles.Count() - 1];
 			Assert.IsTrue((-9.14m).IsApproximatelyEquals(result.Tick.Value));
 		}
+
+        [TestMethod]
+        public async Task TestWmaAsync()
+        {
+            var candles = await ImportIOhlcvDatasAsync();
+            var result = candles.Wma(20)[candles.Count() - 1];
+            Assert.IsTrue((171.2445727m).IsApproximatelyEquals(result.Tick.Value));
+        }
+
+        [TestMethod]
+        public async Task TestHmaAsync()
+        {
+            var candles = await ImportIOhlcvDatasAsync();
+            var result = candles.Hma(30)[candles.Count() - 1];
+            Assert.IsTrue((172.8926202m).IsApproximatelyEquals(result.Tick.Value));
+        }
+
+        [TestMethod]
+        public async Task TestKcAsync()
+        {
+            var candles = await ImportIOhlcvDatasAsync();
+            var result = candles.Kc(20, 2, 10)[candles.Count() - 1];
+            Assert.IsTrue(result.Tick.LowerChannel.Value.IsApproximatelyEquals(165.81m));
+            Assert.IsTrue(result.Tick.Middle.Value.IsApproximatelyEquals(170.65m));
+            Assert.IsTrue(result.Tick.UpperChannel.Value.IsApproximatelyEquals(175.50m));
+        }
 
         [TestMethod]
         public async Task TestVwapAsync()

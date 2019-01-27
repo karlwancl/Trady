@@ -63,7 +63,7 @@ namespace Trady.Analysis.Extension
         public static IReadOnlyList<decimal?> Dymoi(this IEnumerable<decimal?> inputs, int sdPeriod, int smoothedSdPeriod, int rsiPeriod, int upLimit, int lowLimit, int? startIndex = null, int? endIndex = null)
             => new DynamicMomentumIndexByTuple(inputs, sdPeriod, smoothedSdPeriod, rsiPeriod, upLimit, lowLimit).Compute(startIndex, endIndex);
 
-        public static IReadOnlyList<decimal?> Er(this IEnumerable<decimal> inputs, int periodCount, int? startIndex = null, int? endIndex = null)
+        public static IReadOnlyList<decimal?> Er(this IEnumerable<decimal?> inputs, int periodCount, int? startIndex = null, int? endIndex = null)
             => new EfficiencyRatioByTuple(inputs, periodCount).Compute(startIndex, endIndex);
 
         public static IReadOnlyList<decimal?> Ema(this IEnumerable<decimal> inputs, int periodCount, int? startIndex = null, int? endIndex = null)
@@ -183,17 +183,32 @@ namespace Trady.Analysis.Extension
 		public static IReadOnlyList<decimal?> Median(this IEnumerable<decimal?> inputs, int periodCount, int? startIndex = null, int? endIndex = null)
 	        => new MedianByTuple(inputs, periodCount).Compute(startIndex, endIndex);
 
+        public static IReadOnlyList<decimal?> Nvi(this IEnumerable<(decimal Close, decimal Volume)> inputs, int? startIndex = null, int? endIndex = null)
+            => new NegativeVolumeIndexByTuple(inputs).Compute(startIndex, endIndex);
+
         public static IReadOnlyList<decimal?> Percentile(this IEnumerable<decimal> inputs, int periodCount, decimal percent, int? startIndex = null, int? endIndex = null)
             => new PercentileByTuple(inputs, periodCount, percent).Compute(startIndex, endIndex);
 
 		public static IReadOnlyList<decimal?> Percentile(this IEnumerable<decimal?> inputs, int periodCount, decimal percent, int? startIndex = null, int? endIndex = null)
 	        => new PercentileByTuple(inputs, periodCount, percent).Compute(startIndex, endIndex);
 
+        public static IReadOnlyList<decimal?> Pvi(this IEnumerable<(decimal Close, decimal Volume)> inputs, int? startIndex = null, int? endIndex = null)
+            => new PositiveVolumeIndexByTuple(inputs).Compute(startIndex, endIndex);
+
         public static IReadOnlyList<decimal?> Sar(this IEnumerable<(decimal High, decimal Low)> inputs, decimal step, decimal maximumStep, int? startIndex = null, int? endIndex = null)
             => new ParabolicStopAndReverseByTuple(inputs, step, maximumStep).Compute(startIndex, endIndex);
 
         public static IReadOnlyList<decimal?> Smi(this IEnumerable<(decimal High, decimal Low, decimal Close)> inputs, int periodCount, int smoothingPeriodA, int smoothingPeriodB, int? startIndex = null, int? endIndex = null)
             => new StochasticsMomentumIndexByTuple(inputs, periodCount, smoothingPeriodA, smoothingPeriodB).Compute(startIndex, endIndex);
+
+        public static IReadOnlyList<decimal?> Wma(this IEnumerable<decimal?> inputs, int periodCount, int? startIndex = null, int? endIndex = null)
+            => new WeightedMovingAverageByTuple(inputs, periodCount).Compute(startIndex, endIndex);
+
+        public static IReadOnlyList<decimal?> Hma(this IEnumerable<decimal?> inputs, int periodCount, int? startIndex = null, int? endIndex = null)
+            => new HullMovingAverageByTuple(inputs, periodCount).Compute(startIndex, endIndex);
+
+        public static IReadOnlyList<(decimal? LowerChannel, decimal? Middle, decimal? UpperChannel)> Kc(this IEnumerable<(decimal High, decimal Low, decimal Close)> inputs, int periodCount, decimal sdCount, int atrPeriodCount, int? startIndex = null, int? endIndex = null)
+            => new KeltnerChannelsByTuple(inputs, periodCount, sdCount, atrPeriodCount).Compute(startIndex, endIndex);
 
         public static IReadOnlyList<decimal?> Vwap(this IEnumerable<(decimal High, decimal Low, decimal Close, decimal Volume)> inputs, int? period = null, int? startIndex = null, int? endIndex = null)
             => new VolumeWeightedAveragePriceByTuple(inputs, period).Compute(startIndex, endIndex);

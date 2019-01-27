@@ -7,7 +7,7 @@ using Trady.Core.Infrastructure;
 namespace Trady.Analysis.Infrastructure
 {
     public abstract class NumericAnalyzableBase<TInput, TMappedInput, TOutput>
-        : AnalyzableBase<TInput, TMappedInput, decimal?, TOutput>, IDiffAnalyzable<TOutput>, ISmaAnalyzable<TOutput>, IPcDiffAnalyzable<TOutput>, ISdAnalyzable<TOutput>
+        : AnalyzableBase<TInput, TMappedInput, decimal?, TOutput>, IDiffAnalyzable<TOutput>, ISmaAnalyzable<TOutput>, IRDiffAnalyzable<TOutput>, ISdAnalyzable<TOutput>
     {
         protected NumericAnalyzableBase(IEnumerable<TInput> inputs, Func<TInput, TMappedInput> inputMapper) : base(inputs, inputMapper)
         {
@@ -15,69 +15,67 @@ namespace Trady.Analysis.Infrastructure
 
         #region IDiffAnalyzable implementation
 
-        public IReadOnlyList<TOutput> ComputeDiff(int? startIndex = default(int?), int? endIndex = default(int?)) => Compute(Diff, startIndex, endIndex);
+        public IReadOnlyList<TOutput> ComputeDiff(int? startIndex = default, int? endIndex = default) => Compute(Diff, startIndex, endIndex);
 
         public IReadOnlyList<TOutput> ComputeDiff(IEnumerable<int> indexes) => Compute(Diff, indexes);
 
         public (TOutput Prev, TOutput Current, TOutput Next) ComputeNeighbourDiff(int index) => Compute(Diff, index);
 
         public TOutput Diff(int index)
-            => index > 0 ? Map(i => ComputeByIndex(i) - ComputeByIndex(i - 1), index) : default(TOutput);
+            => Map(i => index > 0 ? ComputeByIndex(i) - ComputeByIndex(i - 1) : default, index);
 
         #endregion
 
         #region ISmaAnalyzable implementation
 
-        public IReadOnlyList<TOutput> ComputeSma(int periodCount, int? startIndex = default(int?), int? endIndex = default(int?)) => Compute(i => Sma(periodCount, i), startIndex, endIndex);
+        public IReadOnlyList<TOutput> ComputeSma(int periodCount, int? startIndex = default, int? endIndex = default) => Compute(i => Sma(periodCount, i), startIndex, endIndex);
 
         public IReadOnlyList<TOutput> ComputeSma(int periodCount, IEnumerable<int> indexes) => Compute(i => Sma(periodCount, i), indexes);
 
         public (TOutput Prev, TOutput Current, TOutput Next) ComputeNeighbourSma(int periodCount, int index) => Compute(i => Sma(periodCount, i), index);
 
         public TOutput Sma(int periodCount, int index)
-            => index >= periodCount - 1 ? Map(i => Enumerable.Range(i - periodCount + 1, periodCount).Select(ComputeByIndex).Average(), index) : default(TOutput);
+            => Map(i => index >= periodCount - 1 ? Enumerable.Range(i - periodCount + 1, periodCount).Select(ComputeByIndex).Average() : default, index);
 
         #endregion  
 
-        #region IPcDiffAnalyzable implementation
+        #region IRDiffAnalyzable implementation
 
-        public IReadOnlyList<TOutput> ComputePcDiff(int? startIndex = default(int?), int? endIndex = default(int?)) => Compute(PcDiff, startIndex, endIndex);
+        public IReadOnlyList<TOutput> ComputeRDiff(int? startIndex = default, int? endIndex = default) => Compute(RDiff, startIndex, endIndex);
 
-        public IReadOnlyList<TOutput> ComputePcDiff(IEnumerable<int> indexes) => Compute(PcDiff, indexes);
+        public IReadOnlyList<TOutput> ComputeRDiff(IEnumerable<int> indexes) => Compute(RDiff, indexes);
 
-        public (TOutput Prev, TOutput Current, TOutput Next) ComputeNeighbourPcDiff(int index) => Compute(PcDiff, index);
+        public (TOutput Prev, TOutput Current, TOutput Next) ComputeNeighbourRDiff(int index) => Compute(RDiff, index);
 
-        public TOutput PcDiff(int index)
-            => index > 0 ? Map(i => (ComputeByIndex(i) - ComputeByIndex(i - 1)) / ComputeByIndex(i - 1) * 100, index) : default(TOutput);
+        public TOutput RDiff(int index)
+            => Map(i => index > 0 ? (ComputeByIndex(i) - ComputeByIndex(i - 1)) / ComputeByIndex(i - 1) * 100 : default, index);
 
         #endregion
 
         #region ISdAnalyzable implementation
 
-        public IReadOnlyList<TOutput> ComputeSd(int periodCount, decimal sdValue, int? startIndex = default(int?), int? endIndex = default(int?))
-            => Compute(i => Sd(periodCount, sdValue, i), startIndex, endIndex);
+        public IReadOnlyList<TOutput> ComputeSd(int periodCount, int? startIndex = default, int? endIndex = default)
+            => Compute(i => Sd(periodCount, i), startIndex, endIndex);
 
-        public IReadOnlyList<TOutput> ComputeSd(int periodCount, decimal sdValue, IEnumerable<int> indexes)
-            => Compute(i => Sd(periodCount, sdValue, i), indexes);
+        public IReadOnlyList<TOutput> ComputeSd(int periodCount, IEnumerable<int> indexes)
+            => Compute(i => Sd(periodCount, i), indexes);
 
-        public (TOutput Prev, TOutput Current, TOutput Next) ComputeNeighbourSd(int periodCount, decimal sdValue, int index)
-            => Compute(i => Sd(periodCount, sdValue, i), index);
+        public (TOutput Prev, TOutput Current, TOutput Next) ComputeNeighbourSd(int periodCount, int index)
+            => Compute(i => Sd(periodCount, i), index);
 
-        public TOutput Sd(int periodCount, decimal sdValue, int index)
+        public TOutput Sd(int periodCount, int index)
         {
-            if (index < periodCount - 1)
+            decimal? sd(int i)
             {
-                return default(TOutput);
-            }
+                if (index < periodCount - 1)
+                    return default;
 
-            Func<int, decimal?> sd = i =>
-            {
-                Func<int, IEnumerable<decimal?>> items = j => Enumerable.Range(j - periodCount + 1, periodCount).Select(ComputeByIndex);
+                IEnumerable<decimal?> items(int j) => Enumerable.Range(j - periodCount + 1, periodCount).Select(ComputeByIndex);
                 var count = items(i).Count();
                 var avg = items(i).Average();
-                var diffSum = items(i).Select(item => (item - avg) * (item - avg)).Sum();
-                return Convert.ToDecimal(Math.Sqrt(Convert.ToDouble(diffSum / count)));
-            };
+                var variance = items(i).Select(item => (item - avg) * (item - avg)).Sum() / count;
+                return Convert.ToDecimal(Math.Sqrt(Convert.ToDouble(variance)));
+            }
 
             return Map(sd, index);
         }

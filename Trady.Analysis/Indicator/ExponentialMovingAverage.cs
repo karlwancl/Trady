@@ -34,7 +34,7 @@ namespace Trady.Analysis.Indicator
         }
 
 		public ExponentialMovingAverageByTuple(IEnumerable<decimal> inputs, int periodCount)
-	        : this(inputs.Cast<decimal?>(), periodCount)
+	        : this(inputs.Cast<decimal?>().ToList(), periodCount)
 		{
 		}
     }

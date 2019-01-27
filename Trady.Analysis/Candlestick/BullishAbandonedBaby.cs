@@ -47,16 +47,12 @@ namespace Trady.Analysis.Candlestick
         protected override bool? ComputeByIndexImpl(IReadOnlyList<(decimal Open, decimal High, decimal Low, decimal Close)> mappedInputs, int index)
         {
             if (index < 2)
-            {
-                return null;
-            }
+                return default;
 
             if (!_doji[index - 1])
-            {
                 return false;
-            }
 
-            bool isGapped = mappedInputs[index - 1].High < mappedInputs[index - 2].Low && mappedInputs[index - 1].High < mappedInputs[index].Low;
+            var isGapped = mappedInputs[index - 1].High < mappedInputs[index - 2].Low && mappedInputs[index - 1].High < mappedInputs[index].Low;
             return (_downTrend[index - 1] ?? false) && _bearishLongDay[index - 2] && isGapped && _bullishLongDay[index];
         }
     }

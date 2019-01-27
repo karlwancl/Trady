@@ -38,28 +38,10 @@ namespace Trady.Importer.Yahoo
                 throw new ArgumentException("This importer only supports daily, weekly & monthly data");
 
             var corrStartTime = (startTime < UnixMinDateTime ? UnixMinDateTime : startTime) ?? UnixMinDateTime;
-            var corrEndTime = AddPeriod((endTime > UnixMaxDateTime ? UnixMaxDateTime : endTime) ?? UnixMaxDateTime, period);
-            var candles = await YahooFinanceApi.Yahoo.GetHistoricalAsync(symbol, corrStartTime, corrEndTime, PeriodMap[period], false, false, token);
+            var corrEndTime = (endTime > UnixMaxDateTime ? UnixMaxDateTime : endTime) ?? UnixMaxDateTime;
+            var candles = await YahooFinanceApi.Yahoo.GetHistoricalAsync(symbol, corrStartTime, corrEndTime, PeriodMap[period], token);
 
             return candles.Select(c => new Core.Candle(c.DateTime, c.Open, c.High, c.Low, c.Close, c.Volume)).OrderBy(c => c.DateTime).ToList();
-        }
-
-        private static DateTime AddPeriod(DateTime dateTime, PeriodOption period)
-        {
-            switch (period)
-            {
-                case PeriodOption.Daily:
-                    return dateTime.AddDays(1);
-
-                case PeriodOption.Weekly:
-                    return dateTime.AddDays(7);
-
-                case PeriodOption.Monthly:
-                    return dateTime.AddMonths(1);
-
-                default:
-                    return dateTime;
-            }
         }
     }
 }

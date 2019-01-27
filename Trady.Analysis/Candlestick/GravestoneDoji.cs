@@ -29,7 +29,7 @@ namespace Trady.Analysis.Candlestick
         protected override bool ComputeByIndexImpl(IReadOnlyList<(decimal Open, decimal High, decimal Low, decimal Close)> mappedInputs, int index)
         {
             var mean = (mappedInputs[index].Open + mappedInputs[index].Close) / 2;
-            bool isGravestone = (mean - mappedInputs[index].Low) < ShadowThreshold * (mappedInputs[index].High - mappedInputs[index].Low);
+            var isGravestone = (mean - mappedInputs[index].Low) < ShadowThreshold * (mappedInputs[index].High - mappedInputs[index].Low);
             return _doji[index] && isGravestone;
         }
     }

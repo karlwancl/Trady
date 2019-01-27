@@ -35,8 +35,8 @@ namespace Trady.Analysis.Indicator
 
         protected override (decimal? MacdLine, decimal? SignalLine, decimal? MacdHistogram) ComputeByIndexImpl(IReadOnlyList<decimal> mappedInputs, int index)
         {
-            decimal? macd = _macd[index];
-            decimal? signal = _signal[index];
+            var macd = _macd[index];
+            var signal = _signal[index];
             return (macd, signal, macd - signal);
         }
     }

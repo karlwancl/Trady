@@ -35,8 +35,10 @@ The following shows supporting indicators (test code covered)
 | N/A | HistoricalLowestByTuple | N/A |
 | HistoricalLowestClose | N/A | HistLowClose |
 | HistoricalLowestLow | N/A | HistLowLow |
+| HullMovingAverage | HullMovingAverageByTuple | Hma |
 | IchimokuCloud | IchimokuCloudByTuple | Ichimoku |
 | KaufmanAdaptiveMovingAverage | KaufmanAdaptiveMovingAverageByTuple | Kama |
+| KeltnerChannels | KeltnerChannelsByTuple | Kc |
 | N/A | Lowest | Lowest |
 | LowestClose | N/A | LowClose |
 | LowestLow | N/A | LowLow |
@@ -69,6 +71,7 @@ The following shows supporting indicators (test code covered)
 | StochasticsOscillator.Full | StochasticsOscillator.FullByTuple | FullStoOsc |
 | StochasticsOscillator.Slow | StochasticsOscillator.SlowByTuple | SlowStoOsc |
 | TrueRange | TrueRangeByTuple | Tr |
+| WeightedMovingAverage | WeightedMovingAverageByTuple | Wma |
 
 <a name="candlesticks"></a>
 ## Candlestck patterns

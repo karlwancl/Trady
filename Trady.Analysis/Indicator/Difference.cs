@@ -15,7 +15,7 @@ namespace Trady.Analysis.Indicator
         public int PeriodCount { get; }
 
         protected override decimal? ComputeByIndexImpl(IReadOnlyList<decimal?> mappedInputs, int index)
-            => index >= PeriodCount ? mappedInputs[index] - mappedInputs[index - PeriodCount] : null;
+            => index >= PeriodCount ? mappedInputs[index] - mappedInputs[index - PeriodCount] : default;
     }
 
     public class DifferenceByTuple : Difference<decimal?, decimal?>

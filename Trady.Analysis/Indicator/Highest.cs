@@ -16,7 +16,7 @@ namespace Trady.Analysis.Indicator
         public int PeriodCount { get; }
 
         protected override decimal? ComputeByIndexImpl(IReadOnlyList<decimal?> mappedInputs, int index)
-            => index >= PeriodCount - 1 ? mappedInputs.Skip(index - PeriodCount + 1).Take(PeriodCount).Max() : null;
+            => index >= PeriodCount - 1 ? mappedInputs.Skip(index - PeriodCount + 1).Take(PeriodCount).Max() : default;
     }
 
     public class HighestByTuple : Highest<decimal?, decimal?>

@@ -19,8 +19,8 @@ namespace Trady.Analysis.Indicator
         {
             PeriodCount = periodCount;
 
-            _u = new PositiveDifferenceByTuple(inputs.Select(inputMapper), 1);
-            _d = new NegativeDifferenceByTuple(inputs.Select(inputMapper), 1);
+            _u = new PositiveDifferenceByTuple(inputs.Select(inputMapper).ToList(), 1);
+            _d = new NegativeDifferenceByTuple(inputs.Select(inputMapper).ToList(), 1);
 
             _uEma = new GenericMovingAverage(
                 periodCount,
@@ -42,7 +42,7 @@ namespace Trady.Analysis.Indicator
         protected override decimal? ComputeByIndexImpl(IReadOnlyList<decimal?> mappedInputs, int index)
         {
             var dEma = _dEma[index];
-            return dEma.HasValue && dEma != 0 ? _uEma[index] / dEma : null;
+            return dEma.HasValue && dEma != 0 ? _uEma[index] / dEma : default;
         }
     }
 

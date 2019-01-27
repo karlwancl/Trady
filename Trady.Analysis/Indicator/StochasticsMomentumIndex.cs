@@ -55,7 +55,7 @@ namespace Trady.Analysis.Indicator
         {
             var smoothedDelta = _doubleEma(_sm, index);
             var smoothedRange = _doubleEma(_diff, index) / 2;
-            return 100 * smoothedDelta / smoothedRange;
+            return smoothedRange == 0 ? default : 100 * smoothedDelta / smoothedRange;
         }
     }
 

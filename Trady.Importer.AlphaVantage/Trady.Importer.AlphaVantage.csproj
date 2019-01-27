@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Version>3.2.1</Version>
+    <PackageProjectUrl>https://github.com/lppkarl/Trady</PackageProjectUrl>
+    <PackageLicenseUrl>https://github.com/lppkarl/Trady/blob/master/LICENSE</PackageLicenseUrl>
+    <Product />
+    <Company />
+    <Authors>@irperez</Authors>
+    <PackageTags>Trady;Technical;Analysis;Finance;Stock</PackageTags>
+    <PackageReleaseNotes>
+    Please refer to https://github.com/lppkarl/Trady/</PackageReleaseNotes>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CsvHelper" Version="7.1.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Trady.Core\Trady.Core.csproj" />
+  </ItemGroup>
+
+</Project>

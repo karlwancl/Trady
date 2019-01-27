@@ -51,18 +51,18 @@ namespace Trady.Analysis.Indicator
         protected override (decimal? ConversionLine, decimal? BaseLine, decimal? LeadingSpanA, decimal? LeadingSpanB, decimal? LaggingSpan) ComputeByIndexImpl(IReadOnlyList<(decimal High, decimal Low, decimal Close)> mappedInputs, int index)
         {
             // Current
-            bool dataInRange = index >= 0 && index < mappedInputs.Count;
-            var conversionLine = dataInRange ? _conversionLine(index) : null;
-            var baseLine = dataInRange ? _baseLine(index) : null;
+            var dataInRange = index >= 0 && index < mappedInputs.Count;
+            var conversionLine = dataInRange ? _conversionLine(index) : default;
+            var baseLine = dataInRange ? _baseLine(index) : default;
 
             // Leading
-            bool dataAfterMiddlePeriodCount = index >= MiddlePeriodCount;
-            var leadingSpanA = dataAfterMiddlePeriodCount ? (_conversionLine(index - MiddlePeriodCount) + _baseLine(index - MiddlePeriodCount)) / 2 : null;
-            var leadingSpanB = dataAfterMiddlePeriodCount ? _leadingSpanB(index - MiddlePeriodCount) : null;
+            var dataAfterMiddlePeriodCount = index >= MiddlePeriodCount;
+            var leadingSpanA = dataAfterMiddlePeriodCount ? (_conversionLine(index - MiddlePeriodCount) + _baseLine(index - MiddlePeriodCount)) / 2 : default;
+            var leadingSpanB = dataAfterMiddlePeriodCount ? _leadingSpanB(index - MiddlePeriodCount) : default;
 
             // Lagging
-            bool dataBeforeEquityCountMinusMiddlePeriodCount = index <= mappedInputs.Count - MiddlePeriodCount;
-            var laggingSpan = dataBeforeEquityCountMinusMiddlePeriodCount ? mappedInputs[index + MiddlePeriodCount - 1].Close : (decimal?)null;
+            var dataBeforeEquityCountMinusMiddlePeriodCount = index <= mappedInputs.Count - MiddlePeriodCount;
+            var laggingSpan = dataBeforeEquityCountMinusMiddlePeriodCount ? (decimal?)mappedInputs[index + MiddlePeriodCount - 1].Close : default;
 
             return (conversionLine, baseLine, leadingSpanA, leadingSpanB, laggingSpan);
         }

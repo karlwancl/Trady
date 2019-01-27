@@ -39,12 +39,12 @@ namespace Trady.Analysis.Candlestick
         protected override bool? ComputeByIndexImpl(IReadOnlyList<(decimal Open, decimal High, decimal Low, decimal Close)> mappedInputs, int index)
         {
             if (index == 0)
-                return null;
+                return default;
 
             if (!_bullishLongDay[index] || !_shortDay[index - 1])
                 return false;
 
-            Func<int, bool> isDesc = i => mappedInputs[i].Close < mappedInputs[i - 1].Close && mappedInputs[i].Open < mappedInputs[i - 1].Open;
+            bool isDesc(int i) => mappedInputs[i].Close < mappedInputs[i - 1].Close && mappedInputs[i].Open < mappedInputs[i - 1].Open;
             for (int i = index - 1; i >= UpTrendPeriodCount; i--)
             {
                 if (_shortDay[i] && !_bullishLongDay[i - 1] && !isDesc(i))

@@ -7,6 +7,7 @@ using System.Linq;
 using System.Reflection;
 using Trady.Core;
 using Trady.Core.Infrastructure;
+using Trady.Analysis.Extension;
 
 namespace Trady.Analysis.Infrastructure
 {
@@ -36,10 +37,10 @@ namespace Trady.Analysis.Infrastructure
             _mappedInputs = inputs.Select(inputMapper).ToList();
             if (_isTInputIOhlcvData)
             {
-                _mappedDateTimes = inputs.Select(c => (c as IOhlcv).DateTime).ToList();
+                _mappedDateTimes = inputs.Cast<IOhlcv>().Select(c => c.DateTime).ToList();
             }
 
-            Cache = new ConcurrentDictionary<int, TOutputToMap>();
+            Cache = new Dictionary<int, TOutputToMap>();
         }
 
 		public TOutput this[int index] => Map(ComputeByIndex, index);
@@ -47,6 +48,8 @@ namespace Trady.Analysis.Infrastructure
 		public IReadOnlyList<TOutput> Compute(int? startIndex = null, int? endIndex = null) => Compute(i => this[i], startIndex, endIndex);
 
         public IReadOnlyList<TOutput> Compute(IEnumerable<int> indexes) => Compute(i => this[i], indexes);
+
+        public TOutput Compute(params int[] indexes) => Compute(i => this[i], indexes).FirstOrDefault();
 
         public (TOutput Prev, TOutput Current, TOutput Next) ComputeNeighbour(int index) => Compute(i => this[i], index);
 
@@ -56,7 +59,7 @@ namespace Trady.Analysis.Infrastructure
 
         protected virtual int GetComputeEndIndex(int? endIndex) => endIndex ?? _mappedInputs.Count - 1;
 
-		protected ConcurrentDictionary<int, TOutputToMap> Cache { get; }
+		protected IDictionary<int, TOutputToMap> Cache { get; }
 
 		#region IAnalyzable implementation
 
@@ -84,9 +87,9 @@ namespace Trady.Analysis.Infrastructure
         // Can only get in-range values from IchimokuCloud
         internal protected (TOutput Prev, TOutput Current, TOutput Next) Compute(Func<int, TOutput> outputFunc, int index)
         {
-            var prev = index > 0 ? outputFunc(index - 1) : default(TOutput);
+            var prev = index > 0 ? outputFunc(index - 1) : default;
             var current = outputFunc(index);
-            var next = index < _mappedInputs.Count - 1 ? outputFunc(index + 1) : default(TOutput);
+            var next = index < _mappedInputs.Count - 1 ? outputFunc(index + 1) : default;
 
             return (prev, current, next);
         }
@@ -104,7 +107,7 @@ namespace Trady.Analysis.Infrastructure
             }
 		}
 
-		internal protected TOutputToMap ComputeByIndex(int index) => Cache.GetOrAdd(index, i => ComputeByIndexImpl(_mappedInputs, i));
+        protected internal TOutputToMap ComputeByIndex(int index) => Cache.GetOrAdd(index, i => ComputeByIndexImpl(_mappedInputs, i));
 
         #endregion
     }

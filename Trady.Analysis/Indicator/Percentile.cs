@@ -24,7 +24,7 @@ namespace Trady.Analysis.Indicator
 				throw new ArgumentException("percent should be between 0 and 1", nameof(Percent));
 
 			if (index < PeriodCount - 1)
-				return null;
+				return default;
 
 			var subset = mappedInputs.Skip(index - PeriodCount + 1).Take(PeriodCount).OrderBy(v => v).ToList();
 			var idx = Percent * (subset.Count - 1) + 1;

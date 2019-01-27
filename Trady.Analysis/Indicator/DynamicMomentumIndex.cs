@@ -31,12 +31,14 @@ namespace Trady.Analysis.Indicator
             {
                 var sd = new StandardDeviationByTuple(mappedInputs, SdPeriod);
                 var smoothedSd = new SimpleMovingAverageByTuple(sd.Compute(), SmoothedSdPeriod);
-                return sd[i] / smoothedSd[i];
+                var currentSmoothedSd = smoothedSd[i];
+                return currentSmoothedSd == 0 ? default : sd[i] / currentSmoothedSd;
             }).ToList();
 
-            var t = _v[index].GetValueOrDefault() != 0 ? (int)Math.Floor(RsiPeriod / _v[index].Value) : default(int?);
-            var tAdjusted = t.HasValue ? Math.Max(Math.Min(t.Value, UpLimit), LowLimit) : default(int?);
-            return tAdjusted.HasValue ? new RelativeStrengthIndexByTuple(mappedInputs, tAdjusted.Value)[index] : default(decimal?);
+            var currentV = _v[index];
+            var t = currentV.GetValueOrDefault() != 0 ? (int?)Math.Floor(RsiPeriod / currentV.Value) : default;
+            var tAdjusted = t.HasValue ? (int?)Math.Max(Math.Min(t.Value, UpLimit), LowLimit) : default;
+            return tAdjusted.HasValue ? new RelativeStrengthIndexByTuple(mappedInputs, tAdjusted.Value)[index] : default;
         }
     }
 

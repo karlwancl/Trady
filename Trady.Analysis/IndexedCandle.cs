@@ -34,9 +34,31 @@ namespace Trady.Analysis
 
         public int Index { get; }
 
-        public IIndexedOhlcv Prev => Index - 1 >= 0 ? new IndexedCandle(BackingList, Index - 1) : null;
+        public IIndexedOhlcv Prev
+        {
+            get
+            {
+                if (Index - 1 < 0)
+                    return null;
+                return new IndexedCandle(BackingList, Index - 1)
+                {
+                    Context = Context
+                };
+            }
+        }
 
-        public IIndexedOhlcv Next => Index + 1 < BackingList.Count() ? new IndexedCandle(BackingList, Index + 1) : null;
+        public IIndexedOhlcv Next
+        {
+            get
+            {
+                if (Index + 1 >= BackingList.Count())
+                    return null;
+                return new IndexedCandle(BackingList, Index + 1)
+                {
+                    Context = Context
+                };
+            }
+        }
 
         public IOhlcv Underlying => BackingList.ElementAt(Index);
 

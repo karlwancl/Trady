@@ -17,7 +17,7 @@ namespace Trady.Analysis.Indicator
             => index > 0 ? new List<decimal?> {
                 mappedInputs[index].High - mappedInputs[index].Low,
                 Math.Abs(mappedInputs[index].High - mappedInputs[index - 1].Close),
-                Math.Abs(mappedInputs[index].Low - mappedInputs[index - 1].Close) }.Max() : null;
+                Math.Abs(mappedInputs[index].Low - mappedInputs[index - 1].Close) }.Max() : default;
     }
 
     public class TrueRangeByTuple : TrueRange<(decimal High, decimal Low, decimal Close), decimal?>
