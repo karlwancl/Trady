@@ -64,7 +64,7 @@ namespace Trady.Importer.Csv
                     }
                     return candles.OrderBy(c => c.DateTime).ToList();
                 }
-            });
+            }, token);
 
         public IOhlcv GetRecord(CsvReader csv)
         {
