@@ -65,14 +65,15 @@ namespace Trady.Analysis.Backtest
         /// <returns></returns>
         public Builder Premium(decimal premium)
         {
-            var calculator = new FeeCalculator(0, premium);
-            return new Builder(_weightings, _buyRule, _sellRule, _buyInCompleteQuantity, _calculator);
+            var calculator = new FeeCalculator(0, premium);           
+            return new Builder(_weightings, _buyRule, _sellRule, _buyInCompleteQuantity, calculator);
         }
 
         public Builder PremiumAndFees(decimal premium, decimal flatExchangeFeeRate)
         {
             var calculator = new FeeCalculator(flatExchangeFeeRate, premium);
-            return new Builder(_weightings, _buyRule, _sellRule, _buyInCompleteQuantity, _calculator);
+           
+            return new Builder(_weightings, _buyRule, _sellRule, _buyInCompleteQuantity, calculator);
         }
 
 

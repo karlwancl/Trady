@@ -68,7 +68,7 @@ namespace Trady.Importer.Csv
 
         public IOhlcv GetRecord(CsvReader csv)
         {
-            // By using GetField Methodo of the CSV Reader Culture Info set in the configuration is used
+            // By using GetField Method of the CSV Reader Culture Info set in the configuration is used
             return new Candle(
                 string.IsNullOrWhiteSpace(_format) ? csv.GetField<DateTime>(0) : DateTime.ParseExact(csv.GetField<string>(0), _format, _culture),
                 csv.GetField<Decimal>(1),
