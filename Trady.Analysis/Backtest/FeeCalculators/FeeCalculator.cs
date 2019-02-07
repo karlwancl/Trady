@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.Serialization;
 using Trady.Core.Infrastructure;
 
 namespace Trady.Analysis.Backtest.FeeCalculators
@@ -32,6 +33,8 @@ namespace Trady.Analysis.Backtest.FeeCalculators
 
         public Transaction BuyAsset(IIndexedOhlcv indexedCandle, decimal cash, IIndexedOhlcv nextCandle, bool buyInCompleteQuantities)
         {
+            ValidateProperties();
+
             decimal quantity = (cash - Premium) / nextCandle.Open;
             if(buyInCompleteQuantities)
                 quantity = Math.Floor(quantity);
@@ -54,7 +57,9 @@ namespace Trady.Analysis.Backtest.FeeCalculators
        
 
         public Transaction SellAsset(IIndexedOhlcv indexedCandle, Transaction lastTransaction)
-        {            
+        {
+            ValidateProperties();
+
             var nextCandle = indexedCandle.Next;
             
             decimal quantity = lastTransaction.Quantity;
@@ -71,5 +76,21 @@ namespace Trady.Analysis.Backtest.FeeCalculators
 
             return new Transaction(indexedCandle.BackingList, nextCandle.Index, nextCandle.DateTime, TransactionType.Sell, quantity, cashWhenSellAsset, costs);
         }
+
+        private void ValidateProperties()
+        {
+            if(FlatExchangeFee < 0 || FlatExchangeFee >= 1)
+            {
+                throw new FeeCalculationException("The FlatExchangeFee must be set to a value that is greater than equal to zero (>= 0) and less than one (< 1).  Example => .25");
+            }
+        }
+    }
+
+    public class FeeCalculationException : Exception
+    {
+        public FeeCalculationException() : base() { }
+        public FeeCalculationException(string message) : base(message) { }
+        public FeeCalculationException(string message, Exception innerException) : base(message, innerException) { }
+        public FeeCalculationException(SerializationInfo info, StreamingContext context) : base(info, context) { }
     }
 }
