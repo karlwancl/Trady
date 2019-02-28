@@ -1,4 +1,4 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -582,7 +582,7 @@ namespace Trady.Test
         public async Task TestVwap_IsAccurateAsync()
         {
             var candles = await ImportIOhlcvDatasAsync("NFLX_5m_1_27_2019.csv");
-            var selected = candles.Where(x => x.DateTime.TimeOfDay <= new DateTime(2019, 1, 25, 15, 15, 00).TimeOfDay); 
+            var selected = candles.Where(x => x.DateTime <= new DateTimeOffset(2019, 1, 25, 15, 15, 00, new TimeSpan(-6, 0, 0))); 
             var result = selected.Vwap()[selected.Count() - 1].Tick;
             Assert.IsTrue(335.67m.IsApproximatelyEquals(result.Value));  
         }
@@ -591,7 +591,7 @@ namespace Trady.Test
         public async Task TestVwap_CloseIsAboveVwapAsync()
         {
             var candles = await ImportIOhlcvDatasAsync("NFLX_5m_1_27_2019.csv");
-            var selected = candles.Where(x => x.DateTime.TimeOfDay <= new DateTime(2019, 1, 25, 09, 40, 00).TimeOfDay);  
+            var selected = candles.Where(x => x.DateTime <= new DateTimeOffset(2019, 1, 25, 09, 40, 00, new TimeSpan(-6, 0, 0)));  
             var result = selected.Vwap()[selected.Count() - 1].Tick;
             var close = selected.Last().Close;
             Assert.IsTrue(330.32m.IsApproximatelyEquals(result.Value));
@@ -602,7 +602,7 @@ namespace Trady.Test
         public async Task TestVwap_CloseIsBelowVwapAsync()
         {
             var candles = await ImportIOhlcvDatasAsync("NFLX_5m_1_27_2019.csv");
-            var selected = candles.Where(x => x.DateTime.TimeOfDay <= new DateTime(2019, 1, 25, 09, 30, 00).TimeOfDay); 
+            var selected = candles.Where(x => x.DateTime <= new DateTimeOffset(2019, 1, 25, 09, 30, 00, new TimeSpan(-6, 0, 0))); 
             var result = selected.Vwap()[selected.Count() - 1].Tick;
             var close = selected.Last().Close;
             Assert.IsTrue(329.68m.IsApproximatelyEquals(result.Value));
