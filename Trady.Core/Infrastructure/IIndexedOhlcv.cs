@@ -30,10 +30,10 @@ namespace Trady.Core.Infrastructure
         bool Eval(string name, params decimal[] @params);
 
         decimal? EvalDecimal<TAnalyzable>(params object[] @params)
-            where TAnalyzable : IAnalyzable<IAnalyzableTick<decimal?>>;
+            where TAnalyzable : IAnalyzable;
 
         bool? EvalBool<TAnalyzable>(params object[] @params)
-            where TAnalyzable : IAnalyzable<IAnalyzableTick<bool?>>;
+            where TAnalyzable : IAnalyzable;
 
         decimal? EvalFunc(string name, params decimal[] @params);
     }

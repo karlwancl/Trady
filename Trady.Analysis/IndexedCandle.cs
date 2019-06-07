@@ -135,18 +135,24 @@ namespace Trady.Analysis
             };
         }
 
-        public decimal? EvalDecimal<TAnalyzable>(params object[] @params) where TAnalyzable : IAnalyzable<IAnalyzableTick<decimal?>>
+        public decimal? EvalDecimal<TAnalyzable>(params object[] @params) where TAnalyzable : IAnalyzable
             => Eval<TAnalyzable, decimal?>(@params);
 
-        public bool? EvalBool<TAnalyzable>(params object[] @params) where TAnalyzable : IAnalyzable<IAnalyzableTick<bool?>>
+        public bool? EvalBool<TAnalyzable>(params object[] @params) where TAnalyzable : IAnalyzable
             => Eval<TAnalyzable, bool?>(@params);
 
-        public TOutputType Eval<TAnalyzable, TOutputType>(params object[] @params) where TAnalyzable : IAnalyzable<IAnalyzableTick<TOutputType>>
+        private TOutputType Eval<TAnalyzable, TOutputType>(params object[] @params) where TAnalyzable : IAnalyzable
         {
-            if (Context == null)
-                return AnalyzableFactory.CreateAnalyzable<TAnalyzable>(BackingList, @params)[Index].Tick;
+            object obj = Context == null ?
+                AnalyzableFactory.CreateAnalyzable<TAnalyzable>(BackingList, @params)[Index] :
+                Context.Get<TAnalyzable>(@params)[Index];
 
-            return Context.Get<TAnalyzable>(@params)[Index].Tick;
+            if (obj.GetType().IsAssignableFrom(typeof(AnalyzableTick<TOutputType>)))
+            {
+                var analyzableObj = (AnalyzableTick<TOutputType>)obj;
+                return analyzableObj.Tick;
+            }
+            else throw new TypeLoadException($"The output is not a type of AnalyzableTick<{typeof(TOutputType).Name}>");
         }
 
         public decimal? EvalFunc(string name, params decimal[] @params)
