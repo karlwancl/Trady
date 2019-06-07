@@ -86,6 +86,7 @@ namespace Trady.Analysis
             set => _context = value;
         }
 
+        [Obsolete]
         public TAnalyzable Get<TAnalyzable>(params object[] @params) where TAnalyzable : IAnalyzable
         {
             if (Context == null)
@@ -96,6 +97,7 @@ namespace Trady.Analysis
             return Context.Get<TAnalyzable>(@params);
         }
 
+        [Obsolete]
         public IFuncAnalyzable<IAnalyzableTick<decimal?>> GetFunc(string name, params decimal[] @params)
         {
             if (Context == null)
@@ -106,10 +108,62 @@ namespace Trady.Analysis
             return (IFuncAnalyzable<IAnalyzableTick<decimal?>>)Context.GetFunc(name, @params);
         }
 
+        [Obsolete]
         public bool Eval(string name, params decimal[] @params)
         {
             var func = (Func<IndexedCandle, IReadOnlyList<decimal>, bool>)RuleRegistry.Get(name);
             return func(this, @params);
         }
+
+        public IIndexedOhlcv Before(int count)
+        {
+            if (Index - count < 0)
+                return null;
+            return new IndexedCandle(BackingList, Index - count)
+            {
+                Context = Context
+            };
+        }
+
+        public IIndexedOhlcv After(int count)
+        {
+            if (Index + count >= BackingList.Count())
+                return null;
+            return new IndexedCandle(BackingList, Index + count)
+            {
+                Context = Context
+            };
+        }
+
+        public decimal? EvalDecimal<TAnalyzable>(params object[] @params) where TAnalyzable : IAnalyzable<IAnalyzableTick<decimal?>>
+            => Eval<TAnalyzable, decimal?>(@params);
+
+        public bool? EvalBool<TAnalyzable>(params object[] @params) where TAnalyzable : IAnalyzable<IAnalyzableTick<bool?>>
+            => Eval<TAnalyzable, bool?>(@params);
+
+        public TOutputType Eval<TAnalyzable, TOutputType>(params object[] @params) where TAnalyzable : IAnalyzable<IAnalyzableTick<TOutputType>>
+        {
+            if (Context == null)
+                return AnalyzableFactory.CreateAnalyzable<TAnalyzable>(BackingList, @params)[Index].Tick;
+
+            return Context.Get<TAnalyzable>(@params)[Index].Tick;
+        }
+
+        public decimal? EvalFunc(string name, params decimal[] @params)
+        {
+            if (Context == null)
+                return FuncAnalyzableFactory.CreateAnalyzable(name, BackingList, @params)[Index].Tick;
+
+            var analyzable = (IFuncAnalyzable<IAnalyzableTick<decimal?>>)Context.GetFunc(name, @params);
+            return analyzable[Index].Tick;
+        }
+
+        IIndexedObject<IOhlcv> IIndexedObject<IOhlcv>.Before(int count) => Before(count);
+
+        IIndexedObject<IOhlcv> IIndexedObject<IOhlcv>.After(int count) => After(count);
+
+        IIndexedObject IIndexedObject.Before(int count) => Before(count);
+
+        IIndexedObject IIndexedObject.After(int count) => After(count);
     }
 }

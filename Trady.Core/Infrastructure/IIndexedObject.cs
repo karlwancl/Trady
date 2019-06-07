@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 
 namespace Trady.Core.Infrastructure
@@ -16,6 +16,10 @@ namespace Trady.Core.Infrastructure
         object Underlying { get; }
 
         IAnalyzeContext Context { get; set; }
+
+        IIndexedObject Before(int count);
+
+        IIndexedObject After(int count);
     }
 
     public interface IIndexedObject<T> : IIndexedObject
@@ -29,5 +33,9 @@ namespace Trady.Core.Infrastructure
         new T Underlying { get; }
 
         new IAnalyzeContext<T> Context { get; set; }
+
+        new IIndexedObject<T> Before(int count);
+
+        new IIndexedObject<T> After(int count);
     }
 }
