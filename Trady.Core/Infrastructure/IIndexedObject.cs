@@ -20,6 +20,10 @@ namespace Trady.Core.Infrastructure
         IIndexedObject Before(int count);
 
         IIndexedObject After(int count);
+
+        IIndexedObject First { get; }
+
+        IIndexedObject Last { get; }
     }
 
     public interface IIndexedObject<T> : IIndexedObject
@@ -37,5 +41,9 @@ namespace Trady.Core.Infrastructure
         new IIndexedObject<T> Before(int count);
 
         new IIndexedObject<T> After(int count);
+
+        new IIndexedObject<T> First { get; }
+
+        new IIndexedObject<T> Last { get; }
     }
 }

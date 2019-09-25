@@ -60,6 +60,32 @@ namespace Trady.Analysis
             }
         }
 
+        public IIndexedOhlcv First
+        {
+            get
+            {
+                if (!BackingList.Any())
+                    return null;
+                return new IndexedCandle(BackingList, 0)
+                {
+                    Context = Context
+                };
+            }
+        }
+
+        public IIndexedOhlcv Last
+        {
+            get
+            {
+                if (!BackingList.Any())
+                    return null;
+                return new IndexedCandle(BackingList, BackingList.Count() - 1)
+                {
+                    Context = Context
+                };
+            }
+        }
+
         public IOhlcv Underlying => BackingList.ElementAt(Index);
 
         public IAnalyzeContext<IOhlcv> Context
@@ -77,6 +103,14 @@ namespace Trady.Analysis
         IIndexedObject IIndexedObject.Next => Next;
 
         IIndexedObject<IOhlcv> IIndexedObject<IOhlcv>.Next => Next;
+
+        IIndexedObject IIndexedObject.First => First;
+
+        IIndexedObject<IOhlcv> IIndexedObject<IOhlcv>.First => First;
+
+        IIndexedObject IIndexedObject.Last => Last;
+
+        IIndexedObject<IOhlcv> IIndexedObject<IOhlcv>.Last => Last;
 
         object IIndexedObject.Underlying => Underlying;
 

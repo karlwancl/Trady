@@ -19,6 +19,10 @@ namespace Trady.Core.Infrastructure
 
         new IIndexedOhlcv After(int count);
 
+        new IIndexedOhlcv First { get; }
+
+        new IIndexedOhlcv Last { get; }
+
         [Obsolete]
         TAnalyzable Get<TAnalyzable>(params object[] @params)
             where TAnalyzable : IAnalyzable;
