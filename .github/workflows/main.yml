@@ -1,4 +1,4 @@
-name: Nuget Package Deploy
+name: build
 
 on: 
   push:
@@ -54,11 +54,11 @@ jobs:
           --api-key ${{ secrets.NUGET_DEPLOY_KEY_TRADY }}
           --source https://api.nuget.org/v3/index.json
           --skip-duplicate
-      - name: Push package to nuget (Trady.Importer.Google)
-        run: dotnet nuget push Trady.Importer.Google/bin/Release/Trady.Importer.Google.*.nupkg
-          --api-key ${{ secrets.NUGET_DEPLOY_KEY_TRADY }}
-          --source https://api.nuget.org/v3/index.json
-          --skip-duplicate
+      # - name: Push package to nuget (Trady.Importer.Google)
+      #   run: dotnet nuget push Trady.Importer.Google/bin/Release/Trady.Importer.Google.*.nupkg
+      #     --api-key ${{ secrets.NUGET_DEPLOY_KEY_TRADY }}
+      #     --source https://api.nuget.org/v3/index.json
+      #     --skip-duplicate
       - name: Push package to nuget (Trady.Importer.Quandl)
         run: dotnet nuget push Trady.Importer.Quandl/bin/Release/Trady.Importer.Quandl.*.nupkg
           --api-key ${{ secrets.NUGET_DEPLOY_KEY_TRADY }}
