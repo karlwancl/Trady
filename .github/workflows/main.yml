@@ -1,0 +1,32 @@
+name: Nuget Package Deploy
+
+on: 
+  push:
+    branches: 
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.0.100
+    - name: Build with dotnet
+      run: dotnet build --configuration Release
+    - name: Test with dotnet
+      run: dotnet test
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Pack nuget package
+        run: dotnet pack --configuration Release
+      - name: Push package to nuget
+        run: dotnet nuget push **/*.nupkg
+          -- api-key ${{ secrets.NUGET_DEPLOY_KEY_TRADY }}
+          -- source https://api.nuget.org/v3/index.json
+          
