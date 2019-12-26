@@ -40,8 +40,37 @@ jobs:
           --source https://api.nuget.org/v3/index.json
           --skip-duplicate
       - name: Push package to nuget (Trady.Importer)
-        run: dotnet nuget push Trady.Importer*/bin/Release/Trady.Importer*.nupkg
+        run: dotnet nuget push Trady.Importer/bin/Release/Trady.Importer.*.nupkg
           --api-key ${{ secrets.NUGET_DEPLOY_KEY_TRADY }}
           --source https://api.nuget.org/v3/index.json
           --skip-duplicate
-          
+      - name: Push package to nuget (Trady.Importer.AlphaVantage)
+        run: dotnet nuget push Trady.Importer.AlphaVantage/bin/Release/Trady.Importer.AlphaVantage.*.nupkg
+          --api-key ${{ secrets.NUGET_DEPLOY_KEY_TRADY }}
+          --source https://api.nuget.org/v3/index.json
+          --skip-duplicate
+      - name: Push package to nuget (Trady.Importer.Csv)
+        run: dotnet nuget push Trady.Importer.Csv/bin/Release/Trady.Importer.Csv.*.nupkg
+          --api-key ${{ secrets.NUGET_DEPLOY_KEY_TRADY }}
+          --source https://api.nuget.org/v3/index.json
+          --skip-duplicate
+      - name: Push package to nuget (Trady.Importer.Google)
+        run: dotnet nuget push Trady.Importer.Google/bin/Release/Trady.Importer.Google.*.nupkg
+          --api-key ${{ secrets.NUGET_DEPLOY_KEY_TRADY }}
+          --source https://api.nuget.org/v3/index.json
+          --skip-duplicate
+      - name: Push package to nuget (Trady.Importer.Quandl)
+        run: dotnet nuget push Trady.Importer.Quandl/bin/Release/Trady.Importer.Quandl.*.nupkg
+          --api-key ${{ secrets.NUGET_DEPLOY_KEY_TRADY }}
+          --source https://api.nuget.org/v3/index.json
+          --skip-duplicate
+      - name: Push package to nuget (Trady.Importer.Stooq)
+        run: dotnet nuget push Trady.Importer.Stooq/bin/Release/Trady.Importer.Stooq.*.nupkg
+          --api-key ${{ secrets.NUGET_DEPLOY_KEY_TRADY }}
+          --source https://api.nuget.org/v3/index.json
+          --skip-duplicate
+      - name: Push package to nuget (Trady.Importer.Yahoo)
+        run: dotnet nuget push Trady.Importer.Yahoo/bin/Release/Trady.Importer.Yahoo.*.nupkg
+          --api-key ${{ secrets.NUGET_DEPLOY_KEY_TRADY }}
+          --source https://api.nuget.org/v3/index.json
+          --skip-duplicate
