@@ -27,6 +27,6 @@ jobs:
         run: dotnet pack --configuration Release
       - name: Push package to nuget
         run: dotnet nuget push **/*.nupkg
-          -- api-key ${{ secrets.NUGET_DEPLOY_KEY_TRADY }}
-          -- source https://api.nuget.org/v3/index.json
+          --api-key ${{ secrets.NUGET_DEPLOY_KEY_TRADY }}
+          --source https://api.nuget.org/v3/index.json
           
