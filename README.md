@@ -15,6 +15,9 @@ This library is a hobby project, and would probably making breaking changes, use
 * Signal capturing by rules
 * Strategy backtesting by buy/sell rule
 
+## v3.2.2 update
+* Fixes CommodityChannelIndex
+
 ## v3.2 update
 * Added WeightedMovingAverage, HullMovingAverage & KeltnerChannels
 * Added AlphaVantage importer (thanks to @irperez)

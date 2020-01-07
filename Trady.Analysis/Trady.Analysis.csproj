@@ -7,7 +7,7 @@
     <Description>Analysis module of Trady, a handy library for computing technical indicators, based on .NET Standard 2.0</Description>
     <Copyright>Copyright (c) 2016-2017 Karl Wan</Copyright>
     <AssemblyTitle>Trady.Analysis</AssemblyTitle>
-    <VersionPrefix>3.2.1</VersionPrefix>
+    <VersionPrefix>3.2.2</VersionPrefix>
     <Authors>Karl Wan</Authors>
     <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>Trady.Analysis</AssemblyName>
@@ -27,7 +27,7 @@
     <GenerateNeutralResourcesLanguageAttribute>false</GenerateNeutralResourcesLanguageAttribute>
     <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
     <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
-    <Version>3.2.1</Version>
+    <Version>3.2.2</Version>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <LangVersion>latest</LangVersion>
