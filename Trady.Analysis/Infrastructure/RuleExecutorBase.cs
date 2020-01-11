@@ -27,7 +27,7 @@ namespace Trady.Analysis.Infrastructure
 
         public Func<TIndexed, int, TOutput> OutputFunc { get; }
 
-        public IReadOnlyList<TOutput> Execute(int? startIndex = default(int?), int? endIndex = default(int?))
+        public virtual IReadOnlyList<TOutput> Execute(int? startIndex = default(int?), int? endIndex = default(int?))
         {
             var output = new List<TOutput>();
             for (int i = startIndex ?? 0; i <= (endIndex ?? (_context.BackingList.Count() - 1)); i++)
