@@ -21,9 +21,9 @@ namespace Trady.Analysis.Infrastructure
                 throw new ArgumentException("You must have at least one rule to execute", nameof(rules));
         }
 
-        public Predicate<TIndexed>[] Rules { get; }
+        protected Predicate<TIndexed>[] Rules { get; }
 
-        public Func<TIndexed, int, TOutput> OutputFunc { get; }
+        protected Func<TIndexed, int, TOutput> OutputFunc { get; }
 
         public virtual IReadOnlyList<TOutput> Execute(int? startIndex = default, int? endIndex = default)
         {
@@ -49,6 +49,6 @@ namespace Trady.Analysis.Infrastructure
             return output;
         }
 
-        public abstract Func<IEnumerable<TInput>, int, TIndexed> IndexedObjectConstructor { get; }
+        protected abstract Func<IEnumerable<TInput>, int, TIndexed> IndexedObjectConstructor { get; }
     }
 }
