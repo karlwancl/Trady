@@ -30,6 +30,13 @@ namespace Trady.Test
             //return candles;
         }
 
+        protected async Task<IEnumerable<IOhlcv>> ImportCCiIOhlcvDatasAsync()
+        {
+            var csvImporter = new CsvImporter("cci_test.csv", CultureInfo.GetCultureInfo("en-US"));
+
+            return await csvImporter.ImportAsync("cci_test");
+        }
+
         //protected async Task<IEnumerable<IOhlcv>> ImportSpyAsync()
         //{
         //    var csvImporter = new CsvImporter("spx.csv", CultureInfo.GetCultureInfo("en-US"));
@@ -69,6 +76,12 @@ namespace Trady.Test
             var candles = await ImportIOhlcvDatasAsync();
             var result = candles.Cci(20)[candles.Count() - 1];
             Assert.IsTrue(result.Tick.Value.IsApproximatelyEquals(8.17m));
+
+            // Fixes #103: Not getting expected CCI values
+            var candles2 = await ImportCCiIOhlcvDatasAsync();
+            var cci = candles2.Cci(14);
+            var result2 = cci[candles2.Count() - 1];
+            Assert.IsTrue(result2.Tick.Value.IsApproximatelyEquals(66.66666667m));
         }
 
         [TestMethod]

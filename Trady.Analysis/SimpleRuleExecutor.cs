@@ -13,7 +13,7 @@ namespace Trady.Analysis
         {
         }
 
-        public override Func<IEnumerable<IOhlcv>, int, IIndexedOhlcv> IndexedObjectConstructor
+        protected override Func<IEnumerable<IOhlcv>, int, IIndexedOhlcv> IndexedObjectConstructor
             => (l, i) => new IndexedCandle(l, i);
     }
 }

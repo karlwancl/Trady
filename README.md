@@ -1,5 +1,5 @@
 # Trady
-[![Build status](https://ci.appveyor.com/api/projects/status/kqwo74gn5ms3h0n2?svg=true)](https://ci.appveyor.com/project/lppkarl/trady)
+[![build](https://github.com/lppkarl/trady/workflows/build/badge.svg)](https://github.com/lppkarl/Trady/actions?query=workflow%3A%22build%22)
 [![NuGet Pre Release](https://img.shields.io/nuget/v/Trady.Analysis.svg)](https://www.nuget.org/packages/Trady.Analysis/3.2.0)
 [![NuGet](https://img.shields.io/nuget/dt/Trady.Analysis.svg)](https://www.nuget.org/packages/Trady.Analysis/3.2.0)
 [![license](https://img.shields.io/github/license/lppkarl/Trady.svg)](LICENSE)
@@ -14,6 +14,9 @@ This library is a hobby project, and would probably making breaking changes, use
 * Indicator computing (including SMA, EMA, RSI, MACD, BB, etc.)
 * Signal capturing by rules
 * Strategy backtesting by buy/sell rule
+
+## v3.2.2 update
+* Fixes CommodityChannelIndex
 
 ## v3.2 update
 * Added WeightedMovingAverage, HullMovingAverage & KeltnerChannels
