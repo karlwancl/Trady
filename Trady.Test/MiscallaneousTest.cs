@@ -14,6 +14,7 @@ using Trady.Importer.Csv;
 using Newtonsoft.Json;
 using Trady.Analysis.Indicator;
 using System.IO;
+using System.Diagnostics;
 
 namespace Trady.Test
 {
@@ -25,8 +26,37 @@ namespace Trady.Test
             var csvImporter = new CsvImporter("fb.csv", CultureInfo.GetCultureInfo("en-US"));
             return await csvImporter.ImportAsync("fb");
         }
+        [TestMethod]
 
-		[TestMethod]
+        public void TransformFromTrades()
+        {
+            int days = 3;
+            int hours = days * 24;
+            int minutes = hours * 60;
+            int seconds = minutes * 60;
+
+            var _tradeData = new ITickTrade[seconds];
+            var d = new DateTimeOffset(new DateTime(2019, 1, 1));
+            for (int i = 0; i < seconds; i++)
+            {
+                _tradeData[i] = new Trade(d.AddSeconds(i), 1, 1);
+            }
+
+            var candles1m = _tradeData.TransformToCandles<PerMinute>();
+            Assert.IsTrue(candles1m.Any());
+            Assert.IsTrue(candles1m.All(c => c.Volume == seconds / minutes));
+
+            var candles1h = _tradeData.TransformToCandles<Hourly>();
+            Assert.IsTrue(candles1h.Any());
+            Assert.IsTrue(candles1h.All(c => c.Volume == seconds / hours));
+
+            var candlesD = _tradeData.TransformToCandles<Daily>();
+            Assert.IsTrue(candlesD.Any());
+            Assert.IsTrue(candlesD.All(c => c.Volume == seconds / days));
+
+        }
+
+        [TestMethod]
         public async Task TestRuleExecutorAsync()
         {
             var candles = await ImportIOhlcvDatasAsync();
