@@ -50,6 +50,19 @@ namespace Trady.Test
             Assert.IsTrue(candles1h.Any());
             Assert.IsTrue(candles1h.All(c => c.Volume == seconds / hours));
 
+            var candles4h = _tradeData.TransformToCandles<Per4Hour>();
+            Assert.IsTrue(candles4h.Any());
+            Assert.IsTrue(candles4h.All(c => c.Volume == seconds / (hours / 4)));
+
+            var candles6h = _tradeData.TransformToCandles<Per6Hour>();
+            Assert.IsTrue(candles6h.Any());
+            Assert.IsTrue(candles6h.All(c => c.Volume == seconds / (hours / 6)));
+
+
+            var candles12h = _tradeData.TransformToCandles<Per12Hour>();
+            Assert.IsTrue(candles12h.Any());
+            Assert.IsTrue(candles12h.All(c => c.Volume == seconds / (hours / 12)));
+
             var candlesD = _tradeData.TransformToCandles<Daily>();
             Assert.IsTrue(candlesD.Any());
             Assert.IsTrue(candlesD.All(c => c.Volume == seconds / days));
