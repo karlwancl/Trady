@@ -21,6 +21,8 @@ namespace Trady.Benchmarks.Version31
     {
         private const int _n = 10000;
         private readonly IOhlcv[] _data;
+        private readonly ITickTrade[] _tradeData;
+
 
         public Benchmark()
         {
@@ -32,7 +34,15 @@ namespace Trady.Benchmarks.Version31
                 HasHeaderRecord = false
             };
             var importer = new CsvImporter("Data/EURUSD.csv", config);
-            _data = importer.ImportAsync("EURUSD").Result.ToArray();            
+            _data = importer.ImportAsync("EURUSD").Result.ToArray();
+
+            _tradeData = new ITickTrade[_n];
+            var d = DateTimeOffset.Now;
+            for(int i = 0; i < _n; i++)
+            {                
+                _tradeData[i] = new Trade(d.AddSeconds(i), 1, 1);
+            }           
+
         }
 
         private class Config : ManualConfig
@@ -41,8 +51,8 @@ namespace Trady.Benchmarks.Version31
             {
                 Add(StatisticColumn.P90);
             }
-        }
-
+        }        
+     
         [Benchmark]
         public IReadOnlyList<IOhlcv> TransformToMonthly() => _data.Transform<PerMinute, Monthly>();
 
@@ -59,13 +69,13 @@ namespace Trady.Benchmarks.Version31
         public IReadOnlyList<IAnalyzableTick<decimal?>> SimpleMovingAverage() => _data.Sma(30);
 
         [Benchmark]
-        public IReadOnlyList<Trady.Analysis.AnalyzableTick<(decimal?, decimal?, decimal?)>> MACD() => _data.Macd(12,26,9);
+        public IReadOnlyList<Trady.Analysis.AnalyzableTick<(decimal?, decimal?, decimal?)>> MACD() => _data.Macd(12, 26, 9);
 
         [Benchmark]
         public IReadOnlyList<IAnalyzableTick<decimal?>> CommodityChannelIndex() => _data.Cci(20);
 
         [Benchmark]
-        public IReadOnlyList<IAnalyzableTick<decimal?>> StochasticMomentumIndex() => _data.Smi(15,6,6);
+        public IReadOnlyList<IAnalyzableTick<decimal?>> StochasticMomentumIndex() => _data.Smi(15, 6, 6);
 
         [Benchmark]
         public IReadOnlyList<IAnalyzableTick<decimal?>> StochasticRelativeStrengthIndex() => _data.StochRsi(14);
@@ -213,6 +223,16 @@ namespace Trady.Benchmarks.Version31
 
         [Benchmark]
         public IReadOnlyList<IAnalyzableTick<(decimal?, decimal?, decimal?)>> KeltnerChannels() => _data.Kc(20, 2, 10);
+        [Benchmark]
+        public IReadOnlyList<IOhlcv> TransformFromTradesToMinute() => _tradeData.TransformToCandles<PerMinute>();
+        [Benchmark]
+        public IReadOnlyList<IOhlcv> TransformFromTradesToHourly() => _tradeData.TransformToCandles<Hourly>();
+        [Benchmark]
+        public IReadOnlyList<IOhlcv> TransformFromTradesToBeHourly() => _tradeData.TransformToCandles<BiHourly>();
+        [Benchmark]
+        public IReadOnlyList<IOhlcv> TransformFromTradesToDaily() => _tradeData.TransformToCandles<Daily>();
+        [Benchmark]
+        public IReadOnlyList<IOhlcv> TransformFromTradesToWeekly() => _tradeData.TransformToCandles<Weekly>();
     }
 
     public class Program

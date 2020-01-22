@@ -129,6 +129,7 @@ namespace Trady.Core
             return new Candle(dateTime, open, high, low, close, volume);
         }
 
+
         #endregion candle list transformation
     }
 }
