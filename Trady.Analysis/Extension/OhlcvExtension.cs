@@ -203,5 +203,8 @@ namespace Trady.Analysis.Extension
 
         public static IReadOnlyList<AnalyzableTick<(decimal? LowerChannel, decimal? Middle, decimal? UpperChannel)>> Kc(this IEnumerable<IOhlcv> candles, int periodCount, decimal sdCount, int atrPeriodCount, int? startIndex = null, int? endIndex = null)
             => new KeltnerChannels(candles, periodCount, sdCount, atrPeriodCount).Compute(startIndex, endIndex);
+
+        public static IReadOnlyList<AnalyzableTick<decimal?>> Vwap(this IEnumerable<IOhlcv> candles, int? period = null, int? startIndex = null, int? endIndex = null)
+           => new VolumeWeightedAveragePrice(candles, period).Compute(startIndex, endIndex);
     }
 }
