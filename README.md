@@ -1,7 +1,7 @@
 # Trady
-[![Build status](https://ci.appveyor.com/api/projects/status/kqwo74gn5ms3h0n2?svg=true)](https://ci.appveyor.com/project/lppkarl/trady)
-[![NuGet Pre Release](https://img.shields.io/nuget/v/Trady.Analysis.svg)](https://www.nuget.org/packages/Trady.Analysis/3.2.0)
-[![NuGet](https://img.shields.io/nuget/dt/Trady.Analysis.svg)](https://www.nuget.org/packages/Trady.Analysis/3.2.0)
+[![build](https://github.com/lppkarl/trady/workflows/build/badge.svg)](https://github.com/lppkarl/Trady/actions?query=workflow%3A%22build%22)
+[![NuGet Pre Release](https://img.shields.io/nuget/v/Trady.Analysis.svg)](https://www.nuget.org/packages/Trady.Analysis/3.2.8)
+[![NuGet](https://img.shields.io/nuget/dt/Trady.Analysis.svg)](https://www.nuget.org/packages/Trady.Analysis/3.2.8)
 [![license](https://img.shields.io/github/license/lppkarl/Trady.svg)](LICENSE)
 
 Trady is a handy library for computing technical indicators, and targets to be an automated trading system that provides stock data feeding, indicator computing, strategy building and automatic trading. It is built based on .NET Standard 2.0.
@@ -14,6 +14,16 @@ This library is a hobby project, and would probably making breaking changes, use
 * Indicator computing (including SMA, EMA, RSI, MACD, BB, etc.)
 * Signal capturing by rules
 * Strategy backtesting by buy/sell rule
+
+## v3.2.8 update
+* Fixes IsBull, IsBear recognition, added IsDoji extension by @ridicoulous
+* Added vwap indicator by @codebeaulieu
+
+## v3.2.7 update
+* Added candles transformation by @ridicoulous
+
+## v3.2.2 update
+* Fixes CommodityChannelIndex
 
 ## v3.2 update
 * Added WeightedMovingAverage, HullMovingAverage & KeltnerChannels

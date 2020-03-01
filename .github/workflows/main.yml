@@ -1,0 +1,76 @@
+name: build
+
+on: 
+  push:
+    branches: 
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: Setup .NET Core (Build)
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.1.100
+    - name: Build with dotnet
+      run: dotnet build --configuration Release
+    - name: Test with dotnet
+      run: dotnet test
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Setup .NET Core (Deploy)
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 3.1.100
+      - name: Pack nuget package
+        run: dotnet pack --configuration Release
+      - name: Push package to nuget (Trady.Core)
+        run: dotnet nuget push Trady.Core/bin/Release/Trady.Core.*.nupkg
+          --api-key ${{ secrets.NUGET_DEPLOY_KEY_TRADY }}
+          --source https://api.nuget.org/v3/index.json
+          --skip-duplicate
+      - name: Push package to nuget (Trady.Analysis)
+        run: dotnet nuget push Trady.Analysis/bin/Release/Trady.Analysis.*.nupkg
+          --api-key ${{ secrets.NUGET_DEPLOY_KEY_TRADY }}
+          --source https://api.nuget.org/v3/index.json
+          --skip-duplicate
+      - name: Push package to nuget (Trady.Importer)
+        run: dotnet nuget push Trady.Importer/bin/Release/Trady.Importer.*.nupkg
+          --api-key ${{ secrets.NUGET_DEPLOY_KEY_TRADY }}
+          --source https://api.nuget.org/v3/index.json
+          --skip-duplicate
+      - name: Push package to nuget (Trady.Importer.AlphaVantage)
+        run: dotnet nuget push Trady.Importer.AlphaVantage/bin/Release/Trady.Importer.AlphaVantage.*.nupkg
+          --api-key ${{ secrets.NUGET_DEPLOY_KEY_TRADY }}
+          --source https://api.nuget.org/v3/index.json
+          --skip-duplicate
+      - name: Push package to nuget (Trady.Importer.Csv)
+        run: dotnet nuget push Trady.Importer.Csv/bin/Release/Trady.Importer.Csv.*.nupkg
+          --api-key ${{ secrets.NUGET_DEPLOY_KEY_TRADY }}
+          --source https://api.nuget.org/v3/index.json
+          --skip-duplicate
+      # - name: Push package to nuget (Trady.Importer.Google)
+      #   run: dotnet nuget push Trady.Importer.Google/bin/Release/Trady.Importer.Google.*.nupkg
+      #     --api-key ${{ secrets.NUGET_DEPLOY_KEY_TRADY }}
+      #     --source https://api.nuget.org/v3/index.json
+      #     --skip-duplicate
+      - name: Push package to nuget (Trady.Importer.Quandl)
+        run: dotnet nuget push Trady.Importer.Quandl/bin/Release/Trady.Importer.Quandl.*.nupkg
+          --api-key ${{ secrets.NUGET_DEPLOY_KEY_TRADY }}
+          --source https://api.nuget.org/v3/index.json
+          --skip-duplicate
+      - name: Push package to nuget (Trady.Importer.Stooq)
+        run: dotnet nuget push Trady.Importer.Stooq/bin/Release/Trady.Importer.Stooq.*.nupkg
+          --api-key ${{ secrets.NUGET_DEPLOY_KEY_TRADY }}
+          --source https://api.nuget.org/v3/index.json
+          --skip-duplicate
+      - name: Push package to nuget (Trady.Importer.Yahoo)
+        run: dotnet nuget push Trady.Importer.Yahoo/bin/Release/Trady.Importer.Yahoo.*.nupkg
+          --api-key ${{ secrets.NUGET_DEPLOY_KEY_TRADY }}
+          --source https://api.nuget.org/v3/index.json
+          --skip-duplicate

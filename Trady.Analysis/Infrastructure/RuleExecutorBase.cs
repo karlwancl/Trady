@@ -7,7 +7,7 @@ namespace Trady.Analysis.Infrastructure
 {
     public abstract class RuleExecutorBase<TInput, TIndexed, TOutput> : IRuleExecutor<TInput, TIndexed, TOutput> where TIndexed : IIndexedObject<TInput>
     {
-        private IAnalyzeContext<TInput> _context;
+        protected readonly IAnalyzeContext<TInput> _context;
 
         protected RuleExecutorBase(
             Func<TIndexed, int, TOutput> outputFunc,
@@ -18,16 +18,14 @@ namespace Trady.Analysis.Infrastructure
             OutputFunc = outputFunc ?? throw new ArgumentNullException(nameof(outputFunc));
             Rules = rules ?? throw new ArgumentNullException(nameof(rules));
             if (!rules.Any())
-            {
                 throw new ArgumentException("You must have at least one rule to execute", nameof(rules));
-            }
         }
 
-        public Predicate<TIndexed>[] Rules { get; }
+        protected Predicate<TIndexed>[] Rules { get; }
 
-        public Func<TIndexed, int, TOutput> OutputFunc { get; }
+        protected Func<TIndexed, int, TOutput> OutputFunc { get; }
 
-        public IReadOnlyList<TOutput> Execute(int? startIndex = default(int?), int? endIndex = default(int?))
+        public virtual IReadOnlyList<TOutput> Execute(int? startIndex = default, int? endIndex = default)
         {
             var output = new List<TOutput>();
             for (int i = startIndex ?? 0; i <= (endIndex ?? (_context.BackingList.Count() - 1)); i++)
@@ -51,6 +49,6 @@ namespace Trady.Analysis.Infrastructure
             return output;
         }
 
-        public abstract Func<IEnumerable<TInput>, int, TIndexed> IndexedObjectConstructor { get; }
+        protected abstract Func<IEnumerable<TInput>, int, TIndexed> IndexedObjectConstructor { get; }
     }
 }

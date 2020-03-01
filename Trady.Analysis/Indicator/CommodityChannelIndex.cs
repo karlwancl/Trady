@@ -17,19 +17,30 @@ namespace Trady.Analysis.Indicator
 
         protected override decimal? ComputeByIndexImpl(IReadOnlyList<(decimal High, decimal Low, decimal Close)> mappedInputs, int index)
         {
-            if (index < PeriodCount - 1)
+            var firstNonNullCciIndex = 2 * (PeriodCount - 1);
+
+            if (index < firstNonNullCciIndex)
                 return default;
 
             var typicalPrices = mappedInputs
-                .Skip(index - PeriodCount + 1)
-                .Take(PeriodCount)
-                .Select(i => (i.High + i.Low + i.Close) / 3);
+                .Skip(index - firstNonNullCciIndex)
+                .Take(firstNonNullCciIndex + 1)
+                .Select(i => (i.High + i.Low + i.Close) / 3)
+                .ToList();
 
-            var average = typicalPrices.Average();
-            var meanDeviation = typicalPrices
-                .Select(tp => Math.Abs(tp - average)).Sum() / typicalPrices.Count();
+            var typicalPricesSmas = Enumerable
+                .Range(PeriodCount - 1, PeriodCount)
+                .Select(i => typicalPrices.Skip(i - (PeriodCount - 1)).Take(PeriodCount).Average())
+                .ToList();
 
-            return meanDeviation == 0 ? default : (typicalPrices.Last() - average) / (0.015m * meanDeviation);
+            var deviation = Enumerable
+                .Range(0, PeriodCount)
+                .Select(i => Math.Abs(typicalPrices.ElementAt(i + PeriodCount - 1) - typicalPricesSmas.ElementAt(i)))
+                .ToList();
+
+            var meanDeviation = deviation.Average();
+
+            return meanDeviation == 0 ? default : (typicalPrices.Last() - typicalPricesSmas.Last()) / (0.015m * meanDeviation);
         }
     }
 

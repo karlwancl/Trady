@@ -1,4 +1,4 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -18,16 +18,23 @@ namespace Trady.Test
     [TestClass]
     public class IndicatorTest
     {
-        protected async Task<IEnumerable<IOhlcv>> ImportIOhlcvDatasAsync()
+        protected async Task<IEnumerable<IOhlcv>> ImportIOhlcvDatasAsync(string fileName = "fb.csv")
         {
             // Last record: 09/18/2017
-            var csvImporter = new CsvImporter("fb.csv", CultureInfo.GetCultureInfo("en-US"));
+            var csvImporter = new CsvImporter(fileName, CultureInfo.GetCultureInfo("en-US"));
 
-            return await csvImporter.ImportAsync("fb");
+            return await csvImporter.ImportAsync(string.Empty);
             //var yahooImporter = new YahooFinanceImporter();
             //var candles = await yahooImporter.ImportAsync("FB");
             //File.WriteAllLines("fb.csv", candles.Select(c => $"{c.DateTime.ToString("d")},{c.Open},{c.High},{c.Low},{c.Close},{c.Volume}"));
             //return candles;
+        } 
+
+        protected async Task<IEnumerable<IOhlcv>> ImportCCiIOhlcvDatasAsync()
+        {
+            var csvImporter = new CsvImporter("cci_test.csv", CultureInfo.GetCultureInfo("en-US"));
+
+            return await csvImporter.ImportAsync("cci_test");
         }
 
         //protected async Task<IEnumerable<IOhlcv>> ImportSpyAsync()
@@ -69,6 +76,12 @@ namespace Trady.Test
             var candles = await ImportIOhlcvDatasAsync();
             var result = candles.Cci(20)[candles.Count() - 1];
             Assert.IsTrue(result.Tick.Value.IsApproximatelyEquals(8.17m));
+
+            // Fixes #103: Not getting expected CCI values
+            var candles2 = await ImportCCiIOhlcvDatasAsync();
+            var cci = candles2.Cci(14);
+            var result2 = cci[candles2.Count() - 1];
+            Assert.IsTrue(result2.Tick.Value.IsApproximatelyEquals(66.66666667m));
         }
 
         [TestMethod]
@@ -568,6 +581,45 @@ namespace Trady.Test
             Assert.IsTrue(result.Tick.LowerChannel.Value.IsApproximatelyEquals(165.81m));
             Assert.IsTrue(result.Tick.Middle.Value.IsApproximatelyEquals(170.65m));
             Assert.IsTrue(result.Tick.UpperChannel.Value.IsApproximatelyEquals(175.50m));
+        }
+
+        [TestMethod]
+        public async Task TestVwapAsync()
+        {
+            var candles = await ImportIOhlcvDatasAsync();
+            var result = candles.Vwap(14)[candles.Count() - 1];
+            Assert.IsTrue(171.3262179m.IsApproximatelyEquals(result.Tick.Value));
+        }
+
+        [TestMethod]
+        public async Task TestVwap_IsAccurateAsync()
+        {
+            var candles = await ImportIOhlcvDatasAsync("NFLX_5m_1_27_2019.csv");
+            var selected = candles.Where(x => x.DateTime <= new DateTimeOffset(2019, 1, 25, 15, 15, 00, new TimeSpan(-6, 0, 0))); 
+            var result = selected.Vwap()[selected.Count() - 1].Tick;
+            Assert.IsTrue(335.67m.IsApproximatelyEquals(result.Value));  
+        }
+
+        [TestMethod]
+        public async Task TestVwap_CloseIsAboveVwapAsync()
+        {
+            var candles = await ImportIOhlcvDatasAsync("NFLX_5m_1_27_2019.csv");
+            var selected = candles.Where(x => x.DateTime <= new DateTimeOffset(2019, 1, 25, 09, 40, 00, new TimeSpan(-6, 0, 0)));  
+            var result = selected.Vwap()[selected.Count() - 1].Tick;
+            var close = selected.Last().Close;
+            Assert.IsTrue(330.32m.IsApproximatelyEquals(result.Value));
+            Assert.IsTrue(close > result);
+        }
+
+        [TestMethod]
+        public async Task TestVwap_CloseIsBelowVwapAsync()
+        {
+            var candles = await ImportIOhlcvDatasAsync("NFLX_5m_1_27_2019.csv");
+            var selected = candles.Where(x => x.DateTime <= new DateTimeOffset(2019, 1, 25, 09, 30, 00, new TimeSpan(-6, 0, 0))); 
+            var result = selected.Vwap()[selected.Count() - 1].Tick;
+            var close = selected.Last().Close;
+            Assert.IsTrue(329.68m.IsApproximatelyEquals(result.Value));
+            Assert.IsTrue(close < result);
         }
     }
 }

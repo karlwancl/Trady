@@ -17,7 +17,7 @@ namespace Trady.Analysis.Backtest
         {
         }
 
-        public override Func<IEnumerable<IOhlcv>, int, IIndexedOhlcv> IndexedObjectConstructor
+        protected override Func<IEnumerable<IOhlcv>, int, IIndexedOhlcv> IndexedObjectConstructor
             => (l, i) => new IndexedCandle(l, i);
     }
 }

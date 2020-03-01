@@ -15,9 +15,10 @@ namespace Trady.Core
 
         public static decimal GetBody(this IOhlcv candle) => Math.Abs(candle.Open - candle.Close);
 
-        public static bool IsBull(this IOhlcv candle) => candle.Open - candle.Close > 0;
+        public static bool IsBull(this IOhlcv candle) => candle.Open < candle.Close;
+        public static bool IsBear(this IOhlcv candle) => candle.Open > candle.Close;
+        public static bool IsDoji(this IOhlcv candle) => candle.Open == candle.Close;
 
-        public static bool IsBear(this IOhlcv candle) => candle.Open - candle.Close < 0;
 
         #region candle list transformation
 
@@ -128,6 +129,7 @@ namespace Trady.Core
             var volume = candles.Sum(stick => stick.Volume);
             return new Candle(dateTime, open, high, low, close, volume);
         }
+
 
         #endregion candle list transformation
     }
