@@ -53,7 +53,7 @@ namespace Trady.Core
                 var indexTime = orderedCandles[i].DateTime;
                 if (indexTime >= periodEndTime)
                 {
-                    periodStartTime = periodEndTime;
+                    periodStartTime = indexTime;
                     periodEndTime = periodInstance.NextTimestamp(periodStartTime);
 
                     AddComputedCandleToOutput(outputCandles, tempCandles);
